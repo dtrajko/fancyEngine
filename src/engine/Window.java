@@ -99,6 +99,10 @@ public class Window {
     public boolean windowShouldClose() {
         return GLFW.glfwWindowShouldClose(windowHandle);
     }
+    
+    public long getHandle() {
+    	return windowHandle;
+    }
 
     public String getTitle() {
         return title;

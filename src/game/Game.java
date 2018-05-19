@@ -16,7 +16,7 @@ public class Game implements IGameLogic {
 	}
 
 	@Override
-	public void init() throws Exception {
+	public void init(Window window) throws Exception {
 		renderer.init();
 	}
 
