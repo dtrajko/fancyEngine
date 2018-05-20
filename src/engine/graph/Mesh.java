@@ -20,7 +20,7 @@ public class Mesh {
 
     public Mesh(float[] positions, float[] colors, int[] indices) {
         FloatBuffer posBuffer = null;
-        FloatBuffer colourBuffer = null;
+        FloatBuffer colorBuffer = null;
         IntBuffer indicesBuffer = null;
         try {
             vertexCount = indices.length;
@@ -36,12 +36,12 @@ public class Mesh {
             GL15.glBufferData(GL15.GL_ARRAY_BUFFER, posBuffer, GL15.GL_STATIC_DRAW);
             GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 0, 0);
 
-            // Colour VBO
+            // Color VBO
             colorVboId = GL15.glGenBuffers();
-            colourBuffer = MemoryUtil.memAllocFloat(colors.length);
-            colourBuffer.put(colors).flip();
+            colorBuffer = MemoryUtil.memAllocFloat(colors.length);
+            colorBuffer.put(colors).flip();
             GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, colorVboId);
-            GL15.glBufferData(GL15.GL_ARRAY_BUFFER, colourBuffer, GL15.GL_STATIC_DRAW);
+            GL15.glBufferData(GL15.GL_ARRAY_BUFFER, colorBuffer, GL15.GL_STATIC_DRAW);
             GL20.glVertexAttribPointer(1, 3, GL11.GL_FLOAT, false, 0, 0);
 
             // Index VBO
@@ -57,8 +57,8 @@ public class Mesh {
             if (posBuffer != null) {
                 MemoryUtil.memFree(posBuffer);
             }
-            if (colourBuffer != null) {
-                MemoryUtil.memFree(colourBuffer);
+            if (colorBuffer != null) {
+                MemoryUtil.memFree(colorBuffer);
             }
             if (indicesBuffer != null) {
                 MemoryUtil.memFree(indicesBuffer);

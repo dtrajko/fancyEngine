@@ -43,9 +43,9 @@ public class Game implements IGameLogic {
         };
         Mesh mesh = new Mesh(positions, colors, indices);
         GameItem gameItem1 = new GameItem(mesh);
-        gameItem1.setPosition(-0.6f, 0, -2);
+        gameItem1.setPosition(-0.8f, 0, -2);
         GameItem gameItem2 = new GameItem(mesh);
-        gameItem2.setPosition(0.6f, 0, -2);
+        gameItem2.setPosition(0.8f, 0, -2);
         gameItems = new GameItem[] { gameItem1, gameItem2 };
 	}
 
@@ -56,17 +56,17 @@ public class Game implements IGameLogic {
         displzInc = 0;
         scaleInc = 0;
         if (window.isKeyPressed(GLFW.GLFW_KEY_UP)) {
-            displyInc = 1;
+            displyInc = 4;
         } else if (window.isKeyPressed(GLFW.GLFW_KEY_DOWN)) {
-            displyInc = -1;
+            displyInc = -4;
         } else if (window.isKeyPressed(GLFW.GLFW_KEY_LEFT)) {
-            displxInc = -1;
+            displxInc = -4;
         } else if (window.isKeyPressed(GLFW.GLFW_KEY_RIGHT)) {
-            displxInc = 1;
+            displxInc = 4;
         } else if (window.isKeyPressed(GLFW.GLFW_KEY_A)) {
-            displzInc = -1;
+            displzInc = -2;
         } else if (window.isKeyPressed(GLFW.GLFW_KEY_Q)) {
-            displzInc = 1;
+            displzInc = 2;
         } else if (window.isKeyPressed(GLFW.GLFW_KEY_Z)) {
             scaleInc = -1;
         } else if (window.isKeyPressed(GLFW.GLFW_KEY_X)) {
