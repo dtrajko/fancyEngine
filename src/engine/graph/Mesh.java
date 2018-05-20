@@ -1,4 +1,4 @@
-package graph;
+package engine.graph;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -14,11 +14,11 @@ public class Mesh {
 
 	private final int vaoId;
     private final int posVboId;
-    private final int colourVboId;
+    private final int colorVboId;
     private final int idxVboId;
     private final int vertexCount;
 
-    public Mesh(float[] positions, float[] colours, int[] indices) {
+    public Mesh(float[] positions, float[] colors, int[] indices) {
         FloatBuffer posBuffer = null;
         FloatBuffer colourBuffer = null;
         IntBuffer indicesBuffer = null;
@@ -37,10 +37,10 @@ public class Mesh {
             GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 0, 0);
 
             // Colour VBO
-            colourVboId = GL15.glGenBuffers();
-            colourBuffer = MemoryUtil.memAllocFloat(colours.length);
-            colourBuffer.put(colours).flip();
-            GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, colourVboId);
+            colorVboId = GL15.glGenBuffers();
+            colourBuffer = MemoryUtil.memAllocFloat(colors.length);
+            colourBuffer.put(colors).flip();
+            GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, colorVboId);
             GL15.glBufferData(GL15.GL_ARRAY_BUFFER, colourBuffer, GL15.GL_STATIC_DRAW);
             GL20.glVertexAttribPointer(1, 3, GL11.GL_FLOAT, false, 0, 0);
 
@@ -74,13 +74,27 @@ public class Mesh {
         return vertexCount;
     }
 
+    public void render() {
+        // Draw the mesh
+    	GL30.glBindVertexArray(getVaoId());
+    	GL20.glEnableVertexAttribArray(0);
+    	GL20.glEnableVertexAttribArray(1);
+
+        GL11.glDrawElements(GL11.GL_TRIANGLES, getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
+
+        // Restore state
+        GL20.glDisableVertexAttribArray(0);
+        GL20.glDisableVertexAttribArray(1);
+        GL30.glBindVertexArray(0);
+    }
+
     public void cleanUp() {
         GL20.glDisableVertexAttribArray(0);
 
         // Delete the VBOs
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
         GL15.glDeleteBuffers(posVboId);
-        GL15.glDeleteBuffers(colourVboId);
+        GL15.glDeleteBuffers(colorVboId);
         GL15.glDeleteBuffers(idxVboId);
 
         // Delete the VAO

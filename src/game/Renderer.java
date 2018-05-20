@@ -1,35 +1,51 @@
 package game;
 
-import java.io.File;
-
+import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL30;
 
 import config.Config;
+import engine.GameItem;
 import engine.Utils;
 import engine.Window;
-import graph.Mesh;
-import graph.ShaderProgram;
+import engine.graph.ShaderProgram;
+import engine.graph.Transformation;
 
 public class Renderer {
 
+    /**
+     * Field of View in Radians
+     */
+    private static final float FOV = (float) Math.toRadians(60.0f);
+    private static final float Z_NEAR = 0.01f;
+    private static final float Z_FAR = 1000.f;
+
+    private final Transformation transformation;
 	private ShaderProgram shaderProgram;
 
-    public Renderer() {}
+	public Renderer() {
+        transformation = new Transformation();
+    }
 
-	public void init() throws Exception {
+	public void init(Window window) throws Exception {
+
+		// Create shader
         shaderProgram = new ShaderProgram();        
         shaderProgram.createVertexShader(Utils.readFile(Config.RESOURCES_DIR + "/vertex.vs"));
         shaderProgram.createFragmentShader(Utils.readFile(Config.RESOURCES_DIR + "/fragment.fs"));
         shaderProgram.link();
+
+        // Create uniforms for world and projection matrices
+        shaderProgram.createUniform("projectionMatrix");
+        shaderProgram.createUniform("worldMatrix");
+
+        window.setClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	}
 
 	public void clear() {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 	}
 
-    public void render(Window window, Mesh mesh) {
+    public void render(Window window, GameItem[] gameItems) {
         clear();
 
         if ( window.isResized() ) {
@@ -38,19 +54,22 @@ public class Renderer {
         }
 
         shaderProgram.bind();
+        
+        // Update projection Matrix
+        Matrix4f projectionMatrix = transformation.getProjectionMatrix(FOV, window.getWidth(), window.getHeight(), Z_NEAR, Z_FAR);
+        shaderProgram.setUniform("projectionMatrix", projectionMatrix);
 
-        // Draw the mesh
-        GL30.glBindVertexArray(mesh.getVaoId());
-        GL20.glEnableVertexAttribArray(0);
-        GL20.glEnableVertexAttribArray(1);
-        GL11.glDrawElements(GL11.GL_TRIANGLES, mesh.getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
-
-        // Restore state
-        GL20.glDisableVertexAttribArray(0);
-        GL20.glDisableVertexAttribArray(1);
-        GL30.glBindVertexArray(0);
-
-        shaderProgram.unbind();
+        // Render each gameItem
+        for(GameItem gameItem : gameItems) {
+            // Set world matrix for this item
+            Matrix4f worldMatrix = transformation.getWorldMatrix(
+                    gameItem.getPosition(),
+                    gameItem.getRotation(),
+                    gameItem.getScale());
+            shaderProgram.setUniform("worldMatrix", worldMatrix);
+            // Render the mes for this game item
+            gameItem.getMesh().render();
+        }
     }
 
     public void cleanup() {
