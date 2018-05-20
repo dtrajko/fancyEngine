@@ -6,6 +6,7 @@ import java.util.Map;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 import engine.Window;
+import engine.graph.MouseInput;
 import game.Game;
 import game2D.assets.Assets;
 import game2D.entities.Player;
@@ -48,10 +49,10 @@ public class Game2D extends Game {
 	}
 
 	@Override
-	public void input(Window window) {}
+	public void input(Window window, MouseInput mouseInput) {}
 
 	@Override
-	public void update(float interval) {
+	public void update(float interval, MouseInput mouseInput) {
 		if (switchLevel == true) {
 			beginLevel();
 			switchLevel = false;

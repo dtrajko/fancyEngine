@@ -103,7 +103,11 @@ public class Window {
     }
     
     public long getHandle() {
-    	return windowHandle;
+    	return getWindowHandle();
+    }
+
+    public long getWindowHandle() {
+        return windowHandle;
     }
 
     public String getTitle() {

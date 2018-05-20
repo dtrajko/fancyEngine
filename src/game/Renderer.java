@@ -7,6 +7,7 @@ import config.Config;
 import engine.GameItem;
 import engine.Utils;
 import engine.Window;
+import engine.graph.Camera;
 import engine.graph.ShaderProgram;
 import engine.graph.Transformation;
 
@@ -36,7 +37,7 @@ public class Renderer {
 
         // Create uniforms for world and projection matrices
         shaderProgram.createUniform("projectionMatrix");
-        shaderProgram.createUniform("worldMatrix");
+        shaderProgram.createUniform("modelViewMatrix"); // ex worldMatrix
         shaderProgram.createUniform("texture_sampler");
 
         window.setClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -47,7 +48,7 @@ public class Renderer {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 	}
 
-    public void render(Window window, GameItem[] gameItems) {
+    public void render(Window window, Camera camera, GameItem[] gameItems) {
         clear();
 
         if ( window.isResized() ) {
@@ -67,16 +68,17 @@ public class Renderer {
         );
         shaderProgram.setUniform("projectionMatrix", projectionMatrix);
 
+        // Update view Matrix
+        Matrix4f viewMatrix = transformation.getViewMatrix(camera);
+
+        shaderProgram.setUniform("texture_sampler", 0);
         // Render each gameItem
         for(GameItem gameItem : gameItems) {
-            // Set world matrix for this item
-            Matrix4f worldMatrix = transformation.getWorldMatrix(
-                gameItem.getPosition(),
-                gameItem.getRotation(),
-                gameItem.getScale()
-            );
-            shaderProgram.setUniform("worldMatrix", worldMatrix);
-            shaderProgram.setUniform("texture_sampler", 0);
+
+        	// Set model view matrix for this item
+        	Matrix4f modelViewMatrix = transformation.getModelViewMatrix(gameItem, viewMatrix);
+
+        	shaderProgram.setUniform("modelViewMatrix", modelViewMatrix);
 
             // Render the mesh for this game item
             gameItem.getMesh().render();
