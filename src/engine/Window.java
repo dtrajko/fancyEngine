@@ -86,6 +86,8 @@ public class Window {
 
         // Set the clear color
         setClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
     }
 
     public void setClearColor(float r, float g, float b, float alpha) {

@@ -2,12 +2,15 @@ package game;
 
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.opengl.GL11;
 
+import config.Config;
 import engine.GameItem;
 import engine.IGameLogic;
 import engine.Window;
+import engine.graph.CubeMesh;
 import engine.graph.Mesh;
+import engine.graph.PyramidMesh;
+import engine.graph.Texture;
 
 public class Game implements IGameLogic {
 
@@ -26,27 +29,12 @@ public class Game implements IGameLogic {
 	@Override
 	public void init(Window window) throws Exception {
 		renderer.init(window);
-		float[] positions = new float[]{
-            -0.5f,  0.5f, 0.0f,
-            -0.5f, -0.5f, 0.0f,
-             0.5f, -0.5f, 0.0f,
-             0.5f,  0.5f, 0.0f,
-        };
-        float[] colors = new float[]{
-            0.5f, 0.0f, 0.0f,
-            0.0f, 0.5f, 0.0f,
-            0.0f, 0.0f, 0.5f,
-            0.0f, 0.5f, 0.5f,
-        };
-        int[] indices = new int[]{
-            0, 1, 3, 3, 1, 2,
-        };
-        Mesh mesh = new Mesh(positions, colors, indices);
-        GameItem gameItem1 = new GameItem(mesh);
-        gameItem1.setPosition(-0.8f, 0, -2);
-        GameItem gameItem2 = new GameItem(mesh);
-        gameItem2.setPosition(0.8f, 0, -2);
-        gameItems = new GameItem[] { gameItem1, gameItem2 };
+
+        Texture texture = new Texture(Config.RESOURCES_DIR + "/textures/grassblock.png");
+        Mesh mesh = new Mesh(CubeMesh.positions, CubeMesh.textCoords, CubeMesh.indices, texture);
+        GameItem gameItem = new GameItem(mesh);
+        gameItem.setPosition(0, 0, -2);
+        gameItems = new GameItem[]{gameItem};
 	}
 
 	@Override
@@ -97,7 +85,7 @@ public class Game implements IGameLogic {
             if ( rotation > 360 ) {
                 rotation = 0;
             }
-            gameItem.setRotation(0, 0, rotation);            
+            // gameItem.setRotation(0, 0, rotation);            
         }
 	}
 
