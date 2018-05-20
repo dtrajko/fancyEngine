@@ -10,6 +10,7 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
+import config.Config;
 import engine.Window;
 import game2D.collision.AABB;
 import game2D.entities.Entity;
@@ -45,8 +46,8 @@ public class World {
 
 	public World(String worldName, Camera2D camera, int scale, int bg_tile, Game2D game) {
 
-		String tileSheetPath = "./res/levels/" + worldName + "/tiles.png";
-		String entitySheetPath = "./res/levels/" + worldName + "/entities.png";
+		String tileSheetPath = Config.RESOURCES_DIR + "/levels/" + worldName + "/tiles.png";
+		String entitySheetPath = Config.RESOURCES_DIR + "/levels/" + worldName + "/entities.png";
 		BufferedImage tile_sheet = null;
 		BufferedImage entity_sheet = null;
 

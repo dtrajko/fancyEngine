@@ -10,6 +10,8 @@ import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL20;
 
+import config.Config;
+
 public class Shader {
 	
 	private int program;
@@ -17,23 +19,26 @@ public class Shader {
 	private int fs;
 
 	public Shader(String filename) {
+		
+		String vertexShaderPath = Config.RESOURCES_DIR + "/shaders/" + filename + "_vs.glsl";
+		String fragmentShaderPath = Config.RESOURCES_DIR + "/shaders/" + filename + "_fs.glsl";
 
 		program = GL20.glCreateProgram();
 
 		vs = GL20.glCreateShader(GL20.GL_VERTEX_SHADER);
-		GL20.glShaderSource(vs, readFile(filename + "_vs.glsl"));
+		GL20.glShaderSource(vs, readFile(vertexShaderPath));
 		GL20.glCompileShader(vs);
 		if (GL20.glGetShaderi(vs, GL20.GL_COMPILE_STATUS) != 1) {
-			System.err.println("Failed to compile vertex shader ./shaders/" + filename + "_vs.glsl");
+			System.err.println("Failed to compile vertex shader [" + vertexShaderPath + "]");
 			System.err.println(GL20.glGetShaderInfoLog(vs));
 			System.exit(1);
 		}
 
 		fs = GL20.glCreateShader(GL20.GL_FRAGMENT_SHADER);
-		GL20.glShaderSource(fs, readFile(filename + "_fs.glsl"));
+		GL20.glShaderSource(fs, readFile(fragmentShaderPath));
 		GL20.glCompileShader(fs);
 		if (GL20.glGetShaderi(fs, GL20.GL_COMPILE_STATUS) != 1) {
-			System.err.println("Failed to compile fragment shader ./shaders/" + filename + "_fs.glsl");
+			System.err.println("Failed to compile fragment shader [" + fragmentShaderPath + "]");
 			System.err.println(GL20.glGetShaderInfoLog(fs));
 			System.exit(1);
 		}
@@ -98,7 +103,7 @@ public class Shader {
 		StringBuilder string = new StringBuilder();
 		BufferedReader br;
 		try {
-			br = new BufferedReader(new FileReader(new File("./res/shaders/" + filename)));
+			br = new BufferedReader(new FileReader(new File(filename)));
 			String line;
 			while((line = br.readLine()) != null) {
 				string.append(line);

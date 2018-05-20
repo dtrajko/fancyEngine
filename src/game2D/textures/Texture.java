@@ -9,6 +9,8 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 
+import config.Config;
+
 public class Texture {
 	
 	private int id;
@@ -17,7 +19,7 @@ public class Texture {
 	
 	public Texture(String filename) {
 		
-		String filePath = "./res/textures/" + filename + ".png";
+		String filePath = "./" + Config.RESOURCES_DIR + "/textures/" + filename + ".png";
 		try {
 			 BufferedImage bi = ImageIO.read(new File(filePath));
 			 width  = bi.getWidth();

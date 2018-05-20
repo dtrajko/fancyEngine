@@ -2,8 +2,6 @@ package game;
 
 import engine.GameEngine;
 import engine.IGameLogic;
-import game2D.game.Game2D;
-import game3D.game.Game3D;
 
 public class Main {
 

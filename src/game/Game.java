@@ -4,12 +4,14 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 import engine.IGameLogic;
 import engine.Window;
+import graph.Mesh;
 
 public class Game implements IGameLogic {
 
 	private int direction = 0;
 	private float color = 0.0f;
 	private final Renderer renderer;
+	private Mesh mesh;
 
 	public Game() {
 		renderer = new Renderer();
@@ -18,6 +20,22 @@ public class Game implements IGameLogic {
 	@Override
 	public void init(Window window) throws Exception {
 		renderer.init();
+		float[] positions = new float[]{
+            -0.5f,  0.5f, 0.0f,
+            -0.5f, -0.5f, 0.0f,
+             0.5f, -0.5f, 0.0f,
+             0.5f,  0.5f, 0.0f,
+        };
+        float[] colors = new float[]{
+            0.5f, 0.0f, 0.0f,
+            0.0f, 0.5f, 0.0f,
+            0.0f, 0.0f, 0.5f,
+            0.0f, 0.5f, 0.5f,
+        };
+        int[] indices = new int[]{
+            0, 1, 3, 3, 1, 2,
+        };
+        mesh = new Mesh(positions, colors, indices);
 	}
 
 	@Override
@@ -47,7 +65,13 @@ public class Game implements IGameLogic {
 			GL11.glViewport(0, 0, window.getWidth(), window.getHeight());
 			window.setResized(false);
 		}
-		window.setClearColor(color, color, color, 0.0f);
-		renderer.clear();
+        window.setClearColor(color, color, color, 0.0f);
+        renderer.render(window, mesh);
 	}
+
+    @Override
+    public void cleanup() {
+        renderer.cleanup();
+        mesh.cleanUp();
+    }
 }

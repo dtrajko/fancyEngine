@@ -34,7 +34,7 @@ public class Loader {
 	public int loadTexture(String fileName) {
 
 		int t_id = -1;
-		String filePath = "./res/textures/" + fileName + ".png";
+		String filePath = "./resources/textures/" + fileName + ".png";
 		try {
 			 BufferedImage bi = ImageIO.read(new File(filePath));
 			 int width  = bi.getWidth();
