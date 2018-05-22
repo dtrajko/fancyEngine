@@ -3,9 +3,8 @@ package engine.graph;
 import java.nio.FloatBuffer;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.joml.Matrix4f;
-import org.lwjgl.opengl.GL11;
+import org.joml.Vector4f;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.system.MemoryStack;
 
@@ -32,6 +31,14 @@ public class ShaderProgram {
         uniforms.put(uniformName, uniformLocation);
     }
 
+    public void createMaterialUniform(String uniformName) throws Exception {
+        // createUniform(uniformName + ".ambient");
+        // createUniform(uniformName + ".diffuse");
+        // createUniform(uniformName + ".specular");
+        createUniform("hasTexture");
+        // createUniform(uniformName + ".reflectance");
+    }
+
     public void setUniform(String uniformName, Matrix4f value) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             // Dump the matrix into a float buffer
@@ -41,8 +48,24 @@ public class ShaderProgram {
         }
     }
 
-    public void setUniform(String uniformName, int value) {
+    public void setUniform(String uniformName, float value) {
+    	GL20.glUniform1f(uniforms.get(uniformName), value);
+    }
+
+    public void setUniform(String uniformName, int value) {    	
     	GL20.glUniform1i(uniforms.get(uniformName), value);
+    }
+
+    public void setUniform(String uniformName, Vector4f value) {
+    	GL20.glUniform4f(uniforms.get(uniformName), value.x, value.y, value.z, value.w);
+    }
+
+    public void setUniform(String uniformName, Material material) {
+        // setUniform(uniformName + ".ambient", material.getAmbientColour());
+        // setUniform(uniformName + ".diffuse", material.getDiffuseColour());
+        // setUniform(uniformName + ".specular", material.getSpecularColour());
+        setUniform("hasTexture", material.isTextured() ? 1 : 0);
+        // setUniform(uniformName + ".reflectance", material.getReflectance());
     }
 
     public void createVertexShader(String shaderCode) throws Exception {

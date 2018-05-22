@@ -1,13 +1,8 @@
 package game3D.game;
 
-import java.util.HashMap;
-import java.util.Map;
 import org.joml.Vector3f;
-import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL;
-import org.lwjgl.opengl.GL11;
 import game.Game;
-import game2D.io.Timer;
 import game3D.assets.Cube;
 import game3D.entities.Entity3D;
 import game3D.models.RawModel;

@@ -1,21 +1,32 @@
 package engine.graph;
 
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 public class Camera {
 
 	private final Vector3f position;
 	private final Vector3f rotation;
+	private Matrix4f viewMatrix;
 
 	public Camera() {
 		position = new Vector3f(0, 0, 0);
 		rotation = new Vector3f(0, 0, 0);
+		viewMatrix = new Matrix4f();
 	}
 
 	public Camera(Vector3f position, Vector3f rotation) {
 		this.position = position;
 		this.rotation = rotation;
 	}
+
+    public Matrix4f getViewMatrix() {
+        return viewMatrix;
+    }
+    
+    public Matrix4f updateViewMatrix() {
+        return Transformation.updateGenericViewMatrix(position, rotation, viewMatrix);
+    }
 
 	public Vector3f getPosition() {
 		return position;

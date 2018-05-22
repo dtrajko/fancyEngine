@@ -39,8 +39,8 @@ public class Game2D extends Game {
 	}
 
 	@Override
-	public void init(Window window) throws Exception {
-		this.window = window;
+	public void init(Window win) throws Exception {
+		window = win;
 		renderer = new TileRenderer();
 		shader = new Shader("shader");
 		sheet = new TileSheet("lives", 3);
@@ -52,7 +52,7 @@ public class Game2D extends Game {
 	public void input(Window window, MouseInput mouseInput) {}
 
 	@Override
-	public void update(float interval, MouseInput mouseInput) {
+	public void update(float interval, MouseInput mouseInput, Window window) {
 		if (switchLevel == true) {
 			beginLevel();
 			switchLevel = false;

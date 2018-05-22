@@ -1,14 +1,6 @@
 package game3D.shaders;
 
-import static org.lwjgl.opengl.GL11.GL_PROJECTION;
-import static org.lwjgl.opengl.GL11.glMatrixMode;
-
 import org.joml.Matrix4f;
-import org.joml.Vector2f;
-import org.joml.Vector3f;
-import org.joml.Vector4f;
-import org.lwjgl.opengl.GL11;
-
 import game3D.render.Camera3D;
 import game3D.utils.Maths;
 

@@ -1,5 +1,6 @@
 package engine;
 
+import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -8,12 +9,21 @@ import org.lwjgl.opengl.GL11;
 
 public class Window {
 
+    /**
+     * Field of View in Radians
+     */
+    private static final float FOV = (float) Math.toRadians(60.0f);
+    private static final float Z_NEAR = 0.01f;
+    private static final float Z_FAR = 1000.f;
+
     private final String title;
     private int width;
     private int height;
     private long windowHandle;
     private boolean resized;
     private boolean vSync;
+    
+    private Matrix4f projectionMatrix;
 
     public Window(String title, int width, int height, boolean vSync) {
         this.title = title;
@@ -21,6 +31,7 @@ public class Window {
         this.height = height;
         this.vSync = vSync;
         this.resized = false;
+        projectionMatrix = new Matrix4f();
     }
 
     public void init() {
@@ -88,6 +99,12 @@ public class Window {
         setClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
         GL11.glEnable(GL11.GL_DEPTH_TEST);
+        
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        
+        // GL11.glEnable(GL11.GL_CULL_FACE);
+        GL11.glCullFace(GL11.GL_BACK);
     }
 
     public void setClearColor(float r, float g, float b, float alpha) {
@@ -102,6 +119,15 @@ public class Window {
         return GLFW.glfwWindowShouldClose(windowHandle);
     }
     
+    public Matrix4f getProjectionMatrix() {
+        return projectionMatrix;
+    }
+
+    public Matrix4f updateProjectionMatrix() {
+        float aspectRatio = (float) width / (float) height;
+        return projectionMatrix.setPerspective(FOV, aspectRatio, Z_NEAR, Z_FAR);
+    }
+
     public long getHandle() {
     	return getWindowHandle();
     }

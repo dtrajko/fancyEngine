@@ -7,11 +7,14 @@ import org.lwjgl.glfw.GLFW;
 import config.Config;
 import engine.GameItem;
 import engine.IGameLogic;
+import engine.Scene;
 import engine.Window;
 import engine.graph.Camera;
 import engine.graph.CubeMesh;
+import engine.graph.Material;
 import engine.graph.Mesh;
 import engine.graph.MouseInput;
+import engine.graph.Renderer;
 import engine.graph.Texture;
 
 public class Game implements IGameLogic {
@@ -20,8 +23,13 @@ public class Game implements IGameLogic {
     private final Vector3f cameraInc;
     private final Renderer renderer;
     private final Camera camera;
+    private Scene scene;
+    private Hud hud;
     private GameItem[] gameItems;
     private static final float CAMERA_POS_STEP = 0.05f;
+    
+    private MouseBoxSelectionDetector selectDetector;
+    private boolean leftButtonPressed;
 
 	public Game() {
 		renderer = new Renderer();
@@ -33,8 +41,15 @@ public class Game implements IGameLogic {
 	public void init(Window window) throws Exception {
 		renderer.init(window);
 
+		leftButtonPressed = false;
+		selectDetector = new MouseBoxSelectionDetector();
+
         Texture texture = new Texture(Config.RESOURCES_DIR + "/textures/grassblock.png");
         Mesh mesh = new Mesh(CubeMesh.positions, CubeMesh.textCoords, CubeMesh.indices, texture);
+        Material material = new Material(texture, 0.0f);
+        mesh.setMaterial(material);
+
+        scene = new Scene();
 
         GameItem gameItem1 = new GameItem(mesh);
         gameItem1.setScale(0.5f);
@@ -48,8 +63,12 @@ public class Game implements IGameLogic {
         GameItem gameItem4 = new GameItem(mesh);
         gameItem4.setScale(0.5f);
         gameItem4.setPosition(0.5f, 0, -2.5f);
-
         gameItems = new GameItem[]{gameItem1, gameItem2, gameItem3, gameItem4};
+        
+        scene.setGameItems(gameItems);
+
+        // Create HUD
+        hud = new Hud("DEMO");
 	}
 
     @Override
@@ -73,20 +92,40 @@ public class Game implements IGameLogic {
     }
 
     @Override
-    public void update(float interval, MouseInput mouseInput) {
+    public void update(float interval, MouseInput mouseInput, Window window) {
+        // Update camera based on mouse            
+        if (mouseInput.isRightButtonPressed()) {
+            Vector2f rotVec = mouseInput.getDisplVec();
+            camera.moveRotation(rotVec.x * MOUSE_SENSITIVITY, rotVec.y * MOUSE_SENSITIVITY, 0);
+
+            // Update HUD compass
+            hud.rotateCompass(camera.getRotation().y);
+        }
+
         // Update camera position
         camera.movePosition(cameraInc.x * CAMERA_POS_STEP, cameraInc.y * CAMERA_POS_STEP, cameraInc.z * CAMERA_POS_STEP);
+
+        // Update view matrix
+        camera.updateViewMatrix();
 
         // Update camera based on mouse            
         if (mouseInput.isRightButtonPressed()) {
             Vector2f rotVec = mouseInput.getDisplVec();
             camera.moveRotation(rotVec.x * MOUSE_SENSITIVITY, rotVec.y * MOUSE_SENSITIVITY, 0);
         }
+
+        boolean aux = mouseInput.isLeftButtonPressed();
+        if (aux && !this.leftButtonPressed && this.selectDetector.selectGameItem(gameItems, window, mouseInput.getCurrentPos(), camera)) {
+            this.hud.incCounter();
+        }
+        this.leftButtonPressed = aux;
     }
 
     @Override
     public void render(Window window) {
-        renderer.render(window, camera, gameItems);
+    	hud.updateSize(window);
+    	renderer.render(window, camera, gameItems, hud);
+        // renderer.render(window, camera, scene, hud);
     }
 
     @Override
@@ -94,6 +133,9 @@ public class Game implements IGameLogic {
         renderer.cleanup();
         for (GameItem gameItem : gameItems) {
             gameItem.getMesh().cleanUp();
+        }
+        if (hud != null) {
+            hud.cleanup();
         }
     }
 }
