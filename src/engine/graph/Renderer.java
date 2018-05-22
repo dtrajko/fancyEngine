@@ -44,6 +44,7 @@ public class Renderer {
         shaderProgram.createUniform("projectionMatrix");
         shaderProgram.createUniform("modelViewMatrix"); // ex worldMatrix
         shaderProgram.createUniform("texture_sampler");
+        shaderProgram.createUniform("selectedNonInstanced");
 
         window.setClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         
@@ -116,8 +117,11 @@ public class Renderer {
         	// Set model view matrix for this item
         	Matrix4f modelViewMatrix = transformation.getModelViewMatrix(gameItem, viewMatrix);
         	shaderProgram.setUniform("modelViewMatrix", modelViewMatrix);
+        	shaderProgram.setUniform("selectedNonInstanced", gameItem.isSelected() ? 1.0f : 0.0f);
             // Render the mesh for this game item
-            gameItem.getMesh().render();
+        	if (gameItem.getMesh() != null) {
+        		gameItem.getMesh().render();        		
+        	}
         }
         renderHud(window, hud);
         shaderProgram.unbind();

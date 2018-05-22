@@ -20,7 +20,7 @@ import engine.graph.Texture;
 
 public class Game implements IGameLogic {
 
-    private static final float MOUSE_SENSITIVITY = 0.2f;
+    private static final float MOUSE_SENSITIVITY = 2.0f;
     private final Vector3f cameraInc;
     private final Renderer renderer;
     private final Camera camera;
@@ -28,8 +28,7 @@ public class Game implements IGameLogic {
     private GameItem[] gameItems;
     private static final float CAMERA_POS_STEP = 0.05f;
     
-    private MouseBoxSelectionDetector selectDetector;
-    private boolean leftButtonPressed;
+    private CameraBoxSelectionDetector selectDetector;
 
 	public Game() {
 		renderer = new Renderer();
@@ -41,8 +40,7 @@ public class Game implements IGameLogic {
 	public void init(Window window) throws Exception {
 		renderer.init(window);
 
-		leftButtonPressed = false;
-		selectDetector = new MouseBoxSelectionDetector();
+		selectDetector = new CameraBoxSelectionDetector();
 
         Texture texture = new Texture(Config.RESOURCES_DIR + "/textures/grassblock.png");
         Mesh mesh = new Mesh(CubeMesh.positions, CubeMesh.textCoords, CubeMesh.indices, texture);
@@ -90,41 +88,30 @@ public class Game implements IGameLogic {
         } else if (window.isKeyPressed(GLFW.GLFW_KEY_D)) {
             cameraInc.x = 5;
         }
-        if (window.isKeyPressed(GLFW.GLFW_KEY_Z)) {
-            cameraInc.y = -5;
-        } else if (window.isKeyPressed(GLFW.GLFW_KEY_X)) {
+        if (window.isKeyPressed(GLFW.GLFW_KEY_SPACE)) {
             cameraInc.y = 5;
+        } else if (window.isKeyPressed(GLFW.GLFW_KEY_LEFT_SHIFT)) {
+            cameraInc.y = -5;
         }
     }
 
     @Override
     public void update(float interval, MouseInput mouseInput, Window window) {
         // Update camera based on mouse            
-        if (mouseInput.isRightButtonPressed()) {
-            Vector2f rotVec = mouseInput.getDisplVec();
-            camera.moveRotation(rotVec.x * MOUSE_SENSITIVITY, rotVec.y * MOUSE_SENSITIVITY, 0);
+        Vector2f rotVec = mouseInput.getDisplVec();
+        camera.moveRotation(rotVec.x * MOUSE_SENSITIVITY, rotVec.y * MOUSE_SENSITIVITY, 0);
 
-            // Update HUD compass
-            hud.rotateCompass(camera.getRotation().y);
-        }
+        // Update HUD compass
+        hud.rotateCompass(camera.getRotation().y);
 
         // Update camera position
+        Vector3f prevPos = new Vector3f(camera.getPosition());
         camera.movePosition(cameraInc.x * CAMERA_POS_STEP, cameraInc.y * CAMERA_POS_STEP, cameraInc.z * CAMERA_POS_STEP);
 
         // Update view matrix
         camera.updateViewMatrix();
-
-        // Update camera based on mouse            
-        if (mouseInput.isRightButtonPressed()) {
-            Vector2f rotVec = mouseInput.getDisplVec();
-            camera.moveRotation(rotVec.x * MOUSE_SENSITIVITY, rotVec.y * MOUSE_SENSITIVITY, 0);
-        }
-
-        boolean aux = mouseInput.isLeftButtonPressed();
-        if (aux && !this.leftButtonPressed && this.selectDetector.selectGameItem(gameItems, window, mouseInput.getCurrentPos(), camera)) {
-            this.hud.incCounter();
-        }
-        this.leftButtonPressed = aux;
+        
+        this.selectDetector.selectGameItem(gameItems, camera, mouseInput);
     }
 
     @Override

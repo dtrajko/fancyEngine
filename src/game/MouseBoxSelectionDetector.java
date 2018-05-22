@@ -50,4 +50,9 @@ public class MouseBoxSelectionDetector extends CameraBoxSelectionDetector {
 
         return selectGameItem(gameItems, camera.getPosition(), mouseDir);
     }
+
+	private boolean selectGameItem(GameItem[] gameItems, Vector3f position, Vector3f mouseDir2) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

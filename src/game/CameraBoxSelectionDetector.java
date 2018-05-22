@@ -3,9 +3,12 @@ package game;
 import org.joml.Intersectionf;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.lwjgl.glfw.GLFW;
 
 import engine.GameItem;
 import engine.graph.Camera;
+import engine.graph.Mesh;
+import engine.graph.MouseInput;
 
 public class CameraBoxSelectionDetector {
 
@@ -21,33 +24,36 @@ public class CameraBoxSelectionDetector {
         nearFar = new Vector2f();
     }
 
-    public void selectGameItem(GameItem[] gameItems, Camera camera) {        
-        dir = camera.getViewMatrix().positiveZ(dir).negate();
-        selectGameItem(gameItems, camera.getPosition(), dir);
-    }
-
-    protected boolean selectGameItem(GameItem[] gameItems, Vector3f center, Vector3f dir) {
-
-        boolean selected = false;
+    public void selectGameItem(GameItem[] gameItems, Camera camera, MouseInput mouseInput) {
         GameItem selectedGameItem = null;
         float closestDistance = Float.POSITIVE_INFINITY;
 
+        dir = camera.getViewMatrix().positiveZ(dir).negate();
         for (GameItem gameItem : gameItems) {
+        	if (gameItem.getMesh() == null) {
+        		continue;
+        	}
             gameItem.setSelected(false);
             min.set(gameItem.getPosition());
             max.set(gameItem.getPosition());
             min.add(-gameItem.getScale(), -gameItem.getScale(), -gameItem.getScale());
             max.add(gameItem.getScale(), gameItem.getScale(), gameItem.getScale());
-            if (Intersectionf.intersectRayAab(center, dir, min, max, nearFar) && nearFar.x < closestDistance) {
+            if (Intersectionf.intersectRayAab(camera.getPosition(), dir, min, max, nearFar) && nearFar.x < closestDistance) {
                 closestDistance = nearFar.x;
                 selectedGameItem = gameItem;
             }
         }
-
         if (selectedGameItem != null) {
-            selectedGameItem.setSelected(true);
-            selected = true;
+        	selectedGameItem.setSelected(true);
+            if (mouseInput.isMouseButtonPressed(GLFW.GLFW_MOUSE_BUTTON_1)) {
+            	selectedGameItem.setMesh(null);
+            }
+            if (mouseInput.isMouseButtonPressed(GLFW.GLFW_MOUSE_BUTTON_2)) {
+            	selectedGameItem.setPosition(
+            			selectedGameItem.getPosition().x,
+            			selectedGameItem.getPosition().y + selectedGameItem.getScale(),
+            			selectedGameItem.getPosition().z);
+            }
         }
-        return selected;
     }
 }

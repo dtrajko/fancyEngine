@@ -1,6 +1,5 @@
 package engine;
 
-import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import engine.graph.Mesh;
 
@@ -73,5 +72,9 @@ public class GameItem {
 
     public void setSelected(boolean selected) {
         this.selected = selected;
+    }
+
+    public boolean isSelected() {
+        return selected;
     }
 }
