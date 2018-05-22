@@ -28,9 +28,7 @@ public class Hud implements IHud {
     public Hud(String statusText) throws Exception {
         FontTexture fontTexture = new FontTexture(FONT, CHARSET);
         this.statusTextItem = new TextItem(statusText, fontTexture);
-        this.statusTextItem.getMesh().getMaterial().setAmbientColour(new Vector4f(1, 1, 1, 1));
-        this.statusTextItem.setScale(5.0f);
-        // this.statusTextItem.setPosition(0, 0, 0);
+        this.statusTextItem.getMesh().getMaterial().setAmbientColour(new Vector4f(1, 1, 1, 0.5f));
 
         // Create compass
         Mesh mesh = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/compass.obj");
@@ -67,7 +65,8 @@ public class Hud implements IHud {
     }
 
     public void updateSize(Window window) {
-        this.statusTextItem.setPosition(20f, window.getHeight() - 160f, 0);
+        this.statusTextItem.setScale(5.0f);
+        this.statusTextItem.setPosition(20f, window.getHeight() - 140f, 0);
         this.compassItem.setPosition(window.getWidth() - 60f, 60f, 0);
     }
 

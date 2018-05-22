@@ -1,5 +1,7 @@
 package game;
 
+import java.util.Random;
+
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
@@ -7,7 +9,6 @@ import org.lwjgl.glfw.GLFW;
 import config.Config;
 import engine.GameItem;
 import engine.IGameLogic;
-import engine.Scene;
 import engine.Window;
 import engine.graph.Camera;
 import engine.graph.CubeMesh;
@@ -23,7 +24,6 @@ public class Game implements IGameLogic {
     private final Vector3f cameraInc;
     private final Renderer renderer;
     private final Camera camera;
-    private Scene scene;
     private Hud hud;
     private GameItem[] gameItems;
     private static final float CAMERA_POS_STEP = 0.05f;
@@ -46,26 +46,32 @@ public class Game implements IGameLogic {
 
         Texture texture = new Texture(Config.RESOURCES_DIR + "/textures/grassblock.png");
         Mesh mesh = new Mesh(CubeMesh.positions, CubeMesh.textCoords, CubeMesh.indices, texture);
-        Material material = new Material(texture, 0.0f);
+        Material material = new Material(texture, 1.0f);
         mesh.setMaterial(material);
-
-        scene = new Scene();
-
-        GameItem gameItem1 = new GameItem(mesh);
-        gameItem1.setScale(0.5f);
-        gameItem1.setPosition(0, 0, -2);
-        GameItem gameItem2 = new GameItem(mesh);
-        gameItem2.setScale(0.5f);
-        gameItem2.setPosition(0.5f, 0.5f, -2);
-        GameItem gameItem3 = new GameItem(mesh);
-        gameItem3.setScale(0.5f);
-        gameItem3.setPosition(0, 0, -2.5f);
-        GameItem gameItem4 = new GameItem(mesh);
-        gameItem4.setScale(0.5f);
-        gameItem4.setPosition(0.5f, 0, -2.5f);
-        gameItems = new GameItem[]{gameItem1, gameItem2, gameItem3, gameItem4};
         
-        scene.setGameItems(gameItems);
+        int NUM_ROWS = 40;
+        int NUM_COLS = 40;
+        int offsetX = -NUM_ROWS / 2;
+        int offsetZ = -NUM_COLS / 2;
+        int rangeY = 2;
+        int posX = 0;
+        int posY = 0;
+        int posZ = 0;
+        Random rand = new Random();
+
+        gameItems  = new GameItem[NUM_ROWS * NUM_COLS];
+
+        for(int i = 0; i < NUM_ROWS; i++) {
+            for(int j = 0; j < NUM_COLS; j++) {
+                GameItem gameItem = new GameItem(mesh);
+                gameItem.setScale(1);
+                posX = i + offsetX;
+                posZ = j + offsetZ;
+                posY = rand.nextInt(rangeY);
+                gameItem.setPosition(posX, posY - rangeY, posZ);
+                gameItems[i * NUM_COLS + j] = gameItem;
+            }
+        }
 
         // Create HUD
         hud = new Hud("DEMO");
@@ -75,19 +81,19 @@ public class Game implements IGameLogic {
     public void input(Window window, MouseInput mouseInput) {
         cameraInc.set(0, 0, 0);
         if (window.isKeyPressed(GLFW.GLFW_KEY_W)) {
-            cameraInc.z = -1;
+            cameraInc.z = -5;
         } else if (window.isKeyPressed(GLFW.GLFW_KEY_S)) {
-            cameraInc.z = 1;
+            cameraInc.z = 5;
         }
         if (window.isKeyPressed(GLFW.GLFW_KEY_A)) {
-            cameraInc.x = -1;
+            cameraInc.x = -5;
         } else if (window.isKeyPressed(GLFW.GLFW_KEY_D)) {
-            cameraInc.x = 1;
+            cameraInc.x = 5;
         }
         if (window.isKeyPressed(GLFW.GLFW_KEY_Z)) {
-            cameraInc.y = -1;
+            cameraInc.y = -5;
         } else if (window.isKeyPressed(GLFW.GLFW_KEY_X)) {
-            cameraInc.y = 1;
+            cameraInc.y = 5;
         }
     }
 
