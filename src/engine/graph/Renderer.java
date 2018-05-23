@@ -12,6 +12,7 @@ import engine.IHud;
 import engine.Scene;
 import engine.Utils;
 import engine.Window;
+import game.Hud;
 
 public class Renderer {
 
@@ -91,7 +92,7 @@ public class Renderer {
 		hudShaderProgram.createUniform("hasTexture");
 	}
 
-    public void render(Window window, Camera camera, GameItem[] gameItems, IHud hud) {
+	public void render(Window window, Camera camera, List<GameItem> gameItems, Hud hud) {
         clear();
         if ( window.isResized() ) {
             GL11.glViewport(0, 0, window.getWidth(), window.getHeight());
@@ -119,13 +120,11 @@ public class Renderer {
         	shaderProgram.setUniform("modelViewMatrix", modelViewMatrix);
         	shaderProgram.setUniform("selectedNonInstanced", gameItem.isSelected() ? 1.0f : 0.0f);
             // Render the mesh for this game item
-        	if (gameItem.getMesh() != null) {
-        		gameItem.getMesh().render();        		
-        	}
+        	gameItem.getMesh().render();
         }
         renderHud(window, hud);
         shaderProgram.unbind();
-    }
+	}
 
     public void render(Window window, Camera camera, Scene scene, IHud hud) {
         clear();

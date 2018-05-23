@@ -1,7 +1,11 @@
 package engine;
 
 import org.joml.Vector3f;
+
+import engine.graph.HeightMapMesh;
 import engine.graph.Mesh;
+import engine.items.Box2D;
+import engine.items.Box3D;
 
 public class GameItem {
 
@@ -11,6 +15,7 @@ public class GameItem {
     private float scale;
     private final Vector3f rotation;
     private int textPos;
+    private Box3D boundingBox = null;
 
     public GameItem() {
         selected = false;
@@ -76,5 +81,19 @@ public class GameItem {
 
     public boolean isSelected() {
         return selected;
+    }
+
+    public void setBoundingBox() {
+		float topLeftX = position.x + scale;
+		float topLeftY = position.y + scale;
+		float topLeftZ = position.z + scale;
+		boundingBox = new Box3D(topLeftX, topLeftY, topLeftZ, scale, scale, scale);    		
+    }
+    
+    public Box3D getBoundingBox() {
+    	if (boundingBox == null) {
+    		setBoundingBox();
+    	}
+    	return boundingBox;
     }
 }

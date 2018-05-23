@@ -1,11 +1,10 @@
 package game;
 
-import java.util.Random;
-
+import java.util.ArrayList;
+import java.util.List;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
-
 import config.Config;
 import engine.GameItem;
 import engine.IGameLogic;
@@ -17,59 +16,57 @@ import engine.graph.Mesh;
 import engine.graph.MouseInput;
 import engine.graph.Renderer;
 import engine.graph.Texture;
+import engine.items.Box3D;
 
 public class Game implements IGameLogic {
 
-    private static final float MOUSE_SENSITIVITY = 2.0f;
+    private static final float MOUSE_SENSITIVITY = 0.5f;
     private final Vector3f cameraInc;
     private final Renderer renderer;
     private final Camera camera;
     private Hud hud;
-    private GameItem[] gameItems;
+    private List<GameItem> gameItems;
     private static final float CAMERA_POS_STEP = 0.05f;
     
-    private CameraBoxSelectionDetector selectDetector;
+    private CameraBoxSelectionDetector selectDetectorCamera;
+    // private MouseBoxSelectionDetector selectDetectorMouse;
 
 	public Game() {
 		renderer = new Renderer();
 		camera = new Camera();
 		cameraInc = new Vector3f(0, 0, 0);
+		gameItems = new ArrayList<GameItem>();
 	}
 
 	@Override
 	public void init(Window window) throws Exception {
 		renderer.init(window);
 
-		selectDetector = new CameraBoxSelectionDetector();
+		selectDetectorCamera = new CameraBoxSelectionDetector();
+		// selectDetectorMouse = new MouseBoxSelectionDetector();
 
         Texture texture = new Texture(Config.RESOURCES_DIR + "/textures/grassblock.png");
         Mesh mesh = new Mesh(CubeMesh.positions, CubeMesh.textCoords, CubeMesh.indices, texture);
         Material material = new Material(texture, 1.0f);
         mesh.setMaterial(material);
         
-        int NUM_ROWS = 40;
-        int NUM_COLS = 40;
-        int offsetX = -NUM_ROWS / 2;
-        int offsetZ = -NUM_COLS / 2;
-        int rangeY = 2;
-        int posX = 0;
-        int posY = 0;
-        int posZ = 0;
-        Random rand = new Random();
+        int CUBES_X = 20;
+        int CUBES_Y = 10;
+        int CUBES_Z = 20;
 
-        gameItems  = new GameItem[NUM_ROWS * NUM_COLS];
-
-        for(int i = 0; i < NUM_ROWS; i++) {
-            for(int j = 0; j < NUM_COLS; j++) {
-                GameItem gameItem = new GameItem(mesh);
-                gameItem.setScale(1);
-                posX = i + offsetX;
-                posZ = j + offsetZ;
-                posY = rand.nextInt(rangeY);
-                gameItem.setPosition(posX, posY - rangeY, posZ);
-                gameItems[i * NUM_COLS + j] = gameItem;
+        for(int x = 0; x < CUBES_X; x++) {
+            for(int y = 0; y < CUBES_Y; y++) {
+            	for(int z = 0; z < CUBES_Z; z++) {
+	                GameItem gameItem = new GameItem(mesh);
+	                gameItem.setScale(1);
+	                gameItem.setPosition(x, y, z);
+	                gameItems.add(gameItem);
+	                gameItem.setBoundingBox();
+            	}
             }
         }
+        camera.setPosition(10, 12, -12);
+        camera.setRotation(0, 180, 0);
 
         // Create HUD
         hud = new Hud("DEMO");
@@ -105,13 +102,23 @@ public class Game implements IGameLogic {
         hud.rotateCompass(camera.getRotation().y);
 
         // Update camera position
-        Vector3f prevPos = new Vector3f(camera.getPosition());
-        camera.movePosition(cameraInc.x * CAMERA_POS_STEP, cameraInc.y * CAMERA_POS_STEP, cameraInc.z * CAMERA_POS_STEP);
+        // Vector3f prevPos = new Vector3f(camera.getPosition());
+        Vector3f newPos = camera.calculateNewPosition(cameraInc.x * CAMERA_POS_STEP, cameraInc.y * CAMERA_POS_STEP, cameraInc.z * CAMERA_POS_STEP);
+		// Check if there has been a collision. If true, set the y position to
+		// the maximum height
+		if (!camera.inCollision(gameItems, newPos)) {
+			camera.movePosition(newPos);			
+		} else {
+			// camera.setPosition(prevPos.x, prevPos.y, prevPos.z);
+		}
 
         // Update view matrix
         camera.updateViewMatrix();
         
-        this.selectDetector.selectGameItem(gameItems, camera, mouseInput);
+        this.selectDetectorCamera.selectGameItem(gameItems, camera, mouseInput);
+        // if (mouseInput.isLeftButtonPressed()) {
+        //     this.selectDetectorMouse.selectGameItem(gameItems, window, camera, mouseInput);
+        // }
     }
 
     @Override
@@ -125,7 +132,7 @@ public class Game implements IGameLogic {
     public void cleanup() {
         renderer.cleanup();
         for (GameItem gameItem : gameItems) {
-            gameItem.getMesh().cleanUp();
+        	gameItem.getMesh().cleanUp();
         }
         if (hud != null) {
             hud.cleanup();

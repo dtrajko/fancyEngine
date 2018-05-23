@@ -1,13 +1,17 @@
 package game;
 
+import java.util.List;
+
 import org.joml.Matrix4f;
 import org.joml.Vector2d;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 import engine.GameItem;
 import engine.Window;
 import engine.graph.Camera;
+import engine.graph.MouseInput;
 
 public class MouseBoxSelectionDetector extends CameraBoxSelectionDetector {
 
@@ -24,7 +28,10 @@ public class MouseBoxSelectionDetector extends CameraBoxSelectionDetector {
         tmpVec = new Vector4f();
     }
     
-    public boolean selectGameItem(GameItem[] gameItems, Window window, Vector2d mousePos, Camera camera) {
+    public void selectGameItem(List<GameItem> gameItems, Window window, Camera camera, MouseInput mouseInput) {
+    	
+    	Vector2d mousePos = mouseInput.getCurrentPos();
+
         // Transform mouse coordinates into normalized spaze [-1, 1]
         int wdwWitdh = window.getWidth();
         int wdwHeight = window.getHeight();
@@ -48,11 +55,7 @@ public class MouseBoxSelectionDetector extends CameraBoxSelectionDetector {
         
         mouseDir.set(tmpVec.x, tmpVec.y, tmpVec.z);
 
-        return selectGameItem(gameItems, camera.getPosition(), mouseDir);
+        selectGameItem(gameItems, camera, mouseInput);
     }
-
-	private boolean selectGameItem(GameItem[] gameItems, Vector3f position, Vector3f mouseDir2) {
-		// TODO Auto-generated method stub
-		return false;
-	}
 }
+

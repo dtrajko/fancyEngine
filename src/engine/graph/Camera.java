@@ -1,7 +1,11 @@
 package engine.graph;
 
+import java.util.List;
+
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+
+import engine.GameItem;
 
 public class Camera {
 
@@ -38,16 +42,34 @@ public class Camera {
 		position.z = z;
 	}
 
-	public void movePosition(float offsetX, float offsetY, float offsetZ) {
+	public Vector3f calculateNewPosition(float offsetX, float offsetY, float offsetZ) {
+		Vector3f newPos = new Vector3f(position.x, position.y, position.z);
 		if ( offsetZ != 0 ) {
-			position.x += (float) Math.sin(Math.toRadians(rotation.y)) * -1.0f * offsetZ;
-			position.z += (float) Math.cos(Math.toRadians(rotation.y)) * offsetZ;
+			newPos.x += (float) Math.sin(Math.toRadians(rotation.y)) * -1.0f * offsetZ;
+			newPos.z += (float) Math.cos(Math.toRadians(rotation.y)) * offsetZ;
 		}
 		if ( offsetX != 0) {
-			position.x += (float) Math.sin(Math.toRadians(rotation.y - 90)) * -1.0f * offsetX;
-			position.z += (float) Math.cos(Math.toRadians(rotation.y - 90)) * offsetX;
+			newPos.x += (float) Math.sin(Math.toRadians(rotation.y - 90)) * -1.0f * offsetX;
+			newPos.z += (float) Math.cos(Math.toRadians(rotation.y - 90)) * offsetX;
 		}
-		position.y += offsetY;
+		newPos.y += offsetY;
+		
+		// System.out("Camera new position: " + newPos);
+		
+		return newPos;
+	}
+
+	public void movePosition(float offsetX, float offsetY, float offsetZ) {
+		Vector3f newPos = calculateNewPosition(offsetX, offsetY, offsetZ);
+		position.x = newPos.x;
+		position.y = newPos.y;
+		position.z = newPos.z;
+	}
+
+	public void movePosition(Vector3f newPos) {
+		position.x = newPos.x;
+		position.y = newPos.y;
+		position.z = newPos.z;
 	}
 
 	public Vector3f getRotation() {
@@ -64,5 +86,16 @@ public class Camera {
 		rotation.x += offsetX;
 		rotation.y += offsetY;
 		rotation.z += offsetZ;
+	}
+
+	public boolean inCollision(List<GameItem> gameItems, Vector3f newPos) {
+		boolean inCollision = false;
+		for (GameItem gameItem : gameItems) {
+			if (gameItem.getBoundingBox().contains(newPos.x, newPos.y, newPos.z)) {
+				inCollision = true;
+				break;
+			}
+		}
+		return inCollision;
 	}
 }
