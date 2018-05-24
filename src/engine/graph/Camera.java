@@ -12,6 +12,7 @@ public class Camera {
 	private final Vector3f position;
 	private final Vector3f rotation;
 	private Matrix4f viewMatrix;
+	public static final float HEIGHT = 0.5f;
 
 	public Camera() {
 		position = new Vector3f(0, 0, 0);
@@ -22,6 +23,10 @@ public class Camera {
 	public Camera(Vector3f position, Vector3f rotation) {
 		this.position = position;
 		this.rotation = rotation;
+	}
+	
+	public void reset() {
+		setRotation(0, 0, 0);
 	}
 
     public Matrix4f getViewMatrix() {

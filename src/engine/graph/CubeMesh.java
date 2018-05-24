@@ -53,7 +53,7 @@ public class CubeMesh extends Mesh {
         0.5f, -0.5f, 0.5f,
     };
 
-	public static float[] colors = new float[]{
+	public static float[] colors = new float[] {
         0.5f, 0.0f, 0.0f,
         0.0f, 0.5f, 0.0f,
         0.0f, 0.0f, 0.5f,
@@ -85,37 +85,52 @@ public class CubeMesh extends Mesh {
         0.0f, 0.5f, 0.5f,
     };
 
-	public static float[] textCoords = new float[]{
-            0.0f, 0.0f,
-            0.0f, 0.5f,
-            0.5f, 0.5f,
-            0.5f, 0.0f,
-            
-            0.0f, 0.0f,
-            0.5f, 0.0f,
-            0.0f, 0.5f,
-            0.5f, 0.5f,
-            
-            // For text coords in top face
-            0.0f, 0.5f,
-            0.5f, 0.5f,
-            0.0f, 1.0f,
-            0.5f, 1.0f,
+	public static float[] textCoords = new float[] {
+        0.0f, 0.0f,
+        0.0f, 0.5f,
+        0.5f, 0.5f,
+        0.5f, 0.0f,
+        
+        0.0f, 0.0f,
+        0.5f, 0.0f,
+        0.0f, 0.5f,
+        0.5f, 0.5f,
+        
+        // For text coords in top face
+        0.0f, 0.5f,
+        0.5f, 0.5f,
+        0.0f, 1.0f,
+        0.5f, 1.0f,
 
-            // For text coords in right face
-            0.0f, 0.0f,
-            0.0f, 0.5f,
+        // For text coords in right face
+        0.0f, 0.0f,
+        0.0f, 0.5f,
 
-            // For text coords in left face
-            0.5f, 0.0f,
-            0.5f, 0.5f,
+        // For text coords in left face
+        0.5f, 0.0f,
+        0.5f, 0.5f,
 
-            // For text coords in bottom face
-            0.5f, 0.0f,
-            1.0f, 0.0f,
-            0.5f, 0.5f,
-            1.0f, 0.5f,
-        };
+        // For text coords in bottom face
+        0.5f, 0.0f,
+        1.0f, 0.0f,
+        0.5f, 0.5f,
+        1.0f, 0.5f,
+    };
+
+	public static float[] normals = new float[] {
+	    // Front face
+		0.0f, 0.0f, 1.0f,
+		// Top Face
+		0.0f, 1.0f, 0.0f,
+		// Right face
+		1.0f, 0.0f, 0.0f,
+		// Left face
+		-1.0f, 0.0f, 0.0f,
+		// Bottom face
+		0.0f, -1.0f, 0.0f,
+		// Back face
+		0.0f, 0.0f, -1.0f,
+	};
 
 	public static int[] indices = new int[]{
         // Front face

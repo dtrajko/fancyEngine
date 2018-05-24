@@ -29,6 +29,8 @@ public class MouseInput {
     public void init(Window window) {
 
     	this.window = window.getHandle();
+    	
+    	GLFW.glfwSetInputMode(window.getHandle(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_HIDDEN);
 
         GLFW.glfwSetCursorPosCallback(window.getWindowHandle(), (windowHandle, xpos, ypos) -> {
             currentPos.x = xpos;
@@ -50,8 +52,6 @@ public class MouseInput {
 		for (int mb = 0; mb < GLFW.GLFW_MOUSE_BUTTON_LAST; mb++) {
 			this.buttons[mb] = false;
 		}
-		
-		GLFW.glfwSetInputMode(this.window, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_HIDDEN);
     }
 
     public Vector2f getDisplVec() {

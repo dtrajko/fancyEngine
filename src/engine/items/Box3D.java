@@ -1,5 +1,7 @@
 package engine.items;
 
+import engine.graph.Camera;
+
 public class Box3D {
 
     public float x;
@@ -19,8 +21,9 @@ public class Box3D {
     }
 
     public boolean contains(float x2, float y2, float z2) {
-        return 
-        	x2 >= x - sizeX * 2 && y2 >= y - sizeY * 2 && z2 >= z - sizeZ * 2 &&
-        	x2 < x + sizeX / 2 && y2 < y + sizeY / 2 && z2 < z + sizeZ / 2;
+    	float boxOffset = 0.4f;
+    	boolean contains =	x2 >= x - (2 * sizeX - boxOffset) && y2 >= y - (2 * sizeY - boxOffset) && z2 >= z - (2 * sizeZ - boxOffset) &&
+    						x2 <= x - boxOffset && y2 <= y + Camera.HEIGHT - boxOffset && z2 <= z - boxOffset;
+    	return contains;
     }
 }

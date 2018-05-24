@@ -26,7 +26,11 @@ public class Game implements IGameLogic {
     private final Camera camera;
     private Hud hud;
     private List<GameItem> gameItems;
-    private static final float CAMERA_POS_STEP = 0.05f;
+    private static final float CAMERA_POS_STEP = 0.05f;                          
+    private static final float GRAVITY = -1f;
+    private static boolean gravityOn = true;
+    private static float SPEED;
+    private static final float WORLD_BOTTOM = -10f;
     
     private CameraBoxSelectionDetector selectDetectorCamera;
     // private MouseBoxSelectionDetector selectDetectorMouse;
@@ -65,8 +69,8 @@ public class Game implements IGameLogic {
             	}
             }
         }
-        camera.setPosition(10, 12, -12);
-        camera.setRotation(0, 180, 0);
+        camera.setPosition(10, 11, 10);
+        camera.setRotation(0, 0, 0);
 
         // Create HUD
         hud = new Hud("DEMO");
@@ -75,28 +79,42 @@ public class Game implements IGameLogic {
     @Override
     public void input(Window window, MouseInput mouseInput) {
         cameraInc.set(0, 0, 0);
+        
+        // reset camera position/rotation
+        if (window.isKeyPressed(GLFW.GLFW_KEY_R)) {
+            camera.reset();
+        }
+        if (window.isKeyPressed(GLFW.GLFW_KEY_CAPS_LOCK)) {
+        	SPEED = 1;
+        } else {
+        	SPEED = 5;
+        }
         if (window.isKeyPressed(GLFW.GLFW_KEY_W)) {
-            cameraInc.z = -5;
+            cameraInc.z = -SPEED;
         } else if (window.isKeyPressed(GLFW.GLFW_KEY_S)) {
-            cameraInc.z = 5;
+            cameraInc.z = SPEED;
         }
         if (window.isKeyPressed(GLFW.GLFW_KEY_A)) {
-            cameraInc.x = -5;
+            cameraInc.x = -SPEED;
         } else if (window.isKeyPressed(GLFW.GLFW_KEY_D)) {
-            cameraInc.x = 5;
+            cameraInc.x = SPEED;
         }
         if (window.isKeyPressed(GLFW.GLFW_KEY_SPACE)) {
-            cameraInc.y = 5;
+            cameraInc.y = SPEED;
         } else if (window.isKeyPressed(GLFW.GLFW_KEY_LEFT_SHIFT)) {
-            cameraInc.y = -5;
+            cameraInc.y = -SPEED;
+        } else if (gravityOn && camera.getPosition().y > WORLD_BOTTOM) {
+        	cameraInc.y = GRAVITY;
         }
     }
 
     @Override
     public void update(float interval, MouseInput mouseInput, Window window) {
-        // Update camera based on mouse            
+        // Update camera based on mouse
         Vector2f rotVec = mouseInput.getDisplVec();
         camera.moveRotation(rotVec.x * MOUSE_SENSITIVITY, rotVec.y * MOUSE_SENSITIVITY, 0);
+        
+        // GLFW.glfwSetCursorPos(window.getHandle(), window.getWidth() / 2, window.getHeight() / 2);
 
         // Update HUD compass
         hud.rotateCompass(camera.getRotation().y);
@@ -104,12 +122,15 @@ public class Game implements IGameLogic {
         // Update camera position
         // Vector3f prevPos = new Vector3f(camera.getPosition());
         Vector3f newPos = camera.calculateNewPosition(cameraInc.x * CAMERA_POS_STEP, cameraInc.y * CAMERA_POS_STEP, cameraInc.z * CAMERA_POS_STEP);
-		// Check if there has been a collision. If true, set the y position to
-		// the maximum height
-		if (!camera.inCollision(gameItems, newPos)) {
-			camera.movePosition(newPos);			
-		} else {
+
+		// Check if there has been a collision
+        // newPosCameraBase - the camera imaginery "tripod base" we use to check the collision. It's bellow the camera "lens"
+		if (camera.inCollision(gameItems, newPos)) {
+			gravityOn = false;
 			// camera.setPosition(prevPos.x, prevPos.y, prevPos.z);
+		} else {
+			camera.movePosition(newPos);
+			gravityOn = true;
 		}
 
         // Update view matrix
