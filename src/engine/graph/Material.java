@@ -5,15 +5,10 @@ import org.joml.Vector4f;
 public class Material {
 
     private static final Vector4f DEFAULT_COLOUR = new Vector4f(1.0f, 1.0f, 1.0f, 1.0f);
-
     private Vector4f ambientColour;
-
     private Vector4f diffuseColour;
-
     private Vector4f specularColour;
-
     private float reflectance;
-
     private Texture texture;
 
     public Material() {
@@ -44,7 +39,7 @@ public class Material {
         this.reflectance = reflectance;
     }
 
-    public Vector4f getAmbientColour() {
+    public Vector4f getAmbientColor() {
         return ambientColour;
     }
 
@@ -52,7 +47,7 @@ public class Material {
         this.ambientColour = ambientColour;
     }
 
-    public Vector4f getDiffuseColour() {
+    public Vector4f getDiffuseColor() {
         return diffuseColour;
     }
 
@@ -60,7 +55,7 @@ public class Material {
         this.diffuseColour = diffuseColour;
     }
 
-    public Vector4f getSpecularColour() {
+    public Vector4f getSpecularColor() {
         return specularColour;
     }
 

@@ -4,6 +4,7 @@ import java.nio.FloatBuffer;
 import java.util.HashMap;
 import java.util.Map;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.system.MemoryStack;
@@ -31,12 +32,31 @@ public class ShaderProgram {
         uniforms.put(uniformName, uniformLocation);
     }
 
-    public void createMaterialUniform(String uniformName) throws Exception {
-        // createUniform(uniformName + ".ambient");
-        // createUniform(uniformName + ".diffuse");
-        // createUniform(uniformName + ".specular");
+    public void createTextureUniform(String uniformName) throws Exception {
         createUniform("hasTexture");
-        // createUniform(uniformName + ".reflectance");
+    }
+
+    public void createDirectionalLightUniform(String uniformName) throws Exception {
+        createUniform(uniformName + ".color");
+        createUniform(uniformName + ".direction");
+        createUniform(uniformName + ".intensity");
+    }
+
+    public void createMaterialUniform(String uniformName) throws Exception {
+    	createUniform(uniformName + ".ambient");
+    	createUniform(uniformName + ".diffuse");
+    	createUniform(uniformName + ".specular");
+    	createUniform(uniformName + ".hasTexture");
+    	createUniform(uniformName + ".reflectance");
+    }
+
+    public void createPointLightUniform(String uniformName) throws Exception {
+    	createUniform(uniformName + ".color");
+    	createUniform(uniformName + ".position");
+    	createUniform(uniformName + ".intensity");
+    	createUniform(uniformName + ".att.constant");
+    	createUniform(uniformName + ".att.linear");
+    	createUniform(uniformName + ".att.exponent");
     }
 
     public void setUniform(String uniformName, Matrix4f value) {
@@ -56,17 +76,41 @@ public class ShaderProgram {
     	GL20.glUniform1i(uniforms.get(uniformName), value);
     }
 
+    public void setUniform(String uniformName, Vector3f value) {
+    	GL20.glUniform3f(uniforms.get(uniformName), value.x, value.y, value.z);
+    }
+
     public void setUniform(String uniformName, Vector4f value) {
     	GL20.glUniform4f(uniforms.get(uniformName), value.x, value.y, value.z, value.w);
     }
 
-    public void setUniform(String uniformName, Material material) {
-        // setUniform(uniformName + ".ambient", material.getAmbientColour());
-        // setUniform(uniformName + ".diffuse", material.getDiffuseColour());
-        // setUniform(uniformName + ".specular", material.getSpecularColour());
-        setUniform("hasTexture", material.isTextured() ? 1 : 0);
-        // setUniform(uniformName + ".reflectance", material.getReflectance());
+    public void setUniform(String uniformName, DirectionalLight dirLight) {
+        setUniform(uniformName + ".color", dirLight.getColor());
+        setUniform(uniformName + ".direction", dirLight.getDirection());
+        setUniform(uniformName + ".intensity", dirLight.getIntensity());
     }
+
+    public void setTextureUniform(String uniformName, Material material) {
+        setUniform("hasTexture", material.isTextured() ? 1 : 0);
+    }
+
+    public void setUniform(String uniformName, PointLight pointLight) {
+		setUniform(uniformName + ".color", pointLight.getColor() );
+		setUniform(uniformName + ".position", pointLight.getPosition());
+		setUniform(uniformName + ".intensity", pointLight.getIntensity());
+		PointLight.Attenuation att = pointLight.getAttenuation();
+		setUniform(uniformName + ".att.constant", att.getConstant());
+		setUniform(uniformName + ".att.linear", att.getLinear());
+		setUniform(uniformName + ".att.exponent", att.getExponent());
+    }
+
+	public void setUniform(String uniformName, Material material) {
+		setUniform(uniformName + ".ambient", material.getAmbientColor());
+		setUniform(uniformName + ".diffuse", material.getDiffuseColor());
+		setUniform(uniformName + ".specular", material.getSpecularColor());
+		setUniform(uniformName + ".hasTexture", material.isTextured() ? 1 : 0);
+		setUniform(uniformName + ".reflectance", material.getReflectance());
+	}
 
     public void createVertexShader(String shaderCode) throws Exception {
         vertexShaderId = createShader(shaderCode, GL20.GL_VERTEX_SHADER);

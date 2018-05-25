@@ -147,7 +147,8 @@ public class CubeMesh extends Mesh {
 		4, 6, 7, 5, 4, 7,
     };
 
-	public CubeMesh(float[] positions, float[] colors, int[] indices, Texture texture) {
-		super(positions, colors, indices, texture);
+	public CubeMesh(float[] positions, float[] colors, float[] normals, int[] indices, Texture texture) {
+		super(positions, colors, normals, indices, texture);
 	}
+
 }

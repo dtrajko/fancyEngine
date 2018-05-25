@@ -105,6 +105,8 @@ public class Window {
         
         // GL11.glEnable(GL11.GL_CULL_FACE);
         GL11.glCullFace(GL11.GL_BACK);
+        
+        // GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
     }
 
     public void setClearColor(float r, float g, float b, float alpha) {

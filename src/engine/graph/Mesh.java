@@ -25,10 +25,10 @@ public class Mesh {
     private Material material;
 
     public Mesh(float[] positions, float[] textCoords, float[] normals, int[] indices) throws Exception {
-    	this(positions, textCoords, indices, new Texture(Config.RESOURCES_DIR + "/textures/fancy.png"));
+    	this(positions, textCoords, normals, indices, new Texture(Config.RESOURCES_DIR + "/textures/fancy.png"));
     }
 
-    public Mesh(float[] positions, float[] textCoords, int[] indices, Texture texture) {
+    public Mesh(float[] positions, float[] textCoords, float[] normals, int[] indices, Texture texture) {
 
     	vertexCount = indices.length;
     	vboIdList = new ArrayList<Integer>();
@@ -61,6 +61,15 @@ public class Mesh {
             GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboId);
             GL15.glBufferData(GL15.GL_ARRAY_BUFFER, textCoordsBuffer, GL15.GL_STATIC_DRAW);
             GL20.glVertexAttribPointer(1, 2, GL11.GL_FLOAT, false, 0, 0);
+
+            // Vertex normals VBO
+            vboId = GL15.glGenBuffers();
+            vboIdList.add(vboId);
+            vecNormalsBuffer = MemoryUtil.memAllocFloat(normals.length);
+            vecNormalsBuffer.put(normals).flip();
+            GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboId);
+            GL15.glBufferData(GL15.GL_ARRAY_BUFFER, vecNormalsBuffer, GL15.GL_STATIC_DRAW);
+            GL20.glVertexAttribPointer(2, 3, GL11.GL_FLOAT, false, 0, 0);
 
             // Index VBO
             vboId = GL15.glGenBuffers();

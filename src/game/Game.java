@@ -11,9 +11,11 @@ import engine.IGameLogic;
 import engine.Window;
 import engine.graph.Camera;
 import engine.graph.CubeMesh;
+import engine.graph.DirectionalLight;
 import engine.graph.Material;
 import engine.graph.Mesh;
 import engine.graph.MouseInput;
+import engine.graph.PointLight;
 import engine.graph.Renderer;
 import engine.graph.Texture;
 import engine.items.Box3D;
@@ -31,7 +33,12 @@ public class Game implements IGameLogic {
     private static boolean gravityOn = true;
     private static float SPEED;
     private static final float WORLD_BOTTOM = -10f;
-    
+
+    private Vector3f ambientLight;
+    private PointLight pointLight;
+    private DirectionalLight directionalLight;
+    private float lightAngle;
+
     private CameraBoxSelectionDetector selectDetectorCamera;
     // private MouseBoxSelectionDetector selectDetectorMouse;
 
@@ -40,20 +47,23 @@ public class Game implements IGameLogic {
 		camera = new Camera();
 		cameraInc = new Vector3f(0, 0, 0);
 		gameItems = new ArrayList<GameItem>();
+		lightAngle = 0;
 	}
 
 	@Override
 	public void init(Window window) throws Exception {
 		renderer.init(window);
+		
+		float reflectance = 1f;
 
 		selectDetectorCamera = new CameraBoxSelectionDetector();
 		// selectDetectorMouse = new MouseBoxSelectionDetector();
 
         Texture texture = new Texture(Config.RESOURCES_DIR + "/textures/grassblock.png");
-        Mesh mesh = new Mesh(CubeMesh.positions, CubeMesh.textCoords, CubeMesh.indices, texture);
-        Material material = new Material(texture, 1.0f);
+        Mesh mesh = new Mesh(CubeMesh.positions, CubeMesh.textCoords, CubeMesh.normals, CubeMesh.indices, texture);
+        Material material = new Material(texture, reflectance);
         mesh.setMaterial(material);
-        
+
         int CUBES_X = 20;
         int CUBES_Y = 10;
         int CUBES_Z = 20;
@@ -72,14 +82,27 @@ public class Game implements IGameLogic {
         camera.setPosition(10, 11, 10);
         camera.setRotation(0, 0, 0);
 
+        ambientLight = new Vector3f(0.8f, 0.8f, 0.8f);
+        Vector3f lightColor = new Vector3f(1, 1, 1);
+        Vector3f lightPosition = new Vector3f(0, 20, 0);
+        float lightIntensity = 1.0f;
+        pointLight = new PointLight(lightColor, lightPosition, lightIntensity);
+        PointLight.Attenuation att = new PointLight.Attenuation(0.0f, 0.0f, 1.0f);
+        pointLight.setAttenuation(att);
+
+        lightPosition = new Vector3f(0, 20, 0);
+        lightColor = new Vector3f(1, 1, 1);
+        directionalLight = new DirectionalLight(lightColor, lightPosition, lightIntensity);
+
         // Create HUD
         hud = new Hud("DEMO");
+
 	}
 
     @Override
     public void input(Window window, MouseInput mouseInput) {
         cameraInc.set(0, 0, 0);
-        
+
         // reset camera position/rotation
         if (window.isKeyPressed(GLFW.GLFW_KEY_R)) {
             camera.reset();
@@ -105,6 +128,14 @@ public class Game implements IGameLogic {
             cameraInc.y = -SPEED;
         } else if (gravityOn && camera.getPosition().y > WORLD_BOTTOM) {
         	cameraInc.y = GRAVITY;
+        }
+
+        // controlling the light
+        float lightPos = pointLight.getPosition().z;
+        if (window.isKeyPressed(GLFW.GLFW_KEY_N)) {
+            this.pointLight.getPosition().z = lightPos + 0.1f;
+        } else if (window.isKeyPressed(GLFW.GLFW_KEY_M)) {
+            this.pointLight.getPosition().z = lightPos - 0.1f;
         }
     }
 
@@ -135,18 +166,23 @@ public class Game implements IGameLogic {
 
         // Update view matrix
         camera.updateViewMatrix();
-        
+
         this.selectDetectorCamera.selectGameItem(gameItems, camera, mouseInput);
-        // if (mouseInput.isLeftButtonPressed()) {
-        //     this.selectDetectorMouse.selectGameItem(gameItems, window, camera, mouseInput);
-        // }
+
+        directionalLight.setIntensity(1);
+        directionalLight.getColor().x = 1;
+        directionalLight.getColor().y = 1;
+        directionalLight.getColor().z = 1;
+        double angRad = Math.toRadians(lightAngle);
+        directionalLight.getDirection().x = (float) Math.sin(angRad);
+        directionalLight.getDirection().y = (float) Math.cos(angRad);
     }
 
     @Override
     public void render(Window window) {
     	hud.updateSize(window);
-    	renderer.render(window, camera, gameItems, hud);
-        // renderer.render(window, camera, scene, hud);
+    	// renderer.render(window, camera, gameItems, hud);
+    	renderer.render(window, camera, gameItems, ambientLight, pointLight, directionalLight);
     }
 
     @Override

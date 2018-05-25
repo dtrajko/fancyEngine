@@ -30,7 +30,7 @@ public class PyramidMesh extends Mesh {
 		2, 3, 0,
     };
 
-	public PyramidMesh(float[] positions, float[] colors, int[] indices, Texture texture) {
-		super(positions, colors, indices, texture);
+	public PyramidMesh(float[] positions, float[] colors, float[] normals, int[] indices, Texture texture) {
+		super(positions, colors, normals, indices, texture);
 	}
 }

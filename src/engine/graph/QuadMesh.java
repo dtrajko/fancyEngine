@@ -22,7 +22,7 @@ public class QuadMesh extends Mesh {
         0, 1, 3, 3, 1, 2,
     };
 
-	public QuadMesh(float[] positions, float[] colors, int[] indices, Texture texture) {
-		super(positions, colors, indices, texture);
+	public QuadMesh(float[] positions, float[] colors, float[] normals, int[] indices, Texture texture) {
+		super(positions, colors, normals, indices, texture);
 	}
 }
