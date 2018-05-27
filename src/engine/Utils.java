@@ -66,4 +66,18 @@ public class Utils {
         return floatArr;
     }
 
+    public static int[] listIntToArray(List<Integer> list) {
+        int[] result = list.stream().mapToInt((Integer v) -> v).toArray();
+        return result;
+    }
+
+    public static boolean existsResourceFile(String fileName) {
+        boolean result;
+        try (InputStream is = Utils.class.getResourceAsStream(fileName)) {
+            result = is != null;
+        } catch (Exception excp) {
+            result = false;
+        }
+        return result;
+    }
 }

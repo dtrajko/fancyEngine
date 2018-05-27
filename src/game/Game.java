@@ -4,21 +4,28 @@ import java.util.ArrayList;
 import java.util.List;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.lwjgl.glfw.GLFW;
 import config.Config;
 import engine.GameItem;
 import engine.IGameLogic;
+import engine.Scene;
+import engine.SceneLight;
 import engine.Window;
 import engine.graph.Camera;
 import engine.graph.CubeMesh;
-import engine.graph.DirectionalLight;
 import engine.graph.Material;
 import engine.graph.Mesh;
 import engine.graph.MouseInput;
-import engine.graph.PointLight;
 import engine.graph.Renderer;
 import engine.graph.Texture;
+import engine.graph.anim.AnimGameItem;
+import engine.graph.lights.DirectionalLight;
+import engine.graph.lights.PointLight;
 import engine.items.Box3D;
+import engine.loaders.md5.MD5AnimModel;
+import engine.loaders.md5.MD5Loader;
+import engine.loaders.md5.MD5Model;
 
 public class Game implements IGameLogic {
 
@@ -26,6 +33,7 @@ public class Game implements IGameLogic {
     private final Vector3f cameraInc;
     private final Renderer renderer;
     private final Camera camera;
+    private Scene scene;
     private Hud hud;
     private List<GameItem> gameItems;
     private static final float CAMERA_POS_STEP = 0.05f;                          
@@ -39,6 +47,8 @@ public class Game implements IGameLogic {
     private DirectionalLight directionalLight;
     private float lightAngle;
 
+    private AnimGameItem monster;
+
     private CameraBoxSelectionDetector selectDetectorCamera;
     // private MouseBoxSelectionDetector selectDetectorMouse;
 
@@ -47,13 +57,15 @@ public class Game implements IGameLogic {
 		camera = new Camera();
 		cameraInc = new Vector3f(0, 0, 0);
 		gameItems = new ArrayList<GameItem>();
-		lightAngle = 0;
+		lightAngle = -90;
 	}
 
 	@Override
 	public void init(Window window) throws Exception {
 		renderer.init(window);
 		
+		scene = new Scene();
+
 		float reflectance = 1f;
 
 		selectDetectorCamera = new CameraBoxSelectionDetector();
@@ -82,22 +94,47 @@ public class Game implements IGameLogic {
         camera.setPosition(10, 11, 10);
         camera.setRotation(0, 0, 0);
 
-        ambientLight = new Vector3f(0.8f, 0.8f, 0.8f);
-        Vector3f lightColor = new Vector3f(1, 1, 1);
-        Vector3f lightPosition = new Vector3f(0, 20, 0);
-        float lightIntensity = 1.0f;
+        // Setup  GameItems
+        // MD5Model md5Meshodel = MD5Model.parse(Config.RESOURCES_DIR + "/models/monster.md5mesh");
+        // MD5AnimModel md5AnimModel = MD5AnimModel.parse(Config.RESOURCES_DIR + "/models/monster.md5anim");        
+        // monster = MD5Loader.process(md5Meshodel, md5AnimModel, new Vector4f(1, 1, 1, 1));
+        // monster.setScale(0.05f);
+        // monster.setRotation(90, 0, 90);
+
+        ambientLight = new Vector3f(0.5f, 0.5f, 0.5f);
+
+        Vector3f lightColor = new Vector3f(0, 0, 0);
+        Vector3f lightPosition = new Vector3f(0, 0, 0);
+        float lightIntensity = 0.0f;
         pointLight = new PointLight(lightColor, lightPosition, lightIntensity);
         PointLight.Attenuation att = new PointLight.Attenuation(0.0f, 0.0f, 1.0f);
         pointLight.setAttenuation(att);
 
-        lightPosition = new Vector3f(0, 20, 0);
         lightColor = new Vector3f(1, 1, 1);
+        lightPosition = new Vector3f(10, 0, -10);
+        lightIntensity = 1.0f;
         directionalLight = new DirectionalLight(lightColor, lightPosition, lightIntensity);
 
         // Create HUD
         hud = new Hud("DEMO");
-
 	}
+
+    private void setupLights() {
+        SceneLight sceneLight = new SceneLight();
+        scene.setSceneLight(sceneLight);
+
+        // Ambient Light
+        sceneLight.setAmbientLight(new Vector3f(0.3f, 0.3f, 0.3f));
+        sceneLight.setSkyBoxLight(new Vector3f(1.0f, 1.0f, 1.0f));
+
+        // Directional Light
+        float lightIntensity = 1.0f;
+        Vector3f lightDirection = new Vector3f(0, 1, 1);
+        DirectionalLight directionalLight = new DirectionalLight(new Vector3f(1, 1, 1), lightDirection, lightIntensity);
+        directionalLight.setShadowPosMult(10);
+        directionalLight.setOrthoCords(-10.0f, 10.0f, -10.0f, 10.0f, -1.0f, 20.0f);
+        sceneLight.setDirectionalLight(directionalLight);
+    }
 
     @Override
     public void input(Window window, MouseInput mouseInput) {
@@ -168,14 +205,6 @@ public class Game implements IGameLogic {
         camera.updateViewMatrix();
 
         this.selectDetectorCamera.selectGameItem(gameItems, camera, mouseInput);
-
-        directionalLight.setIntensity(1);
-        directionalLight.getColor().x = 1;
-        directionalLight.getColor().y = 1;
-        directionalLight.getColor().z = 1;
-        double angRad = Math.toRadians(lightAngle);
-        directionalLight.getDirection().x = (float) Math.sin(angRad);
-        directionalLight.getDirection().y = (float) Math.cos(angRad);
     }
 
     @Override

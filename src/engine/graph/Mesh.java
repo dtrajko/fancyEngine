@@ -18,11 +18,24 @@ import engine.GameItem;
 
 public class Mesh {
 
+	public static final int MAX_WEIGHTS = 4;
     private final int vaoId;
     private final List<Integer> vboIdList;
     private final int vertexCount;
     private final Texture texture;
     private Material material;
+
+    public Mesh(float[] positions, float[] textCoords, float[] normals, int[] indices, int[] jointIndices, float[] weights) throws Exception {
+    	FloatBuffer posBuffer = null;
+    	FloatBuffer textCoordsBuffer = null;
+    	FloatBuffer vecNormalsBuffer = null;
+    	IntBuffer indicesBuffer = null;
+
+    	vertexCount = indices.length;
+    	vboIdList = new ArrayList<Integer>();
+    	vaoId = GL30.glGenVertexArrays();
+    	this.texture = new Texture(Config.RESOURCES_DIR + "/textures/fancy.png");
+	}
 
     public Mesh(float[] positions, float[] textCoords, float[] normals, int[] indices) throws Exception {
     	this(positions, textCoords, normals, indices, new Texture(Config.RESOURCES_DIR + "/textures/fancy.png"));
@@ -30,15 +43,16 @@ public class Mesh {
 
     public Mesh(float[] positions, float[] textCoords, float[] normals, int[] indices, Texture texture) {
 
+    	FloatBuffer posBuffer = null;
+    	FloatBuffer textCoordsBuffer = null;
+    	FloatBuffer vecNormalsBuffer = null;
+    	IntBuffer indicesBuffer = null;
+
     	vertexCount = indices.length;
     	vboIdList = new ArrayList<Integer>();
     	vaoId = GL30.glGenVertexArrays();
     	this.texture = texture;
 
-        FloatBuffer posBuffer = null;
-        FloatBuffer textCoordsBuffer = null;
-        FloatBuffer vecNormalsBuffer = null;
-        IntBuffer indicesBuffer = null;
 
         try {
 
@@ -102,7 +116,7 @@ public class Mesh {
         }
     }
 
-    public int getVaoId() {
+	public int getVaoId() {
         return vaoId;
     }
 

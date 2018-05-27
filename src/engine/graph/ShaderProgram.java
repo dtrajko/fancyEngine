@@ -9,6 +9,9 @@ import org.joml.Vector4f;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.system.MemoryStack;
 
+import engine.graph.lights.DirectionalLight;
+import engine.graph.lights.PointLight;
+
 public class ShaderProgram {
 
     private final int programId;
