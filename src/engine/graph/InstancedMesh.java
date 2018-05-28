@@ -100,7 +100,6 @@ public class InstancedMesh extends Mesh {
 
     public void renderListInstanced(List<GameItem> gameItems, boolean billBoard, Transformation transformation, Matrix4f viewMatrix, Matrix4f lightViewMatrix) {
         initRender();
-
         int chunkSize = numInstances;
         int length = gameItems.size();
         for (int i = 0; i < length; i += chunkSize) {
@@ -150,7 +149,6 @@ public class InstancedMesh extends Mesh {
 
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, instanceDataVBO);
         GL15.glBufferData(GL15.GL_ARRAY_BUFFER, instanceDataBuffer, GL15.GL_DYNAMIC_DRAW);
-        // System.out.println("InstancedMesh glDrawElementsInstanced getVertexCount(): " + getVertexCount() + " gameItems.size(): " + gameItems.size());
         GL31.glDrawElementsInstanced(
         		GL11.GL_TRIANGLES, getVertexCount(), GL11.GL_UNSIGNED_INT, 0, gameItems.size());
 

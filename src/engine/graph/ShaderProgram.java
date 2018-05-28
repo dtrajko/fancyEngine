@@ -16,13 +16,9 @@ import engine.graph.weather.Fog;
 public class ShaderProgram {
 
     private final int programId;
-
     private int vertexShaderId;
-
     private int fragmentShaderId;
-
     private int geometryShaderId;
-
     private final Map<String, Integer> uniforms;
 
     public ShaderProgram() throws Exception {

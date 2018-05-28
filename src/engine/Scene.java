@@ -15,17 +15,11 @@ import engine.items.SkyBox;
 public class Scene {
 
     private final Map<Mesh, List<GameItem>> meshMap;
-
     private final Map<InstancedMesh, List<GameItem>> instancedMeshMap;
-
     private SkyBox skyBox;
-
     private SceneLight sceneLight;
-
     private Fog fog;
-
     private boolean renderShadows;
-    
     private IParticleEmitter[] particleEmitters;
 
     public Scene() {
@@ -67,8 +61,61 @@ public class Scene {
                 list.add(gameItem);
             }
         }
-        System.out.println("Scene setGameItems instanced: " + instancedMeshMap.size() + " non instanced: " + meshMap.size());
     }
+
+	public void setGameItems(List<GameItem> gameItems) {
+        // Create a map of meshes to speed up rendering
+        for (GameItem gameItem : gameItems) {
+            Mesh[] meshes = gameItem.getMeshes();
+            for (Mesh mesh : meshes) {
+                boolean instancedMesh = mesh instanceof InstancedMesh;
+                List<GameItem> list = instancedMesh ? instancedMeshMap.get(mesh) : meshMap.get(mesh);
+                if (list == null) {
+                    list = new ArrayList<>();
+                    if (instancedMesh) {
+                        instancedMeshMap.put((InstancedMesh)mesh, list);
+                    } else {
+                        meshMap.put(mesh, list);
+                    }
+                }
+                list.add(gameItem);
+            }
+        }
+    }
+
+	public void appendGameItem(GameItem gameItem) {
+        Mesh[] meshes = gameItem.getMeshes();
+        for (Mesh mesh : meshes) {
+            boolean instancedMesh = mesh instanceof InstancedMesh;
+            List<GameItem> list = instancedMesh ? instancedMeshMap.get(mesh) : meshMap.get(mesh);
+            if (list == null) {
+                list = new ArrayList<>();
+                if (instancedMesh) {
+                    instancedMeshMap.put((InstancedMesh)mesh, list);
+                } else {
+                    meshMap.put(mesh, list);
+                }
+            }
+            list.add(gameItem);
+        }
+    }
+
+	public void removeGameItem(GameItem gameItem) {
+        Mesh[] meshes = gameItem.getMeshes();
+        for (Mesh mesh : meshes) {
+            boolean instancedMesh = mesh instanceof InstancedMesh;
+            List<GameItem> list = instancedMesh ? instancedMeshMap.get(mesh) : meshMap.get(mesh);
+            if (list == null) {
+                list = new ArrayList<>();
+                if (instancedMesh) {
+                    instancedMeshMap.remove((InstancedMesh)mesh, list);
+                } else {
+                    meshMap.remove(mesh, list);
+                }
+            }
+            list.remove(gameItem);
+        }
+	}
 
     public void cleanup() {
         for (Mesh mesh : meshMap.keySet()) {

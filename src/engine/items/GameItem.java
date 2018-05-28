@@ -7,16 +7,16 @@ import engine.graph.Mesh;
 public class GameItem {
 
     private Mesh[] meshes;
-
     private final Vector3f position;
-
     private float scale;
-
     private final Quaternionf rotation;
-
     private int textPos;
+
+    private boolean selected;
+    private Box3D boundingBox = null;
             
     public GameItem() {
+    	selected = false;
         position = new Vector3f(0, 0, 0);
         scale = 1;
         rotation = new Quaternionf();
@@ -88,5 +88,27 @@ public class GameItem {
 
     public void setTextPos(int textPos) {
         this.textPos = textPos;
+    }
+
+    public void setSelected(boolean selected) {
+    	this.selected = selected;
+	}
+
+	public boolean isSelected() {
+		return selected;
+    }
+
+    public void setBoundingBox() {
+		float topLeftX = position.x + scale;
+		float topLeftY = position.y + scale;
+		float topLeftZ = position.z + scale;
+		boundingBox = new Box3D(topLeftX, topLeftY, topLeftZ, scale, scale, scale);    		
+    }
+    
+    public Box3D getBoundingBox() {
+    	if (boundingBox == null) {
+    		setBoundingBox();
+    	}
+    	return boundingBox;
     }
 }

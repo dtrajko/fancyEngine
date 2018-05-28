@@ -31,7 +31,7 @@ public class CameraBoxSelectionDetector {
         float closestDistance = Float.POSITIVE_INFINITY;
         dir = camera.getViewMatrix().positiveZ(dir).negate();
         for (GameItem gameItem : gameItems) {
-            // gameItem.setSelected(false);
+            gameItem.setSelected(false);
             min.set(gameItem.getPosition());
             max.set(gameItem.getPosition());
             min.sub(gameItem.getScale(), gameItem.getScale(), gameItem.getScale());
@@ -44,7 +44,6 @@ public class CameraBoxSelectionDetector {
             }
         }
         if (selectedGameItem != null) {
-        	/*
         	selectedGameItem.setSelected(true);
             if (mouseInput.isMouseButtonPressed(GLFW.GLFW_MOUSE_BUTTON_1)) {
             	gameItems.remove(selectedGameItem);
@@ -57,7 +56,6 @@ public class CameraBoxSelectionDetector {
         			selectedGameItem.getPosition().z);
             	gameItems.add(newGameItem);
             }
-            */
         }
     }
 }
