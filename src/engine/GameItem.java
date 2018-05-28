@@ -1,5 +1,6 @@
 package engine;
 
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import engine.graph.HeightMapMesh;
@@ -13,7 +14,7 @@ public class GameItem {
 	private Mesh[] meshes;
     private final Vector3f position;
     private float scale;
-    private final Vector3f rotation;
+    private final Quaternionf rotation;
     private int textPos;
     private Box3D boundingBox = null;
 
@@ -21,7 +22,7 @@ public class GameItem {
         selected = false;
         position = new Vector3f(0, 0, 0);
         scale = 1;
-        rotation = new Vector3f(0, 0, 0);
+        rotation = new Quaternionf();
         textPos = 0;
     }
 
@@ -53,8 +54,12 @@ public class GameItem {
         this.scale = scale;
     }
 
-    public Vector3f getRotation() {
+    public Quaternionf getRotation() {
         return rotation;
+    }
+
+    public final void setRotation(Quaternionf q) {
+        this.rotation.set(q);
     }
 
     public void setRotation(float x, float y, float z) {
@@ -81,6 +86,10 @@ public class GameItem {
 
     public boolean isSelected() {
         return selected;
+    }
+
+    public int getTextPos() {
+        return textPos;
     }
 
     public void setBoundingBox() {

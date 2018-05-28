@@ -3,6 +3,7 @@ package engine.graph;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -19,8 +20,8 @@ import engine.GameItem;
 public class Mesh {
 
 	public static final int MAX_WEIGHTS = 4;
-    private final int vaoId;
-    private final List<Integer> vboIdList;
+    protected final int vaoId;
+    protected final List<Integer> vboIdList;
     private final int vertexCount;
     private final Texture texture;
     private Material material;
@@ -132,7 +133,7 @@ public class Mesh {
         return material;
     }
 
-    private void initRender() {
+    protected void initRender() {
         Texture texture = material.getTexture();
         if (texture != null) {
             // Activate first texture bank
@@ -148,7 +149,7 @@ public class Mesh {
         GL20.glEnableVertexAttribArray(2);
     }
 
-    private void endRender() {
+    protected void endRender() {
         // Restore state
     	GL20.glDisableVertexAttribArray(0);
     	GL20.glDisableVertexAttribArray(1);
@@ -160,6 +161,7 @@ public class Mesh {
 
     public void renderList(List<GameItem> gameItems, Consumer<GameItem> consumer) {
         initRender();
+
         for (GameItem gameItem : gameItems) {
             // Set up data required by gameItem
             consumer.accept(gameItem);
@@ -207,5 +209,17 @@ public class Mesh {
         // Delete the VAO
         GL30.glBindVertexArray(0);
         GL30.glDeleteVertexArrays(vaoId);
+    }
+
+    protected static float[] createEmptyFloatArray(int length, float defaultValue) {
+        float[] result = new float[length];
+        Arrays.fill(result, defaultValue);
+        return result;
+    }
+
+    protected static int[] createEmptyIntArray(int length, int defaultValue) {
+        int[] result = new int[length];
+        Arrays.fill(result, defaultValue);
+        return result;
     }
 }

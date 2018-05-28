@@ -1,7 +1,6 @@
 package game;
 
 import java.io.FileInputStream;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,14 +18,15 @@ import engine.Window;
 import engine.graph.Camera;
 import engine.graph.CubeMesh;
 import engine.graph.HeightMapMesh;
+import engine.graph.InstancedMesh;
 import engine.graph.Material;
 import engine.graph.Mesh;
 import engine.graph.MouseInput;
 import engine.graph.Renderer;
 import engine.graph.Texture;
-import engine.graph.anim.AnimGameItem;
 import engine.graph.lights.DirectionalLight;
-import engine.graph.lights.PointLight;
+import engine.graph.weather.Fog;
+import engine.items.SkyBox;
 import engine.items.Terrain;
 
 public class Game implements IGameLogic {
@@ -46,10 +46,6 @@ public class Game implements IGameLogic {
     private static final float WORLD_BOTTOM = -20f;
     private static float SPEED;
     private static boolean gravityOn = true;
-    private Vector3f ambientLight;
-    private PointLight pointLight;
-    private DirectionalLight directionalLight;
-    private AnimGameItem monster;
     private CameraBoxSelectionDetector selectDetectorCamera;
 
     private List<GameItem> gameItems;
@@ -65,8 +61,8 @@ public class Game implements IGameLogic {
 
 	@Override
 	public void init(Window window) throws Exception {
-		renderer.init(window);
-		
+
+		renderer.init(window);		
 		scene = new Scene();
 
         float reflectance = 1f;
@@ -97,8 +93,8 @@ public class Game implements IGameLogic {
         decoder.decode(buffer, width * 4, PNGDecoder.Format.RGBA);
         buffer.flip();
 
+        InstancedMesh mesh = new InstancedMesh(CubeMesh.positions, CubeMesh.textCoords, CubeMesh.normals, CubeMesh.indices, 10000);
         Texture texture = new Texture(Config.RESOURCES_DIR + "/textures/grassblock.png");
-        Mesh mesh = new Mesh(CubeMesh.positions, CubeMesh.textCoords, CubeMesh.normals, CubeMesh.indices, texture);
         Material material = new Material(texture, reflectance);
         mesh.setMaterial(material);
 
@@ -130,28 +126,29 @@ public class Game implements IGameLogic {
             posZ -= increment;
         }
         scene.setGameItems(gameItems);        
-        
-        camera.setPosition(0, 5, 0);
-        camera.setRotation(0, 0, 0);
 
-        ambientLight = new Vector3f(0.5f, 0.5f, 0.5f);
+        // Shadows
+        scene.setRenderShadows(false);
 
-        Vector3f lightColor = new Vector3f(0, 0, 0);
-        Vector3f lightPosition = new Vector3f(0, 0, 0);
-        float lightIntensity = 0.0f;
-        pointLight = new PointLight(lightColor, lightPosition, lightIntensity);
-        PointLight.Attenuation att = new PointLight.Attenuation(0.0f, 0.0f, 1.0f);
-        pointLight.setAttenuation(att);
+        // Fog
+        Vector3f fogColour = new Vector3f(0.5f, 0.5f, 0.5f);
+        scene.setFog(new Fog(true, fogColour, 0.02f));
 
-        lightColor = new Vector3f(1, 1, 1);
-        lightPosition = new Vector3f(10, 0, -10);
-        lightIntensity = 1.0f;
-        directionalLight = new DirectionalLight(lightColor, lightPosition, lightIntensity);
+        // Setup  SkyBox
+        SkyBox skyBox = new SkyBox(Config.RESOURCES_DIR + "/models/skybox.obj", new Vector4f(0.65f, 0.65f, 0.65f, 1.0f));
+        skyBox.setScale(skyBoxScale);
+        scene.setSkyBox(skyBox);
+
+        // Setup Lights
+        setupLights();
 
         selectDetectorCamera = new CameraBoxSelectionDetector();
 
+        camera.setPosition(0, 5, 0);
+        camera.setRotation(0, 0, 0);
+
         // Create HUD
-        hud = new Hud("DEMO");
+        hud = new Hud("");
 
         // Setup  GameItems
         // MD5Model md5Meshodel = MD5Model.parse(Config.RESOURCES_DIR + "/models/monster.md5mesh");
@@ -209,12 +206,12 @@ public class Game implements IGameLogic {
         	cameraInc.y = GRAVITY;
         }
 
-        // controlling the light
-        float lightPos = pointLight.getPosition().z;
-        if (window.isKeyPressed(GLFW.GLFW_KEY_N)) {
-            this.pointLight.getPosition().z = lightPos + 0.1f;
-        } else if (window.isKeyPressed(GLFW.GLFW_KEY_M)) {
-            this.pointLight.getPosition().z = lightPos - 0.1f;
+        if (window.isKeyPressed(GLFW.GLFW_KEY_LEFT)) {
+            angleInc -= 0.05f;
+        } else if (window.isKeyPressed(GLFW.GLFW_KEY_RIGHT)) {
+            angleInc += 0.05f;
+        } else {
+            angleInc = 0;
         }
     }
 
@@ -247,18 +244,34 @@ public class Game implements IGameLogic {
         camera.updateViewMatrix();
 
         this.selectDetectorCamera.selectGameItem(gameItems, camera, mouseInput);
+
+        lightAngle += angleInc;
+        if (lightAngle < 0) {
+            lightAngle = 0;
+        } else if (lightAngle > 180) {
+            lightAngle = 180;
+        }
+        float zValue = (float) Math.cos(Math.toRadians(lightAngle));
+        float yValue = (float) Math.sin(Math.toRadians(lightAngle));
+        Vector3f lightDirection = this.scene.getSceneLight().getDirectionalLight().getDirection();
+        lightDirection.x = 0;
+        lightDirection.y = yValue;
+        lightDirection.z = zValue;
+        lightDirection.normalize();
     }
 
     @Override
     public void render(Window window) {
-    	hud.updateSize(window);
-    	// renderer.render(window, camera, gameItems, hud);
-    	renderer.render(window, camera, gameItems, ambientLight, pointLight, directionalLight);
+        if (hud != null) {
+            hud.updateSize(window);
+        }
+    	renderer.render(window, camera, scene, hud);
     }
 
     @Override
     public void cleanup() {
         renderer.cleanup();
+        scene.cleanup();
         for (GameItem gameItem : gameItems) {
         	gameItem.getMesh().cleanUp();
         }
