@@ -96,4 +96,8 @@ public class GameItem {
     	}
     	return boundingBox;
     }
+
+    public void setTextPos(int textPos) {
+        this.textPos = textPos;
+    }
 }

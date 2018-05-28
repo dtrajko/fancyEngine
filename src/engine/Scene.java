@@ -38,6 +38,18 @@ public class Scene {
         }
     }
 
+    public void setGameItems(List<GameItem> gameItems) {
+        for (GameItem gameItem: gameItems) {
+            Mesh mesh = gameItem.getMesh();
+            List<GameItem> list = meshMap.get(mesh);
+            if ( list == null ) {
+                list = new ArrayList<>();
+                meshMap.put(mesh, list);
+            }
+            list.add(gameItem);
+        }
+    }
+
     public void cleanup() {
         for (Mesh mesh : meshMap.keySet()) {
             mesh.cleanUp();

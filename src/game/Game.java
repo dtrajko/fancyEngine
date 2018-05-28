@@ -1,5 +1,8 @@
 package game;
 
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import org.joml.Vector2f;
@@ -7,6 +10,7 @@ import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.glfw.GLFW;
 import config.Config;
+import de.matthiasmann.twl.utils.PNGDecoder;
 import engine.GameItem;
 import engine.IGameLogic;
 import engine.Scene;
@@ -14,6 +18,7 @@ import engine.SceneLight;
 import engine.Window;
 import engine.graph.Camera;
 import engine.graph.CubeMesh;
+import engine.graph.HeightMapMesh;
 import engine.graph.Material;
 import engine.graph.Mesh;
 import engine.graph.MouseInput;
@@ -22,10 +27,7 @@ import engine.graph.Texture;
 import engine.graph.anim.AnimGameItem;
 import engine.graph.lights.DirectionalLight;
 import engine.graph.lights.PointLight;
-import engine.items.Box3D;
-import engine.loaders.md5.MD5AnimModel;
-import engine.loaders.md5.MD5Loader;
-import engine.loaders.md5.MD5Model;
+import engine.items.Terrain;
 
 public class Game implements IGameLogic {
 
@@ -35,29 +37,30 @@ public class Game implements IGameLogic {
     private final Camera camera;
     private Scene scene;
     private Hud hud;
-    private List<GameItem> gameItems;
-    private static final float CAMERA_POS_STEP = 0.05f;                          
-    private static final float GRAVITY = -1f;
-    private static boolean gravityOn = true;
-    private static float SPEED;
-    private static final float WORLD_BOTTOM = -10f;
+    private static final float CAMERA_POS_STEP = 0.1f;
+    private Terrain terrain;
+    private float angleInc;
+    private float lightAngle;
 
+    private static final float GRAVITY = -1f;
+    private static final float WORLD_BOTTOM = -20f;
+    private static float SPEED;
+    private static boolean gravityOn = true;
     private Vector3f ambientLight;
     private PointLight pointLight;
     private DirectionalLight directionalLight;
-    private float lightAngle;
-
     private AnimGameItem monster;
-
     private CameraBoxSelectionDetector selectDetectorCamera;
-    // private MouseBoxSelectionDetector selectDetectorMouse;
+
+    private List<GameItem> gameItems;
 
 	public Game() {
 		renderer = new Renderer();
 		camera = new Camera();
 		cameraInc = new Vector3f(0, 0, 0);
+		angleInc = 0;
+		lightAngle = 45;
 		gameItems = new ArrayList<GameItem>();
-		lightAngle = -90;
 	}
 
 	@Override
@@ -66,40 +69,70 @@ public class Game implements IGameLogic {
 		
 		scene = new Scene();
 
-		float reflectance = 1f;
+        float reflectance = 1f;
 
-		selectDetectorCamera = new CameraBoxSelectionDetector();
-		// selectDetectorMouse = new MouseBoxSelectionDetector();
+        int blockScale = 1;
+        int skyBoxScale = 10;
+        int extension = 2;
+
+        int startX = extension * (-skyBoxScale + blockScale);
+        int startZ = extension * (skyBoxScale - blockScale);
+        int startY = -1;
+        int increment = blockScale * 2;
+
+        int posX = startX;
+        int posZ = startZ;
+        int topY = 0;
+        
+        int coordX = 0;
+        int coordY = 0;
+        int coordZ = 0;
+
+        int terrainHeight = 8;
+
+		PNGDecoder decoder = new PNGDecoder(new FileInputStream(Config.RESOURCES_DIR + "/textures/heightmap_64.png"));
+        int height = decoder.getHeight();
+        int width = decoder.getWidth();
+        ByteBuffer buffer = ByteBuffer.allocateDirect(4 * width * height);
+        decoder.decode(buffer, width * 4, PNGDecoder.Format.RGBA);
+        buffer.flip();
 
         Texture texture = new Texture(Config.RESOURCES_DIR + "/textures/grassblock.png");
         Mesh mesh = new Mesh(CubeMesh.positions, CubeMesh.textCoords, CubeMesh.normals, CubeMesh.indices, texture);
         Material material = new Material(texture, reflectance);
         mesh.setMaterial(material);
 
-        int CUBES_X = 20;
-        int CUBES_Y = 10;
-        int CUBES_Z = 20;
+        for (int incX = 0; incX < height; incX++) {
+            for (int incZ = 0; incZ < width; incZ++) {
 
-        for(int x = 0; x < CUBES_X; x++) {
-            for(int y = 0; y < CUBES_Y; y++) {
-            	for(int z = 0; z < CUBES_Z; z++) {
-	                GameItem gameItem = new GameItem(mesh);
-	                gameItem.setScale(1);
-	                gameItem.setPosition(x, y, z);
-	                gameItems.add(gameItem);
-	                gameItem.setBoundingBox();
-            	}
+            	int rgb = HeightMapMesh.getRGB(incX, incZ, width, buffer);
+            	topY = -rgb / (255 / terrainHeight * 255 * 255);
+
+                for (int incY = topY; incY < topY + 2; incY++) {
+
+                	GameItem gameItem = new GameItem(mesh);
+                	gameItem.setScale(blockScale);
+
+                	coordX = posX / 2;
+                	coordY = incY;
+                	coordZ = posZ / 2;
+
+                	gameItem.setPosition(coordX, coordY, coordZ);
+
+                	// int textPos = Math.random() > 0.5f ? 0 : 1;
+                	// gameItem.setTextPos(textPos);
+                	gameItems.add(gameItem);
+                }
+
+                posX += increment;
             }
+            posX = startX;
+            posZ -= increment;
         }
-        camera.setPosition(10, 11, 10);
+        scene.setGameItems(gameItems);        
+        
+        camera.setPosition(0, 5, 0);
         camera.setRotation(0, 0, 0);
-
-        // Setup  GameItems
-        // MD5Model md5Meshodel = MD5Model.parse(Config.RESOURCES_DIR + "/models/monster.md5mesh");
-        // MD5AnimModel md5AnimModel = MD5AnimModel.parse(Config.RESOURCES_DIR + "/models/monster.md5anim");        
-        // monster = MD5Loader.process(md5Meshodel, md5AnimModel, new Vector4f(1, 1, 1, 1));
-        // monster.setScale(0.05f);
-        // monster.setRotation(90, 0, 90);
 
         ambientLight = new Vector3f(0.5f, 0.5f, 0.5f);
 
@@ -115,8 +148,17 @@ public class Game implements IGameLogic {
         lightIntensity = 1.0f;
         directionalLight = new DirectionalLight(lightColor, lightPosition, lightIntensity);
 
+        selectDetectorCamera = new CameraBoxSelectionDetector();
+
         // Create HUD
         hud = new Hud("DEMO");
+
+        // Setup  GameItems
+        // MD5Model md5Meshodel = MD5Model.parse(Config.RESOURCES_DIR + "/models/monster.md5mesh");
+        // MD5AnimModel md5AnimModel = MD5AnimModel.parse(Config.RESOURCES_DIR + "/models/monster.md5anim");        
+        // monster = MD5Loader.process(md5Meshodel, md5AnimModel, new Vector4f(1, 1, 1, 1));
+        // monster.setScale(0.05f);
+        // monster.setRotation(90, 0, 90);
 	}
 
     private void setupLights() {

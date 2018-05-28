@@ -170,7 +170,7 @@ public class HeightMapMesh {
         int argb = getRGB(x, z, width, buffer);
         return this.minY + Math.abs(this.maxY - this.minY) * ((float) argb / (float) MAX_COLOUR);
     }
-    
+
     public static int getRGB(int x, int z, int width, ByteBuffer buffer) {
         byte r = buffer.get(x * 4 + 0 + z * 4 * width);
         byte g = buffer.get(x * 4 + 1 + z * 4 * width);
