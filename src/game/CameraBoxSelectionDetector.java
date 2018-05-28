@@ -7,10 +7,10 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
-import engine.GameItem;
 import engine.graph.Camera;
 import engine.graph.Mesh;
 import engine.graph.MouseInput;
+import engine.items.GameItem;
 
 public class CameraBoxSelectionDetector {
 
@@ -31,7 +31,7 @@ public class CameraBoxSelectionDetector {
         float closestDistance = Float.POSITIVE_INFINITY;
         dir = camera.getViewMatrix().positiveZ(dir).negate();
         for (GameItem gameItem : gameItems) {
-            gameItem.setSelected(false);
+            // gameItem.setSelected(false);
             min.set(gameItem.getPosition());
             max.set(gameItem.getPosition());
             min.sub(gameItem.getScale(), gameItem.getScale(), gameItem.getScale());
@@ -44,6 +44,7 @@ public class CameraBoxSelectionDetector {
             }
         }
         if (selectedGameItem != null) {
+        	/*
         	selectedGameItem.setSelected(true);
             if (mouseInput.isMouseButtonPressed(GLFW.GLFW_MOUSE_BUTTON_1)) {
             	gameItems.remove(selectedGameItem);
@@ -56,6 +57,7 @@ public class CameraBoxSelectionDetector {
         			selectedGameItem.getPosition().z);
             	gameItems.add(newGameItem);
             }
+            */
         }
     }
 }

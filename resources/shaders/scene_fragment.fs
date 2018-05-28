@@ -227,7 +227,7 @@ void main()
     float shadow = calcShadow(mlightviewVertexPos);
     fragColor = clamp(ambientC * vec4(ambientLight, 1) + diffuseSpecularComp * shadow, 0, 1);
 
-    if ( true || fog.activeFog == 1 ) 
+    if ( fog.activeFog == 1 ) 
     {
         fragColor = calcFog(mvVertexPos, fragColor, fog, ambientLight, directionalLight);
     }

@@ -1,6 +1,7 @@
 package game;
 
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +11,6 @@ import org.joml.Vector4f;
 import org.lwjgl.glfw.GLFW;
 import config.Config;
 import de.matthiasmann.twl.utils.PNGDecoder;
-import engine.GameItem;
 import engine.IGameLogic;
 import engine.Scene;
 import engine.SceneLight;
@@ -22,110 +22,111 @@ import engine.graph.InstancedMesh;
 import engine.graph.Material;
 import engine.graph.Mesh;
 import engine.graph.MouseInput;
+import engine.graph.OBJLoader;
 import engine.graph.Renderer;
 import engine.graph.Texture;
 import engine.graph.lights.DirectionalLight;
+import engine.graph.particles.FlowParticleEmitter;
+import engine.graph.particles.Particle;
 import engine.graph.weather.Fog;
+import engine.items.GameItem;
 import engine.items.SkyBox;
 import engine.items.Terrain;
 
 public class Game implements IGameLogic {
 
-    private static final float MOUSE_SENSITIVITY = 0.5f;
+    private static final float MOUSE_SENSITIVITY = 0.2f;
     private final Vector3f cameraInc;
     private final Renderer renderer;
     private final Camera camera;
     private Scene scene;
     private Hud hud;
-    private static final float CAMERA_POS_STEP = 0.1f;
+    private static final float CAMERA_POS_STEP = 0.10f;
     private Terrain terrain;
     private float angleInc;
     private float lightAngle;
+    private FlowParticleEmitter particleEmitter;
 
-    private static final float GRAVITY = -1f;
-    private static final float WORLD_BOTTOM = -20f;
-    private static float SPEED;
-    private static boolean gravityOn = true;
-    private CameraBoxSelectionDetector selectDetectorCamera;
+    public Game() {
+        renderer = new Renderer();
+        camera = new Camera();
+        cameraInc = new Vector3f(0.0f, 0.0f, 0.0f);
+        angleInc = 0;
+        lightAngle = 45;
+    }
 
-    private List<GameItem> gameItems;
+    @Override
+    public void init(Window window) throws Exception {
+        renderer.init(window);
 
-	public Game() {
-		renderer = new Renderer();
-		camera = new Camera();
-		cameraInc = new Vector3f(0, 0, 0);
-		angleInc = 0;
-		lightAngle = 45;
-		gameItems = new ArrayList<GameItem>();
-	}
-
-	@Override
-	public void init(Window window) throws Exception {
-
-		renderer.init(window);		
-		scene = new Scene();
+        scene = new Scene();
 
         float reflectance = 1f;
 
-        int blockScale = 1;
-        int skyBoxScale = 10;
-        int extension = 2;
+        float blockScale = 0.5f;
+        float skyBoxScale = 100.0f;
+        float extension = 2.0f;
 
-        int startX = extension * (-skyBoxScale + blockScale);
-        int startZ = extension * (skyBoxScale - blockScale);
-        int startY = -1;
-        int increment = blockScale * 2;
+        float startx = extension * (-skyBoxScale + blockScale);
+        float startz = extension * (skyBoxScale - blockScale);
+        float starty = -1.0f;
+        float inc = blockScale * 2;
 
-        int posX = startX;
-        int posZ = startZ;
-        int topY = 0;
-        
-        int coordX = 0;
-        int coordY = 0;
-        int coordZ = 0;
+        float posx = startx;
+        float posz = startz;
+        float incy = 0.0f;
 
-        int terrainHeight = 8;
-
-		PNGDecoder decoder = new PNGDecoder(new FileInputStream(Config.RESOURCES_DIR + "/textures/heightmap_64.png"));
+        PNGDecoder decoder = new PNGDecoder(new FileInputStream(Config.RESOURCES_DIR + "/textures/heightmap.png"));
         int height = decoder.getHeight();
         int width = decoder.getWidth();
-        ByteBuffer buffer = ByteBuffer.allocateDirect(4 * width * height);
-        decoder.decode(buffer, width * 4, PNGDecoder.Format.RGBA);
-        buffer.flip();
+        ByteBuffer buf = ByteBuffer.allocateDirect(4 * width * height);
+        decoder.decode(buf, width * 4, PNGDecoder.Format.RGBA);
+        buf.flip();
 
-        InstancedMesh mesh = new InstancedMesh(CubeMesh.positions, CubeMesh.textCoords, CubeMesh.normals, CubeMesh.indices, 10000);
-        Texture texture = new Texture(Config.RESOURCES_DIR + "/textures/grassblock.png");
+        int instances = height * width;
+        Mesh mesh = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", instances);
+        Texture texture = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_textures.png", 2, 1);
         Material material = new Material(texture, reflectance);
         mesh.setMaterial(material);
+        GameItem[] gameItems = new GameItem[instances];
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                GameItem gameItem = new GameItem(mesh);
+                gameItem.setScale(blockScale);
+                int rgb = HeightMapMesh.getRGB(i, j, width, buf);
+                incy = rgb / (10 * 255 * 255);
+                gameItem.setPosition(posx, starty + incy, posz);
+                int textPos = Math.random() > 0.5f ? 0 : 1;
+                gameItem.setTextPos(textPos);
+                gameItems[i * width + j] = gameItem;
 
-        for (int incX = 0; incX < height; incX++) {
-            for (int incZ = 0; incZ < width; incZ++) {
-
-            	int rgb = HeightMapMesh.getRGB(incX, incZ, width, buffer);
-            	topY = -rgb / (255 / terrainHeight * 255 * 255);
-
-                for (int incY = topY; incY < topY + 2; incY++) {
-
-                	GameItem gameItem = new GameItem(mesh);
-                	gameItem.setScale(blockScale);
-
-                	coordX = posX / 2;
-                	coordY = incY;
-                	coordZ = posZ / 2;
-
-                	gameItem.setPosition(coordX, coordY, coordZ);
-
-                	// int textPos = Math.random() > 0.5f ? 0 : 1;
-                	// gameItem.setTextPos(textPos);
-                	gameItems.add(gameItem);
-                }
-
-                posX += increment;
+                posx += inc;
             }
-            posX = startX;
-            posZ -= increment;
+            posx = startx;
+            posz -= inc;
         }
-        scene.setGameItems(gameItems);        
+        scene.setGameItems(gameItems);
+
+        // Particles
+        int maxParticles = 200;
+        Vector3f particleSpeed = new Vector3f(0, 1, 0);
+        particleSpeed.mul(2.5f);
+        long ttl = 4000;
+        long creationPeriodMillis = 300;
+        float range = 0.2f;
+        float scale = 1.0f;
+        Mesh partMesh = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/particle.obj", maxParticles);
+        Texture particleTexture = new Texture(Config.RESOURCES_DIR + "/textures/particle_anim.png", 4, 4);
+        Material partMaterial = new Material(particleTexture, reflectance);
+        partMesh.setMaterial(partMaterial);
+        Particle particle = new Particle(partMesh, particleSpeed, ttl, 100);
+        particle.setScale(scale);
+        particleEmitter = new FlowParticleEmitter(particle, maxParticles, creationPeriodMillis);
+        particleEmitter.setActive(true);
+        particleEmitter.setPositionRndRange(range);
+        particleEmitter.setSpeedRndRange(range);
+        particleEmitter.setAnimRange(10);
+        this.scene.setParticleEmitters(new FlowParticleEmitter[]{particleEmitter});
 
         // Shadows
         scene.setRenderShadows(false);
@@ -142,21 +143,14 @@ public class Game implements IGameLogic {
         // Setup Lights
         setupLights();
 
-        selectDetectorCamera = new CameraBoxSelectionDetector();
+        camera.getPosition().x = 0.25f;
+        camera.getPosition().y = 6.5f;
+        camera.getPosition().z = 6.5f;
+        camera.getRotation().x = 25;
+        camera.getRotation().y = -1;
 
-        camera.setPosition(0, 5, 0);
-        camera.setRotation(0, 0, 0);
-
-        // Create HUD
-        hud = new Hud("");
-
-        // Setup  GameItems
-        // MD5Model md5Meshodel = MD5Model.parse(Config.RESOURCES_DIR + "/models/monster.md5mesh");
-        // MD5AnimModel md5AnimModel = MD5AnimModel.parse(Config.RESOURCES_DIR + "/models/monster.md5anim");        
-        // monster = MD5Loader.process(md5Meshodel, md5AnimModel, new Vector4f(1, 1, 1, 1));
-        // monster.setScale(0.05f);
-        // monster.setRotation(90, 0, 90);
-	}
+        hud = new Hud("DEMO");
+    }
 
     private void setupLights() {
         SceneLight sceneLight = new SceneLight();
@@ -178,34 +172,21 @@ public class Game implements IGameLogic {
     @Override
     public void input(Window window, MouseInput mouseInput) {
         cameraInc.set(0, 0, 0);
-
-        // reset camera position/rotation
-        if (window.isKeyPressed(GLFW.GLFW_KEY_R)) {
-            camera.reset();
-        }
-        if (window.isKeyPressed(GLFW.GLFW_KEY_CAPS_LOCK)) {
-        	SPEED = 1;
-        } else {
-        	SPEED = 5;
-        }
         if (window.isKeyPressed(GLFW.GLFW_KEY_W)) {
-            cameraInc.z = -SPEED;
+            cameraInc.z = -1;
         } else if (window.isKeyPressed(GLFW.GLFW_KEY_S)) {
-            cameraInc.z = SPEED;
+            cameraInc.z = 1;
         }
         if (window.isKeyPressed(GLFW.GLFW_KEY_A)) {
-            cameraInc.x = -SPEED;
+            cameraInc.x = -1;
         } else if (window.isKeyPressed(GLFW.GLFW_KEY_D)) {
-            cameraInc.x = SPEED;
+            cameraInc.x = 1;
         }
-        if (window.isKeyPressed(GLFW.GLFW_KEY_SPACE)) {
-            cameraInc.y = SPEED;
-        } else if (window.isKeyPressed(GLFW.GLFW_KEY_LEFT_SHIFT)) {
-            cameraInc.y = -SPEED;
-        } else if (gravityOn && camera.getPosition().y > WORLD_BOTTOM) {
-        	cameraInc.y = GRAVITY;
+        if (window.isKeyPressed(GLFW.GLFW_KEY_Z)) {
+            cameraInc.y = -1;
+        } else if (window.isKeyPressed(GLFW.GLFW_KEY_X)) {
+            cameraInc.y = 1;
         }
-
         if (window.isKeyPressed(GLFW.GLFW_KEY_LEFT)) {
             angleInc -= 0.05f;
         } else if (window.isKeyPressed(GLFW.GLFW_KEY_RIGHT)) {
@@ -216,34 +197,22 @@ public class Game implements IGameLogic {
     }
 
     @Override
-    public void update(float interval, MouseInput mouseInput, Window window) {
-        // Update camera based on mouse
-        Vector2f rotVec = mouseInput.getDisplVec();
-        camera.moveRotation(rotVec.x * MOUSE_SENSITIVITY, rotVec.y * MOUSE_SENSITIVITY, 0);
-        
-        // GLFW.glfwSetCursorPos(window.getHandle(), window.getWidth() / 2, window.getHeight() / 2);
-
-        // Update HUD compass
-        hud.rotateCompass(camera.getRotation().y);
+    public void update(float interval, MouseInput mouseInput) {
+        // Update camera based on mouse            
+        if (mouseInput.isRightButtonPressed()) {
+            Vector2f rotVec = mouseInput.getDisplVec();
+            camera.moveRotation(rotVec.x * MOUSE_SENSITIVITY, rotVec.y * MOUSE_SENSITIVITY, 0);
+        }
 
         // Update camera position
-        // Vector3f prevPos = new Vector3f(camera.getPosition());
-        Vector3f newPos = camera.calculateNewPosition(cameraInc.x * CAMERA_POS_STEP, cameraInc.y * CAMERA_POS_STEP, cameraInc.z * CAMERA_POS_STEP);
-
-		// Check if there has been a collision
-        // newPosCameraBase - the camera imaginery "tripod base" we use to check the collision. It's bellow the camera "lens"
-		if (camera.inCollision(gameItems, newPos)) {
-			gravityOn = false;
-			// camera.setPosition(prevPos.x, prevPos.y, prevPos.z);
-		} else {
-			camera.movePosition(newPos);
-			gravityOn = true;
-		}
-
-        // Update view matrix
-        camera.updateViewMatrix();
-
-        this.selectDetectorCamera.selectGameItem(gameItems, camera, mouseInput);
+        Vector3f prevPos = new Vector3f(camera.getPosition());
+        camera.movePosition(cameraInc.x * CAMERA_POS_STEP, cameraInc.y * CAMERA_POS_STEP, cameraInc.z * CAMERA_POS_STEP);
+        // Check if there has been a collision. If true, set the y position to
+        // the maximum height
+        float height = terrain != null ? terrain.getHeight(camera.getPosition()) : -Float.MAX_VALUE;
+        if (camera.getPosition().y <= height) {
+            camera.setPosition(prevPos.x, prevPos.y, prevPos.z);
+        }
 
         lightAngle += angleInc;
         if (lightAngle < 0) {
@@ -258,6 +227,8 @@ public class Game implements IGameLogic {
         lightDirection.y = yValue;
         lightDirection.z = zValue;
         lightDirection.normalize();
+
+        particleEmitter.update((long) (interval * 1000));
     }
 
     @Override
@@ -265,16 +236,13 @@ public class Game implements IGameLogic {
         if (hud != null) {
             hud.updateSize(window);
         }
-    	renderer.render(window, camera, scene, hud);
+        renderer.render(window, camera, scene, hud);
     }
 
     @Override
     public void cleanup() {
         renderer.cleanup();
         scene.cleanup();
-        for (GameItem gameItem : gameItems) {
-        	gameItem.getMesh().cleanUp();
-        }
         if (hud != null) {
             hud.cleanup();
         }

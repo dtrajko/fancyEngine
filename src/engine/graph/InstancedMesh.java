@@ -12,7 +12,7 @@ import org.lwjgl.opengl.GL31;
 import org.lwjgl.opengl.GL33;
 import org.lwjgl.system.MemoryUtil;
 
-import engine.GameItem;
+import engine.items.GameItem;
 
 public class InstancedMesh extends Mesh {
 

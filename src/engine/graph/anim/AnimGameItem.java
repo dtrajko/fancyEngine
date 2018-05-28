@@ -3,8 +3,8 @@ package engine.graph.anim;
 import java.util.List;
 import org.joml.Matrix4f;
 
-import engine.GameItem;
 import engine.graph.Mesh;
+import engine.items.GameItem;
 
 public class AnimGameItem extends GameItem {
 

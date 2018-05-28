@@ -2,23 +2,24 @@ package engine.graph;
 
 import org.joml.Vector2d;
 import org.joml.Vector2f;
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.opengl.GL11;
 
 import engine.Window;
 
+import static org.lwjgl.glfw.GLFW.*;
+
 public class MouseInput {
 
-	private long window;
     private final Vector2d previousPos;
+
     private final Vector2d currentPos;
+
     private final Vector2f displVec;
+
     private boolean inWindow = false;
+
     private boolean leftButtonPressed = false;
+
     private boolean rightButtonPressed = false;
-    
-	private boolean keys[];
-	private boolean buttons[];
 
     public MouseInput() {
         previousPos = new Vector2d(-1, -1);
@@ -27,39 +28,21 @@ public class MouseInput {
     }
 
     public void init(Window window) {
-
-    	this.window = window.getHandle();
-    	
-    	GLFW.glfwSetInputMode(window.getHandle(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_HIDDEN);
-
-        GLFW.glfwSetCursorPosCallback(window.getWindowHandle(), (windowHandle, xpos, ypos) -> {
+        glfwSetCursorPosCallback(window.getWindowHandle(), (windowHandle, xpos, ypos) -> {
             currentPos.x = xpos;
             currentPos.y = ypos;
         });
-        GLFW.glfwSetCursorEnterCallback(window.getWindowHandle(), (windowHandle, entered) -> {
+        glfwSetCursorEnterCallback(window.getWindowHandle(), (windowHandle, entered) -> {
             inWindow = entered;
         });
-        GLFW.glfwSetMouseButtonCallback(window.getWindowHandle(), (windowHandle, button, action, mode) -> {
-            leftButtonPressed = button == GLFW.GLFW_MOUSE_BUTTON_1 && action == GLFW.GLFW_PRESS;
-            rightButtonPressed = button == GLFW.GLFW_MOUSE_BUTTON_2 && action == GLFW.GLFW_PRESS;
+        glfwSetMouseButtonCallback(window.getWindowHandle(), (windowHandle, button, action, mode) -> {
+            leftButtonPressed = button == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS;
+            rightButtonPressed = button == GLFW_MOUSE_BUTTON_2 && action == GLFW_PRESS;
         });
-        
-		this.keys = new boolean[GLFW.GLFW_KEY_LAST];
-		for (int k = 32; k < GLFW.GLFW_KEY_LAST; k++) {
-			this.keys[k] = false;
-		}
-		this.buttons = new boolean[GLFW.GLFW_MOUSE_BUTTON_LAST];
-		for (int mb = 0; mb < GLFW.GLFW_MOUSE_BUTTON_LAST; mb++) {
-			this.buttons[mb] = false;
-		}
     }
 
     public Vector2f getDisplVec() {
         return displVec;
-    }
-
-    public Vector2d getCurrentPos() {
-        return currentPos;        
     }
 
     public void input(Window window) {
@@ -88,37 +71,4 @@ public class MouseInput {
     public boolean isRightButtonPressed() {
         return rightButtonPressed;
     }
-
-	public void update(Window window) {
-		for (int k = 32; k < GLFW.GLFW_KEY_LAST; k++) {
-			this.keys[k] = isKeyDown(k);
-		}
-		for (int mb = 0; mb < GLFW.GLFW_MOUSE_BUTTON_LAST; mb++) {
-			this.buttons[mb] = isMouseButtonDown(mb);
-		}
-	}
-
-	public boolean isKeyDown(int key) {
-		return GLFW.glfwGetKey(window, key) == GL11.GL_TRUE;
-	}
-
-	public boolean isKeyPressed(int key) {
-		return isKeyDown(key) && !keys[key];
-	}
-
-	public boolean isKeyReleased(int key) {
-		return !isKeyDown(key) && keys[key];
-	}
-
-	public boolean isMouseButtonDown(int button) {
-		return GLFW.glfwGetMouseButton(window, button) == GL11.GL_TRUE;
-	}
-
-	public boolean isMouseButtonPressed(int button) {
-		return isMouseButtonDown(button) && !buttons[button];
-	}
-
-	public boolean isMouseButtonReleased(int button) {
-		return !isMouseButtonDown(button) && buttons[button];
-	}
 }

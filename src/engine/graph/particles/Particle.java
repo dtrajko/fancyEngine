@@ -2,9 +2,9 @@ package engine.graph.particles;
 
 import org.joml.Vector3f;
 
-import engine.GameItem;
 import engine.graph.Mesh;
 import engine.graph.Texture;
+import engine.items.GameItem;
 
 public class Particle extends GameItem {
 

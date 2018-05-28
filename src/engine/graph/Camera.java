@@ -5,7 +5,7 @@ import java.util.List;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
-import engine.GameItem;
+import engine.items.GameItem;
 
 public class Camera {
 
@@ -96,10 +96,12 @@ public class Camera {
 	public boolean inCollision(List<GameItem> gameItems, Vector3f newPos) {
 		boolean inCollision = false;
 		for (GameItem gameItem : gameItems) {
+			/*
 			if (gameItem.getBoundingBox().contains(newPos.x, newPos.y, newPos.z)) {
 				inCollision = true;
 				break;
 			}
+			*/
 		}
 		return inCollision;
 	}

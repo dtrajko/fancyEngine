@@ -2,6 +2,11 @@ package engine.graph;
 
 public class CubeMesh extends Mesh {
 
+	public CubeMesh(float[] positions, float[] textCoords, float[] normals, int[] indices) {
+		super(positions, textCoords, normals, indices);
+		// TODO Auto-generated constructor stub
+	}
+
 	public static float[] positions = new float[]{
 		// V0
 		-0.5f, 0.5f, 0.5f,
@@ -146,9 +151,4 @@ public class CubeMesh extends Mesh {
 		// Back face
 		4, 6, 7, 5, 4, 7,
     };
-
-	public CubeMesh(float[] positions, float[] colors, float[] normals, int[] indices, Texture texture) {
-		super(positions, colors, normals, indices, texture);
-	}
-
 }

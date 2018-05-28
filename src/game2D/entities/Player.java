@@ -29,7 +29,7 @@ public class Player extends Entity {
 	public Player(Window2D window) {
 		this(new Transform());
 		this.window = window;
-		input = new Input(window.getHandle());
+		input = new Input(window.getWindowHandle());
 	}
 
 	public Player(Transform transform) {

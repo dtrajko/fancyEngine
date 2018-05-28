@@ -9,8 +9,12 @@ import engine.Utils;
 public class OBJLoader {
 
     public static Mesh loadMesh(String fileName) throws Exception {
+        return loadMesh(fileName, 1);
+    }
+
+    public static Mesh loadMesh(String fileName, int instances) throws Exception {
         List<String> lines = Utils.readAllLines(fileName);
-        
+
         List<Vector3f> vertices = new ArrayList<>();
         List<Vector2f> textures = new ArrayList<>();
         List<Vector3f> normals = new ArrayList<>();
@@ -51,13 +55,13 @@ public class OBJLoader {
                     break;
             }
         }
-        return reorderLists(vertices, textures, normals, faces);
+        return reorderLists(vertices, textures, normals, faces, instances);
     }
 
     private static Mesh reorderLists(List<Vector3f> posList, List<Vector2f> textCoordList,
-            List<Vector3f> normList, List<Face> facesList) {
+            List<Vector3f> normList, List<Face> facesList, int instances) throws Exception {
 
-        List<Integer> indices = new ArrayList<Integer>();
+        List<Integer> indices = new ArrayList();
         // Create position array in the order it has been declared
         float[] posArr = new float[posList.size() * 3];
         int i = 0;
@@ -77,17 +81,16 @@ public class OBJLoader {
                         indices, textCoordArr, normArr);
             }
         }
-        int[] indicesArr = new int[indices.size()];
-        indicesArr = indices.stream().mapToInt((Integer v) -> v).toArray();
-        Mesh mesh = null;
-		try {
-			mesh = new Mesh(posArr, textCoordArr, normArr, indicesArr);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        int[] indicesArr = Utils.listIntToArray(indices);
+        Mesh mesh;
+        if (instances > 1) {
+            mesh = new InstancedMesh(posArr, textCoordArr, normArr, indicesArr, instances);
+        } else {
+            mesh = new Mesh(posArr, textCoordArr, normArr, indicesArr);
+        }
         return mesh;
     }
+
 
     private static void processFaceVertex(IdxGroup indices, List<Vector2f> textCoordList,
             List<Vector3f> normList, List<Integer> indicesList,

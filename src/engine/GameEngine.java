@@ -4,48 +4,58 @@ import engine.graph.MouseInput;
 
 public class GameEngine implements Runnable {
 
-	public static final int TARGET_FPS = 75;
+    public static final int TARGET_FPS = 75;
     public static final int TARGET_UPS = 30;
     private final Window window;
-	private final Thread gameLoopThread;
-	private final Timer timer;
-	private final IGameLogic gameLogic;
-	private final MouseInput mouseInput;
+    private final Thread gameLoopThread;
+    private final Timer timer;
+    private final IGameLogic gameLogic;
+    private final MouseInput mouseInput;
+    private double lastFps;
+    private int fps;
+    private String windowTitle;
+    
+    public GameEngine(String windowTitle, boolean vSync, Window.WindowOptions opts, IGameLogic gameLogic) throws Exception {
+        this(windowTitle, 0, 0, vSync, opts, gameLogic);
+    }
 
-	public GameEngine(String windowTitle, int width, int height, boolean vsSync, IGameLogic gameLogic) throws Exception {
-		gameLoopThread = new Thread(this, "GAME_LOOP_THREAD");
-		window = new Window(windowTitle, width, height, vsSync);
-		mouseInput = new MouseInput();
-		this.gameLogic = gameLogic;
-		timer = new Timer();
-	}
+    public GameEngine(String windowTitle, int width, int height, boolean vSync, Window.WindowOptions opts, IGameLogic gameLogic) throws Exception {
+        this.windowTitle = windowTitle;
+        gameLoopThread = new Thread(this, "GAME_LOOP_THREAD");
+        window = new Window(windowTitle, width, height, vSync, opts);
+        mouseInput = new MouseInput();
+        this.gameLogic = gameLogic;
+        timer = new Timer();
+    }
 
-	public void start() {
-		String osName = System.getProperty("os.name");
-		if ( osName.contains("Mac") ) {
-			gameLoopThread.run();
-		} else {
-			gameLoopThread.start();
-		}
-	}
+    public void start() {
+        String osName = System.getProperty("os.name");
+        if ( osName.contains("Mac") ) {
+            gameLoopThread.run();
+        } else {
+            gameLoopThread.start();
+        }
+    }
 
-	@Override
-	public void run() {
-		try {
-			init();
-			gameLoop();
-		} catch (Exception e) {
-			e.printStackTrace();
+    @Override
+    public void run() {
+        try {
+            init();
+            gameLoop();
+        } catch (Exception excp) {
+            excp.printStackTrace();
         } finally {
             cleanup();
         }
-	}
+    }
 
     protected void init() throws Exception {
         window.init();
         timer.init();
         mouseInput.init(window);
         gameLogic.init(window);
+        lastFps = timer.getTime();
+        fps = 0;
     }
 
     protected void gameLoop() {
@@ -67,7 +77,7 @@ public class GameEngine implements Runnable {
 
             render();
 
-            if (!window.isvSync()) {
+            if ( !window.isvSync() ) {
                 sync();
             }
         }
@@ -76,7 +86,7 @@ public class GameEngine implements Runnable {
     protected void cleanup() {
         gameLogic.cleanup();                
     }
-
+    
     private void sync() {
         float loopSlot = 1f / TARGET_FPS;
         double endTime = timer.getLastLoopTime() + loopSlot;
@@ -88,18 +98,32 @@ public class GameEngine implements Runnable {
         }
     }
 
-	protected void input() {
-		mouseInput.input(window);
-		gameLogic.input(window, mouseInput);
-	}
+    protected void input() {
+        mouseInput.input(window);
+        gameLogic.input(window, mouseInput);
+    }
 
-	protected void update(float interval) {
-		gameLogic.update(interval, mouseInput, window);
-		mouseInput.update(window);
-	}
+    protected void update(float interval) {
+        gameLogic.update(interval, mouseInput);
+    }
 
-	protected void render() {
-		gameLogic.render(window);
-		window.update();
-	}
+    protected void render() {
+        if ( window.getWindowOptions().showFps && timer.getLastLoopTime() - lastFps > 1 ) {
+            lastFps = timer.getLastLoopTime();
+            window.setWindowTitle(windowTitle + " - " + fps + " FPS");
+            fps = 0;
+        }
+        fps++;
+        gameLogic.render(window);
+        window.update();
+    }
+
+    public GameEngine() {
+        this.window = null;
+        this.gameLoopThread = null;
+        this.timer = null;
+        this.gameLogic = null;
+        this.mouseInput = null;
+    }
+    
 }

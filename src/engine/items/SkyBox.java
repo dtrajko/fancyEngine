@@ -2,7 +2,6 @@ package engine.items;
 
 import org.joml.Vector4f;
 
-import engine.GameItem;
 import engine.graph.Material;
 import engine.graph.Mesh;
 import engine.graph.OBJLoader;

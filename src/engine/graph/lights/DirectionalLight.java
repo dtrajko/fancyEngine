@@ -4,19 +4,23 @@ import org.joml.Vector3f;
 
 public class DirectionalLight {
     
-	
     private Vector3f color;
-    private Vector3f direction;
-    private float intensity;
-    private OrthoCoords orthoCords;
-    private float shadowPosMult;
 
+    private Vector3f direction;
+
+    private float intensity;
+
+    private OrthoCoords orthoCords;
+    
+    private float shadowPosMult;
+    
     public DirectionalLight(Vector3f color, Vector3f direction, float intensity) {
-    	this.orthoCords = new OrthoCoords();
+        this.orthoCords = new OrthoCoords();
+        this.shadowPosMult = 1;
         this.color = color;
         this.direction = direction;
         this.intensity = intensity;
-        this.shadowPosMult = 1;
+        shadowPosMult = 1;
     }
 
     public DirectionalLight(DirectionalLight light) {
@@ -30,7 +34,7 @@ public class DirectionalLight {
     public void setShadowPosMult(float shadowPosMult) {
         this.shadowPosMult = shadowPosMult;
     }
-
+    
     public OrthoCoords getOrthoCoords(){
         return orthoCords;
     }
@@ -43,7 +47,7 @@ public class DirectionalLight {
         orthoCords.near = near;
         orthoCords.far = far;
     }
-
+    
     public Vector3f getColor() {
         return color;
     }
@@ -67,13 +71,19 @@ public class DirectionalLight {
     public void setIntensity(float intensity) {
         this.intensity = intensity;
     }
-
+    
     public static class OrthoCoords {
+        
         public float left;
+        
         public float right;
+        
         public float bottom;
+        
         public float top;
-        public float near;        
+
+        public float near;
+        
         public float far;
     }
 }

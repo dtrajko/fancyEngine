@@ -2,7 +2,7 @@ package engine.graph.particles;
 
 import java.util.List;
 
-import engine.GameItem;
+import engine.items.GameItem;
 
 public interface IParticleEmitter {
 

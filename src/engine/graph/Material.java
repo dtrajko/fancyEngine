@@ -5,11 +5,17 @@ import org.joml.Vector4f;
 public class Material {
 
     private static final Vector4f DEFAULT_COLOUR = new Vector4f(1.0f, 1.0f, 1.0f, 1.0f);
+
     private Vector4f ambientColour;
+
     private Vector4f diffuseColour;
+
     private Vector4f specularColour;
+    
     private float reflectance;
+
     private Texture texture;
+    
     private Texture normalMap;
 
     public Material() {
@@ -40,7 +46,7 @@ public class Material {
         this.reflectance = reflectance;
     }
 
-    public Vector4f getAmbientColor() {
+    public Vector4f getAmbientColour() {
         return ambientColour;
     }
 
@@ -48,7 +54,7 @@ public class Material {
         this.ambientColour = ambientColour;
     }
 
-    public Vector4f getDiffuseColor() {
+    public Vector4f getDiffuseColour() {
         return diffuseColour;
     }
 
@@ -56,7 +62,7 @@ public class Material {
         this.diffuseColour = diffuseColour;
     }
 
-    public Vector4f getSpecularColor() {
+    public Vector4f getSpecularColour() {
         return specularColour;
     }
 
@@ -83,8 +89,17 @@ public class Material {
     public void setTexture(Texture texture) {
         this.texture = texture;
     }
+    
+    public boolean hasNormalMap() {
+        return this.normalMap != null;
+    }
+
+    public Texture getNormalMap() {
+        return normalMap;
+    }
 
     public void setNormalMap(Texture normalMap) {
         this.normalMap = normalMap;
     }
 }
+

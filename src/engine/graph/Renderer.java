@@ -11,7 +11,6 @@ import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL30;
 
 import config.Config;
-import engine.GameItem;
 import engine.IHud;
 import engine.Scene;
 import engine.SceneLight;
@@ -22,6 +21,7 @@ import engine.graph.anim.AnimatedFrame;
 import engine.graph.lights.DirectionalLight;
 import engine.graph.lights.PointLight;
 import engine.graph.lights.SpotLight;
+import engine.items.GameItem;
 import game.Hud;
 
 public class Renderer {
@@ -167,7 +167,7 @@ public class Renderer {
         sceneShaderProgram.createUniform("modelViewMatrix");
         sceneShaderProgram.createUniform("texture_sampler");
         // Create uniform for material
-        sceneShaderProgram.createTextureUniform("material");
+        // sceneShaderProgram.createTextureUniform("material");
     }
 
 	public void render(Window window, Camera camera, List<GameItem> gameItems, Hud hud) {
@@ -177,9 +177,6 @@ public class Renderer {
             window.setResized(false);
         }
         shaderProgram.bind();
-
-        // Update projection matrix once per render cycle
-        window.updateProjectionMatrix(); // do we need this?
 
         // Update projection Matrix
         Matrix4f projectionMatrix = transformation.getProjectionMatrix(FOV, window.getWidth(), window.getHeight(), Z_NEAR, Z_FAR);
@@ -197,7 +194,7 @@ public class Renderer {
         	// Set model view matrix for this item
         	Matrix4f modelViewMatrix = transformation.getModelViewMatrix(gameItem, viewMatrix);
         	shaderProgram.setUniform("modelViewMatrix", modelViewMatrix);
-        	shaderProgram.setUniform("selectedNonInstanced", gameItem.isSelected() ? 1.0f : 0.0f);
+        	// shaderProgram.setUniform("selectedNonInstanced", gameItem.isSelected() ? 1.0f : 0.0f);
 
             // Render the mesh for this game item
             // shaderProgram.setUniform("material", mesh.getMaterial());
@@ -258,7 +255,7 @@ public class Renderer {
             // Set model view matrix for this item
             Matrix4f modelViewMatrix = transformation.getModelViewMatrix(gameItem, viewMatrix);
             shaderProgram.setUniform("modelViewMatrix", modelViewMatrix);
-            shaderProgram.setUniform("selectedNonInstanced", gameItem.isSelected() ? 1.0f : 0.0f);
+            // shaderProgram.setUniform("selectedNonInstanced", gameItem.isSelected() ? 1.0f : 0.0f);
 
             // Render the mesh for this game item
             shaderProgram.setUniform("material", mesh.getMaterial());
@@ -378,7 +375,7 @@ public class Renderer {
             // Set ortohtaphic and model matrix for this HUD item
             Matrix4f projModelMatrix = transformation.buildOrtoProjModelMatrix(gameItem, ortho);
             hudShaderProgram.setUniform("projModelMatrix", projModelMatrix);
-            hudShaderProgram.setUniform("colour", gameItem.getMesh().getMaterial().getAmbientColor());
+            // hudShaderProgram.setUniform("colour", gameItem.getMesh().getMaterial().getAmbientColor());
             hudShaderProgram.setUniform("hasTexture", gameItem.getMesh().getMaterial().isTextured() ? 1 : 0);
 
             // Render the mesh for this HUD item

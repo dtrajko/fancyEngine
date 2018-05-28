@@ -5,6 +5,7 @@ import java.util.List;
 import engine.graph.FontTexture;
 import engine.graph.Material;
 import engine.graph.Mesh;
+import engine.items.GameItem;
 
 public class TextItem extends GameItem {
 

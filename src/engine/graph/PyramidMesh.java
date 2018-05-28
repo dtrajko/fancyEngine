@@ -2,6 +2,11 @@ package engine.graph;
 
 public class PyramidMesh extends Mesh {
 
+	public PyramidMesh(float[] positions, float[] textCoords, float[] normals, int[] indices) {
+		super(positions, textCoords, normals, indices);
+		// TODO Auto-generated constructor stub
+	}
+
 	public static float[] positions = new float[]{
 		-0.5f, -0.5f, -0.5f,
 		 0.5f, -0.5f, -0.5f,
@@ -29,8 +34,4 @@ public class PyramidMesh extends Mesh {
 		0, 1, 2,
 		2, 3, 0,
     };
-
-	public PyramidMesh(float[] positions, float[] colors, float[] normals, int[] indices, Texture texture) {
-		super(positions, colors, normals, indices, texture);
-	}
 }

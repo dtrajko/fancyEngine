@@ -5,7 +5,6 @@ import java.nio.ByteBuffer;
 import org.joml.Vector3f;
 
 import de.matthiasmann.twl.utils.PNGDecoder;
-import engine.GameItem;
 import engine.graph.HeightMapMesh;
 
 public class Terrain {

@@ -52,7 +52,7 @@ public class Game2D extends Game {
 	public void input(Window window, MouseInput mouseInput) {}
 
 	@Override
-	public void update(float interval, MouseInput mouseInput, Window window) {
+	public void update(float interval, MouseInput mouseInput) {
 		if (switchLevel == true) {
 			beginLevel();
 			switchLevel = false;
