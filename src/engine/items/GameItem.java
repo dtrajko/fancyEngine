@@ -99,10 +99,10 @@ public class GameItem {
     }
 
     public void setBoundingBox() {
-		float topLeftX = position.x + scale;
-		float topLeftY = position.y + scale;
-		float topLeftZ = position.z + scale;
-		boundingBox = new Box3D(topLeftX, topLeftY, topLeftZ, scale, scale, scale);    		
+		float topLeftX = position.x - scale;
+		float topLeftY = position.y - scale;
+		float topLeftZ = position.z - scale;
+		boundingBox = new Box3D(topLeftX, topLeftY, topLeftZ, scale * 2);
     }
     
     public Box3D getBoundingBox() {

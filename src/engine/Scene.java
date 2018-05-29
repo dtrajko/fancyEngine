@@ -84,38 +84,22 @@ public class Scene {
     }
 
 	public void appendGameItem(GameItem gameItem) {
-        Mesh[] meshes = gameItem.getMeshes();
-        for (Mesh mesh : meshes) {
-            boolean instancedMesh = mesh instanceof InstancedMesh;
-            List<GameItem> list = instancedMesh ? instancedMeshMap.get(mesh) : meshMap.get(mesh);
-            if (list == null) {
-                list = new ArrayList<>();
-                if (instancedMesh) {
-                    instancedMeshMap.put((InstancedMesh)mesh, list);
-                } else {
-                    meshMap.put(mesh, list);
-                }
-            }
-            list.add(gameItem);
+        Mesh mesh = gameItem.getMeshes()[0];
+        List<GameItem> list = meshMap.get(mesh);
+        if (list == null) {
+        	list = new ArrayList<GameItem>();
         }
+        list.add(gameItem);
     }
 
 	public void removeGameItem(GameItem gameItem) {
-        Mesh[] meshes = gameItem.getMeshes();
-        for (Mesh mesh : meshes) {
-            boolean instancedMesh = mesh instanceof InstancedMesh;
-            List<GameItem> list = instancedMesh ? instancedMeshMap.get(mesh) : meshMap.get(mesh);
-            if (list == null) {
-                list = new ArrayList<>();
-                if (instancedMesh) {
-                    instancedMeshMap.remove((InstancedMesh)mesh, list);
-                } else {
-                    meshMap.remove(mesh, list);
-                }
-            }
-            list.remove(gameItem);
+        Mesh mesh = gameItem.getMeshes()[0];
+        List<GameItem> list = meshMap.get(mesh);
+        if (list == null) {
+        	list = new ArrayList<GameItem>();
         }
-	}
+        list.remove(gameItem);
+    }
 
     public void cleanup() {
         for (Mesh mesh : meshMap.keySet()) {

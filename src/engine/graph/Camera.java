@@ -1,10 +1,12 @@
 package engine.graph;
 
 import java.util.List;
+import java.util.Map;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
+import engine.Scene;
 import engine.items.GameItem;
 
 public class Camera {
@@ -12,7 +14,7 @@ public class Camera {
 	private final Vector3f position;
 	private final Vector3f rotation;
 	private Matrix4f viewMatrix;
-	public static final float HEIGHT = 0.5f;
+	public static final float HEIGHT = 1.0f;
 
 	public Camera() {
 		position = new Vector3f(0, 0, 0);
@@ -93,14 +95,17 @@ public class Camera {
 		rotation.z += offsetZ;
 	}
 
-	public boolean inCollision(List<GameItem> gameItems, Vector3f newPos) {
+	public boolean inCollision(Scene scene, Vector3f newPos) {
 		boolean inCollision = false;
-		for (GameItem gameItem : gameItems) {
-			if (gameItem.getBoundingBox().contains(newPos.x, newPos.y, newPos.z)) {
-				inCollision = true;
-				break;
-			}
-		}
+        Map<Mesh, List<GameItem>> mapMeshes = scene.getGameMeshes();
+        for (Mesh mesh : mapMeshes.keySet()) {
+    		for (GameItem gameItem : mapMeshes.get(mesh)) {
+    			if (gameItem.getBoundingBox().contains(newPos.x, newPos.y, newPos.z)) {
+    				inCollision = true;
+    				break;
+    			}
+    		}        	
+        }
 		return inCollision;
 	}
 }

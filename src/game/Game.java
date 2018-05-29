@@ -50,7 +50,6 @@ public class Game implements IGameLogic {
     private static float SPEED;
     private static boolean gravityOn = true;
     private CameraBoxSelectionDetector selectDetectorCamera;
-    private List<GameItem> gameItems;
 
     public Game() {
         renderer = new Renderer();
@@ -58,7 +57,6 @@ public class Game implements IGameLogic {
         cameraInc = new Vector3f(0.0f, 0.0f, 0.0f);
         angleInc = 0;
         lightAngle = 45;
-        gameItems = new ArrayList<GameItem>();
     }
 
     @Override
@@ -74,10 +72,9 @@ public class Game implements IGameLogic {
         decoder.decode(buffer, width * 4, PNGDecoder.Format.RGBA);
         buffer.flip();
 
-        int instances = height * width;
-        Mesh mesh = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", instances);
+        Mesh mesh = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj");
         Texture texture = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_textures.png", 2, 1);
-
+        
         float reflectance = 1f;
         Material material = new Material(texture, reflectance);
         mesh.setMaterial(material);
@@ -92,26 +89,29 @@ public class Game implements IGameLogic {
         int increment = blockScale * 2;
 
         int posX = startX;
+        int posY = 0;
         int posZ = startZ;
-        int topY = 0;
         
-        int coordX = 0;
-        int coordY = 0;
-        int coordZ = 0;
+        int topY = 0;
 
         int terrainHeight = 8;
         
+        List<GameItem> gameItems = new ArrayList<GameItem>();
+
         for (int incX = 0; incX < height; incX++) {
             for (int incZ = 0; incZ < width; incZ++) {
             	int rgb = HeightMapMesh.getRGB(incX, incZ, width, buffer);
             	topY = -rgb / (255 / terrainHeight * 255 * 255);
-                for (int incY = topY; incY < topY + 2; incY++) {
+            	topY = topY - topY % increment;
+ 
+            	for (int incY = 0; incY < 2; incY++) {
+            		
+            		posY = topY + incY * increment;
+
                 	GameItem gameItem = new GameItem(mesh);
                 	gameItem.setScale(blockScale);
-                	coordX = posX / 2;
-                	coordY = incY;
-                	coordZ = posZ / 2;
-                	gameItem.setPosition(coordX, coordY, coordZ);
+                	gameItem.setPosition(posX, posY, posZ);                	
+                	gameItem.setBoundingBox();
                 	// int textPos = Math.random() > 0.5f ? 0 : 1;
                 	// gameItem.setTextPos(textPos);
                 	gameItems.add(gameItem);
@@ -121,7 +121,9 @@ public class Game implements IGameLogic {
             posX = startX;
             posZ -= increment;
         }
+
         scene.setGameItems(gameItems);
+        gameItems.clear();
 
         // Particles
         int maxParticles = 200;
@@ -237,15 +239,18 @@ public class Game implements IGameLogic {
         Vector3f newPos = camera.calculateNewPosition(cameraInc.x * CAMERA_POS_STEP, cameraInc.y * CAMERA_POS_STEP, cameraInc.z * CAMERA_POS_STEP);
 
 		// Check if there has been a collision
-        // newPosCameraBase - the camera imaginery "tripod base" we use to check the collision. It's bellow the camera "lens"
-		if (camera.inCollision(gameItems, newPos)) {
+        // newPosCameraBase - the camera imaginary "tripod base" we use to check the collision. It's bellow the camera "lens"
+		if (camera.inCollision(scene, newPos)) {
 			gravityOn = false;
 		} else {
 			camera.movePosition(newPos);
 			gravityOn = true;
 		}
 
-        selectDetectorCamera.selectGameItem(gameItems, camera, mouseInput);
+		// Update view matrix
+		camera.updateViewMatrix();
+
+        selectDetectorCamera.selectGameItem(scene, camera, mouseInput);
 
         lightAngle += angleInc;
         if (lightAngle < 0) {
@@ -276,9 +281,6 @@ public class Game implements IGameLogic {
     public void cleanup() {
         renderer.cleanup();
         scene.cleanup();
-        for (GameItem gameItem : gameItems) {
-        	gameItem.getMesh().cleanUp();
-        }
         if (hud != null) {
             hud.cleanup();
         }

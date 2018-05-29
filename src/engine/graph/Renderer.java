@@ -113,7 +113,6 @@ public class Renderer {
         sceneShaderProgram.createUniform("projectionMatrix");
         sceneShaderProgram.createUniform("modelViewNonInstancedMatrix");
         sceneShaderProgram.createUniform("texture_sampler");
-        sceneShaderProgram.createUniform("selectedNonInstanced");
         sceneShaderProgram.createUniform("normalMap");
         // Create uniform for material
         sceneShaderProgram.createMaterialUniform("material");
@@ -137,6 +136,8 @@ public class Renderer {
         sceneShaderProgram.createUniform("isInstanced");
         sceneShaderProgram.createUniform("numCols");
         sceneShaderProgram.createUniform("numRows");
+
+        sceneShaderProgram.createUniform("selectedNonInstanced");
     }
 
     private void setupHudShader() throws Exception {
@@ -277,7 +278,7 @@ public class Renderer {
             window.setResized(false);
         }
 
-        // Update projection and view atrices once per render cycle
+        // Update projection and view matrices once per render cycle
         transformation.updateProjectionMatrix(FOV, window.getWidth(), window.getHeight(), Z_NEAR, Z_FAR);
         transformation.updateViewMatrix(camera);
 
@@ -406,7 +407,7 @@ public class Renderer {
         sceneShaderProgram.setUniform("renderShadow", scene.isRenderShadows() ? 1 : 0);
 
         renderNonInstancedMeshes(scene, sceneShaderProgram, viewMatrix, lightViewMatrix);
-        renderInstancedMeshes(scene, sceneShaderProgram, viewMatrix, lightViewMatrix);
+        // renderInstancedMeshes(scene, sceneShaderProgram, viewMatrix, lightViewMatrix);
 
         sceneShaderProgram.unbind();
     }
@@ -439,12 +440,14 @@ public class Renderer {
                 }
                 Matrix4f modelLightViewMatrix = transformation.buildModelLightViewMatrix(modelMatrix, lightViewMatrix);
                 sceneShaderProgram.setUniform("modelLightViewNonInstancedMatrix", modelLightViewMatrix);
+                
+                sceneShaderProgram.setUniform("selectedNonInstanced", gameItem.isSelected() ? 1.0f : 0.0f);
 
                 if (gameItem instanceof AnimGameItem) {
                     AnimGameItem animGameItem = (AnimGameItem) gameItem;
                     AnimatedFrame frame = animGameItem.getCurrentFrame();
                     shader.setUniform("jointsMatrix", frame.getJointMatrices());
-                }
+                }                
             }
             );
         }
