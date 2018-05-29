@@ -84,7 +84,7 @@ public class Scene {
     }
 
 	public void appendGameItem(GameItem gameItem) {
-        Mesh mesh = gameItem.getMeshes()[0];
+        Mesh mesh = gameItem.getMesh();
         List<GameItem> list = meshMap.get(mesh);
         if (list == null) {
         	list = new ArrayList<GameItem>();
@@ -93,7 +93,7 @@ public class Scene {
     }
 
 	public void removeGameItem(GameItem gameItem) {
-        Mesh mesh = gameItem.getMeshes()[0];
+		Mesh mesh = gameItem.getMesh();
         List<GameItem> list = meshMap.get(mesh);
         if (list == null) {
         	list = new ArrayList<GameItem>();
