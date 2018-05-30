@@ -22,15 +22,18 @@ public class MouseInput {
     private boolean buttons[];
     private long window;
 
-    public MouseInput() {
-        previousPos = new Vector2d(-1, -1);
+    public MouseInput(Window window) {
+        previousPos = new Vector2d(0, 0);
         currentPos = new Vector2d(0, 0);
         displVec = new Vector2f();
     }
 
     public void init(Window window) {
-    	
+
     	this.window = window.getWindowHandle();
+
+    	GLFW.glfwSetInputMode(this.window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    	GLFW.glfwSetCursorPos(this.window, window.getWidth() / 2, window.getHeight() / 2);
 
         glfwSetCursorPosCallback(window.getWindowHandle(), (windowHandle, xpos, ypos) -> {
             currentPos.x = xpos;
@@ -61,7 +64,8 @@ public class MouseInput {
     public void input(Window window) {
         displVec.x = 0;
         displVec.y = 0;
-        if (previousPos.x > 0 && previousPos.y > 0 && inWindow) {
+        // if (previousPos.x > 0 && previousPos.y > 0 && inWindow) {
+        if (previousPos.x != 0 && previousPos.y != 0) {
             double deltax = currentPos.x - previousPos.x;
             double deltay = currentPos.y - previousPos.y;
             boolean rotateX = deltax != 0;

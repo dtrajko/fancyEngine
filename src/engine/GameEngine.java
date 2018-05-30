@@ -1,5 +1,7 @@
 package engine;
 
+import org.lwjgl.glfw.GLFW;
+
 import engine.graph.MouseInput;
 
 public class GameEngine implements Runnable {
@@ -23,9 +25,9 @@ public class GameEngine implements Runnable {
         this.windowTitle = windowTitle;
         gameLoopThread = new Thread(this, "GAME_LOOP_THREAD");
         window = new Window(windowTitle, width, height, vSync, opts);
-        mouseInput = new MouseInput();
+        mouseInput = new MouseInput(window);
         this.gameLogic = gameLogic;
-        timer = new Timer();
+        timer = new Timer();        
     }
 
     public void start() {

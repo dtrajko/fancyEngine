@@ -33,23 +33,24 @@ import engine.items.Terrain;
 
 public class Game implements IGameLogic {
 
-    private static final float MOUSE_SENSITIVITY = 0.5f;
+    private static final float MOUSE_SENSITIVITY = 0.2f;
     private final Vector3f cameraInc;
     private final Renderer renderer;
     private final Camera camera;
     private Scene scene;
     private Hud hud;
-    private static final float CAMERA_POS_STEP = 0.10f;
+    private static final float CAMERA_POS_STEP = 0.1f;
     private Terrain terrain;
     private float angleInc;
     private float lightAngle;
     private FlowParticleEmitter particleEmitter;
     
-    private static final float GRAVITY = -1f;
+    private static final float GRAVITY = -2f;
     private static final float WORLD_BOTTOM = -20f;
     private static float SPEED;
     private static boolean gravityOn = true;
     private CameraBoxSelectionDetector selectDetectorCamera;
+    private Window window;
 
     public Game() {
         renderer = new Renderer();
@@ -62,7 +63,7 @@ public class Game implements IGameLogic {
     @Override
     public void init(Window window) throws Exception {
         renderer.init(window);
-
+        this.window = window;
         scene = new Scene();
 
         PNGDecoder decoder = new PNGDecoder(new FileInputStream(Config.RESOURCES_DIR + "/textures/heightmap_64.png"));
@@ -161,11 +162,10 @@ public class Game implements IGameLogic {
         // Setup Lights
         setupLights();        
 
-        camera.getPosition().x = 0.25f;
-        camera.getPosition().y = 6.5f;
-        camera.getPosition().z = 6.5f;
-        camera.getRotation().x = 25;
-        camera.getRotation().y = -1;
+        camera.getPosition().x = 40.0f;
+        camera.getPosition().y = 20.0f;
+        camera.getPosition().z = -40.0f;
+        camera.setRotation(0, 0, 0);
 
         selectDetectorCamera = new CameraBoxSelectionDetector();
 
@@ -226,14 +226,15 @@ public class Game implements IGameLogic {
             angleInc += 0.05f;
         } else {
             angleInc = 0;
-        }
+        }        
     }
 
     @Override
     public void update(float interval, MouseInput mouseInput) {
+
     	// Update camera based on mouse
         Vector2f rotVec = mouseInput.getDisplVec();
-        camera.moveRotation(rotVec.x * MOUSE_SENSITIVITY, rotVec.y * MOUSE_SENSITIVITY, 0);
+        camera.moveRotation(rotVec.x * MOUSE_SENSITIVITY, rotVec.y * MOUSE_SENSITIVITY, 0);        	
 
         // Update camera position
         Vector3f newPos = camera.calculateNewPosition(cameraInc.x * CAMERA_POS_STEP, cameraInc.y * CAMERA_POS_STEP, cameraInc.z * CAMERA_POS_STEP);
