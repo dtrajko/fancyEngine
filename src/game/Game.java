@@ -152,7 +152,7 @@ public class Game implements IGameLogic {
 
         // Fog
         Vector3f fogColour = new Vector3f(0.5f, 0.5f, 0.5f);
-        scene.setFog(new Fog(true, fogColour, 0.02f));
+        scene.setFog(new Fog(true, fogColour, 0.01f));
 
         // Setup  SkyBox
         SkyBox skyBox = new SkyBox(Config.RESOURCES_DIR + "/models/skybox.obj", new Vector4f(0.65f, 0.65f, 0.65f, 1.0f));
