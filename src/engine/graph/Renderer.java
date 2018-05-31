@@ -22,6 +22,7 @@ import engine.graph.lights.DirectionalLight;
 import engine.graph.lights.PointLight;
 import engine.graph.lights.SpotLight;
 import engine.items.GameItem;
+import engine.items.SkyBox;
 import game.Hud;
 
 public class Renderer {
@@ -56,7 +57,7 @@ public class Renderer {
         shadowMap = new ShadowMap();
 
         setupDepthShader();
-        // setupSkyBoxShader();
+        setupSkyBoxShader();
         setupSceneShader();
         // setupParticlesShader();
         setupHudShader();
@@ -283,7 +284,7 @@ public class Renderer {
         transformation.updateViewMatrix(camera);
 
         renderScene(window, camera, scene);
-        // renderSkyBox(window, camera, scene);
+        renderSkyBox(window, camera, scene);
         // renderParticles(window, camera, scene);
         renderHud(window, hud);
     }
@@ -316,6 +317,39 @@ public class Renderer {
             // Unbind
             depthShaderProgram.unbind();
             GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
+        }
+    }
+
+    private void renderSkyBox(Window window, Camera camera, Scene scene) {
+        SkyBox skyBox = scene.getSkyBox();
+        if (skyBox != null) {
+            skyBoxShaderProgram.bind();
+
+            skyBoxShaderProgram.setUniform("texture_sampler", 0);
+
+            Matrix4f projectionMatrix = transformation.getProjectionMatrix();
+            skyBoxShaderProgram.setUniform("projectionMatrix", projectionMatrix);
+            Matrix4f viewMatrix = transformation.getViewMatrix();
+            float m30 = viewMatrix.m30();
+            viewMatrix.m30(0);
+            float m31 = viewMatrix.m31();
+            viewMatrix.m31(0);
+            float m32 = viewMatrix.m32();
+            viewMatrix.m32(0);
+
+            Mesh mesh = skyBox.getMesh();
+            Matrix4f modelViewMatrix = transformation.buildModelViewMatrix(skyBox, viewMatrix);
+            skyBoxShaderProgram.setUniform("modelViewMatrix", modelViewMatrix);
+            skyBoxShaderProgram.setUniform("ambientLight", scene.getSceneLight().getSkyBoxLight());
+            skyBoxShaderProgram.setUniform("colour", mesh.getMaterial().getAmbientColour());
+            skyBoxShaderProgram.setUniform("hasTexture", mesh.getMaterial().isTextured() ? 1 : 0);
+
+            mesh.render();
+
+            viewMatrix.m30(m30);
+            viewMatrix.m31(m31);
+            viewMatrix.m32(m32);
+            skyBoxShaderProgram.unbind();
         }
     }
 

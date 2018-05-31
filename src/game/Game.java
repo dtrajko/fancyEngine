@@ -81,7 +81,7 @@ public class Game implements IGameLogic {
         mesh.setMaterial(material);
 
         int blockScale = 1;
-        int skyBoxScale = 10;
+        int skyBoxScale = 60;
         int extension = 2;
 
         int startX = extension * (-skyBoxScale + blockScale);
@@ -155,16 +155,18 @@ public class Game implements IGameLogic {
         scene.setFog(new Fog(true, fogColour, 0.01f));
 
         // Setup  SkyBox
-        SkyBox skyBox = new SkyBox(Config.RESOURCES_DIR + "/models/skybox.obj", new Vector4f(0.65f, 0.65f, 0.65f, 1.0f));
+        // SkyBox skyBox = new SkyBox(Config.RESOURCES_DIR + "/models/skybox.obj", new Vector4f(0.65f, 0.65f, 0.65f, 1.0f));
+        SkyBox skyBox = new SkyBox(Config.RESOURCES_DIR + "/models/skybox.obj", Config.RESOURCES_DIR + "/textures/skybox_minecraft.png");
+        
         skyBox.setScale(skyBoxScale);
         scene.setSkyBox(skyBox);
 
         // Setup Lights
         setupLights();        
 
-        camera.getPosition().x = 40.0f;
+        camera.getPosition().x = -60.0f;
         camera.getPosition().y = 20.0f;
-        camera.getPosition().z = -40.0f;
+        camera.getPosition().z = 60.0f;
         camera.setRotation(0, 0, 0);
 
         selectDetectorCamera = new CameraBoxSelectionDetector();
