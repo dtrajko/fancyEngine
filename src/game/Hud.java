@@ -30,21 +30,6 @@ public class Hud implements IHud {
         this.statusTextItem = new TextItem(statusText, fontTexture);
         this.statusTextItem.getMesh().getMaterial().setAmbientColour(new Vector4f(0.8f, 0.8f, 1.0f, 10f));
 
-        // Create bullseye
-        /*
-        Mesh bullseyeMesh = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/quad.obj");
-        Texture bullseyeTexture = new Texture(Config.RESOURCES_DIR +  "/textures/bullseye.png", 1, 1);
-        float reflectance = 1f;
-        Material bullseyeMaterial = new Material(bullseyeTexture, reflectance);
-        bullseyeMaterial.setAmbientColour(new Vector4f(1, 0, 0, 1));
-        bullseyeMesh.setMaterial(bullseyeMaterial);
-        GameItem bullseye = new GameItem(bullseyeMesh);
-        bullseye.setScale(10.0f);
-        // Rotate to transform it to screen coordinates
-        bullseye.setRotation(new Quaternionf(0f, 0f, 180f, 1f));
-        bullseye.setPosition(5, 5, 0);
-        */
-
         Font bullseyeFont = new Font("Arial", Font.PLAIN, 60);
         FontTexture bullseyeFontTexture = new FontTexture(bullseyeFont, CHARSET);
         bullseyeTextItem = new TextItem("+", bullseyeFontTexture);
