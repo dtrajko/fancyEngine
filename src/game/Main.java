@@ -13,6 +13,7 @@ public class Main {
             Window.WindowOptions opts = new Window.WindowOptions();
             opts.cullFace = true;
             opts.showFps = true;
+            opts.compatibleProfile = false;
             GameEngine gameEng = new GameEngine("Java / LWJGL3 / lwjglbook", vSync, opts, gameLogic);
             gameEng.start();
         } catch (Exception excp) {

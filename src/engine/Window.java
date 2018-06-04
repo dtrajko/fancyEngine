@@ -7,21 +7,22 @@ import org.lwjgl.opengl.GL;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
+import org.joml.Matrix4f;
+
 public class Window {
 
+    private static final float FOV = (float) Math.toRadians(60.0f);
+    private static final float Z_NEAR = 0.01f;
+    private static final float Z_FAR = 1000.f;
+
     private final String title;
-
     private int width;
-
     private int height;
-
     private long windowHandle;
-
     private boolean resized;
-
     private boolean vSync;
-
     private WindowOptions opts;
+    private Matrix4f projectionMatrix;
 
     public Window(String title, int width, int height, boolean vSync, WindowOptions opts) {
         this.title = title;
@@ -30,6 +31,7 @@ public class Window {
         this.vSync = vSync;
         this.resized = false;
         this.opts = opts;
+        projectionMatrix = new Matrix4f();
     }
 
     public void init() {
@@ -49,6 +51,13 @@ public class Window {
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+
+        if (opts.compatibleProfile) {
+            glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
+        } else {
+            glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+            glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+        }
 
         boolean maximized = false;
         // If no size has been specified set it to maximized state
@@ -121,6 +130,11 @@ public class Window {
         }
     }
 
+    public Matrix4f updateProjectionMatrix() {
+        float aspectRatio = (float)width / (float)height;        
+        return projectionMatrix.setPerspective(FOV, aspectRatio, Z_NEAR, Z_FAR);
+    }
+
     public long getWindowHandle() {
         return windowHandle;
     }
@@ -183,11 +197,9 @@ public class Window {
     }
 
     public static class WindowOptions {
-
         public boolean cullFace;
-
         public boolean showTriangles;
-
         public boolean showFps;
+        public boolean compatibleProfile;
     }
 }

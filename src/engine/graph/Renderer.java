@@ -55,7 +55,6 @@ public class Renderer {
 
     public void init(Window window) throws Exception {
         shadowMap = new ShadowMap();
-
         setupDepthShader();
         setupSkyBoxShader();
         setupSceneShader();
@@ -279,6 +278,9 @@ public class Renderer {
             window.setResized(false);
         }
 
+        // Update projection matrix once per render cycle
+        window.updateProjectionMatrix();
+
         // Update projection and view matrices once per render cycle
         transformation.updateProjectionMatrix(FOV, window.getWidth(), window.getHeight(), Z_NEAR, Z_FAR);
         transformation.updateViewMatrix(camera);
@@ -287,6 +289,34 @@ public class Renderer {
         renderSkyBox(window, camera, scene);
         // renderParticles(window, camera, scene);
         renderHud(window, hud);
+        // renderCrossHair(window);
+    }
+
+    private void renderCrossHair(Window window) {
+    	if (window.getWindowOptions().compatibleProfile) {
+            GL11.glPushMatrix();
+            GL11.glLoadIdentity();
+
+            float inc = 0.05f;
+            GL11.glLineWidth(2.0f);
+
+            GL11.glBegin(GL11.GL_LINES);
+
+            GL11.glColor3f(1.0f, 1.0f, 1.0f);
+
+            // Horizontal line
+            GL11.glVertex3f(-inc, 0.0f, 0.0f);
+            GL11.glVertex3f(+inc, 0.0f, 0.0f);
+            GL11.glEnd();
+
+            // Vertical line
+            GL11.glBegin(GL11.GL_LINES);
+            GL11.glVertex3f(0.0f, -inc, 0.0f);
+            GL11.glVertex3f(0.0f, +inc, 0.0f);
+            GL11.glEnd();
+
+            GL11.glPopMatrix();
+        }
     }
 
     private void renderDepthMap(Window window, Camera camera, Scene scene) {
@@ -403,22 +433,24 @@ public class Renderer {
     }
 
     private void renderHud(Window window, IHud hud) {
-        hudShaderProgram.bind();
+        if (hud != null) {
+            hudShaderProgram.bind();
 
-        Matrix4f ortho = transformation.getOrthoProjectionMatrix(0, window.getWidth(), window.getHeight(), 0);
-        for (GameItem gameItem : hud.getGameItems()) {
-            Mesh mesh = gameItem.getMesh();
-            // Set ortohtaphic and model matrix for this HUD item
-            Matrix4f projModelMatrix = transformation.buildOrtoProjModelMatrix(gameItem, ortho);
-            hudShaderProgram.setUniform("projModelMatrix", projModelMatrix);
-            // hudShaderProgram.setUniform("colour", gameItem.getMesh().getMaterial().getAmbientColor());
-            hudShaderProgram.setUniform("hasTexture", gameItem.getMesh().getMaterial().isTextured() ? 1 : 0);
+            Matrix4f ortho = transformation.getOrtho2DProjectionMatrix(0, window.getWidth(), window.getHeight(), 0);
+            for (GameItem gameItem : hud.getGameItems()) {
+                Mesh mesh = gameItem.getMesh();
+                // Set ortohtaphic and model matrix for this HUD item
+                Matrix4f projModelMatrix = transformation.buildOrthoProjModelMatrix(gameItem, ortho);
+                hudShaderProgram.setUniform("projModelMatrix", projModelMatrix);
+                hudShaderProgram.setUniform("colour", gameItem.getMesh().getMaterial().getAmbientColour());
+                hudShaderProgram.setUniform("hasTexture", gameItem.getMesh().getMaterial().isTextured() ? 1 : 0);                
 
-            // Render the mesh for this HUD item
-            mesh.render();
+                // Render the mesh for this HUD item
+                mesh.render();
+            }
+
+            hudShaderProgram.unbind();
         }
-
-        hudShaderProgram.unbind();
     }
 
     public void renderScene(Window window, Camera camera, Scene scene) {

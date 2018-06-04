@@ -140,6 +140,7 @@ public class Mesh {
 
     protected void initRender() {
         Texture texture = material.getTexture();
+        
         if (texture != null) {
             // Activate first texture bank
             glActiveTexture(GL_TEXTURE0);
@@ -177,8 +178,8 @@ public class Mesh {
 
     public void render() {
         initRender();
-        
-        glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0);
+
+        glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0);        
 
         endRender();
     }

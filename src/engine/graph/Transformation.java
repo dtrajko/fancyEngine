@@ -15,9 +15,10 @@ public class Transformation {
     private final Matrix4f worldMatrix;
     private final Matrix4f viewMatrix; // obsolete
     private final Matrix4f lightViewMatrix;
-    private final Matrix4f orthoMatrix;
-    private final Matrix4f orthoModelMatrix;
+    private final Matrix4f orthoMatrix;    
     private final Matrix4f orthoProjMatrix;
+    private final Matrix4f ortho2DMatrix;
+    private final Matrix4f orthoModelMatrix;
 
 	public Transformation() {
         projectionMatrix = new Matrix4f();
@@ -27,9 +28,10 @@ public class Transformation {
         worldMatrix = new Matrix4f();
         viewMatrix = new Matrix4f();
         orthoMatrix = new Matrix4f();
-        orthoModelMatrix = new Matrix4f();
-        orthoProjMatrix = new Matrix4f();
         lightViewMatrix = new Matrix4f();
+        orthoProjMatrix = new Matrix4f();
+        ortho2DMatrix = new Matrix4f();
+        orthoModelMatrix = new Matrix4f();
 	}
 
     public Matrix4f getProjectionMatrix() {
@@ -48,6 +50,14 @@ public class Transformation {
         projectionMatrix.identity();
         projectionMatrix.perspective(fov, aspectRatio, zNear, zFar);
         return projectionMatrix;
+    }
+
+    public final Matrix4f getOrtho2DProjectionMatrix(float left, float right, float bottom, float top) {
+        return ortho2DMatrix.setOrtho2D(left, right, bottom, top);
+    }
+
+    public Matrix4f buildOrthoProjModelMatrix(GameItem gameItem, Matrix4f orthoMatrix) {
+        return orthoMatrix.mulOrthoAffine(buildModelMatrix(gameItem), orthoModelMatrix);
     }
 
     public Matrix4f getViewMatrix() {
