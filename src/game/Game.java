@@ -27,6 +27,7 @@ import engine.graph.particles.Particle;
 import engine.graph.weather.Fog;
 import engine.items.GameItem;
 import engine.items.SkyBox;
+import engine.sound.SoundManager;
 
 public class Game implements IGameLogic {
 
@@ -40,6 +41,7 @@ public class Game implements IGameLogic {
     private float angleInc;
     private float lightAngle;
     private FlowParticleEmitter particleEmitter;
+    private final SoundManager soundMgr;
 
     private static final float GRAVITY = -2f;
     private static final float WORLD_BOTTOM = -20f;
@@ -51,6 +53,8 @@ public class Game implements IGameLogic {
     public Game() {
         renderer = new Renderer();
         camera = new Camera();
+        hud = new Hud();
+        soundMgr = new SoundManager();
         cameraInc = new Vector3f(0.0f, 0.0f, 0.0f);
         angleInc = 0;
         lightAngle = 45;
@@ -61,6 +65,7 @@ public class Game implements IGameLogic {
 
     	window = win;
         renderer.init(window);
+        hud.init(window);
         scene = new Scene();
 
         PNGDecoder decoder = new PNGDecoder(new FileInputStream(Config.RESOURCES_DIR + "/textures/heightmap_64.png"));
@@ -160,8 +165,6 @@ public class Game implements IGameLogic {
         camera.setRotation(0, 0, 0);
 
         selectDetectorCamera = new CameraBoxSelectionDetector();
-
-        hud = new Hud(window);
     }
 
     private void setupLights() {
