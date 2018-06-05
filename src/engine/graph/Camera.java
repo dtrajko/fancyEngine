@@ -106,6 +106,15 @@ public class Camera {
     			}
     		}        	
         }
+        Map<InstancedMesh, List<GameItem>> mapInstancedMeshes = scene.getGameInstancedMeshes();
+        for (Mesh mesh : mapInstancedMeshes.keySet()) {
+    		for (GameItem gameItem : mapInstancedMeshes.get(mesh)) {
+    			if (gameItem.getBoundingBox().contains(newPos.x, newPos.y, newPos.z)) {
+    				inCollision = true;
+    				break;
+    			}
+    		}        	
+        }
 		return inCollision;
 	}
 }

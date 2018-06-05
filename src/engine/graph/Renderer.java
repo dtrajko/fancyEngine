@@ -146,7 +146,7 @@ public class Renderer {
         hudShaderProgram.createFragmentShader(Utils.loadResource(Config.RESOURCES_DIR + "/shaders/hud_fragment.fs"));
         hudShaderProgram.link();
 
-        // Create uniforms for Ortographic-model projection matrix and base colour
+        // Create uniforms for orthographic-model projection matrix and base colour
         hudShaderProgram.createUniform("projModelMatrix");
         hudShaderProgram.createUniform("colour");
         hudShaderProgram.createUniform("hasTexture");
@@ -341,7 +341,6 @@ public class Renderer {
             depthShaderProgram.setUniform("orthoProjectionMatrix", orthoProjMatrix);
 
             renderNonInstancedMeshes(scene, depthShaderProgram, null, lightViewMatrix);
-
             renderInstancedMeshes(scene, depthShaderProgram, null, lightViewMatrix);
 
             // Unbind
@@ -471,7 +470,7 @@ public class Renderer {
         sceneShaderProgram.setUniform("renderShadow", scene.isRenderShadows() ? 1 : 0);
 
         renderNonInstancedMeshes(scene, sceneShaderProgram, viewMatrix, lightViewMatrix);
-        // renderInstancedMeshes(scene, sceneShaderProgram, viewMatrix, lightViewMatrix);
+        renderInstancedMeshes(scene, sceneShaderProgram, viewMatrix, lightViewMatrix);
 
         sceneShaderProgram.unbind();
     }
@@ -504,7 +503,6 @@ public class Renderer {
                 }
                 Matrix4f modelLightViewMatrix = transformation.buildModelLightViewMatrix(modelMatrix, lightViewMatrix);
                 sceneShaderProgram.setUniform("modelLightViewNonInstancedMatrix", modelLightViewMatrix);
-                
                 sceneShaderProgram.setUniform("selectedNonInstanced", gameItem.isSelected() ? 1.0f : 0.0f);
 
                 if (gameItem instanceof AnimGameItem) {

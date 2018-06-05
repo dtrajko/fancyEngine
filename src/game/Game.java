@@ -4,10 +4,8 @@ import java.io.FileInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.joml.Vector2f;
 import org.joml.Vector3f;
-import org.joml.Vector4f;
 import org.lwjgl.glfw.GLFW;
 import config.Config;
 import de.matthiasmann.twl.utils.PNGDecoder;
@@ -29,7 +27,6 @@ import engine.graph.particles.Particle;
 import engine.graph.weather.Fog;
 import engine.items.GameItem;
 import engine.items.SkyBox;
-import engine.items.Terrain;
 
 public class Game implements IGameLogic {
 
@@ -40,7 +37,6 @@ public class Game implements IGameLogic {
     private Scene scene;
     private Hud hud;
     private static final float CAMERA_POS_STEP = 0.1f;
-    private Terrain terrain;
     private float angleInc;
     private float lightAngle;
     private FlowParticleEmitter particleEmitter;
@@ -61,9 +57,10 @@ public class Game implements IGameLogic {
     }
 
     @Override
-    public void init(Window window) throws Exception {
+    public void init(Window win) throws Exception {
+
+    	window = win;
         renderer.init(window);
-        this.window = window;
         scene = new Scene();
 
         PNGDecoder decoder = new PNGDecoder(new FileInputStream(Config.RESOURCES_DIR + "/textures/heightmap_64.png"));
@@ -73,28 +70,24 @@ public class Game implements IGameLogic {
         decoder.decode(buffer, width * 4, PNGDecoder.Format.RGBA);
         buffer.flip();
 
-        Mesh mesh = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj");
+        Mesh mesh = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj"); // 10000
         Texture texture = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_textures.png", 2, 1);
-        
+
         float reflectance = 1f;
         Material material = new Material(texture, reflectance);
         mesh.setMaterial(material);
 
         int blockScale = 1;
-        int skyBoxScale = 60;
+        int skyBoxScale = 100;
         int extension = 2;
-
         int startX = extension * (-skyBoxScale + blockScale);
         int startZ = extension * (skyBoxScale - blockScale);
-        int startY = -1;
+        // int startY = -1;
         int increment = blockScale * 2;
-
         int posX = startX;
         int posY = 0;
         int posZ = startZ;
-        
         int topY = 0;
-
         int terrainHeight = 8;
         
         List<GameItem> gameItems = new ArrayList<GameItem>();
@@ -104,11 +97,8 @@ public class Game implements IGameLogic {
             	int rgb = HeightMapMesh.getRGB(incX, incZ, width, buffer);
             	topY = -rgb / (255 / terrainHeight * 255 * 255);
             	topY = topY - topY % increment;
- 
             	for (int incY = 0; incY < 2; incY++) {
-            		
             		posY = topY + incY * increment;
-
                 	GameItem gameItem = new GameItem(mesh);
                 	gameItem.setScale(blockScale);
                 	gameItem.setPosition(posX, posY, posZ);                	
@@ -164,9 +154,9 @@ public class Game implements IGameLogic {
         // Setup Lights
         setupLights();        
 
-        camera.getPosition().x = -60.0f;
-        camera.getPosition().y = 20.0f;
-        camera.getPosition().z = 60.0f;
+        camera.getPosition().x = -skyBoxScale;
+        camera.getPosition().y = 10.0f;
+        camera.getPosition().z = skyBoxScale;
         camera.setRotation(0, 0, 0);
 
         selectDetectorCamera = new CameraBoxSelectionDetector();

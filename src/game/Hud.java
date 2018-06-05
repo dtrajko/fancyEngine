@@ -21,7 +21,7 @@ public class Hud implements IHud {
         this.statusTextItem = new TextItem("...", fontTexture);
         this.statusTextItem.getMesh().getMaterial().setAmbientColour(new Vector4f(1.0f, 1.0f, 1.0f, 0.5f));
 
-        Font bullseyeFont = new Font("Arial", Font.PLAIN, 60);
+        Font bullseyeFont = new Font("Monospaced", Font.PLAIN, 60); // Century, Garamond, Monospaced
         FontTexture bullseyeFontTexture = new FontTexture(bullseyeFont, CHARSET);
         bullseyeTextItem = new TextItem("+", bullseyeFontTexture);
         bullseyeTextItem.getMesh().getMaterial().setAmbientColour(new Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
