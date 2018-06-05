@@ -7,6 +7,8 @@ import java.util.List;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.openal.AL11;
+
 import config.Config;
 import de.matthiasmann.twl.utils.PNGDecoder;
 import engine.IGameLogic;
@@ -27,7 +29,10 @@ import engine.graph.particles.Particle;
 import engine.graph.weather.Fog;
 import engine.items.GameItem;
 import engine.items.SkyBox;
+import engine.sound.SoundBuffer;
+import engine.sound.SoundListener;
 import engine.sound.SoundManager;
+import engine.sound.SoundSource;
 
 public class Game implements IGameLogic {
 
@@ -49,6 +54,11 @@ public class Game implements IGameLogic {
     private static boolean gravityOn = true;
     private CameraBoxSelectionDetector selectDetectorCamera;
     private Window window;
+
+    private enum Sounds {
+        FIRE,
+        BACKGROUND,
+    };
 
     public Game() {
         renderer = new Renderer();
@@ -159,6 +169,9 @@ public class Game implements IGameLogic {
         // Setup Lights
         setupLights();        
 
+        // Setup Sounds
+        setupSounds();
+
         camera.getPosition().x = -skyBoxScale;
         camera.getPosition().y = 10.0f;
         camera.getPosition().z = skyBoxScale;
@@ -182,6 +195,35 @@ public class Game implements IGameLogic {
         directionalLight.setShadowPosMult(10);
         directionalLight.setOrthoCords(-10.0f, 10.0f, -10.0f, 10.0f, -1.0f, 20.0f);
         sceneLight.setDirectionalLight(directionalLight);
+    }
+
+    private void setupSounds() throws Exception {
+
+        this.soundMgr.init();
+        this.soundMgr.setAttenuationModel(AL11.AL_EXPONENT_DISTANCE);
+        
+        /*
+        SoundBuffer buffFire = new SoundBuffer(Config.RESOURCES_DIR + "/sounds/fire.ogg");
+        soundMgr.addSoundBuffer(buffFire);
+        SoundSource sourceFire = new SoundSource(true, false);
+        Vector3f pos = particleEmitter.getBaseParticle().getPosition();
+        sourceFire.setPosition(pos);
+        sourceFire.setBuffer(buffFire.getBufferId());
+        soundMgr.addSoundSource(Sounds.FIRE.toString(), sourceFire);
+        // sourceFire.play();
+        soundMgr.setListener(new SoundListener(new Vector3f(0, 0, 0)));
+		*/
+
+        SoundBuffer buffBackground = new SoundBuffer(Config.RESOURCES_DIR + "/sounds/background.ogg");
+        soundMgr.addSoundBuffer(buffBackground);
+        SoundSource sourceBackground = new SoundSource(true, false);
+        Vector3f posBackground = particleEmitter.getBaseParticle().getPosition();
+        sourceBackground.setPosition(posBackground);
+        sourceBackground.setBuffer(buffBackground.getBufferId());
+        soundMgr.addSoundSource(Sounds.BACKGROUND.toString(), sourceBackground);
+        sourceBackground.play();
+        sourceBackground.setGain(0.2f);
+        soundMgr.setListener(new SoundListener(new Vector3f(0, 0, 0)));
     }
 
     @Override
@@ -246,8 +288,6 @@ public class Game implements IGameLogic {
 		// Update view matrix
 		camera.updateViewMatrix();
 
-        selectDetectorCamera.selectGameItem(scene, camera, mouseInput);
-
         lightAngle += angleInc;
         if (lightAngle < 0) {
             lightAngle = 0;
@@ -262,7 +302,12 @@ public class Game implements IGameLogic {
         lightDirection.z = zValue;
         lightDirection.normalize();
 
-        particleEmitter.update((long) (interval * 1000));
+        // Update sound listener position;
+        // soundMgr.updateListenerPosition(camera);
+
+        // particleEmitter.update((long) (interval * 1000));
+
+        selectDetectorCamera.selectGameItem(scene, camera, mouseInput);
     }
 
     @Override
@@ -271,12 +316,14 @@ public class Game implements IGameLogic {
             hud.updateSize(window);
         }
         renderer.render(window, camera, scene, hud);
+        hud.render(window);
     }
 
     @Override
     public void cleanup() {
         renderer.cleanup();
         scene.cleanup();
+        soundMgr.cleanup();
         if (hud != null) {
             hud.cleanup();
         }

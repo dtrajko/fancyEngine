@@ -196,10 +196,16 @@ public class Window {
         glfwPollEvents();
     }
 
+    public WindowOptions getOptions() {
+        return opts;
+    }
+
     public static class WindowOptions {
         public boolean cullFace;
         public boolean showTriangles;
         public boolean showFps;
-        public boolean compatibleProfile;
+        public boolean compatibleProfile;        
+        public boolean antialiasing;
+        public boolean frustumCulling;    
     }
 }
