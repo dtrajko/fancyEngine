@@ -435,7 +435,6 @@ public class Renderer {
     private void renderHud(Window window, IHud hud) {
         if (hud != null) {
             hudShaderProgram.bind();
-
             Matrix4f ortho = transformation.getOrtho2DProjectionMatrix(0, window.getWidth(), window.getHeight(), 0);
             for (GameItem gameItem : hud.getGameItems()) {
                 Mesh mesh = gameItem.getMesh();
@@ -448,7 +447,6 @@ public class Renderer {
                 // Render the mesh for this HUD item
                 mesh.render();
             }
-
             hudShaderProgram.unbind();
         }
     }

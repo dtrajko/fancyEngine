@@ -171,7 +171,7 @@ public class Game implements IGameLogic {
 
         selectDetectorCamera = new CameraBoxSelectionDetector();
 
-        hud = new Hud("DEMO", window);
+        hud = new Hud(window);
     }
 
     private void setupLights() {

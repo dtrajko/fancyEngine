@@ -1,34 +1,25 @@
 package game;
 
 import java.awt.Font;
-import java.io.File;
-
-import org.joml.Quaternionf;
 import org.joml.Vector4f;
-
-import config.Config;
 import engine.IHud;
 import engine.TextItem;
 import engine.Window;
 import engine.graph.FontTexture;
-import engine.graph.Material;
-import engine.graph.Mesh;
-import engine.graph.OBJLoader;
-import engine.graph.Texture;
 import engine.items.GameItem;
 
 public class Hud implements IHud {
 
-    private static final Font FONT = new Font("Arial", Font.PLAIN, 40);
+    private static final Font FONT = new Font("Arial", Font.BOLD, 40);
     private static final String CHARSET = "ISO-8859-1";
     private final GameItem[] gameItems;
     private final TextItem statusTextItem;
     private final TextItem bullseyeTextItem;
 
-    public Hud(String statusText, Window window) throws Exception {
+    public Hud(Window window) throws Exception {
         FontTexture fontTexture = new FontTexture(FONT, CHARSET);
-        this.statusTextItem = new TextItem(statusText, fontTexture);
-        this.statusTextItem.getMesh().getMaterial().setAmbientColour(new Vector4f(0.8f, 0.8f, 1.0f, 10f));
+        this.statusTextItem = new TextItem("...", fontTexture);
+        this.statusTextItem.getMesh().getMaterial().setAmbientColour(new Vector4f(1.0f, 1.0f, 1.0f, 0.5f));
 
         Font bullseyeFont = new Font("Arial", Font.PLAIN, 60);
         FontTexture bullseyeFontTexture = new FontTexture(bullseyeFont, CHARSET);
