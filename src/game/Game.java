@@ -40,7 +40,7 @@ public class Game implements IGameLogic {
     private float angleInc;
     private float lightAngle;
     private FlowParticleEmitter particleEmitter;
-    
+
     private static final float GRAVITY = -2f;
     private static final float WORLD_BOTTOM = -20f;
     private static float SPEED;
