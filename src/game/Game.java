@@ -87,7 +87,7 @@ public class Game implements IGameLogic {
         decoder.decode(buffer, width * 4, PNGDecoder.Format.RGBA);
         buffer.flip();
 
-        Mesh mesh = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj"); // 10000
+        Mesh mesh = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 10000); // 10000
         Texture texture = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_textures.png", 2, 1);
 
         float reflectance = 1f;

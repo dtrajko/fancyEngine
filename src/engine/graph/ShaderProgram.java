@@ -37,6 +37,12 @@ public class ShaderProgram {
         uniforms.put(uniformName, uniformLocation);
     }
 
+    public void createUniform(String uniformName, int size) throws Exception {
+        for (int i = 0; i < size; i++) {
+            createUniform(uniformName + "[" + i + "]");
+        }
+    }
+
     public void createPointLightListUniform(String uniformName, int size) throws Exception {
         for (int i = 0; i < size; i++) {
             createPointLightUniform(uniformName + "[" + i + "]");
@@ -94,6 +100,10 @@ public class ShaderProgram {
         }
     }
 
+    public void setUniform(String uniformName, Matrix4f value, int index) {
+        setUniform(uniformName + "[" + index  + "]", value);
+    }
+
     public void setUniform(String uniformName, Matrix4f[] matrices) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             int length = matrices != null ? matrices.length : 0;
@@ -111,6 +121,10 @@ public class ShaderProgram {
 
     public void setUniform(String uniformName, float value) {
         glUniform1f(uniforms.get(uniformName), value);
+    }
+
+    public void setUniform(String uniformName, float value, int index) {
+        setUniform(uniformName + "[" + index  + "]", value);
     }
 
     public void setUniform(String uniformName, Vector3f value) {

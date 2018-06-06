@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.joml.Matrix4f;
+
+import config.Config;
+
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE2;
 import static org.lwjgl.opengl.GL30.*;
@@ -59,8 +62,8 @@ public class ShadowRenderer {
 
     private void setupDepthShader() throws Exception {
         depthShaderProgram = new ShaderProgram();
-        depthShaderProgram.createVertexShader(Utils.loadResource("/shaders/depth_vertex.vs"));
-        depthShaderProgram.createFragmentShader(Utils.loadResource("/shaders/depth_fragment.fs"));
+        depthShaderProgram.createVertexShader(Utils.loadResource(Config.RESOURCES_DIR + "/shaders/depth_vertex.vs"));
+        depthShaderProgram.createFragmentShader(Utils.loadResource(Config.RESOURCES_DIR + "/shaders/depth_fragment.fs"));
         depthShaderProgram.link();
 
         depthShaderProgram.createUniform("isInstanced");
