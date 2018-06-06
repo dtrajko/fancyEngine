@@ -94,6 +94,11 @@ public class InstancedMesh extends Mesh {
         super.endRender();
     }
 
+    public void renderListInstanced( List<GameItem> gameItems, Transformation transformation, Matrix4f viewMatrix) {
+    	Matrix4f lightViewMatrix = new Matrix4f(); // temporary solution to match method arguments
+        renderListInstanced(gameItems, false, transformation, viewMatrix, lightViewMatrix);
+    }
+
     public void renderListInstanced(List<GameItem> gameItems, Transformation transformation, Matrix4f viewMatrix, Matrix4f lightViewMatrix) {
         renderListInstanced(gameItems, false, transformation, viewMatrix, lightViewMatrix);
     }

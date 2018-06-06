@@ -102,6 +102,10 @@ public class GameItem {
 		return selected;
     }
 
+	public boolean isInsideFrustum() {
+        return insideFrustum;
+    }
+
 	public void setInsideFrustum(boolean insideFrustum) {
         this.insideFrustum = insideFrustum;
     }

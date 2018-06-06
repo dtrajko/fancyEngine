@@ -4,8 +4,8 @@ import org.joml.Vector4f;
 
 import engine.graph.Material;
 import engine.graph.Mesh;
-import engine.graph.OBJLoader;
 import engine.graph.Texture;
+import engine.loaders.obj.OBJLoader;
 
 public class SkyBox extends GameItem {
 

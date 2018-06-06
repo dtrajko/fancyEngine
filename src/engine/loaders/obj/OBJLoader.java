@@ -1,10 +1,12 @@
-package engine.graph;
+package engine.loaders.obj;
 
 import java.util.ArrayList;
 import java.util.List;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import engine.Utils;
+import engine.graph.InstancedMesh;
+import engine.graph.Mesh;
 
 public class OBJLoader {
 

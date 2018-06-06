@@ -9,7 +9,6 @@ import org.joml.Vector4f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL30;
-
 import config.Config;
 import engine.IHud;
 import engine.Scene;
@@ -21,6 +20,7 @@ import engine.graph.anim.AnimatedFrame;
 import engine.graph.lights.DirectionalLight;
 import engine.graph.lights.PointLight;
 import engine.graph.lights.SpotLight;
+import engine.graph.shadow.ShadowRenderer;
 import engine.items.GameItem;
 import engine.items.SkyBox;
 import game.Hud;
@@ -37,8 +37,8 @@ public class Renderer {
     private static final int MAX_SPOT_LIGHTS = 5;
 
     private final Transformation transformation;
+    private final ShadowRenderer shadowRenderer;
 	private ShaderProgram shaderProgram;
-
     private ShaderProgram depthShaderProgram;
     private ShaderProgram sceneShaderProgram;
     private ShaderProgram hudShaderProgram;
@@ -52,6 +52,7 @@ public class Renderer {
 	public Renderer() {
         transformation = new Transformation();
         specularPower = 10f;
+        shadowRenderer = new ShadowRenderer();
         frustumFilter = new FrustumCullingFilter();
     }
 
@@ -269,13 +270,18 @@ public class Renderer {
         shaderProgram.unbind();
     }
 
-    public void render(Window window, Camera camera, Scene scene, IHud hud) {
+    public void render(Window window, Camera camera, Scene scene, IHud hud, boolean sceneChanged) {
         clear();
 
         if (window.getOptions().frustumCulling) {
             frustumFilter.updateFrustum(window.getProjectionMatrix(), camera.getViewMatrix());
             frustumFilter.filter(scene.getGameMeshes());
             frustumFilter.filter(scene.getGameInstancedMeshes());
+        }
+
+        // Render depth map before view ports has been set up
+        if (scene.isRenderShadows() && sceneChanged) {
+            shadowRenderer.render(window, scene, camera, transformation, this);
         }
 
         // Render depth map before view ports has been set up
@@ -297,7 +303,7 @@ public class Renderer {
         renderSkyBox(window, camera, scene);
         // renderParticles(window, camera, scene);
         renderHud(window, hud);
-        // renderCrossHair(window);
+        renderCrossHair(window);
     }
 
     private void renderCrossHair(Window window) {
@@ -460,6 +466,13 @@ public class Renderer {
 
     public void renderScene(Window window, Camera camera, Scene scene) {
         sceneShaderProgram.bind();
+
+        /*
+        Matrix4f viewMatrix = camera.getViewMatrix();
+        Matrix4f projectionMatrix = window.getProjectionMatrix();
+        sceneShaderProgram.setUniform("viewMatrix", viewMatrix);
+        sceneShaderProgram.setUniform("projectionMatrix", projectionMatrix);
+		*/
 
         Matrix4f projectionMatrix = transformation.getProjectionMatrix();
         sceneShaderProgram.setUniform("projectionMatrix", projectionMatrix);

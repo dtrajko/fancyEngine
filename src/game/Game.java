@@ -20,7 +20,6 @@ import engine.graph.HeightMapMesh;
 import engine.graph.Material;
 import engine.graph.Mesh;
 import engine.graph.MouseInput;
-import engine.graph.OBJLoader;
 import engine.graph.Renderer;
 import engine.graph.Texture;
 import engine.graph.lights.DirectionalLight;
@@ -29,6 +28,7 @@ import engine.graph.particles.Particle;
 import engine.graph.weather.Fog;
 import engine.items.GameItem;
 import engine.items.SkyBox;
+import engine.loaders.obj.OBJLoader;
 import engine.sound.SoundBuffer;
 import engine.sound.SoundListener;
 import engine.sound.SoundManager;
@@ -54,6 +54,8 @@ public class Game implements IGameLogic {
     private static boolean gravityOn = true;
     private CameraBoxSelectionDetector selectDetectorCamera;
     private Window window;
+    private boolean firstTime;
+    private boolean sceneChanged;
 
     private enum Sounds {
         FIRE,
@@ -316,7 +318,11 @@ public class Game implements IGameLogic {
         if (hud != null) {
             hud.updateSize(window);
         }
-        renderer.render(window, camera, scene, hud);
+        if (firstTime) {
+            sceneChanged = true;
+            firstTime = false;
+        }
+        renderer.render(window, camera, scene, hud, sceneChanged);
         hud.render(window);
     }
 
