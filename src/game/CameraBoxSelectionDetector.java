@@ -46,7 +46,8 @@ public class CameraBoxSelectionDetector {
             if (mouseInput.isMouseButtonPressed(GLFW.GLFW_MOUSE_BUTTON_1)) {
             	scene.removeGameItem(selectedGameItem);
             }
-            if (mouseInput.isMouseButtonPressed(GLFW.GLFW_MOUSE_BUTTON_2)) {
+            // middle button - create a new cube above the selected cube
+            if (mouseInput.isMouseButtonPressed(GLFW.GLFW_MOUSE_BUTTON_3)) {
             	GameItem newGameItem = new GameItem(selectedGameItem.getMesh());
             	newGameItem.setPosition(
         			selectedGameItem.getPosition().x,
@@ -55,9 +56,45 @@ public class CameraBoxSelectionDetector {
             	newGameItem.setBoundingBox();
             	scene.appendGameItem(newGameItem);
             }
+            // left button - create a new cube in camera direction
+            if (mouseInput.isMouseButtonPressed(GLFW.GLFW_MOUSE_BUTTON_2)) {
+
+            	GameItem newGameItem = new GameItem(selectedGameItem.getMesh());
+
+            	Vector3f camPos = camera.getPosition();
+            	Vector3f cubePos = selectedGameItem.getPosition();
+            	float cubeSize = selectedGameItem.getScale() * 2;
+            	float offsetX = 0;
+            	float offsetY = 0;
+            	float offsetZ = 0;
+            	if (Math.abs(camPos.x - cubePos.x) > Math.abs(camPos.y - cubePos.y) &&
+            		Math.abs(camPos.x - cubePos.x) > Math.abs(camPos.z - cubePos.z)) {
+            		offsetX = (camPos.x > cubePos.x) ? cubeSize : -cubeSize;
+                	offsetY = 0;
+                	offsetZ = 0;
+            	}
+            	if (Math.abs(camPos.y - cubePos.y) > Math.abs(camPos.x - cubePos.x) &&
+                	Math.abs(camPos.y - cubePos.y) > Math.abs(camPos.z - cubePos.z)) {
+            		offsetX = 0;
+            		offsetY = (camPos.y > cubePos.y) ? cubeSize : -cubeSize;
+                	offsetZ = 0;
+            	}
+            	if (Math.abs(camPos.z - cubePos.z) > Math.abs(camPos.x - cubePos.x) &&
+                	Math.abs(camPos.z - cubePos.z) > Math.abs(camPos.y - cubePos.y)) {
+            		offsetX = 0;
+            		offsetY = 0;
+            		offsetZ = (camPos.z > cubePos.z) ? cubeSize : -cubeSize;
+            	}
+            	newGameItem.setPosition(
+        			selectedGameItem.getPosition().x + offsetX,
+        			selectedGameItem.getPosition().y + offsetY,
+        			selectedGameItem.getPosition().z + offsetZ);
+            	newGameItem.setBoundingBox();
+            	scene.appendGameItem(newGameItem);
+            }
         }
     }
-    
+
     public GameItem selectGameItemLoop(List<GameItem> gameItems, Camera camera) {
     	GameItem selectedGameItem = null;
         float closestDistance = Float.POSITIVE_INFINITY;

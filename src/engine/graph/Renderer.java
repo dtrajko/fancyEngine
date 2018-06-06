@@ -47,10 +47,12 @@ public class Renderer {
 
 	private final float specularPower;
 	private ShadowMap shadowMap;
+	private final FrustumCullingFilter frustumFilter;
 
 	public Renderer() {
         transformation = new Transformation();
         specularPower = 10f;
+        frustumFilter = new FrustumCullingFilter();
     }
 
     public void init(Window window) throws Exception {
@@ -269,6 +271,12 @@ public class Renderer {
 
     public void render(Window window, Camera camera, Scene scene, IHud hud) {
         clear();
+
+        if (window.getOptions().frustumCulling) {
+            frustumFilter.updateFrustum(window.getProjectionMatrix(), camera.getViewMatrix());
+            frustumFilter.filter(scene.getGameMeshes());
+            frustumFilter.filter(scene.getGameInstancedMeshes());
+        }
 
         // Render depth map before view ports has been set up
         renderDepthMap(window, camera, scene);

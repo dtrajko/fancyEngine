@@ -103,16 +103,17 @@ public class Game implements IGameLogic {
         int posY = 0;
         int posZ = startZ;
         int topY = 0;
-        int terrainHeight = 8;
+        int terrainAltitude = 8;
+        int terrainDepth = 2;
         
         List<GameItem> gameItems = new ArrayList<GameItem>();
 
         for (int incX = 0; incX < height; incX++) {
             for (int incZ = 0; incZ < width; incZ++) {
             	int rgb = HeightMapMesh.getRGB(incX, incZ, width, buffer);
-            	topY = -rgb / (255 / terrainHeight * 255 * 255);
+            	topY = -rgb / (255 / terrainAltitude * 255 * 255);
             	topY = topY - topY % increment;
-            	for (int incY = 0; incY < 2; incY++) {
+            	for (int incY = 0; incY < terrainDepth; incY++) {
             		posY = topY + incY * increment;
                 	GameItem gameItem = new GameItem(mesh);
                 	gameItem.setScale(blockScale);
@@ -214,7 +215,7 @@ public class Game implements IGameLogic {
         soundMgr.setListener(new SoundListener(new Vector3f(0, 0, 0)));
 		*/
 
-        SoundBuffer buffBackground = new SoundBuffer(Config.RESOURCES_DIR + "/sounds/background.ogg");
+        SoundBuffer buffBackground = new SoundBuffer(Config.RESOURCES_DIR + "/sounds/tomb_raider.ogg");
         soundMgr.addSoundBuffer(buffBackground);
         SoundSource sourceBackground = new SoundSource(true, false);
         Vector3f posBackground = particleEmitter.getBaseParticle().getPosition();

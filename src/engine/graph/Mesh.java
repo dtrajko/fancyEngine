@@ -18,14 +18,11 @@ import engine.items.GameItem;
 public class Mesh {
 
     public static final int MAX_WEIGHTS = 4;
-
     protected final int vaoId;
-
     protected final List<Integer> vboIdList;
-
     private final int vertexCount;
-
     private Material material;
+    private float boundingRadius;
 
     public Mesh(float[] positions, float[] textCoords, float[] normals, int[] indices) {
         this(positions, textCoords, normals, indices, createEmptyIntArray(MAX_WEIGHTS * positions.length / 3, 0), createEmptyFloatArray(MAX_WEIGHTS * positions.length / 3, 0));
@@ -136,6 +133,10 @@ public class Mesh {
 
     public int getVertexCount() {
         return vertexCount;
+    }
+
+    public float getBoundingRadius() {
+        return boundingRadius;
     }
 
     protected void initRender() {

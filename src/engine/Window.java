@@ -150,7 +150,11 @@ public class Window {
     public WindowOptions getWindowOptions() {
         return opts;
     }
-    
+
+    public Matrix4f getProjectionMatrix() {
+        return projectionMatrix;
+    }
+
     public void setClearColor(float r, float g, float b, float alpha) {
         glClearColor(r, g, b, alpha);
     }
