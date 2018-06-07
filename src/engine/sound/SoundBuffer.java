@@ -21,8 +21,6 @@ public class SoundBuffer {
         this.bufferId = alGenBuffers();
         try (STBVorbisInfo info = STBVorbisInfo.malloc()) {
             ShortBuffer pcm = readVorbis(file, 128 * 1024, info);
-            
-            System.out.println("SoundBuffer sample_rate: " + info.sample_rate());
 
             // Copy to buffer
             alBufferData(bufferId, info.channels() == 1 ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16, pcm, info.sample_rate());
