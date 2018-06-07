@@ -14,15 +14,15 @@ import engine.Utils;
 public class SoundBuffer {
 
     private final int bufferId;
-
     private ShortBuffer pcm = null;
-
     private ByteBuffer vorbis = null;
 
     public SoundBuffer(String file) throws Exception {
         this.bufferId = alGenBuffers();
         try (STBVorbisInfo info = STBVorbisInfo.malloc()) {
-            ShortBuffer pcm = readVorbis(file, 32 * 1024, info);
+            ShortBuffer pcm = readVorbis(file, 128 * 1024, info);
+            
+            System.out.println("SoundBuffer sample_rate: " + info.sample_rate());
 
             // Copy to buffer
             alBufferData(bufferId, info.channels() == 1 ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16, pcm, info.sample_rate());
@@ -48,18 +48,12 @@ public class SoundBuffer {
             if (decoder == NULL) {
                 throw new RuntimeException("Failed to open Ogg Vorbis file. Error: " + error.get(0));
             }
-
             stb_vorbis_get_info(decoder, info);
-
             int channels = info.channels();
-
             int lengthSamples = stb_vorbis_stream_length_in_samples(decoder);
-
             pcm = MemoryUtil.memAllocShort(lengthSamples);
-
             pcm.limit(stb_vorbis_get_samples_short_interleaved(decoder, channels, pcm) * channels);
             stb_vorbis_close(decoder);
-
             return pcm;
         }
     }

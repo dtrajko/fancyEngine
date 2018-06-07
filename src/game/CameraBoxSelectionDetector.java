@@ -31,16 +31,43 @@ public class CameraBoxSelectionDetector {
 
     public void selectGameItem(Scene scene, Camera camera, MouseInput mouseInput) {
 
-        GameItem selectedGameItem = null;
+    	GameItem selectedGameItem = null;
+        float closestDistance = Float.POSITIVE_INFINITY;
+        dir = camera.getViewMatrix().positiveZ(dir).negate();
 
         Map<Mesh, List<GameItem>> meshMap = scene.getGameMeshes();
-        for (List<GameItem> gameItems : meshMap.values()) {
-        	selectedGameItem = selectGameItemLoop(gameItems, camera);
+        for (Mesh mesh : meshMap.keySet()) {
+        	for (GameItem gameItem : meshMap.get(mesh)) {
+    	        gameItem.setSelected(false);
+    	        min.set(gameItem.getPosition());
+    	        max.set(gameItem.getPosition());
+    	        min.sub(gameItem.getScale(), gameItem.getScale(), gameItem.getScale());
+    	        min.add(0.2f, 0.2f, 0.2f);
+    	        max.add(gameItem.getScale(), gameItem.getScale(), gameItem.getScale());
+    	        max.sub(0.2f, 0.2f, 0.2f);
+    	        if (Intersectionf.intersectRayAab(camera.getPosition(), dir, min, max, nearFar) && nearFar.x < closestDistance) {
+    	            closestDistance = nearFar.x;
+    	            selectedGameItem = gameItem;
+    	        }
+        	}
         }
         Map<InstancedMesh, List<GameItem>> instancedMeshMap = scene.getGameInstancedMeshes();
-        for (List<GameItem> gameItems : instancedMeshMap.values()) {
-        	selectedGameItem = selectGameItemLoop(gameItems, camera);
+        for (Mesh mesh : instancedMeshMap.keySet()) {
+        	for (GameItem gameItem : instancedMeshMap.get(mesh)) {
+    	        gameItem.setSelected(false);
+    	        min.set(gameItem.getPosition());
+    	        max.set(gameItem.getPosition());
+    	        min.sub(gameItem.getScale(), gameItem.getScale(), gameItem.getScale());
+    	        min.add(0.2f, 0.2f, 0.2f);
+    	        max.add(gameItem.getScale(), gameItem.getScale(), gameItem.getScale());
+    	        max.sub(0.2f, 0.2f, 0.2f);
+    	        if (Intersectionf.intersectRayAab(camera.getPosition(), dir, min, max, nearFar) && nearFar.x < closestDistance) {
+    	            closestDistance = nearFar.x;
+    	            selectedGameItem = gameItem;
+    	        }
+        	}
         }
+
         if (selectedGameItem != null) {
         	selectedGameItem.setSelected(true);
             if (mouseInput.isMouseButtonPressed(GLFW.GLFW_MOUSE_BUTTON_1)) {
@@ -93,26 +120,5 @@ public class CameraBoxSelectionDetector {
             	scene.appendGameItem(newGameItem);
             }
         }
-    }
-
-    public GameItem selectGameItemLoop(List<GameItem> gameItems, Camera camera) {
-    	GameItem selectedGameItem = null;
-        float closestDistance = Float.POSITIVE_INFINITY;
-        dir = camera.getViewMatrix().positiveZ(dir).negate();
-
-        for (GameItem gameItem : gameItems) {
-	        gameItem.setSelected(false);
-	        min.set(gameItem.getPosition());
-	        max.set(gameItem.getPosition());
-	        min.sub(gameItem.getScale(), gameItem.getScale(), gameItem.getScale());
-	        min.add(0.2f, 0.2f, 0.2f);
-	        max.add(gameItem.getScale(), gameItem.getScale(), gameItem.getScale());
-	        max.sub(0.2f, 0.2f, 0.2f);
-	        if (Intersectionf.intersectRayAab(camera.getPosition(), dir, min, max, nearFar) && nearFar.x < closestDistance) {
-	            closestDistance = nearFar.x;
-	            selectedGameItem = gameItem;
-	        }
-        }
-        return selectedGameItem;
     }
 }

@@ -87,12 +87,22 @@ public class Game implements IGameLogic {
         decoder.decode(buffer, width * 4, PNGDecoder.Format.RGBA);
         buffer.flip();
 
-        Mesh mesh = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 10000); // 10000
-        Texture texture = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_textures.png", 2, 1);
-
         float reflectance = 1f;
-        Material material = new Material(texture, reflectance);
-        mesh.setMaterial(material);
+
+        Mesh meshWater = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
+        Texture textureWater = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_water.png", 2, 1);
+        Material materialWater = new Material(textureWater, reflectance);
+        meshWater.setMaterial(materialWater);
+
+        Mesh meshGrass = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
+        Texture textureGrass = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_textures.png", 2, 1);
+        Material materialGrass = new Material(textureGrass, reflectance);
+        meshGrass.setMaterial(materialGrass);
+
+        Mesh meshMount = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
+        Texture textureMount = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_textures_mountain.png", 2, 1);
+        Material materialMount = new Material(textureMount, reflectance);
+        meshMount.setMaterial(materialMount);
 
         int blockScale = 1;
         int skyBoxScale = 100;
@@ -105,19 +115,32 @@ public class Game implements IGameLogic {
         int posY = 0;
         int posZ = startZ;
         int topY = 0;
-        int terrainAltitude = 8;
+        int terrainAltitude = 16;
         int terrainDepth = 2;
-        
+        int waterLevel = 8;
+        int mountLevel = 14;
+
+        GameItem gameItem;
         List<GameItem> gameItems = new ArrayList<GameItem>();
 
         for (int incX = 0; incX < height; incX++) {
             for (int incZ = 0; incZ < width; incZ++) {
             	int rgb = HeightMapMesh.getRGB(incX, incZ, width, buffer);
             	topY = -rgb / (255 / terrainAltitude * 255 * 255);
+            	if (topY < waterLevel - terrainDepth - increment) {
+            		topY = waterLevel - terrainDepth - increment;
+            	}
             	topY = topY - topY % increment;
             	for (int incY = 0; incY < terrainDepth; incY++) {
             		posY = topY + incY * increment;
-                	GameItem gameItem = new GameItem(mesh);
+
+            		if (posY < waterLevel) {
+            			gameItem = new GameItem(meshWater);
+            		} else if (posY < mountLevel){
+            			gameItem = new GameItem(meshGrass);
+            		} else {
+            			gameItem = new GameItem(meshMount);
+            		}
                 	gameItem.setScale(blockScale);
                 	gameItem.setPosition(posX, posY, posZ);                	
                 	gameItem.setBoundingBox();
@@ -217,15 +240,14 @@ public class Game implements IGameLogic {
         soundMgr.setListener(new SoundListener(new Vector3f(0, 0, 0)));
 		*/
 
-        SoundBuffer buffBackground = new SoundBuffer(Config.RESOURCES_DIR + "/sounds/tomb_raider.ogg");
+        SoundBuffer buffBackground = new SoundBuffer(Config.RESOURCES_DIR + "/sounds/tomb_raider_01.ogg");
         soundMgr.addSoundBuffer(buffBackground);
-        SoundSource sourceBackground = new SoundSource(true, false);
-        Vector3f posBackground = particleEmitter.getBaseParticle().getPosition();
-        sourceBackground.setPosition(posBackground);
+        SoundSource sourceBackground = new SoundSource(true, true);
+        sourceBackground.setPosition(camera.getPosition());
         sourceBackground.setBuffer(buffBackground.getBufferId());
         soundMgr.addSoundSource(Sounds.BACKGROUND.toString(), sourceBackground);
         sourceBackground.play();
-        sourceBackground.setGain(0.2f);
+        sourceBackground.setGain(0.5f);
         soundMgr.setListener(new SoundListener(new Vector3f(0, 0, 0)));
     }
 
@@ -306,7 +328,7 @@ public class Game implements IGameLogic {
         lightDirection.normalize();
 
         // Update sound listener position;
-        // soundMgr.updateListenerPosition(camera);
+        soundMgr.updateListenerPosition(camera);
 
         // particleEmitter.update((long) (interval * 1000));
 

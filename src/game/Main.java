@@ -16,8 +16,8 @@ public class Main {
             opts.compatibleProfile = false;
             GameEngine gameEng = new GameEngine("Java / LWJGL3 / lwjglbook", vSync, opts, gameLogic);
             gameEng.start();
-        } catch (Exception excp) {
-            excp.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
             System.exit(-1);
         }
     }

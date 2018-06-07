@@ -20,15 +20,10 @@ import engine.graph.Transformation;
 public class SoundManager {
 
     private long device;
-
     private long context;
-
     private SoundListener listener;
-
     private final List<SoundBuffer> soundBufferList;
-
     private final Map<String, SoundSource> soundSourceMap;
-
     private final Matrix4f cameraMatrix;
 
     public SoundManager() {
