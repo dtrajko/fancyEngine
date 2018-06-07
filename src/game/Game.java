@@ -48,7 +48,7 @@ public class Game implements IGameLogic {
     private FlowParticleEmitter particleEmitter;
     private final SoundManager soundMgr;
 
-    private static final float GRAVITY = -2f;
+    private static final float GRAVITY = -0.5f;
     private static final float WORLD_BOTTOM = -20f;
     private static float SPEED;
     private static boolean gravityOn = true;
