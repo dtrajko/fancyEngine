@@ -34,5 +34,10 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/jars/PNGDecoder.jar"/>
+	<classpathentry kind="lib" path="lib/jars/lwjgl3/lwjgl-nanovg/lwjgl-nanovg.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="fancyEngine/lib/jars/lwjgl3/lwjgl-nanovg"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -1,15 +1,22 @@
 package game;
 
 import java.awt.Font;
+import java.nio.DoubleBuffer;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.joml.Vector4f;
 import engine.IHud;
 import engine.TextItem;
 import engine.Window;
 import engine.graph.FontTexture;
 import engine.items.GameItem;
-// import org.lwjgl.nanovg.NVGColor;
-//import static org.lwjgl.nanovg.NanoVG.*;
-//import static org.lwjgl.nanovg.NanoVGGL3.*;
+
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.nanovg.NVGColor;
+import static org.lwjgl.nanovg.NanoVG.*;
+import static org.lwjgl.nanovg.NanoVGGL3.*;
 
 public class Hud implements IHud {
 
@@ -20,7 +27,13 @@ public class Hud implements IHud {
     private TextItem bullseyeTextItem;
     private Window window;
     
+    private static final String FONT_NAME = "BOLD";
     private long vg;
+    private NVGColor colour;
+    private final DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+    private DoubleBuffer posx;
+    private DoubleBuffer posy;
+    private int counter;
 
     public Hud() {}
 
@@ -64,9 +77,10 @@ public class Hud implements IHud {
     }
 
     public void render(Window window) {
-    	/*
-        nvgBeginFrame(vg, window.getWidth(), window.getHeight(), 1);
 
+        /*
+        nvgBeginFrame(vg, window.getWidth(), window.getHeight(), 1);
+        
         // Upper ribbon
         nvgBeginPath(vg);
         nvgRect(vg, 0, window.getHeight() - 100, window.getWidth(), 50);
@@ -79,7 +93,7 @@ public class Hud implements IHud {
         nvgFillColor(vg, rgba(0xc1, 0xe3, 0xf9, 200, colour));
         nvgFill(vg);
 
-        glfwGetCursorPos(window.getWindowHandle(), posx, posy);
+        GLFW.glfwGetCursorPos(window.getWindowHandle(), posx, posy);
         int xcenter = 50;
         int ycenter = window.getHeight() - 75;
         int radius = 20;
@@ -118,4 +132,15 @@ public class Hud implements IHud {
         window.restoreState();
         */
     }
+
+    /*
+    private NVGColor rgba(int r, int g, int b, int a, NVGColor colour) {
+        colour.r(r / 255.0f);
+        colour.g(g / 255.0f);
+        colour.b(b / 255.0f);
+        colour.a(a / 255.0f);
+
+        return colour;
+    }
+    */
 }

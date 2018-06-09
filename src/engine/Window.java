@@ -116,6 +116,7 @@ public class Window {
         // Set the clear color
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glEnable(GL_DEPTH_TEST);
+        glEnable(GL_STENCIL_TEST);
         if (opts.showTriangles) {
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         }
@@ -127,6 +128,11 @@ public class Window {
         if (opts.cullFace) {
             glEnable(GL_CULL_FACE);
             glCullFace(GL_BACK);
+        }
+
+        // Antialiasing
+        if (opts.antialiasing) {
+            glfwWindowHint(GLFW_SAMPLES, 4);
         }
     }
 
@@ -211,5 +217,15 @@ public class Window {
         public boolean compatibleProfile;        
         public boolean antialiasing;
         public boolean frustumCulling;    
+    }
+
+    public void restoreState() {
+        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_STENCIL_TEST);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        if (opts.cullFace) {
+            glEnable(GL_CULL_FACE);
+            glCullFace(GL_BACK);
+        }
     }
 }
