@@ -227,7 +227,7 @@ float calcShadow(vec4 position, int idx)
     }
 
     return 1 - shadowFactor;
-} 
+}
 
 void main()
 {

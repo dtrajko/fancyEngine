@@ -293,13 +293,7 @@ public class Renderer {
             shadowRenderer.render(window, scene, camera, transformation, this);
         }
 
-        // Render depth map before view ports has been set up
-        renderDepthMap(window, camera, scene);
-
-        if ( window.isResized() ) {
-            GL11.glViewport(0, 0, window.getWidth(), window.getHeight());
-            window.setResized(false);
-        }
+        GL11.glViewport(0, 0, window.getWidth(), window.getHeight());
 
         // Update projection matrix once per render cycle
         window.updateProjectionMatrix();
@@ -373,6 +367,7 @@ public class Renderer {
     }
 
     private void renderSkyBox(Window window, Camera camera, Scene scene) {
+    	
         SkyBox skyBox = scene.getSkyBox();
         if (skyBox != null) {
             skyBoxShaderProgram.bind();

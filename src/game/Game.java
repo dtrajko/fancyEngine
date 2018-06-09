@@ -179,14 +179,13 @@ public class Game implements IGameLogic {
         this.scene.setParticleEmitters(new FlowParticleEmitter[]{particleEmitter});
 
         // Shadows
-        scene.setRenderShadows(false);
+        scene.setRenderShadows(true);
 
         // Fog
         Vector3f fogColour = new Vector3f(0.5f, 0.5f, 0.5f);
         scene.setFog(new Fog(true, fogColour, 0.01f));
 
         // Setup  SkyBox
-        // SkyBox skyBox = new SkyBox(Config.RESOURCES_DIR + "/models/skybox.obj", new Vector4f(0.65f, 0.65f, 0.65f, 1.0f));
         SkyBox skyBox = new SkyBox(Config.RESOURCES_DIR + "/models/skybox.obj", Config.RESOURCES_DIR + "/textures/skybox_minecraft.png");
         
         skyBox.setScale(skyBoxScale);
@@ -227,18 +226,6 @@ public class Game implements IGameLogic {
 
         this.soundMgr.init();
         this.soundMgr.setAttenuationModel(AL11.AL_EXPONENT_DISTANCE);
-        
-        /*
-        SoundBuffer buffFire = new SoundBuffer(Config.RESOURCES_DIR + "/sounds/fire.ogg");
-        soundMgr.addSoundBuffer(buffFire);
-        SoundSource sourceFire = new SoundSource(true, false);
-        Vector3f pos = particleEmitter.getBaseParticle().getPosition();
-        sourceFire.setPosition(pos);
-        sourceFire.setBuffer(buffFire.getBufferId());
-        soundMgr.addSoundSource(Sounds.FIRE.toString(), sourceFire);
-        // sourceFire.play();
-        soundMgr.setListener(new SoundListener(new Vector3f(0, 0, 0)));
-		*/
 
         SoundBuffer buffBackground = new SoundBuffer(Config.RESOURCES_DIR + "/sounds/tomb_raider_01.ogg");
         soundMgr.addSoundBuffer(buffBackground);
@@ -253,10 +240,11 @@ public class Game implements IGameLogic {
 
     @Override
     public void input(Window window, MouseInput mouseInput) {
-
+    	sceneChanged = false;
         cameraInc.set(0, 0, 0);
         // reset camera position/rotation
         if (window.isKeyPressed(GLFW.GLFW_KEY_R)) {
+        	sceneChanged = true;
             camera.reset();
         }
         if (window.isKeyPressed(GLFW.GLFW_KEY_CAPS_LOCK)) {
@@ -265,26 +253,35 @@ public class Game implements IGameLogic {
         	SPEED = 5;
         }
         if (window.isKeyPressed(GLFW.GLFW_KEY_W)) {
+        	sceneChanged = true;
             cameraInc.z = -SPEED;
         } else if (window.isKeyPressed(GLFW.GLFW_KEY_S)) {
+        	sceneChanged = true;
             cameraInc.z = SPEED;
         }
         if (window.isKeyPressed(GLFW.GLFW_KEY_A)) {
+        	sceneChanged = true;
             cameraInc.x = -SPEED;
         } else if (window.isKeyPressed(GLFW.GLFW_KEY_D)) {
+        	sceneChanged = true;
             cameraInc.x = SPEED;
         }
         if (window.isKeyPressed(GLFW.GLFW_KEY_SPACE)) {
+        	sceneChanged = true;
             cameraInc.y = SPEED;
         } else if (window.isKeyPressed(GLFW.GLFW_KEY_LEFT_SHIFT)) {
+        	sceneChanged = true;
             cameraInc.y = -SPEED;
         } else if (gravityOn && camera.getPosition().y > WORLD_BOTTOM) {
+        	sceneChanged = true;
         	cameraInc.y = GRAVITY;
         }
 
         if (window.isKeyPressed(GLFW.GLFW_KEY_LEFT)) {
+        	sceneChanged = true;
             angleInc -= 0.05f;
         } else if (window.isKeyPressed(GLFW.GLFW_KEY_RIGHT)) {
+        	sceneChanged = true;
             angleInc += 0.05f;
         } else {
             angleInc = 0;
@@ -310,9 +307,6 @@ public class Game implements IGameLogic {
 			gravityOn = true;
 		}
 
-		// Update view matrix
-		camera.updateViewMatrix();
-
         lightAngle += angleInc;
         if (lightAngle < 0) {
             lightAngle = 0;
@@ -333,6 +327,9 @@ public class Game implements IGameLogic {
         // particleEmitter.update((long) (interval * 1000));
 
         selectDetectorCamera.selectGameItem(scene, camera, mouseInput);
+        
+		// Update view matrix
+		camera.updateViewMatrix();
     }
 
     @Override
