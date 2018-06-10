@@ -150,6 +150,8 @@ public class Renderer {
         sceneShaderProgram.createUniform("numRows");
 
         sceneShaderProgram.createUniform("selectedNonInstanced");
+        
+        sceneShaderProgram.createUniform("transparency");
     }
 
     private void setupHudShader() throws Exception {
@@ -302,8 +304,8 @@ public class Renderer {
         transformation.updateProjectionMatrix(FOV, window.getWidth(), window.getHeight(), Z_NEAR, Z_FAR);
         transformation.updateViewMatrix(camera);
 
-        renderScene(window, camera, scene);
         renderSkyBox(window, camera, scene);
+        renderScene(window, camera, scene);
         // renderParticles(window, camera, scene);
         renderHud(window, hud);
         renderCrossHair(window);
@@ -511,6 +513,7 @@ public class Renderer {
 
         for (Mesh mesh : mapMeshes.keySet()) {
         	sceneShaderProgram.setUniform("material", mesh.getMaterial());
+        	sceneShaderProgram.setUniform("transparency", mesh.getTransparency());
         	
             Texture text = mesh.getMaterial().getTexture();
             if (text != null) {
@@ -544,8 +547,9 @@ public class Renderer {
                 sceneShaderProgram.setUniform("numCols", text.getNumCols());
                 sceneShaderProgram.setUniform("numRows", text.getNumRows());
             }
-
+            
             sceneShaderProgram.setUniform("material", mesh.getMaterial());
+            sceneShaderProgram.setUniform("transparency", mesh.getTransparency());
 
             filteredItems.clear();
             for (GameItem gameItem : mapMeshes.get(mesh)) {

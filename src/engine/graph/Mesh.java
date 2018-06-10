@@ -23,6 +23,7 @@ public class Mesh {
     private final int vertexCount;
     private Material material;
     private float boundingRadius;
+    private float transparency = 1.0f;
 
     public Mesh(float[] positions, float[] textCoords, float[] normals, int[] indices) {
         this(positions, textCoords, normals, indices, createEmptyIntArray(MAX_WEIGHTS * positions.length / 3, 0), createEmptyFloatArray(MAX_WEIGHTS * positions.length / 3, 0));
@@ -125,6 +126,14 @@ public class Mesh {
 
     public void setMaterial(Material material) {
         this.material = material;
+    }
+    
+    public void setTransparency(float value) {
+    	transparency = value;
+    }
+    
+    public float getTransparency() {
+    	return transparency;
     }
 
     public final int getVaoId() {

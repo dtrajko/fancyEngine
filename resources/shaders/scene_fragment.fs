@@ -74,6 +74,7 @@ uniform DirectionalLight directionalLight;
 uniform Fog fog;
 uniform float cascadeFarPlanes[NUM_CASCADES];
 uniform int renderShadow;
+uniform float transparency;
 
 vec4 ambientC;
 vec4 diffuseC;
@@ -272,6 +273,6 @@ void main()
     	// vec4(fragColor.x, fragColor.y, 1, 1);
         fragColor = vec4(fragColor.x + 0.2, fragColor.y + 0.2, fragColor.z + 0.2, 1);
     }
-
-    // fragColor = vec4(fragColor.xyz, 0.95); // make the terrain semi-transparent
+    
+    fragColor = vec4(fragColor.xyz, transparency); 
 }

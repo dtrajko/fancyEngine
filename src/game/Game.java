@@ -87,22 +87,25 @@ public class Game implements IGameLogic {
         decoder.decode(buffer, width * 4, PNGDecoder.Format.RGBA);
         buffer.flip();
 
-        float reflectance = 1f;
-
-        Mesh meshWater = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
-        Texture textureWater = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_water.png", 2, 1);
-        Material materialWater = new Material(textureWater, reflectance);
-        meshWater.setMaterial(materialWater);
+        float reflectance = 1.0f;
 
         Mesh meshGrass = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
         Texture textureGrass = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_textures.png", 2, 1);
         Material materialGrass = new Material(textureGrass, reflectance);
         meshGrass.setMaterial(materialGrass);
+        meshGrass.setTransparency(1.0f);
 
         Mesh meshMount = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
         Texture textureMount = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_textures_mountain.png", 2, 1);
         Material materialMount = new Material(textureMount, reflectance);
         meshMount.setMaterial(materialMount);
+        meshMount.setTransparency(1.0f);
+
+        Mesh meshWater = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
+        Texture textureWater = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_water.png", 2, 1);
+        Material materialWater = new Material(textureWater, reflectance);
+        meshWater.setMaterial(materialWater);
+        meshWater.setTransparency(0.5f);
 
         int blockScale = 1;
         int skyBoxScale = 100;
@@ -122,6 +125,7 @@ public class Game implements IGameLogic {
 
         GameItem gameItem;
         List<GameItem> gameItems = new ArrayList<GameItem>();
+        List<GameItem> gameItemsTransparent = new ArrayList<GameItem>();
 
         for (int incX = 0; incX < height; incX++) {
             for (int incZ = 0; incZ < width; incZ++) {
@@ -146,7 +150,12 @@ public class Game implements IGameLogic {
                 	gameItem.setBoundingBox();
                 	// int textPos = Math.random() > 0.5f ? 0 : 1;
                 	// gameItem.setTextPos(textPos);
-                	gameItems.add(gameItem);
+                	
+                	if (gameItem.getMesh().getTransparency() < 1.0f) {
+                		gameItemsTransparent.add(gameItem);
+                	} else {
+                		gameItems.add(gameItem);     		
+                	}
                 }
                 posX += increment;
             }
@@ -155,7 +164,9 @@ public class Game implements IGameLogic {
         }
 
         scene.setGameItems(gameItems);
+        scene.setGameItems(gameItemsTransparent);
         gameItems.clear();
+        gameItemsTransparent.clear();
 
         // Particles
         int maxParticles = 200;
@@ -179,7 +190,7 @@ public class Game implements IGameLogic {
         this.scene.setParticleEmitters(new FlowParticleEmitter[]{particleEmitter});
 
         // Shadows
-        scene.setRenderShadows(true);
+        scene.setRenderShadows(false);
 
         // Fog
         Vector3f fogColour = new Vector3f(0.5f, 0.5f, 0.5f);
