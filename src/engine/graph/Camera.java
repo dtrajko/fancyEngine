@@ -49,6 +49,24 @@ public class Camera {
 		position.z = z;
 	}
 
+	public void setPosition(Vector3f pos) {
+		setPosition(pos.x, pos.y, pos.z);
+	}
+
+	public Vector3f getRotation() {
+		return rotation;
+	}
+
+	public void setRotation(float x, float y, float z) {
+		rotation.x = x;
+		rotation.y = y;
+		rotation.z = z;
+	}
+
+	public void setRotation(Vector3f rot) {
+		setRotation(rot.x, rot.y, rot.z);
+	}
+
 	public Vector3f calculateNewPosition(float offsetX, float offsetY, float offsetZ) {
 		Vector3f newPos = new Vector3f(position.x, position.y, position.z);
 		if ( offsetZ != 0 ) {
@@ -77,16 +95,6 @@ public class Camera {
 		position.x = newPos.x;
 		position.y = newPos.y;
 		position.z = newPos.z;
-	}
-
-	public Vector3f getRotation() {
-		return rotation;
-	}
-
-	public void setRotation(float x, float y, float z) {
-		rotation.x = x;
-		rotation.y = y;
-		rotation.z = z;
 	}
 
 	public void moveRotation(float offsetX, float offsetY, float offsetZ) {

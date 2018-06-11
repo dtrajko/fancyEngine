@@ -3,13 +3,11 @@ package game;
 import java.io.FileInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.openal.AL11;
-
 import config.Config;
 import de.matthiasmann.twl.utils.PNGDecoder;
 import engine.IGameLogic;
@@ -64,7 +62,8 @@ public class Game implements IGameLogic {
     private Mesh meshGrass;
     private Mesh meshGround;
     private Mesh meshWater;
-    
+    private boolean updateEnabled = true;
+    private long toggleGuiLastTime;
 
     private enum Sounds {
         FIRE,
@@ -291,6 +290,22 @@ public class Game implements IGameLogic {
     public void input(Window window, MouseInput mouseInput) {
     	sceneChanged = false;
         cameraInc.set(0, 0, 0);
+        
+        if (mouseInput.isMouseButtonReleased(0)) {
+        	Vector2f mouseNDC = GuiManager.getNormalisedDeviceCoordinates(
+        		(float) mouseInput.getMousePosition().x,
+        		(float) mouseInput.getMousePosition().y, window);
+        	nextBlock = GuiManager.selectGuiItem(mouseNDC, guis);
+        	if (inventoryOn) {
+        		toggleGui();
+        	}
+        }
+
+        if (mouseInput.isKeyReleased(GLFW.GLFW_KEY_E)) {
+        	sceneChanged = true;
+        	toggleGui();
+        }
+
         // reset camera position/rotation
         if (window.isKeyPressed(GLFW.GLFW_KEY_R)) {
         	sceneChanged = true;
@@ -325,11 +340,6 @@ public class Game implements IGameLogic {
         	sceneChanged = true;
         	cameraInc.y = GRAVITY;
         }
-        
-        if (mouseInput.isKeyReleased(GLFW.GLFW_KEY_I)) {
-        	sceneChanged = true;
-        	toggleGui();
-        }
 
         if (window.isKeyPressed(GLFW.GLFW_KEY_LEFT)) {
         	sceneChanged = true;
@@ -340,28 +350,33 @@ public class Game implements IGameLogic {
         } else {
             angleInc = 0;
         }
-        
-        if (mouseInput.isMouseButtonPressed(0)) {
-        	Vector2f mouseNDC = GuiManager.getNormalisedDeviceCoordinates(
-        		(float) mouseInput.getMousePosition().x,
-        		(float) mouseInput.getMousePosition().y, window);
-        	nextBlock = GuiManager.selectGuiItem(mouseNDC, guis);
-        }
     }
 
     private void toggleGui() {
+    	long currentTime = System.currentTimeMillis();
+    	if (currentTime - toggleGuiLastTime < 1000) {
+    		return;
+    	}
     	if (!inventoryOn) {
     		inventoryOn = true;
+    		updateEnabled = false;
     		GLFW.glfwSetInputMode(window.getWindowHandle(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
     	} else {
     		inventoryOn = false;
+    		updateEnabled = true;
     		GLFW.glfwSetInputMode(window.getWindowHandle(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_DISABLED);
     	}
+    	toggleGuiLastTime = currentTime;
 	}
 
 	@Override
     public void update(float interval, MouseInput mouseInput) {
-
+		if (updateEnabled) {
+			updateConditional(mouseInput);
+		}
+    }
+	
+	public void updateConditional(MouseInput mouseInput) {
     	// Update camera based on mouse
         Vector2f rotVec = mouseInput.getDisplVec();
         camera.moveRotation(rotVec.x * MOUSE_SENSITIVITY, rotVec.y * MOUSE_SENSITIVITY, 0);        	
@@ -405,7 +420,8 @@ public class Game implements IGameLogic {
 
 		// Update view matrix
 		camera.updateViewMatrix();
-    }
+
+	}
 
     @Override
     public void render(Window window) {

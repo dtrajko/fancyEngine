@@ -6,7 +6,6 @@ import org.joml.Vector3f;
 import engine.graph.Mesh;
 import engine.graph.Texture;
 import engine.items.Box2D;
-import engine.items.Box3D;
 
 public class GuiButton {
 

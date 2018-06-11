@@ -2,7 +2,6 @@ package engine.graph;
 
 import de.matthiasmann.twl.utils.PNGDecoder;
 import de.matthiasmann.twl.utils.PNGDecoder.Format;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;

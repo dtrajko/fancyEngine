@@ -135,6 +135,16 @@ public class Window {
             glfwWindowHint(GLFW_SAMPLES, 4);
         }
     }
+    
+    public void setMousePositionCenter() {
+    	int xpos = getWidth() / 2;
+    	int ypos = getHeight() / 2;
+    	setMousePosition(xpos, ypos);
+    }
+
+    public void setMousePosition(int xpos, int ypos) {
+    	glfwSetCursorPos(windowHandle, xpos, ypos);
+    }
 
     public Matrix4f updateProjectionMatrix() {
         float aspectRatio = (float)width / (float)height;        

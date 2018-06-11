@@ -2,18 +2,15 @@ package game;
 
 import java.util.List;
 import java.util.Map;
-
 import org.joml.Intersectionf;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
-
 import engine.Scene;
 import engine.graph.Camera;
 import engine.graph.InstancedMesh;
 import engine.graph.Mesh;
 import engine.graph.MouseInput;
-import engine.gui.GuiButton;
 import engine.items.GameItem;
 
 public class CameraBoxSelectionDetector {

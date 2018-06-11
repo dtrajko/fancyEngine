@@ -1,9 +1,7 @@
 package engine.graph;
 
 import java.nio.FloatBuffer;
-import java.util.HashMap;
 import java.util.List;
-
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;

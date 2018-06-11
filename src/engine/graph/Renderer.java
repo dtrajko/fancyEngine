@@ -3,7 +3,6 @@ package engine.graph;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -25,7 +24,6 @@ import engine.graph.shadow.ShadowCascade;
 import engine.graph.shadow.ShadowRenderer;
 import engine.gui.GuiButton;
 import engine.gui.GuiRenderer;
-import engine.gui.GuiTexture;
 import engine.items.GameItem;
 import engine.items.SkyBox;
 import game.Hud;
@@ -315,35 +313,6 @@ public class Renderer {
         renderSkyBox(window, camera, scene);
         renderScene(window, camera, scene);
         // renderParticles(window, camera, scene);
-        // renderHud(window, hud);
-        // renderCrossHair(window);
-    }
-
-    private void renderCrossHair(Window window) {
-    	if (window.getWindowOptions().compatibleProfile) {
-            GL11.glPushMatrix();
-            GL11.glLoadIdentity();
-
-            float inc = 0.05f;
-            GL11.glLineWidth(2.0f);
-
-            GL11.glBegin(GL11.GL_LINES);
-
-            GL11.glColor3f(1.0f, 1.0f, 1.0f);
-
-            // Horizontal line
-            GL11.glVertex3f(-inc, 0.0f, 0.0f);
-            GL11.glVertex3f(+inc, 0.0f, 0.0f);
-            GL11.glEnd();
-
-            // Vertical line
-            GL11.glBegin(GL11.GL_LINES);
-            GL11.glVertex3f(0.0f, -inc, 0.0f);
-            GL11.glVertex3f(0.0f, +inc, 0.0f);
-            GL11.glEnd();
-
-            GL11.glPopMatrix();
-        }
     }
 
     private void renderDepthMap(Window window, Camera camera, Scene scene) {
