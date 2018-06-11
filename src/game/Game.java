@@ -26,6 +26,7 @@ import engine.graph.lights.DirectionalLight;
 import engine.graph.particles.FlowParticleEmitter;
 import engine.graph.particles.Particle;
 import engine.graph.weather.Fog;
+import engine.gui.GuiTexture;
 import engine.items.GameItem;
 import engine.items.SkyBox;
 import engine.loaders.obj.OBJLoader;
@@ -56,6 +57,8 @@ public class Game implements IGameLogic {
     private Window window;
     private boolean firstTime;
     private boolean sceneChanged;
+    private List<GuiTexture> guis = new ArrayList<GuiTexture>();
+    private boolean guiVisible = false;
 
     private enum Sounds {
         FIRE,
@@ -105,7 +108,7 @@ public class Game implements IGameLogic {
         Texture textureWater = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_water.png", 2, 1);
         Material materialWater = new Material(textureWater, reflectance);
         meshWater.setMaterial(materialWater);
-        meshWater.setTransparency(0.5f);
+        meshWater.setTransparency(0.7f);
 
         int blockScale = 1;
         int skyBoxScale = 100;
@@ -142,11 +145,12 @@ public class Game implements IGameLogic {
             			gameItem = new GameItem(meshWater);
             		} else if (posY < mountLevel){
             			gameItem = new GameItem(meshGrass);
+            			
             		} else {
             			gameItem = new GameItem(meshMount);
             		}
+            		gameItem.setPosition(posX, posY, posZ);
                 	gameItem.setScale(blockScale);
-                	gameItem.setPosition(posX, posY, posZ);                	
                 	gameItem.setBoundingBox();
                 	// int textPos = Math.random() > 0.5f ? 0 : 1;
                 	// gameItem.setTextPos(textPos);
@@ -207,6 +211,9 @@ public class Game implements IGameLogic {
 
         // Setup Sounds
         setupSounds();
+        
+        // Setup GUI
+        setupGui();
 
         camera.getPosition().x = -skyBoxScale;
         camera.getPosition().y = 10.0f;
@@ -216,7 +223,13 @@ public class Game implements IGameLogic {
         selectDetectorCamera = new CameraBoxSelectionDetector();
     }
 
-    private void setupLights() {
+    private void setupGui() throws Exception {
+    	Texture guiQuad = new Texture(Config.RESOURCES_DIR +  "/textures/inventory.png", 1, 1);
+    	GuiTexture guiInventory = new GuiTexture(guiQuad.getId(), new Vector3f(0.0f, 0.0f, 1), new Vector2f(0.3f, 0.5f));
+    	guis.add(guiInventory);
+	}
+
+	private void setupLights() {
         SceneLight sceneLight = new SceneLight();
         scene.setSceneLight(sceneLight);
 
@@ -287,6 +300,10 @@ public class Game implements IGameLogic {
         	sceneChanged = true;
         	cameraInc.y = GRAVITY;
         }
+        
+        if (mouseInput.isKeyReleased(GLFW.GLFW_KEY_I)) {
+        	toggleGui();
+        }
 
         if (window.isKeyPressed(GLFW.GLFW_KEY_LEFT)) {
         	sceneChanged = true;
@@ -299,7 +316,17 @@ public class Game implements IGameLogic {
         }        
     }
 
-    @Override
+    private void toggleGui() {
+    	if (!guiVisible) {
+    		guiVisible = true;
+    		GLFW.glfwSetInputMode(window.getWindowHandle(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
+    	} else {
+    		guiVisible = false;
+    		GLFW.glfwSetInputMode(window.getWindowHandle(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_DISABLED);
+    	}
+	}
+
+	@Override
     public void update(float interval, MouseInput mouseInput) {
 
     	// Update camera based on mouse
@@ -353,7 +380,9 @@ public class Game implements IGameLogic {
             firstTime = false;
         }
         renderer.render(window, camera, scene, hud, sceneChanged);
-        hud.render(window);
+        if (guiVisible) {
+        	renderer.renderGui(guis, window);        	
+        }
     }
 
     @Override

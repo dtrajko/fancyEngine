@@ -7,11 +7,11 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
 import engine.Window;
+import engine.utils.Maths;
 import game3D.entities.Entity3D;
 import game3D.models.RawModel;
 import game3D.models.TexturedModel;
 import game3D.shaders.StaticShader;
-import game3D.utils.Maths;
 
 public class Renderer {
 

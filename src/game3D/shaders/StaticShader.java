@@ -1,8 +1,9 @@
 package game3D.shaders;
 
 import org.joml.Matrix4f;
+
+import engine.utils.Maths;
 import game3D.render.Camera3D;
-import game3D.utils.Maths;
 
 public class StaticShader extends ShaderProgram {
 

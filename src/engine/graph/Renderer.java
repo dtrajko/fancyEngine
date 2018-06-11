@@ -23,6 +23,8 @@ import engine.graph.lights.PointLight;
 import engine.graph.lights.SpotLight;
 import engine.graph.shadow.ShadowCascade;
 import engine.graph.shadow.ShadowRenderer;
+import engine.gui.GuiRenderer;
+import engine.gui.GuiTexture;
 import engine.items.GameItem;
 import engine.items.SkyBox;
 import game.Hud;
@@ -46,6 +48,8 @@ public class Renderer {
     private ShaderProgram hudShaderProgram;
     private ShaderProgram skyBoxShaderProgram;
     private ShaderProgram particlesShaderProgram;
+    
+    private GuiRenderer guiRenderer;
 
 	private final float specularPower;
 	private ShadowMap shadowMap;
@@ -58,6 +62,7 @@ public class Renderer {
         shadowRenderer = new ShadowRenderer();
         frustumFilter = new FrustumCullingFilter();
         filteredItems = new ArrayList<>();
+        
     }
 
     public void init(Window window) throws Exception {
@@ -66,6 +71,8 @@ public class Renderer {
         setupSceneShader();
         // setupParticlesShader();
         setupHudShader();
+        guiRenderer = new GuiRenderer();
+        guiRenderer.setupGuiShader();
     }
 
     private void setupParticlesShader() throws Exception {
@@ -307,8 +314,8 @@ public class Renderer {
         renderSkyBox(window, camera, scene);
         renderScene(window, camera, scene);
         // renderParticles(window, camera, scene);
-        renderHud(window, hud);
-        renderCrossHair(window);
+        // renderHud(window, hud);
+        // renderCrossHair(window);
     }
 
     private void renderCrossHair(Window window) {
@@ -468,6 +475,10 @@ public class Renderer {
             }
             hudShaderProgram.unbind();
         }
+    }
+    
+    public void renderGui(List<GuiTexture> guis, Window window) {
+    	this.guiRenderer.render(guis, window);
     }
 
     public void renderScene(Window window, Camera camera, Scene scene) {
