@@ -43,17 +43,20 @@ public class GuiRenderer {
     	guiShaderProgram.createUniform("guiTexture");
     }
 
-	public void render(List<GuiTexture> guis, Window window) {
+	public void render(List<GuiButton> guis, Window window, boolean renderInventory) {
 		guiShaderProgram.bind();
 		GL30.glBindVertexArray(quad.getVaoID());
 		GL20.glEnableVertexAttribArray(0);
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
-		for (GuiTexture gui:guis) {
+		for (GuiButton gui:guis) {
+			if (gui.isInventory() && !renderInventory) {
+				continue;
+			}
 			GL13.glActiveTexture(GL13.GL_TEXTURE0);
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, gui.getTexture());
-			Matrix4f orthoMatrix = Maths.createTransformationMatrix(gui.getPosition(), new Vector3f(), gui.getScale());
+			Matrix4f orthoMatrix = Maths.createTransformationMatrix(gui.getGuiTexture().getPosition(), gui.getGuiTexture().getRotation(), gui.getGuiTexture().getScale());
 			guiShaderProgram.setUniform("transformationMatrix", orthoMatrix);
 			GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
 		}

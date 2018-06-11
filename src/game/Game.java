@@ -26,6 +26,8 @@ import engine.graph.lights.DirectionalLight;
 import engine.graph.particles.FlowParticleEmitter;
 import engine.graph.particles.Particle;
 import engine.graph.weather.Fog;
+import engine.gui.GuiButton;
+import engine.gui.GuiManager;
 import engine.gui.GuiTexture;
 import engine.items.GameItem;
 import engine.items.SkyBox;
@@ -57,8 +59,8 @@ public class Game implements IGameLogic {
     private Window window;
     private boolean firstTime;
     private boolean sceneChanged;
-    private List<GuiTexture> guis = new ArrayList<GuiTexture>();
-    private boolean guiVisible = false;
+    private List<GuiButton> guis = new ArrayList<GuiButton>();
+    private boolean inventoryVisible = false;
 
     private enum Sounds {
         FIRE,
@@ -224,9 +226,25 @@ public class Game implements IGameLogic {
     }
 
     private void setupGui() throws Exception {
-    	Texture guiQuad = new Texture(Config.RESOURCES_DIR +  "/textures/inventory.png", 1, 1);
-    	GuiTexture guiInventory = new GuiTexture(guiQuad.getId(), new Vector3f(0.0f, 0.0f, 1), new Vector2f(0.3f, 0.5f));
-    	guis.add(guiInventory);
+    	
+    	Texture textureBullseye = new Texture(Config.RESOURCES_DIR +  "/textures/bullseye.png", 1, 1);
+    	GuiButton guiBullseye = new GuiButton(textureBullseye, new Vector3f(0f, 0f, 1), new Vector2f(0.026f, 0.04f));
+    	guis.add(guiBullseye);
+
+    	Texture textureButtonGrass = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_grass.png", 1, 1);
+    	GuiButton guiButtonGrass = new GuiButton(textureButtonGrass, new Vector3f(-0.23f, -0.78f, 1), new Vector2f(0.1f, 0.18f));
+    	guiButtonGrass.setInventory(true);
+    	guis.add(guiButtonGrass);
+
+    	Texture textureButtonGround = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_ground.png", 1, 1);
+    	GuiButton guiButtonGround = new GuiButton(textureButtonGround, new Vector3f(0f, -0.78f, 1), new Vector2f(0.1f, 0.18f));
+    	guiButtonGround.setInventory(true);
+    	guis.add(guiButtonGround);
+    	
+    	Texture textureButtonWater = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_water.png", 1, 1);
+    	GuiButton guiButtonWater = new GuiButton(textureButtonWater, new Vector3f(0.23f, -0.78f, 1), new Vector2f(0.1f, 0.18f));
+    	guiButtonWater.setInventory(true);
+    	guis.add(guiButtonWater);
 	}
 
 	private void setupLights() {
@@ -313,15 +331,23 @@ public class Game implements IGameLogic {
             angleInc += 0.05f;
         } else {
             angleInc = 0;
-        }        
+        }
+        
+        if (mouseInput.isMouseButtonPressed(0)) {
+        	GuiButton selectedGuiItem = null;
+        	Vector2f mouseNDC = GuiManager.getNormalisedDeviceCoordinates(
+        		(float) mouseInput.getMousePosition().x,
+        		(float) mouseInput.getMousePosition().y, window);
+        	selectedGuiItem = GuiManager.selectGuiItem(mouseNDC, guis);
+        }
     }
 
     private void toggleGui() {
-    	if (!guiVisible) {
-    		guiVisible = true;
+    	if (!inventoryVisible) {
+    		inventoryVisible = true;
     		GLFW.glfwSetInputMode(window.getWindowHandle(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
     	} else {
-    		guiVisible = false;
+    		inventoryVisible = false;
     		GLFW.glfwSetInputMode(window.getWindowHandle(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_DISABLED);
     	}
 	}
@@ -365,7 +391,7 @@ public class Game implements IGameLogic {
         // particleEmitter.update((long) (interval * 1000));
 
         selectDetectorCamera.selectGameItem(scene, camera, mouseInput);
-        
+
 		// Update view matrix
 		camera.updateViewMatrix();
     }
@@ -380,9 +406,7 @@ public class Game implements IGameLogic {
             firstTime = false;
         }
         renderer.render(window, camera, scene, hud, sceneChanged);
-        if (guiVisible) {
-        	renderer.renderGui(guis, window);        	
-        }
+        renderer.renderGui(guis, window, inventoryVisible);        	
     }
 
     @Override

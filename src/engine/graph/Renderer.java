@@ -23,6 +23,7 @@ import engine.graph.lights.PointLight;
 import engine.graph.lights.SpotLight;
 import engine.graph.shadow.ShadowCascade;
 import engine.graph.shadow.ShadowRenderer;
+import engine.gui.GuiButton;
 import engine.gui.GuiRenderer;
 import engine.gui.GuiTexture;
 import engine.items.GameItem;
@@ -477,8 +478,8 @@ public class Renderer {
         }
     }
     
-    public void renderGui(List<GuiTexture> guis, Window window) {
-    	this.guiRenderer.render(guis, window);
+    public void renderGui(List<GuiButton> guis, Window window, boolean renderInventory) {
+    	this.guiRenderer.render(guis, window, renderInventory);
     }
 
     public void renderScene(Window window, Camera camera, Scene scene) {

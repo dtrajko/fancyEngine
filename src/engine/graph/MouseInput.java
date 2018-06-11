@@ -60,6 +60,10 @@ public class MouseInput {
     public Vector2f getDisplVec() {
         return displVec;
     }
+    
+    public Vector2d getMousePosition() {
+    	return this.currentPos;
+    }
 
     public void input(Window window) {
         displVec.x = 0;

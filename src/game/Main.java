@@ -5,7 +5,7 @@ import engine.IGameLogic;
 import engine.Window;
 
 public class Main {
-	 
+
     public static void main(String[] args) {
         try {
             boolean vSync = true;
