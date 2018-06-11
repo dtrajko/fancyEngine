@@ -13,6 +13,7 @@ import engine.graph.Camera;
 import engine.graph.InstancedMesh;
 import engine.graph.Mesh;
 import engine.graph.MouseInput;
+import engine.gui.GuiButton;
 import engine.items.GameItem;
 
 public class CameraBoxSelectionDetector {
@@ -29,7 +30,7 @@ public class CameraBoxSelectionDetector {
         nearFar = new Vector2f();
     }
 
-    public void selectGameItem(Scene scene, Camera camera, MouseInput mouseInput) {
+    public void selectGameItem(Scene scene, Camera camera, MouseInput mouseInput, Mesh nextMesh) {
 
     	GameItem selectedGameItem = null;
         float closestDistance = Float.POSITIVE_INFINITY;
@@ -73,9 +74,13 @@ public class CameraBoxSelectionDetector {
             if (mouseInput.isMouseButtonPressed(GLFW.GLFW_MOUSE_BUTTON_1)) {
             	scene.removeGameItem(selectedGameItem);
             }
+            
+            nextMesh = nextMesh != null ? nextMesh : selectedGameItem.getMesh();
+            
             // middle button - create a new cube above the selected cube
             if (mouseInput.isMouseButtonPressed(GLFW.GLFW_MOUSE_BUTTON_3)) {
-            	GameItem newGameItem = new GameItem(selectedGameItem.getMesh());
+            	
+            	GameItem newGameItem = new GameItem(nextMesh);
             	newGameItem.setPosition(
         			selectedGameItem.getPosition().x,
         			selectedGameItem.getPosition().y + selectedGameItem.getScale() * 2,
@@ -86,7 +91,7 @@ public class CameraBoxSelectionDetector {
             // left button - create a new cube in camera direction
             if (mouseInput.isMouseButtonPressed(GLFW.GLFW_MOUSE_BUTTON_2)) {
 
-            	GameItem newGameItem = new GameItem(selectedGameItem.getMesh());
+            	GameItem newGameItem = new GameItem(nextMesh);
 
             	Vector3f camPos = camera.getPosition();
             	Vector3f cubePos = selectedGameItem.getPosition();

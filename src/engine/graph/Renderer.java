@@ -289,7 +289,7 @@ public class Renderer {
         shaderProgram.unbind();
     }
 
-    public void render(Window window, Camera camera, Scene scene, IHud hud, boolean sceneChanged) {
+    public void render(Window window, Camera camera, Scene scene, boolean sceneChanged) {
         clear();
 
         if (window.getOptions().frustumCulling) {

@@ -3,6 +3,7 @@ package engine.gui;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
+import engine.graph.Mesh;
 import engine.graph.Texture;
 import engine.items.Box2D;
 import engine.items.Box3D;
@@ -13,6 +14,7 @@ public class GuiButton {
 	private Box2D aabb;
 	private boolean selected;
 	private boolean inventory;
+	private Mesh mesh = null;
 
 	public GuiButton(Texture texture, Vector3f position, Vector2f scale) {
 		super();
@@ -59,5 +61,13 @@ public class GuiButton {
 
 	public boolean isInventory() {
 		return inventory;
+	}
+
+	public void setMesh(Mesh mesh) {
+		this.mesh = mesh;
+	}
+	
+	public Mesh getMesh() {
+		return mesh;
 	}
 }
