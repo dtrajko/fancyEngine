@@ -28,7 +28,6 @@ import engine.graph.particles.Particle;
 import engine.graph.weather.Fog;
 import engine.gui.GuiButton;
 import engine.gui.GuiManager;
-import engine.gui.GuiTexture;
 import engine.items.GameItem;
 import engine.items.SkyBox;
 import engine.loaders.obj.OBJLoader;
@@ -92,25 +91,26 @@ public class Game implements IGameLogic {
         decoder.decode(buffer, width * 4, PNGDecoder.Format.RGBA);
         buffer.flip();
 
-        float reflectance = 1.0f;
-
         Mesh meshGrass = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
         Texture textureGrass = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_textures.png", 2, 1);
-        Material materialGrass = new Material(textureGrass, reflectance);
+        Material materialGrass = new Material(textureGrass);
+        materialGrass.setReflectance(1.0f);
+        materialGrass.setTransparency(1.0f);
         meshGrass.setMaterial(materialGrass);
-        meshGrass.setTransparency(1.0f);
 
         Mesh meshMount = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
         Texture textureMount = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_textures_mountain.png", 2, 1);
-        Material materialMount = new Material(textureMount, reflectance);
+        Material materialMount = new Material(textureMount);
+        materialMount.setReflectance(1.0f);
+        materialMount.setTransparency(1.0f);
         meshMount.setMaterial(materialMount);
-        meshMount.setTransparency(1.0f);
 
         Mesh meshWater = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
         Texture textureWater = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_water.png", 2, 1);
-        Material materialWater = new Material(textureWater, reflectance);
+        Material materialWater = new Material(textureWater);
+        materialWater.setReflectance(1.0f);
+        materialWater.setTransparency(0.7f);
         meshWater.setMaterial(materialWater);
-        meshWater.setTransparency(0.7f);
 
         int blockScale = 1;
         int skyBoxScale = 100;
@@ -156,8 +156,8 @@ public class Game implements IGameLogic {
                 	gameItem.setBoundingBox();
                 	// int textPos = Math.random() > 0.5f ? 0 : 1;
                 	// gameItem.setTextPos(textPos);
-                	
-                	if (gameItem.getMesh().getTransparency() < 1.0f) {
+
+                	if (gameItem.getMesh().getMaterial().getTransparency() < 1.0f) {
                 		gameItemsTransparent.add(gameItem);
                 	} else {
                 		gameItems.add(gameItem);     		
@@ -184,7 +184,8 @@ public class Game implements IGameLogic {
         float scale = 1.0f;
         Mesh partMesh = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/particle.obj", maxParticles);
         Texture particleTexture = new Texture(Config.RESOURCES_DIR + "/textures/particle_anim.png", 4, 4);
-        Material partMaterial = new Material(particleTexture, reflectance);
+        Material partMaterial = new Material(particleTexture);
+        partMaterial.setReflectance(1.0f);
         partMesh.setMaterial(partMaterial);
         Particle particle = new Particle(partMesh, particleSpeed, ttl, 100);
         particle.setScale(scale);
@@ -226,7 +227,7 @@ public class Game implements IGameLogic {
     }
 
     private void setupGui() throws Exception {
-    	
+
     	Texture textureBullseye = new Texture(Config.RESOURCES_DIR +  "/textures/bullseye.png", 1, 1);
     	GuiButton guiBullseye = new GuiButton(textureBullseye, new Vector3f(0f, 0f, 1), new Vector2f(0.026f, 0.04f));
     	guis.add(guiBullseye);
@@ -240,7 +241,7 @@ public class Game implements IGameLogic {
     	GuiButton guiButtonGround = new GuiButton(textureButtonGround, new Vector3f(0f, -0.78f, 1), new Vector2f(0.1f, 0.18f));
     	guiButtonGround.setInventory(true);
     	guis.add(guiButtonGround);
-    	
+
     	Texture textureButtonWater = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_water.png", 1, 1);
     	GuiButton guiButtonWater = new GuiButton(textureButtonWater, new Vector3f(0.23f, -0.78f, 1), new Vector2f(0.1f, 0.18f));
     	guiButtonWater.setInventory(true);
@@ -320,6 +321,7 @@ public class Game implements IGameLogic {
         }
         
         if (mouseInput.isKeyReleased(GLFW.GLFW_KEY_I)) {
+        	sceneChanged = true;
         	toggleGui();
         }
 
@@ -406,7 +408,7 @@ public class Game implements IGameLogic {
             firstTime = false;
         }
         renderer.render(window, camera, scene, hud, sceneChanged);
-        renderer.renderGui(guis, window, inventoryVisible);        	
+        renderer.renderGui(guis, window, inventoryVisible);
     }
 
     @Override

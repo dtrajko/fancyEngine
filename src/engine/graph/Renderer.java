@@ -511,7 +511,6 @@ public class Renderer {
         sceneShaderProgram.setUniform("renderShadow", scene.isRenderShadows() ? 1 : 0);
 
         renderNonInstancedMeshes(scene);
-
         renderInstancedMeshes(scene, viewMatrix);
 
         sceneShaderProgram.unbind();
@@ -525,7 +524,7 @@ public class Renderer {
 
         for (Mesh mesh : mapMeshes.keySet()) {
         	sceneShaderProgram.setUniform("material", mesh.getMaterial());
-        	sceneShaderProgram.setUniform("transparency", mesh.getTransparency());
+        	sceneShaderProgram.setUniform("transparency", mesh.getMaterial().getTransparency());
         	
             Texture text = mesh.getMaterial().getTexture();
             if (text != null) {
@@ -561,7 +560,7 @@ public class Renderer {
             }
             
             sceneShaderProgram.setUniform("material", mesh.getMaterial());
-            sceneShaderProgram.setUniform("transparency", mesh.getTransparency());
+            sceneShaderProgram.setUniform("transparency", mesh.getMaterial().getTransparency());
 
             filteredItems.clear();
             for (GameItem gameItem : mapMeshes.get(mesh)) {
