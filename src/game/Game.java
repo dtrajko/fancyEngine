@@ -56,14 +56,16 @@ public class Game implements IGameLogic {
     private Window window;
     private boolean firstTime;
     private boolean sceneChanged;
-    private List<GuiButton> guis = new ArrayList<GuiButton>();
     private boolean inventoryOn = false;
     private GuiButton nextBlock;
     private Mesh meshGrass;
     private Mesh meshGround;
     private Mesh meshWater;
+    private Mesh meshLava;
     private boolean updateEnabled = true;
     private long toggleGuiLastTime;
+    private GuiManager guiManager;
+    private List<GuiButton> guiItems = new ArrayList<GuiButton>();
 
     private enum Sounds {
         FIRE,
@@ -74,6 +76,7 @@ public class Game implements IGameLogic {
         renderer = new Renderer();
         camera = new Camera();
         soundMgr = new SoundManager();
+        guiManager = new GuiManager();
         cameraInc = new Vector3f(0.0f, 0.0f, 0.0f);
         angleInc = 0;
         lightAngle = 45;
@@ -94,14 +97,14 @@ public class Game implements IGameLogic {
         buffer.flip();
 
         meshGrass = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
-        Texture textureGrass = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_textures.png", 2, 1);
+        Texture textureGrass = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_grass.png", 2, 1);
         Material materialGrass = new Material(textureGrass);
         materialGrass.setReflectance(1.0f);
         materialGrass.setTransparency(1.0f);
         meshGrass.setMaterial(materialGrass);
 
         meshGround = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
-        Texture textureGround = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_textures_mountain.png", 2, 1);
+        Texture textureGround = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_ground.png", 2, 1);
         Material materialGround = new Material(textureGround);
         materialGround.setReflectance(1.0f);
         materialGround.setTransparency(1.0f);
@@ -113,6 +116,13 @@ public class Game implements IGameLogic {
         materialWater.setReflectance(1.0f);
         materialWater.setTransparency(0.7f);
         meshWater.setMaterial(materialWater);
+
+        meshLava = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
+        Texture textureLava = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_lava.png", 2, 1);
+        Material materialLava = new Material(textureLava);
+        materialLava.setReflectance(1.0f);
+        materialLava.setTransparency(1.0f);
+        meshLava.setMaterial(materialLava);
 
         int blockScale = 1;
         int skyBoxScale = 100;
@@ -128,6 +138,8 @@ public class Game implements IGameLogic {
         int terrainAltitude = 16;
         int terrainDepth = 2;
         int waterLevel = 8;
+        int grassLevel = 10;
+        int lavaLevel = 12;
         int mountLevel = 14;
 
         GameItem gameItem;
@@ -147,9 +159,10 @@ public class Game implements IGameLogic {
 
             		if (posY < waterLevel) {
             			gameItem = new GameItem(meshWater);
-            		} else if (posY < mountLevel){
+            		} else if (posY <= grassLevel) {
             			gameItem = new GameItem(meshGrass);
-            			
+            		} else if (posY <= lavaLevel) {
+            			gameItem = new GameItem(meshLava);
             		} else {
             			gameItem = new GameItem(meshGround);
             		}
@@ -230,27 +243,35 @@ public class Game implements IGameLogic {
 
     private void setupGui() throws Exception {
 
+    	// bullseye
     	Texture textureBullseye = new Texture(Config.RESOURCES_DIR +  "/textures/bullseye.png", 1, 1);
     	GuiButton guiBullseye = new GuiButton(textureBullseye, new Vector3f(0f, 0f, 1), new Vector2f(0.026f, 0.04f));
-    	guis.add(guiBullseye);
+    	guiItems.add(guiBullseye);
 
+    	// inventory
     	Texture textureButtonGrass = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_grass.png", 1, 1);
-    	GuiButton guiButtonGrass = new GuiButton(textureButtonGrass, new Vector3f(-0.23f, -0.78f, 1), new Vector2f(0.1f, 0.18f));
+    	GuiButton guiButtonGrass = new GuiButton(textureButtonGrass, new Vector3f(-0.21f, 0.0f, 1), new Vector2f(0.1f, 0.18f));
     	guiButtonGrass.setInventory(true);
     	guiButtonGrass.setMesh(meshGrass);
-    	guis.add(guiButtonGrass);
+    	guiItems.add(guiButtonGrass);
 
     	Texture textureButtonGround = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_ground.png", 1, 1);
-    	GuiButton guiButtonGround = new GuiButton(textureButtonGround, new Vector3f(0f, -0.78f, 1), new Vector2f(0.1f, 0.18f));
+    	GuiButton guiButtonGround = new GuiButton(textureButtonGround, new Vector3f(0f, 0.0f, 1), new Vector2f(0.1f, 0.18f));
     	guiButtonGround.setInventory(true);
     	guiButtonGround.setMesh(meshGround);
-    	guis.add(guiButtonGround);
+    	guiItems.add(guiButtonGround);
 
     	Texture textureButtonWater = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_water.png", 1, 1);
-    	GuiButton guiButtonWater = new GuiButton(textureButtonWater, new Vector3f(0.23f, -0.78f, 1), new Vector2f(0.1f, 0.18f));
+    	GuiButton guiButtonWater = new GuiButton(textureButtonWater, new Vector3f(0.21f, 0.0f, 1), new Vector2f(0.1f, 0.18f));
     	guiButtonWater.setInventory(true);
     	guiButtonWater.setMesh(meshWater);
-    	guis.add(guiButtonWater);
+    	guiItems.add(guiButtonWater);
+
+    	Texture textureButtonLava = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_lava.png", 1, 1);
+    	GuiButton guiButtonLava = new GuiButton(textureButtonLava, new Vector3f(0.0f, 0.38f, 1), new Vector2f(0.1f, 0.18f));
+    	guiButtonLava.setInventory(true);
+    	guiButtonLava.setMesh(meshLava);
+    	guiItems.add(guiButtonLava);
 	}
 
 	private void setupLights() {
@@ -292,10 +313,10 @@ public class Game implements IGameLogic {
         cameraInc.set(0, 0, 0);
         
         if (mouseInput.isMouseButtonReleased(0)) {
-        	Vector2f mouseNDC = GuiManager.getNormalisedDeviceCoordinates(
+        	Vector2f mouseNDC = guiManager.getNormalisedDeviceCoordinates(
         		(float) mouseInput.getMousePosition().x,
         		(float) mouseInput.getMousePosition().y, window);
-        	nextBlock = GuiManager.selectGuiItem(mouseNDC, guis);
+        	nextBlock = guiManager.selectGuiItem(mouseNDC, guiItems);
         	if (inventoryOn) {
         		toggleGui();
         	}
@@ -354,9 +375,10 @@ public class Game implements IGameLogic {
 
     private void toggleGui() {
     	long currentTime = System.currentTimeMillis();
-    	if (currentTime - toggleGuiLastTime < 1000) {
+    	if (currentTime - toggleGuiLastTime < 100) {
     		return;
     	}
+    	toggleGuiLastTime = currentTime;
     	if (!inventoryOn) {
     		inventoryOn = true;
     		updateEnabled = false;
@@ -366,7 +388,6 @@ public class Game implements IGameLogic {
     		updateEnabled = true;
     		GLFW.glfwSetInputMode(window.getWindowHandle(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_DISABLED);
     	}
-    	toggleGuiLastTime = currentTime;
 	}
 
 	@Override
@@ -430,7 +451,7 @@ public class Game implements IGameLogic {
             firstTime = false;
         }
         renderer.render(window, camera, scene, sceneChanged);
-        renderer.renderGui(guis, window, inventoryOn);
+        renderer.renderGui(guiItems, window, inventoryOn);
     }
 
     @Override
