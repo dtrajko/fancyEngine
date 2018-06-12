@@ -83,13 +83,14 @@ public class CameraBoxSelectionDetector {
         			selectedGameItem.getPosition().y + selectedGameItem.getScale() * 2,
         			selectedGameItem.getPosition().z);
             	newGameItem.setBoundingBox();
-            	scene.appendGameItem(newGameItem);
+            	if (!scene.inCollision(newGameItem.getPosition())) {
+            		scene.appendGameItem(newGameItem);            		
+            	}
             }
             // left button - create a new cube in camera direction
             if (mouseInput.isMouseButtonPressed(GLFW.GLFW_MOUSE_BUTTON_2)) {
 
             	GameItem newGameItem = new GameItem(nextMesh);
-
             	Vector3f camPos = camera.getPosition();
             	Vector3f cubePos = selectedGameItem.getPosition();
             	float cubeSize = selectedGameItem.getScale() * 2;
@@ -119,7 +120,9 @@ public class CameraBoxSelectionDetector {
         			selectedGameItem.getPosition().y + offsetY,
         			selectedGameItem.getPosition().z + offsetZ);
             	newGameItem.setBoundingBox();
-            	scene.appendGameItem(newGameItem);
+            	if (!scene.inCollision(newGameItem.getPosition())) {
+            		scene.appendGameItem(newGameItem);            		
+            	}
             }
         }
     }

@@ -102,27 +102,4 @@ public class Camera {
 		rotation.y += offsetY;
 		rotation.z += offsetZ;
 	}
-
-	public boolean inCollision(Scene scene, Vector3f newPos) {
-		boolean inCollision = false;
-        Map<Mesh, List<GameItem>> mapMeshes = scene.getGameMeshes();
-        for (Mesh mesh : mapMeshes.keySet()) {
-    		for (GameItem gameItem : mapMeshes.get(mesh)) {
-    			if (gameItem.getBoundingBox().contains(newPos.x, newPos.y, newPos.z)) {
-    				inCollision = true;
-    				break;
-    			}
-    		}        	
-        }
-        Map<InstancedMesh, List<GameItem>> mapInstancedMeshes = scene.getGameInstancedMeshes();
-        for (Mesh mesh : mapInstancedMeshes.keySet()) {
-    		for (GameItem gameItem : mapInstancedMeshes.get(mesh)) {
-    			if (gameItem.getBoundingBox().contains(newPos.x, newPos.y, newPos.z)) {
-    				inCollision = true;
-    				break;
-    			}
-    		}        	
-        }
-		return inCollision;
-	}
 }

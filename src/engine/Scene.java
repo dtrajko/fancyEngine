@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.joml.Vector3f;
+
 import engine.graph.InstancedMesh;
 import engine.graph.Mesh;
 import engine.graph.particles.IParticleEmitter;
@@ -88,7 +90,12 @@ public class Scene {
         boolean instancedMesh = mesh instanceof InstancedMesh;
         List<GameItem> list = instancedMesh ? instancedMeshMap.get(mesh) : meshMap.get(mesh);
         if (list == null) {
-        	list = new ArrayList<GameItem>();
+            list = new ArrayList<>();
+            if (instancedMesh) {
+                instancedMeshMap.put((InstancedMesh)mesh, list);
+            } else {
+                meshMap.put(mesh, list);
+            }
         }
         list.add(gameItem);
     }
@@ -159,4 +166,26 @@ public class Scene {
         this.particleEmitters = particleEmitters;
     }
 
+	public boolean inCollision(Vector3f newPos) {
+		boolean inCollision = false;
+        Map<Mesh, List<GameItem>> mapMeshes = getGameMeshes();
+        for (Mesh mesh : mapMeshes.keySet()) {
+    		for (GameItem gameItem : mapMeshes.get(mesh)) {
+    			if (gameItem.getBoundingBox().contains(newPos.x, newPos.y, newPos.z)) {
+    				inCollision = true;
+    				break;
+    			}
+    		}        	
+        }
+        Map<InstancedMesh, List<GameItem>> mapInstancedMeshes = getGameInstancedMeshes();
+        for (Mesh mesh : mapInstancedMeshes.keySet()) {
+    		for (GameItem gameItem : mapInstancedMeshes.get(mesh)) {
+    			if (gameItem.getBoundingBox().contains(newPos.x, newPos.y, newPos.z)) {
+    				inCollision = true;
+    				break;
+    			}
+    		}        	
+        }
+		return inCollision;
+	}
 }

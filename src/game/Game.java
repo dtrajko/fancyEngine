@@ -58,10 +58,16 @@ public class Game implements IGameLogic {
     private boolean sceneChanged;
     private boolean inventoryOn = false;
     private GuiButton nextBlock;
+
     private Mesh meshGrass;
     private Mesh meshGround;
     private Mesh meshWater;
     private Mesh meshLava;
+    private Mesh meshWood;
+    private Mesh meshOakwood;
+    private Mesh meshGlass;
+    private Mesh meshCobble;
+
     private boolean updateEnabled = true;
     private long toggleGuiLastTime;
     private GuiManager guiManager;
@@ -117,12 +123,40 @@ public class Game implements IGameLogic {
         materialWater.setTransparency(0.7f);
         meshWater.setMaterial(materialWater);
 
-        meshLava = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
+        meshLava = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 500);
         Texture textureLava = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_lava.png", 2, 1);
         Material materialLava = new Material(textureLava);
         materialLava.setReflectance(1.0f);
         materialLava.setTransparency(1.0f);
         meshLava.setMaterial(materialLava);
+
+        meshWood = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 500);
+        Texture textureWood = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_wood.png", 2, 1);
+        Material materialWood = new Material(textureWood);
+        materialWood.setReflectance(1.0f);
+        materialWood.setTransparency(1.0f);
+        meshWood.setMaterial(materialWood);
+
+        meshOakwood = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 500);
+        Texture textureOakwood = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_oakwood.png", 2, 1);
+        Material materialOakwood = new Material(textureOakwood);
+        materialOakwood.setReflectance(1.0f);
+        materialOakwood.setTransparency(1.0f);
+        meshOakwood.setMaterial(materialOakwood);
+
+        meshGlass = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 500);
+        Texture textureGlass = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_glass.png", 2, 1);
+        Material materialGlass = new Material(textureGlass);
+        materialGlass.setReflectance(1.0f);
+        materialGlass.setTransparency(0.8f);
+        meshGlass.setMaterial(materialGlass);
+
+        meshCobble = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 500);
+        Texture textureCobble = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_cobble.png", 2, 1);
+        Material materialCobble = new Material(textureCobble);
+        materialCobble.setReflectance(1.0f);
+        materialCobble.setTransparency(1.0f);
+        meshCobble.setMaterial(materialCobble);
 
         int blockScale = 1;
         int skyBoxScale = 100;
@@ -162,7 +196,7 @@ public class Game implements IGameLogic {
             		} else if (posY <= grassLevel) {
             			gameItem = new GameItem(meshGrass);
             		} else if (posY <= lavaLevel) {
-            			gameItem = new GameItem(meshLava);
+            			gameItem = new GameItem(meshGrass); // meshLava
             		} else {
             			gameItem = new GameItem(meshGround);
             		}
@@ -244,34 +278,59 @@ public class Game implements IGameLogic {
     private void setupGui() throws Exception {
 
     	// bullseye
-    	Texture textureBullseye = new Texture(Config.RESOURCES_DIR +  "/textures/bullseye.png", 1, 1);
+    	Texture textureBullseye = new Texture(Config.RESOURCES_DIR +  "/textures/bullseye.png");
     	GuiButton guiBullseye = new GuiButton(textureBullseye, new Vector3f(0f, 0f, 1), new Vector2f(0.026f, 0.04f));
     	guiItems.add(guiBullseye);
 
     	// inventory
-    	Texture textureButtonGrass = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_grass.png", 1, 1);
-    	GuiButton guiButtonGrass = new GuiButton(textureButtonGrass, new Vector3f(-0.21f, 0.0f, 1), new Vector2f(0.1f, 0.18f));
+    	Texture textureBtnGrass = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_grass.png");
+    	GuiButton guiButtonGrass = new GuiButton(textureBtnGrass, new Vector3f(-0.21f, 0.0f, 1), new Vector2f(0.1f, 0.18f));
     	guiButtonGrass.setInventory(true);
     	guiButtonGrass.setMesh(meshGrass);
     	guiItems.add(guiButtonGrass);
 
-    	Texture textureButtonGround = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_ground.png", 1, 1);
-    	GuiButton guiButtonGround = new GuiButton(textureButtonGround, new Vector3f(0f, 0.0f, 1), new Vector2f(0.1f, 0.18f));
+    	Texture textureBtnGround = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_ground.png");
+    	GuiButton guiButtonGround = new GuiButton(textureBtnGround, new Vector3f(0f, 0.0f, 1), new Vector2f(0.1f, 0.18f));
     	guiButtonGround.setInventory(true);
     	guiButtonGround.setMesh(meshGround);
     	guiItems.add(guiButtonGround);
 
-    	Texture textureButtonWater = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_water.png", 1, 1);
-    	GuiButton guiButtonWater = new GuiButton(textureButtonWater, new Vector3f(0.21f, 0.0f, 1), new Vector2f(0.1f, 0.18f));
+    	Texture textureBtnWater = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_water.png");
+    	GuiButton guiButtonWater = new GuiButton(textureBtnWater, new Vector3f(0.21f, 0.0f, 1), new Vector2f(0.1f, 0.18f));
     	guiButtonWater.setInventory(true);
     	guiButtonWater.setMesh(meshWater);
     	guiItems.add(guiButtonWater);
 
-    	Texture textureButtonLava = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_lava.png", 1, 1);
-    	GuiButton guiButtonLava = new GuiButton(textureButtonLava, new Vector3f(0.0f, 0.38f, 1), new Vector2f(0.1f, 0.18f));
+    	Texture textureBtnLava = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_lava.png");
+    	GuiButton guiButtonLava = new GuiButton(textureBtnLava, new Vector3f(0.0f, -0.38f, 1), new Vector2f(0.1f, 0.18f));
     	guiButtonLava.setInventory(true);
     	guiButtonLava.setMesh(meshLava);
     	guiItems.add(guiButtonLava);
+
+    	Texture textureBtnWood = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_wood.png");
+    	GuiButton guiButtonWood = new GuiButton(textureBtnWood, new Vector3f(0.0f, 0.38f, 1), new Vector2f(0.1f, 0.18f));
+    	guiButtonWood.setInventory(true);
+    	guiButtonWood.setMesh(meshWood);
+    	guiItems.add(guiButtonWood);
+    	
+    	Texture textureBtnOakWood = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_oakwood.png");
+    	GuiButton guiButtonOakWood = new GuiButton(textureBtnOakWood, new Vector3f(-0.21f, 0.38f, 1), new Vector2f(0.1f, 0.18f));
+    	guiButtonOakWood.setInventory(true);
+    	guiButtonOakWood.setMesh(meshOakwood);
+    	guiItems.add(guiButtonOakWood);
+    	
+    	Texture textureBtnGlass = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_glass.png");
+    	GuiButton guiButtonGlass = new GuiButton(textureBtnGlass, new Vector3f(-0.21f, -0.38f, 1), new Vector2f(0.1f, 0.18f));
+    	guiButtonGlass.setInventory(true);
+    	guiButtonGlass.setMesh(meshGlass);
+    	guiItems.add(guiButtonGlass);
+    	
+    	Texture textureBtnCobble = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_cobble.png");
+    	GuiButton guiButtonCobble = new GuiButton(textureBtnCobble, new Vector3f(0.21f, 0.38f, 1), new Vector2f(0.1f, 0.18f));
+    	guiButtonCobble.setInventory(true);
+    	guiButtonCobble.setMesh(meshCobble);
+    	guiItems.add(guiButtonCobble);
+
 	}
 
 	private void setupLights() {
@@ -407,7 +466,7 @@ public class Game implements IGameLogic {
 
 		// Check if there has been a collision
         // newPosCameraBase - the camera imaginary "tripod base" we use to check the collision. It's bellow the camera "lens"
-		if (camera.inCollision(scene, newPos)) {
+		if (scene.inCollision(newPos)) {
 			gravityOn = false;
 		} else {
 			camera.movePosition(newPos);
