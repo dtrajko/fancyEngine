@@ -95,7 +95,7 @@ public class Game implements IGameLogic {
         renderer.init(window);
         scene = new Scene();
 
-        PNGDecoder decoder = new PNGDecoder(new FileInputStream(Config.RESOURCES_DIR + "/textures/heightmap_64.png"));
+        PNGDecoder decoder = new PNGDecoder(new FileInputStream(Config.RESOURCES_DIR + "/textures/heightmap_128.png"));
         int height = decoder.getHeight();
         int width = decoder.getWidth();
         ByteBuffer buffer = ByteBuffer.allocateDirect(4 * width * height);
@@ -123,35 +123,35 @@ public class Game implements IGameLogic {
         materialWater.setTransparency(0.7f);
         meshWater.setMaterial(materialWater);
 
-        meshLava = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 500);
+        meshLava = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
         Texture textureLava = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_lava.png", 2, 1);
         Material materialLava = new Material(textureLava);
         materialLava.setReflectance(1.0f);
         materialLava.setTransparency(1.0f);
         meshLava.setMaterial(materialLava);
 
-        meshWood = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 500);
+        meshWood = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
         Texture textureWood = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_wood.png", 2, 1);
         Material materialWood = new Material(textureWood);
         materialWood.setReflectance(1.0f);
         materialWood.setTransparency(1.0f);
         meshWood.setMaterial(materialWood);
 
-        meshOakwood = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 500);
+        meshOakwood = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
         Texture textureOakwood = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_oakwood.png", 2, 1);
         Material materialOakwood = new Material(textureOakwood);
         materialOakwood.setReflectance(1.0f);
         materialOakwood.setTransparency(1.0f);
         meshOakwood.setMaterial(materialOakwood);
 
-        meshGlass = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 500);
+        meshGlass = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
         Texture textureGlass = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_glass.png", 2, 1);
         Material materialGlass = new Material(textureGlass);
         materialGlass.setReflectance(1.0f);
-        materialGlass.setTransparency(0.8f);
+        materialGlass.setTransparency(0.4f);
         meshGlass.setMaterial(materialGlass);
 
-        meshCobble = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 500);
+        meshCobble = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
         Texture textureCobble = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_cobble.png", 2, 1);
         Material materialCobble = new Material(textureCobble);
         materialCobble.setReflectance(1.0f);
@@ -169,7 +169,7 @@ public class Game implements IGameLogic {
         int posY = 0;
         int posZ = startZ;
         int topY = 0;
-        int terrainAltitude = 16;
+        int terrainAltitude = 20;
         int terrainDepth = 2;
         int waterLevel = 8;
         int grassLevel = 10;
@@ -371,7 +371,9 @@ public class Game implements IGameLogic {
     	sceneChanged = false;
         cameraInc.set(0, 0, 0);
         
-        if (mouseInput.isMouseButtonReleased(0)) {
+        if (mouseInput.isMouseButtonReleased(GLFW.GLFW_MOUSE_BUTTON_1) || 
+        	mouseInput.isMouseButtonReleased(GLFW.GLFW_MOUSE_BUTTON_2) ||
+        	mouseInput.isMouseButtonReleased(GLFW.GLFW_MOUSE_BUTTON_3)) {
         	Vector2f mouseNDC = guiManager.getNormalisedDeviceCoordinates(
         		(float) mouseInput.getMousePosition().x,
         		(float) mouseInput.getMousePosition().y, window);
