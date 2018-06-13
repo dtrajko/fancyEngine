@@ -85,9 +85,7 @@ public class CameraBoxSelectionDetector {
             	newGameItem.setBoundingBox();
             	Vector3f pos = new Vector3f(newGameItem.getPosition().x + 1, newGameItem.getPosition().y + 1, newGameItem.getPosition().z + 1);
             	if (!scene.inCollision(pos, false)) {
-            		scene.appendGameItem(newGameItem);            		
-            	} else {
-            		System.out.println("CameraBoxSelectionDetector BUTTON_3 inCollision TRUE");
+            		scene.appendGameItem(newGameItem);
             	}
             }
             // left button - create a new cube in camera direction
@@ -125,9 +123,7 @@ public class CameraBoxSelectionDetector {
             	newGameItem.setBoundingBox();
             	Vector3f pos = new Vector3f(newGameItem.getPosition().x + 1, newGameItem.getPosition().y + 1, newGameItem.getPosition().z + 1);
             	if (!scene.inCollision(pos, false)) {
-            		scene.appendGameItem(newGameItem);            		
-            	} else {
-            		System.out.println("CameraBoxSelectionDetector BUTTON_2 inCollision TRUE");
+            		scene.appendGameItem(newGameItem);
             	}
             }
         }

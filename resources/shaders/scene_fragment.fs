@@ -271,8 +271,8 @@ void main()
 
     if ( outSelected > 0 ) {
     	// vec4(fragColor.x, fragColor.y, 1, 1);
-        fragColor = vec4(fragColor.x + 0.2, fragColor.y + 0.2, fragColor.z + 0.2, 1);
+        fragColor = vec4(fragColor.x + 0.2, fragColor.y + 0.2, fragColor.z + 0.2, fragColor.w + 0.2 * transparency);
     }
     
-    fragColor = vec4(fragColor.xyz, transparency); 
+    fragColor = vec4(fragColor.xyz, fragColor.w * transparency); 
 }

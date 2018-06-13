@@ -67,6 +67,7 @@ public class Game implements IGameLogic {
     private Mesh meshOakwood;
     private Mesh meshGlass;
     private Mesh meshCobble;
+    private Mesh meshTreetop;
 
     private boolean updateEnabled = true;
     private long toggleGuiLastTime;
@@ -137,6 +138,13 @@ public class Game implements IGameLogic {
         materialWood.setTransparency(1.0f);
         meshWood.setMaterial(materialWood);
 
+        meshTreetop = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
+        Texture textureTreetop = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_treetop.png", 2, 1);
+        Material materialTreetop = new Material(textureTreetop);
+        materialTreetop.setReflectance(1.0f);
+        materialTreetop.setTransparency(0.8f);
+        meshTreetop.setMaterial(materialTreetop);
+
         meshOakwood = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
         Texture textureOakwood = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_oakwood.png", 2, 1);
         Material materialOakwood = new Material(textureOakwood);
@@ -148,7 +156,7 @@ public class Game implements IGameLogic {
         Texture textureGlass = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_glass.png", 2, 1);
         Material materialGlass = new Material(textureGlass);
         materialGlass.setReflectance(1.0f);
-        materialGlass.setTransparency(0.4f);
+        materialGlass.setTransparency(0.6f);
         meshGlass.setMaterial(materialGlass);
 
         meshCobble = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
@@ -310,6 +318,12 @@ public class Game implements IGameLogic {
     	guiButtonWood.setInventory(true);
     	guiButtonWood.setMesh(meshWood);
     	guiItems.add(guiButtonWood);
+    	
+    	Texture textureBtnTreetop = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_treetop.png");
+    	GuiButton guiButtonTreetop = new GuiButton(textureBtnTreetop, new Vector3f(0.21f, -0.38f, 1), new Vector2f(0.1f, 0.18f));
+    	guiButtonTreetop.setInventory(true);
+    	guiButtonTreetop.setMesh(meshTreetop);
+    	guiItems.add(guiButtonTreetop);
     	
     	Texture textureBtnOakWood = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_oakwood.png");
     	GuiButton guiButtonOakWood = new GuiButton(textureBtnOakWood, new Vector3f(-0.21f, 0.38f, 1), new Vector2f(0.1f, 0.18f));
