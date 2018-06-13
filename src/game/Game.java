@@ -203,8 +203,6 @@ public class Game implements IGameLogic {
             		gameItem.setPosition(posX, posY, posZ);
                 	gameItem.setScale(blockScale);
                 	gameItem.setBoundingBox();
-                	// int textPos = Math.random() > 0.5f ? 0 : 1;
-                	// gameItem.setTextPos(textPos);
 
                 	if (gameItem.getMesh().getMaterial().getTransparency() < 1.0f) {
                 		gameItemsTransparent.add(gameItem);
@@ -254,7 +252,7 @@ public class Game implements IGameLogic {
 
         // Setup  SkyBox
         SkyBox skyBox = new SkyBox(Config.RESOURCES_DIR + "/models/skybox.obj", Config.RESOURCES_DIR + "/textures/skybox_minecraft.png");
-        
+
         skyBox.setScale(skyBoxScale);
         scene.setSkyBox(skyBox);
 
@@ -362,7 +360,7 @@ public class Game implements IGameLogic {
         sourceBackground.setBuffer(buffBackground.getBufferId());
         soundMgr.addSoundSource(Sounds.BACKGROUND.toString(), sourceBackground);
         sourceBackground.play();
-        sourceBackground.setGain(0.5f);
+        sourceBackground.setGain(0.3f);
         soundMgr.setListener(new SoundListener(new Vector3f(0, 0, 0)));
     }
 
@@ -468,7 +466,7 @@ public class Game implements IGameLogic {
 
 		// Check if there has been a collision
         // newPosCameraBase - the camera imaginary "tripod base" we use to check the collision. It's bellow the camera "lens"
-		if (scene.inCollision(newPos)) {
+		if (scene.inCollision(newPos, true)) {
 			gravityOn = false;
 		} else {
 			camera.movePosition(newPos);

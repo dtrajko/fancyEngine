@@ -16,11 +16,12 @@ public class Box3D {
         this.scale = scale;
     }
 
-    public boolean contains(float x2, float y2, float z2) {
+    public boolean contains(float x2, float y2, float z2, boolean camera) {
+    	float offsetY = camera ? Camera.HEIGHT : 0;
     	boolean contains =
-        	x2 > x && x2 < x + scale &&
-        	y2 > y + Camera.HEIGHT && y2 < y + scale + Camera.HEIGHT &&
-        	z2 > z && z2 < z + scale;        	
+        	x2 > x           && x2 <= x + scale           &&
+        	y2 > y + offsetY && y2 <= y + scale + offsetY &&
+        	z2 > z           && z2 <= z + scale;        	
         return contains;
     }
 }

@@ -166,12 +166,12 @@ public class Scene {
         this.particleEmitters = particleEmitters;
     }
 
-	public boolean inCollision(Vector3f newPos) {
+	public boolean inCollision(Vector3f newPos, boolean camera) {
 		boolean inCollision = false;
         Map<Mesh, List<GameItem>> mapMeshes = getGameMeshes();
         for (Mesh mesh : mapMeshes.keySet()) {
     		for (GameItem gameItem : mapMeshes.get(mesh)) {
-    			if (gameItem.getBoundingBox().contains(newPos.x, newPos.y, newPos.z)) {
+    			if (gameItem.getBoundingBox().contains(newPos.x, newPos.y, newPos.z, camera)) {
     				inCollision = true;
     				break;
     			}
@@ -180,7 +180,7 @@ public class Scene {
         Map<InstancedMesh, List<GameItem>> mapInstancedMeshes = getGameInstancedMeshes();
         for (Mesh mesh : mapInstancedMeshes.keySet()) {
     		for (GameItem gameItem : mapInstancedMeshes.get(mesh)) {
-    			if (gameItem.getBoundingBox().contains(newPos.x, newPos.y, newPos.z)) {
+    			if (gameItem.getBoundingBox().contains(newPos.x, newPos.y, newPos.z, camera)) {
     				inCollision = true;
     				break;
     			}
