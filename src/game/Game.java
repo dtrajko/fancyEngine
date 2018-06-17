@@ -28,6 +28,7 @@ import engine.graph.weather.Fog;
 import engine.gui.GuiButton;
 import engine.gui.GuiManager;
 import engine.items.GameItem;
+import engine.items.GameItemStairs;
 import engine.items.SkyBox;
 import engine.loaders.obj.OBJLoader;
 import engine.sound.SoundBuffer;
@@ -68,12 +69,13 @@ public class Game implements IGameLogic {
     private Mesh meshGlass;
     private Mesh meshCobble;
     private Mesh meshTreetop;
+    private Mesh meshStairs;
 
     private boolean updateEnabled = true;
     private long toggleGuiLastTime;
     private GuiManager guiManager;
     private List<GuiButton> guiItems = new ArrayList<GuiButton>();
-
+    
     private enum Sounds {
         FIRE,
         BACKGROUND,
@@ -96,12 +98,29 @@ public class Game implements IGameLogic {
         renderer.init(window);
         scene = new Scene();
 
+        List<GameItem> gameItems = new ArrayList<GameItem>();
+        List<GameItem> gameItemsTransparent = new ArrayList<GameItem>();
+
         PNGDecoder decoder = new PNGDecoder(new FileInputStream(Config.RESOURCES_DIR + "/textures/heightmap_128.png"));
         int height = decoder.getHeight();
         int width = decoder.getWidth();
         ByteBuffer buffer = ByteBuffer.allocateDirect(4 * width * height);
         decoder.decode(buffer, width * 4, PNGDecoder.Format.RGBA);
         buffer.flip();
+        
+        /*
+        Mesh meshCustom = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/minecraft_sword.obj");
+        Texture textureCustom = new Texture(Config.RESOURCES_DIR +  "/textures/minecraft_sword.png");
+        Material materialCustom = new Material(textureCustom);
+        materialCustom.setReflectance(1.0f);
+        materialCustom.setTransparency(1.0f);
+        meshCustom.setMaterial(materialCustom);
+        GameItem gameItemCustom = new GameItem(meshCustom);
+        gameItemCustom.setRotation(0.5f, 0.5f, 0.5f);
+        gameItemCustom.setPosition(-100, 30f, 50);
+        gameItemCustom.setScale(10f);
+        gameItems.add(gameItemCustom);
+		*/
 
         meshGrass = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
         Texture textureGrass = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_grass.png", 2, 1);
@@ -166,6 +185,12 @@ public class Game implements IGameLogic {
         materialCobble.setTransparency(1.0f);
         meshCobble.setMaterial(materialCobble);
 
+        GameItemStairs gameStairs = new GameItemStairs(meshOakwood);
+        gameStairs.setPosition(-100, 20, 80);
+        for (GameItem item : gameStairs.getItems()) {
+        	gameItems.add(item);
+        } 
+
         int blockScale = 1;
         int skyBoxScale = 100;
         int extension = 2;
@@ -185,8 +210,6 @@ public class Game implements IGameLogic {
         int mountLevel = 14;
 
         GameItem gameItem;
-        List<GameItem> gameItems = new ArrayList<GameItem>();
-        List<GameItem> gameItemsTransparent = new ArrayList<GameItem>();
 
         for (int incX = 0; incX < height; incX++) {
             for (int incZ = 0; incZ < width; incZ++) {

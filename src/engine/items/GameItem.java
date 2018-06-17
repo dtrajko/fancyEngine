@@ -3,6 +3,7 @@ package engine.items;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import engine.graph.Mesh;
+import engine.loaders.md5.MD5Utils;
 
 public class GameItem {
 
@@ -45,7 +46,7 @@ public class GameItem {
         return textPos;
     }
 
-    public final void setPosition(float x, float y, float z) {
+    public void setPosition(float x, float y, float z) {
         this.position.x = x;
         this.position.y = y;
         this.position.z = z;
@@ -61,6 +62,10 @@ public class GameItem {
 
     public Quaternionf getRotation() {
         return rotation;
+    }
+
+    public final void setRotation(float x, float y, float z) {
+    	this.rotation.set(MD5Utils.calculateQuaternion(x, y, z));
     }
 
     public final void setRotation(Quaternionf q) {
