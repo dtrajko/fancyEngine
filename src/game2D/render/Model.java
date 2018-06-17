@@ -13,12 +13,18 @@ public class Model {
 	private int v_id;
 	private int t_id;
 	private int i_id;
+	private float[] vertices;
+	private float[] tex_coords;
+	private int[] indices;
 
 	public Model(float[] vertices, float[] tex_coords, int[] indices) {
+		this.draw_count = indices.length;
+		this.vertices = vertices;
+		this.tex_coords = tex_coords;
+		this.indices = indices;
+	}
 
-		draw_count = indices.length;
-		// System.out.println("Model::draw_count: " + draw_count);
-
+	public void renderInit() {
 		v_id = GL15.glGenBuffers();
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, v_id);
 		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, createFloatBuffer(vertices), GL15.GL_STATIC_DRAW);
@@ -34,7 +40,7 @@ public class Model {
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
-	
+
 	public void render() {
 		GL20.glEnableVertexAttribArray(0);
 		GL20.glEnableVertexAttribArray(1);
@@ -60,7 +66,7 @@ public class Model {
 		GL20.glDisableVertexAttribArray(0);
 		GL20.glDisableVertexAttribArray(1);
 	}
-	
+
 	public int getDrawCount() {
 		return draw_count;
 	}

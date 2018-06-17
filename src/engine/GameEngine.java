@@ -25,7 +25,7 @@ public class GameEngine implements Runnable {
         window = new Window(windowTitle, width, height, vSync, opts);
         mouseInput = new MouseInput(window);
         this.gameLogic = gameLogic;
-        timer = new Timer();        
+        timer = new Timer();
     }
 
     public void start() {

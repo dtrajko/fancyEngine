@@ -4,14 +4,13 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
+import engine.IGameLogic;
 import engine.Window;
+import engine.graph.Camera;
 import game2D.assets.Assets;
 import game2D.collision.AABB;
 import game2D.collision.Collision;
-import game2D.game.Game2D;
-import game2D.io.Window2D;
 import game2D.render.Animation;
-import game2D.render.Camera2D;
 import game2D.render.Model;
 import game2D.shaders.Shader;
 import game2D.world.World;
@@ -36,7 +35,7 @@ public abstract class Entity {
 			new Vector2f(this.transform.scale.x, this.transform.scale.y));
 	}
 
-	public abstract void update(float delta, Window2D window, Camera2D camera, World world, Game2D game);
+	public abstract void update(float delta, Window window, Camera camera, World world, IGameLogic game);
 
 	public void setAnimation(int index, Animation animation) {
 		try {
@@ -121,8 +120,8 @@ public abstract class Entity {
 		}
 	}
 
-	public void render(Shader shader, Camera2D camera, World world) {
-		Matrix4f target = camera.getProjection();
+	public void render(Shader shader, Camera camera, World world) {
+		Matrix4f target = camera.getOrthoProjection();
 		target.mul(world.getWorldMatrix());
 		shader.bind();
 		shader.setUniform("sampler", 0);

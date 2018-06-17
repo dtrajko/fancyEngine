@@ -6,15 +6,14 @@ import org.joml.Vector3f;
 public class Camera2D {
 
 	private Vector3f position;
-	private Matrix4f projection;
+	private Matrix4f orthoProjectionMatrix;
 
-	public Camera2D(int width, int height) {
+	public Camera2D() {
 		position = new Vector3f(0, 0, 0);
-		setProjection(width, height);
 	}
 
 	public void setProjection(int width, int height) {
-		projection = new Matrix4f().setOrtho2D(-width/2, width/2, -height/2, height/2);
+		orthoProjectionMatrix = new Matrix4f().setOrtho2D(-width/2, width/2, -height/2, height/2);
 	}
 
 	public void setPosition(Vector3f position) {
@@ -30,10 +29,10 @@ public class Camera2D {
 	}
 
 	public Matrix4f getUntransformedProjection() {
-		return projection;
+		return orthoProjectionMatrix;
 	}
 
 	public Matrix4f getProjection() {
-		return projection.translate(position, new Matrix4f());
+		return orthoProjectionMatrix.translate(position, new Matrix4f());
 	}
 }

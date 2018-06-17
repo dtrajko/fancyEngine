@@ -1,19 +1,16 @@
 package engine.graph;
 
-import java.util.List;
-import java.util.Map;
-
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
-import engine.Scene;
-import engine.items.GameItem;
+import engine.Window;
 
 public class Camera {
 
 	private final Vector3f position;
 	private final Vector3f rotation;
 	private Matrix4f viewMatrix;
+	private Matrix4f orthoProjectionMatrix;
 	public static final float HEIGHT = 1.0f;
 
 	public Camera() {
@@ -34,7 +31,7 @@ public class Camera {
     public Matrix4f getViewMatrix() {
         return viewMatrix;
     }
-    
+
     public Matrix4f updateViewMatrix() {
         return Transformation.updateGenericViewMatrix(position, rotation, viewMatrix);
     }
@@ -101,5 +98,17 @@ public class Camera {
 		rotation.x += offsetX;
 		rotation.y += offsetY;
 		rotation.z += offsetZ;
+	}
+
+	public void setOrthoProjection(Window window) {
+		orthoProjectionMatrix = new Matrix4f().setOrtho2D(
+			-(window.getWidth() / 2),
+			  window.getWidth() / 2,
+			-(window.getHeight() / 2),
+			  window.getHeight() / 2);
+	}
+
+	public Matrix4f getOrthoProjection() {
+		return orthoProjectionMatrix.translate(position, new Matrix4f());
 	}
 }

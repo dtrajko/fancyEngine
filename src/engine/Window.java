@@ -31,7 +31,7 @@ public class Window {
         this.vSync = vSync;
         this.resized = false;
         this.opts = opts;
-        projectionMatrix = new Matrix4f();
+        projectionMatrix = new Matrix4f();        
     }
 
     public void init() {
@@ -49,8 +49,6 @@ public class Window {
         glfwWindowHint(GLFW_RESIZABLE, GL_TRUE); // the window will be resizable
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
         if (opts.compatibleProfile) {
             glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
@@ -133,7 +131,7 @@ public class Window {
         // Antialiasing
         if (opts.antialiasing) {
             glfwWindowHint(GLFW_SAMPLES, 4);
-        }
+        }        
     }
     
     public void setMousePositionCenter() {
@@ -238,4 +236,11 @@ public class Window {
             glCullFace(GL_BACK);
         }
     }
+
+	public void toggleFullscreen() {
+		// TODO toggle fulscreen method for LWJGL3
+	}
+	
+	public void cleanup() {
+	}
 }

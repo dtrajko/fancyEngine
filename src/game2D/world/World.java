@@ -9,42 +9,41 @@ import javax.imageio.ImageIO;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
-
 import config.Config;
+import engine.IGameLogic;
 import engine.Window;
+import engine.graph.Camera;
+import game.Game2D;
 import game2D.collision.AABB;
 import game2D.entities.Entity;
 import game2D.entities.Player;
 import game2D.entities.Transform;
-import game2D.game.Game2D;
-import game2D.io.Window2D;
-import game2D.render.Camera2D;
-import game2D.shaders.Shader;
 
 public class World {
-	private int view_width = 26;
-	private int view_height = 16;
+
+	public int view_width = 26;
+	public int view_height = 16;
 	private byte[] tiles;
 	private AABB[] bounding_boxes;
 	private List<Entity> entities;
 	private int width;
 	private int height;
 	private int scale;
-	private Matrix4f world;
-	private Window2D window;
+	private Matrix4f worldMatrix;
+	private Window window;
 
-	public World(Window2D window, int width, int height, int scale) {
+	public World(Window window, int width, int height, int scale) {
 		this.window = window;
 		this.width = width;   // 16
 		this.height = height; // 16
 		this.scale = scale;   // 16
 		tiles = new byte[width * height];
 		bounding_boxes = new AABB[width * height];
-		this.world = new Matrix4f().setTranslation(new Vector3f(0));
-		this.world.scale(scale);
+		this.worldMatrix = new Matrix4f().setTranslation(new Vector3f(0));
+		this.worldMatrix.scale(scale);
 	}
 
-	public World(String worldName, Camera2D camera, int scale, int bg_tile, Game2D game) {
+	public World(String worldName, Camera camera, int scale, int bg_tile, Game2D game) {
 
 		String tileSheetPath = Config.RESOURCES_DIR + "/levels/" + worldName + "/tiles.png";
 		String entitySheetPath = Config.RESOURCES_DIR + "/levels/" + worldName + "/entities.png";
@@ -73,8 +72,8 @@ public class World {
 		this.tiles = new byte[width * height];
 		this.bounding_boxes = new AABB[width * height];
 		this.entities = new ArrayList<Entity>();
-		this.world = new Matrix4f().setTranslation(new Vector3f(0));
-		this.world.scale(scale);
+		this.worldMatrix = new Matrix4f().setTranslation(new Vector3f(0));
+		this.worldMatrix.scale(scale);
 
 		Transform transform;
 
@@ -117,14 +116,14 @@ public class World {
 	}
 
 	public void calculateView(Window window) {
-		this.view_width = window.getWidth() / (scale * 2) + 2;
-		this.view_height = window.getHeight() / (scale * 2) + 4;
+		view_width = window.getWidth() / (scale * 2) + 2;
+		view_height = window.getHeight() / (scale * 2) + 4;
 	}
 
-	public Matrix4f getWorldMatrix() { return this.world; }
+	public Matrix4f getWorldMatrix() { return this.worldMatrix; }
 
 	public void setMatrix(Matrix4f matrix) {
-		this.world = matrix;
+		this.worldMatrix = matrix;
 	}
 
 	public int getWidth() {
@@ -135,27 +134,23 @@ public class World {
 		return height;
 	}
 
+	public int getViewWidth() {
+		return view_width;
+	}
+
+	public int getViewHeight() {
+		return view_height;
+	}
+
 	public int getScale() {
 		return scale;
 	}
 
-	public void render(TileRenderer renderer, Shader shader, Camera2D camera) {
-		int posX = (int)camera.getPosition().x / (scale * 2);
-		int posY = (int)camera.getPosition().y / (scale * 2);
-		for (int i = 0; i < view_width; i++) {
-			for (int j = 0; j < view_height; j++) {
-				Tile tile = getTile(i - posX - (this.view_width / 2) + 1, j + posY - (this.view_height / 2));
-				if (tile != null) {
-					renderer.renderTile(tile, i - posX - (this.view_width / 2) + 1, -j - posY + (this.view_height / 2), shader, world, camera);
-				}
-			}
-		}
-		for (Entity entity : entities) {
-			entity.render(shader, camera, this);
-		}
+	public List<Entity> getEntities() {
+		return entities;
 	}
 
-	public void update(float delta, Window2D window, Camera2D camera, Game2D game) {
+	public void update(float delta, Window window, Camera camera, IGameLogic game) {
 		for (Entity entity : entities) {
 			entity.update(delta, window, camera, this, game);
 		}
@@ -167,7 +162,7 @@ public class World {
 		}
 	}
 
-	public void correctCamera(Camera2D camera) {
+	public void correctCamera(Camera camera) {
 
 		Vector3f pos = camera.getPosition();
 
@@ -208,5 +203,11 @@ public class World {
 		} catch (ArrayIndexOutOfBoundsException e) {
 			return null;
 		}
+	}
+
+	public void cleanup() {
+		tiles = null;
+		bounding_boxes = null;
+		entities.clear();
 	}
 }

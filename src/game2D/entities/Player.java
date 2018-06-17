@@ -4,11 +4,12 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
-import game2D.game.Game2D;
+import engine.IGameLogic;
+import engine.Window;
+import engine.graph.Camera;
+import game.Game2D;
 import game2D.io.Input;
-import game2D.io.Window2D;
 import game2D.render.Animation;
-import game2D.render.Camera2D;
 import game2D.world.Tile;
 import game2D.world.World;
 
@@ -24,9 +25,9 @@ public class Player extends Entity {
 	private static int subsequent_jumps = 0;
 	private static int lives = 5;
 	private static Input input;
-	private Window2D window;
+	private Window window;
 
-	public Player(Window2D window) {
+	public Player(Window window) {
 		this(new Transform());
 		this.window = window;
 		input = new Input(window.getWindowHandle());
@@ -39,8 +40,7 @@ public class Player extends Entity {
 		previous_height = this.transform.position.y;		
 	}
 
-	@Override
-	public void update(float delta, Window2D window, Camera2D camera, World world, Game2D game) {
+	public void update(float delta, Window window, Camera camera, World world, IGameLogic game) {
 
 		this.useAnimation(ANIM_IDLE);
 		Vector2f movement = new Vector2f();
@@ -63,6 +63,7 @@ public class Player extends Entity {
 			this.useAnimation(ANIM_WALK);
 		}
 		if (input.isKeyDown(GLFW.GLFW_KEY_W)) {
+			System.out.println("Player idemo pravo!!!");
 			// movement.add(0, delta);
 			// this.useAnimation(ANIM_WALK);
 		}
@@ -82,18 +83,18 @@ public class Player extends Entity {
 			window.toggleFullscreen();
 		}
 		if (input.isKeyReleased(GLFW.GLFW_KEY_1)) {
-			game.setLevel(1);
+			((Game2D) game).setLevel(1);
 		}
 		if (input.isKeyReleased(GLFW.GLFW_KEY_2)) {
-			game.setLevel(2);
+			((Game2D) game).setLevel(2);
 		}
 
 		move(movement);
 		collideWithTiles(world);
 		correctPosition(window, world);
 		camera.getPosition().lerp(this.transform.position.mul(-world.getScale(), new Vector3f()), 0.02f);	
-		manageLives(game, world);
-		manageLevels(game, world);
+		manageLives((Game2D) game, world);
+		manageLevels((Game2D) game, world);
 	}
 
 	public void manageLevels(Game2D game, World world) {

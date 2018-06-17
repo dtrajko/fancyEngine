@@ -1,51 +1,47 @@
-package game2D.game;
+package game;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
+import engine.IGameLogic;
 import engine.Window;
+import engine.graph.Camera;
 import engine.graph.MouseInput;
-import game.Game;
 import game2D.assets.Assets;
 import game2D.entities.Player;
 import game2D.entities.Transform;
 import game2D.gui.Gui;
-import game2D.io.Window2D;
-import game2D.render.Camera2D;
 import game2D.render.TileSheet;
-import game2D.shaders.Shader;
 import game2D.world.TileRenderer;
 import game2D.world.World;
 
-public class Game2D extends Game {
+public class Game2D implements IGameLogic {
 
 	private static int current_level = 1;
 	private static int TOTAL_LEVELS = 2;
 	private static World level;
-	private static Camera2D camera;
+	private final Camera camera;
 	private int level_scale = 26;
 	private static Map<Gui, Transform> guis = new HashMap<Gui, Transform>();
-	private static Player player;
+	public static Player player;
 	private static boolean switchLevel = true;
-	private static Shader shader;
 	private static TileRenderer renderer;
 	private static TileSheet sheet;
 	private static Window window;
 
 	public Game2D() {
-		super();
+		renderer = new TileRenderer();
+		camera = new Camera();
 	}
 
 	@Override
 	public void init(Window win) throws Exception {
 		window = win;
-		renderer = new TileRenderer();
-		shader = new Shader("shader");
-		sheet = new TileSheet("lives", 3);
-		camera = new Camera2D(window.getWidth(), window.getHeight());
+		camera.setOrthoProjection(window);
 		renderer.init();
+		sheet = new TileSheet("lives", 3);
+		beginLevel();
 	}
 
 	@Override
@@ -65,12 +61,13 @@ public class Game2D extends Game {
 			GL11.glViewport(0, 0, window.getWidth(), window.getHeight());
 			window.setResized(false);
 		}
-		level.render(renderer, shader, camera);
+
+		renderer.render(level, renderer, camera);
 		renderer.clear();
 	}
 
 	public void beginLevel() {
-		switch (Game2D.current_level) {
+		switch (current_level) {
 		case 1:
 			level = new World("level_1", camera, this.level_scale, 5, this);
 			level.calculateView(window);
@@ -85,8 +82,8 @@ public class Game2D extends Game {
 		}
 	}
 
-	public static void onWindowResize() {
-		camera.setProjection(window.getWidth(), window.getHeight());
+	public void onWindowResize() {
+		camera.setOrthoProjection(window);
 		level.calculateView(window);
 		GL11.glViewport(0, 0, window.getWidth(), window.getHeight());
 	}
@@ -109,9 +106,9 @@ public class Game2D extends Game {
 	}
 
 	public void setPlayer(Player player) {
-		Game2D.player = player;
+		player = player;
 	}
-	
+
 	public Player getPlayer() {
 		return player;
 	}
@@ -127,14 +124,17 @@ public class Game2D extends Game {
 		return current_level;
 	}
 
-	public void update2D(float frame_cap) {
+	public void update(float frame_cap) {
 		updateGui();
-		level.update(frame_cap * 10, (Window2D) window, camera, this);
+		level.update(frame_cap * 10, window, camera, this);
 		level.correctCamera(camera);
 	}
 
-	public void cleanUp() {
+	@Override
+	public void cleanup() {
 		Assets.deleteAsset();
+		renderer.clear();
+		level.cleanup();
 	}
 
 }

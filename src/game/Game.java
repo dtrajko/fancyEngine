@@ -28,7 +28,6 @@ import engine.graph.weather.Fog;
 import engine.gui.GuiButton;
 import engine.gui.GuiManager;
 import engine.items.GameItem;
-import engine.items.GameItemStairs;
 import engine.items.SkyBox;
 import engine.loaders.obj.OBJLoader;
 import engine.sound.SoundBuffer;
@@ -184,12 +183,16 @@ public class Game implements IGameLogic {
         materialCobble.setReflectance(1.0f);
         materialCobble.setTransparency(1.0f);
         meshCobble.setMaterial(materialCobble);
-
+        
+        /*
+        meshStairs = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/stairs.obj", 5000);
+        meshStairs.setMaterial(materialOakwood);
         GameItemStairs gameStairs = new GameItemStairs(meshOakwood);
         gameStairs.setPosition(-100, 20, 80);
         for (GameItem item : gameStairs.getItems()) {
         	gameItems.add(item);
         } 
+		*/
 
         int blockScale = 1;
         int skyBoxScale = 100;
@@ -366,6 +369,13 @@ public class Game implements IGameLogic {
     	guiButtonCobble.setMesh(meshCobble);
     	guiItems.add(guiButtonCobble);
 
+    	/*
+    	Texture textureBtnStairs = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_stairs.png");
+    	GuiButton guiButtonStairs = new GuiButton(textureBtnStairs, new Vector3f(0.21f, -0.38f, 1), new Vector2f(0.1f, 0.18f));
+    	guiButtonStairs.setInventory(true);
+    	guiButtonStairs.setMesh(meshStairs);
+    	guiItems.add(guiButtonStairs);
+    	*/
 	}
 
 	private void setupLights() {
@@ -555,5 +565,5 @@ public class Game implements IGameLogic {
         renderer.cleanup();
         scene.cleanup();
         soundMgr.cleanup();
-    }
+    }    
 }

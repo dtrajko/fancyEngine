@@ -3,7 +3,8 @@ package engine.utils;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
-import game3D.render.Camera3D;
+
+import engine.graph.Camera;
 
 public class Maths {
 
@@ -27,18 +28,6 @@ public class Maths {
 		matrix.rotate((float) Math.toRadians(rz), new Vector3f(0, 0, 1), matrix);
 		matrix.scale(new Vector3f(scale, scale, scale), matrix);
 		return matrix;
-	}
-
-	public static Matrix4f createViewMatrix(Camera3D camera) {
-		Matrix4f viewMatrix = new Matrix4f();
-		viewMatrix.identity();
-		viewMatrix.rotate((float) Math.toRadians(camera.getPitch()), new Vector3f(1, 0, 0), viewMatrix);
-		viewMatrix.rotate((float) Math.toRadians(camera.getYaw()),   new Vector3f(0, 1, 0), viewMatrix);
-		viewMatrix.rotate((float) Math.toRadians(camera.getRoll()),  new Vector3f(0, 0, 1), viewMatrix);
-		Vector3f cameraPos = camera.getPosition();
-		Vector3f negativeCameraPos = new Vector3f(-cameraPos.x, -cameraPos.y, -cameraPos.z);
-		viewMatrix.translate(negativeCameraPos, viewMatrix);
-		return viewMatrix;
 	}
 
 	public static float barryCentric(Vector3f p1, Vector3f p2, Vector3f p3, Vector2f pos) {

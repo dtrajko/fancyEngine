@@ -16,17 +16,18 @@ public class Texture {
 	private int id;
 	private int width;
 	private int height;
+	private ByteBuffer pixels;
 	
 	public Texture(String filename) {
 		
-		String filePath = "./" + Config.RESOURCES_DIR + "/textures/" + filename + ".png";
+		String filePath = "./" + Config.RESOURCES_DIR + "/textures/game2D/" + filename + ".png";
 		try {
 			 BufferedImage bi = ImageIO.read(new File(filePath));
 			 width  = bi.getWidth();
 			 height = bi.getHeight();
 			 int[] pixels_raw = new int[width * height];
 			 pixels_raw = bi.getRGB(0, 0, width, height, null, 0, width);
-			 ByteBuffer pixels = BufferUtils.createByteBuffer(width * height * 4);
+			 pixels = BufferUtils.createByteBuffer(width * height * 4);
 
 			 for (int i = 0; i < width; i++) {
 				 for (int j = 0; j < height; j++) {
@@ -38,12 +39,6 @@ public class Texture {
 				 }
 			 }
 			 pixels.flip();
-			 id = GL11.glGenTextures();
-			 GL11.glBindTexture(GL11.GL_TEXTURE_2D, id);
-			 GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
-			 GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
-			 GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, width, height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, pixels);
-
 		} catch (IOException e) {
 			System.err.println("Failed to load texture '" + filePath + "'");
 			e.printStackTrace();
@@ -51,12 +46,19 @@ public class Texture {
 	}
 
 	public void bind(int sampler) {
+
+		 id = GL11.glGenTextures();
+		 GL11.glBindTexture(GL11.GL_TEXTURE_2D, id);
+		 GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
+		 GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
+		 GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, width, height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, pixels);
+
 		if (sampler >= 0 && sampler <= 31 ) {
 			GL13.glActiveTexture(GL13.GL_TEXTURE0 + sampler);
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, id);
 		}
 	}
-	
+
 	protected void finalize() throws Throwable {
 		// GL11.glDeleteTextures(id);
 		super.finalize();

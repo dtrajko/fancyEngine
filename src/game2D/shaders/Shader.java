@@ -20,8 +20,8 @@ public class Shader {
 
 	public Shader(String filename) {
 		
-		String vertexShaderPath = Config.RESOURCES_DIR + "/shaders/" + filename + "_vs.glsl";
-		String fragmentShaderPath = Config.RESOURCES_DIR + "/shaders/" + filename + "_fs.glsl";
+		String vertexShaderPath = Config.RESOURCES_DIR + "/shaders/game2D/" + filename + "_vs.glsl";
+		String fragmentShaderPath = Config.RESOURCES_DIR + "/shaders/game2D/" + filename + "_fs.glsl";
 
 		program = GL20.glCreateProgram();
 
@@ -116,13 +116,16 @@ public class Shader {
 		return string.toString();
 	}
 
-	protected void finalize() throws Throwable {
+	public void finalize() {
 		GL20.glDetachShader(program, vs);
 		GL20.glDetachShader(program, fs);
 		GL20.glDeleteShader(vs);
 		GL20.glDeleteShader(fs);
 		GL20.glDeleteProgram(program);		
-		super.finalize();
+		try {
+			super.finalize();
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
 	}
-
 }
