@@ -10,7 +10,6 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import config.Config;
-import engine.IGameLogic;
 import engine.Window;
 import engine.graph.Camera;
 import game.Game2D;
@@ -31,6 +30,7 @@ public class World {
 	private int scale;
 	private Matrix4f worldMatrix;
 	private Window window;
+	private Player player;
 
 	public World(Window window, int width, int height, int scale) {
 		this.window = window;
@@ -44,6 +44,8 @@ public class World {
 	}
 
 	public World(String worldName, Camera camera, int scale, int bg_tile, Game2D game) {
+
+		window = game.getWindow();
 
 		String tileSheetPath = Config.RESOURCES_DIR + "/levels/" + worldName + "/tiles.png";
 		String entitySheetPath = Config.RESOURCES_DIR + "/levels/" + worldName + "/entities.png";
@@ -102,8 +104,8 @@ public class World {
 					transform.position.y = -y * 2;
 					switch (entity_index) {
 						case 1:
-							Player player = new Player(transform);
-							game.setPlayer(player);
+							player = new Player(transform, game.getInput());
+							game.setPlayer(player);							
 							entities.add(player);
 							camera.getPosition().set(transform.position.mul(-scale, new Vector3f()));
 							break;
@@ -124,6 +126,10 @@ public class World {
 
 	public void setMatrix(Matrix4f matrix) {
 		this.worldMatrix = matrix;
+	}
+
+	public Player getPlayer() {
+		return player;
 	}
 
 	public int getWidth() {
@@ -150,7 +156,7 @@ public class World {
 		return entities;
 	}
 
-	public void update(float delta, Window window, Camera camera, IGameLogic game) {
+	public void update(float delta, Window window, Camera camera, Game2D game) {
 		for (Entity entity : entities) {
 			entity.update(delta, window, camera, this, game);
 		}

@@ -117,6 +117,7 @@ public class Shader {
 	}
 
 	public void finalize() {
+		/*
 		GL20.glDetachShader(program, vs);
 		GL20.glDetachShader(program, fs);
 		GL20.glDeleteShader(vs);
@@ -127,5 +128,6 @@ public class Shader {
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
+		*/
 	}
 }

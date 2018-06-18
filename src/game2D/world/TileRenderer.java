@@ -7,6 +7,7 @@ import org.lwjgl.opengl.GL11;
 
 import engine.Window;
 import engine.graph.Camera;
+import game2D.assets.Assets;
 import game2D.assets.Sprite;
 import game2D.entities.Entity;
 import game2D.render.Model;
@@ -35,6 +36,24 @@ public class TileRenderer {
 	public void init() {
 		shader = new Shader("shader");
 		model.renderInit();
+		Assets.getModel().renderInit();
+	}
+
+	public void render(World world, Camera camera) {
+
+		int posX = (int)camera.getPosition().x / (world.getScale() * 2);
+		int posY = (int)camera.getPosition().y / (world.getScale() * 2);
+		for (int i = 0; i < world.getViewWidth(); i++) {
+			for (int j = 0; j < world.getViewHeight(); j++) {
+				Tile tile = world.getTile(i - posX - (world.getViewWidth() / 2) + 1, j + posY - (world.getViewHeight() / 2));
+				if (tile != null) {
+					renderTile(tile, i - posX - (world.getViewWidth() / 2) + 1, -j - posY + (world.getViewHeight() / 2), world.getWorldMatrix(), camera);
+				}
+			}
+		}
+		for (Entity entity : world.getEntities()) {
+			entity.render(shader, camera, world);
+		}
 	}
 
 	public void renderTile(Tile tile, int x, int y, Matrix4f world, Camera camera) {
@@ -56,25 +75,8 @@ public class TileRenderer {
 		return shader;
 	}
 
-	public void render(World world, TileRenderer renderer, Camera camera) {
-
-		int posX = (int)camera.getPosition().x / (world.getScale() * 2);
-		int posY = (int)camera.getPosition().y / (world.getScale() * 2);
-		for (int i = 0; i < world.getViewWidth(); i++) {
-			for (int j = 0; j < world.getViewHeight(); j++) {
-				Tile tile = world.getTile(i - posX - (world.getViewWidth() / 2) + 1, j + posY - (world.getViewHeight() / 2));
-				if (tile != null) {
-					renderTile(tile, i - posX - (world.getViewWidth() / 2) + 1, -j - posY + (world.getViewHeight() / 2), world.getWorldMatrix(), camera);
-				}
-			}
-		}
-		for (Entity entity : world.getEntities()) {
-			entity.render(renderer.getShader(), camera, world);
-		}
-	}
-
 	public void clear() {
-		shader.finalize();
+		// shader.finalize();
 	}
 
 }

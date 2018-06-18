@@ -32,8 +32,10 @@ public class MouseInput {
 
     	this.window = window.getWindowHandle();
 
-    	GLFW.glfwSetInputMode(this.window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    	GLFW.glfwSetCursorPos(this.window, window.getWidth() / 2, window.getHeight() / 2);
+    	if (window.getOptions().mode3D) {
+    		GLFW.glfwSetInputMode(this.window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);    		
+    		GLFW.glfwSetCursorPos(this.window, window.getWidth() / 2, window.getHeight() / 2);
+    	}
 
         glfwSetCursorPosCallback(window.getWindowHandle(), (windowHandle, xpos, ypos) -> {
             currentPos.x = xpos;

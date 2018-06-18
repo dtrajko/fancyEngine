@@ -3,12 +3,10 @@ package game2D.entities;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
-
-import engine.IGameLogic;
 import engine.Window;
 import engine.graph.Camera;
+import engine.graph.MouseInput;
 import game.Game2D;
-import game2D.io.Input;
 import game2D.render.Animation;
 import game2D.world.Tile;
 import game2D.world.World;
@@ -24,23 +22,23 @@ public class Player extends Entity {
 	private static float previous_height;
 	private static int subsequent_jumps = 0;
 	private static int lives = 5;
-	private static Input input;
+	private MouseInput input;
 	private Window window;
 
-	public Player(Window window) {
-		this(new Transform());
+	public Player(Window window, MouseInput input) {
+		this(new Transform(), input);
 		this.window = window;
-		input = new Input(window.getWindowHandle());
 	}
 
-	public Player(Transform transform) {
+	public Player(Transform transform, MouseInput input) {
 		super(ANIM_SIZE, transform);
+		this.input = input;
 		this.setAnimation(ANIM_IDLE, new Animation(4, 10, "player/idle"));
 		this.setAnimation(ANIM_WALK, new Animation(4, 10, "player/walking"));
-		previous_height = this.transform.position.y;		
+		previous_height = this.transform.position.y;
 	}
 
-	public void update(float delta, Window window, Camera camera, World world, IGameLogic game) {
+	public void update(float delta, Window window, Camera camera, World world, Game2D game) {
 
 		this.useAnimation(ANIM_IDLE);
 		Vector2f movement = new Vector2f();
@@ -63,7 +61,6 @@ public class Player extends Entity {
 			this.useAnimation(ANIM_WALK);
 		}
 		if (input.isKeyDown(GLFW.GLFW_KEY_W)) {
-			System.out.println("Player idemo pravo!!!");
 			// movement.add(0, delta);
 			// this.useAnimation(ANIM_WALK);
 		}
@@ -83,18 +80,18 @@ public class Player extends Entity {
 			window.toggleFullscreen();
 		}
 		if (input.isKeyReleased(GLFW.GLFW_KEY_1)) {
-			((Game2D) game).setLevel(1);
+			game.setLevel(1);
 		}
 		if (input.isKeyReleased(GLFW.GLFW_KEY_2)) {
-			((Game2D) game).setLevel(2);
+			game.setLevel(2);
 		}
 
 		move(movement);
 		collideWithTiles(world);
 		correctPosition(window, world);
-		camera.getPosition().lerp(this.transform.position.mul(-world.getScale(), new Vector3f()), 0.02f);	
-		manageLives((Game2D) game, world);
-		manageLevels((Game2D) game, world);
+		camera.getPosition().lerp(this.transform.position.mul(-world.getScale(), new Vector3f()), 0.02f);
+		manageLives(game, world);
+		manageLevels(game, world);
 	}
 
 	public void manageLevels(Game2D game, World world) {

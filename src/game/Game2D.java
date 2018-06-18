@@ -29,6 +29,7 @@ public class Game2D implements IGameLogic {
 	private static TileRenderer renderer;
 	private static TileSheet sheet;
 	private static Window window;
+	private MouseInput mouseInput;
 
 	public Game2D() {
 		renderer = new TileRenderer();
@@ -44,8 +45,28 @@ public class Game2D implements IGameLogic {
 		beginLevel();
 	}
 
+	public void beginLevel() {
+		switch (current_level) {
+		case 1:
+			level = new World("level_1", camera, this.level_scale, 5, this);
+			level.calculateView(window);
+			player = level.getPlayer();
+			break;
+		case 2:
+			level = new World("level_2", camera, this.level_scale, 0, this);
+			level.calculateView(window);
+			player = level.getPlayer();
+			break;
+		default:
+			System.err.println("Level index is not correct.");
+			break;
+		}
+	}
+
 	@Override
-	public void input(Window window, MouseInput mouseInput) {}
+	public void input(Window window, MouseInput mouseInput) {
+		this.mouseInput = mouseInput;
+	}
 
 	@Override
 	public void update(float interval, MouseInput mouseInput) {
@@ -53,6 +74,11 @@ public class Game2D implements IGameLogic {
 			beginLevel();
 			switchLevel = false;
 		}
+		mouseInput.update(window);
+		player.update(interval * 5, window, camera, level, this);
+		level.update(interval * 5, window, camera, this);
+		level.correctCamera(camera);
+		updateGui();
 	}
 
 	@Override
@@ -61,25 +87,8 @@ public class Game2D implements IGameLogic {
 			GL11.glViewport(0, 0, window.getWidth(), window.getHeight());
 			window.setResized(false);
 		}
-
-		renderer.render(level, renderer, camera);
+		renderer.render(level, camera);
 		renderer.clear();
-	}
-
-	public void beginLevel() {
-		switch (current_level) {
-		case 1:
-			level = new World("level_1", camera, this.level_scale, 5, this);
-			level.calculateView(window);
-			break;
-		case 2:
-			level = new World("level_2", camera, this.level_scale, 0, this);
-			level.calculateView(window);
-			break;
-		default:
-			System.err.println("Level index is not correct.");
-			break;
-		}
 	}
 
 	public void onWindowResize() {
@@ -112,7 +121,7 @@ public class Game2D implements IGameLogic {
 	public Player getPlayer() {
 		return player;
 	}
-	
+
 	public void setLevel(int level) {
 		if (level < 1) level = 1;
 		if (level > TOTAL_LEVELS) level = 1; // TOTAL_LEVELS;
@@ -124,10 +133,12 @@ public class Game2D implements IGameLogic {
 		return current_level;
 	}
 
-	public void update(float frame_cap) {
-		updateGui();
-		level.update(frame_cap * 10, window, camera, this);
-		level.correctCamera(camera);
+	public MouseInput getInput() {
+		return mouseInput;
+	}
+
+	public Window getWindow() {
+		return window;
 	}
 
 	@Override
@@ -136,5 +147,4 @@ public class Game2D implements IGameLogic {
 		renderer.clear();
 		level.cleanup();
 	}
-
 }

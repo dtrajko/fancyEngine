@@ -5,8 +5,8 @@ import engine.IGameLogic;
 import engine.Window;
 
 public class Main {
-	
-	private static String mode = "3D"; // 2D/3D
+
+	private static boolean mode3D = true;
 	private static int width = 1280;
 	private static int height = 720;
 
@@ -17,15 +17,16 @@ public class Main {
             GameEngine gameEng;
 
             Window.WindowOptions opts = new Window.WindowOptions();
+            opts.mode3D = mode3D;
             opts.cullFace = true;
             opts.showFps = true;
             opts.compatibleProfile = true;
 
-            if (mode == "3D") {
+            if (opts.mode3D) {
             	gameLogic = new Game();
             	gameEng = new GameEngine("Java / LWJGL3 / lwjglbook", vSync, opts, gameLogic);
             	gameEng.start();
-            } else if (mode == "2D") {
+            } else {
             	gameLogic = new Game2D();
             	gameEng = new GameEngine("Java / LWJGL3 / lwjglbook", width, height, vSync, opts, gameLogic);
             	gameEng.start();

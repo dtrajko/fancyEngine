@@ -3,10 +3,9 @@ package game2D.entities;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
-
-import engine.IGameLogic;
 import engine.Window;
 import engine.graph.Camera;
+import game.Game2D;
 import game2D.assets.Assets;
 import game2D.collision.AABB;
 import game2D.collision.Collision;
@@ -35,7 +34,7 @@ public abstract class Entity {
 			new Vector2f(this.transform.scale.x, this.transform.scale.y));
 	}
 
-	public abstract void update(float delta, Window window, Camera camera, World world, IGameLogic game);
+	public abstract void update(float delta, Window window, Camera camera, World world, Game2D game);
 
 	public void setAnimation(int index, Animation animation) {
 		try {
@@ -117,7 +116,7 @@ public abstract class Entity {
 		}
 		if (pos.y < -world.getHeight() * 2 + 2) {
 			pos.y = -world.getHeight() * 2 + 2;
-		}
+		}		
 	}
 
 	public void render(Shader shader, Camera camera, World world) {
