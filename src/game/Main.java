@@ -7,8 +7,8 @@ import engine.Window;
 public class Main {
 
 	private static boolean mode3D = true;
-	private static int width = 1280;
-	private static int height = 720;
+	private static int width = 0;
+	private static int height = 0;
 
     public static void main(String[] args) {
         try {
@@ -22,15 +22,9 @@ public class Main {
             opts.showFps = true;
             opts.compatibleProfile = true;
 
-            if (opts.mode3D) {
-            	gameLogic = new Game();
-            	gameEng = new GameEngine("Java / LWJGL3 / lwjglbook", vSync, opts, gameLogic);
-            	gameEng.start();
-            } else {
-            	gameLogic = new Game2D();
-            	gameEng = new GameEngine("Java / LWJGL3 / lwjglbook", width, height, vSync, opts, gameLogic);
-            	gameEng.start();
-            }
+            gameLogic = opts.mode3D ? new Game() : new Game2D();
+        	gameEng = new GameEngine("Java / LWJGL3 / lwjglbook", width, height, vSync, opts, gameLogic);
+        	gameEng.start();
 
         } catch (Exception e) {
             e.printStackTrace();

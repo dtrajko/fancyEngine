@@ -184,15 +184,12 @@ public class Game implements IGameLogic {
         materialCobble.setTransparency(1.0f);
         meshCobble.setMaterial(materialCobble);
         
-        /*
         meshStairs = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/stairs.obj", 5000);
-        meshStairs.setMaterial(materialOakwood);
-        GameItemStairs gameStairs = new GameItemStairs(meshOakwood);
-        gameStairs.setPosition(-100, 20, 80);
-        for (GameItem item : gameStairs.getItems()) {
-        	gameItems.add(item);
-        } 
-		*/
+        Texture textureStairs = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_stairs.png", 2, 1);
+        Material materialStairs = new Material(textureStairs);
+        materialStairs.setReflectance(1.0f);
+        materialStairs.setTransparency(1.0f);
+        meshStairs.setMaterial(materialStairs);
 
         int blockScale = 1;
         int skyBoxScale = 100;
@@ -369,13 +366,11 @@ public class Game implements IGameLogic {
     	guiButtonCobble.setMesh(meshCobble);
     	guiItems.add(guiButtonCobble);
 
-    	/*
     	Texture textureBtnStairs = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_stairs.png");
-    	GuiButton guiButtonStairs = new GuiButton(textureBtnStairs, new Vector3f(0.21f, -0.38f, 1), new Vector2f(0.1f, 0.18f));
+    	GuiButton guiButtonStairs = new GuiButton(textureBtnStairs, new Vector3f(0.21f, 0.76f, 1), new Vector2f(0.1f, 0.18f));
     	guiButtonStairs.setInventory(true);
     	guiButtonStairs.setMesh(meshStairs);
     	guiItems.add(guiButtonStairs);
-    	*/
 	}
 
 	private void setupLights() {
@@ -416,16 +411,16 @@ public class Game implements IGameLogic {
     	sceneChanged = false;
         cameraInc.set(0, 0, 0);
         
-        if (mouseInput.isMouseButtonReleased(GLFW.GLFW_MOUSE_BUTTON_1) || 
-        	mouseInput.isMouseButtonReleased(GLFW.GLFW_MOUSE_BUTTON_2) ||
-        	mouseInput.isMouseButtonReleased(GLFW.GLFW_MOUSE_BUTTON_3)) {
-        	Vector2f mouseNDC = guiManager.getNormalisedDeviceCoordinates(
-        		(float) mouseInput.getMousePosition().x,
-        		(float) mouseInput.getMousePosition().y, window);
-        	nextBlock = guiManager.selectGuiItem(mouseNDC, guiItems);
-        	if (inventoryOn) {
-        		toggleGui();
-        	}
+        if (inventoryOn) {
+	        if (mouseInput.isMouseButtonReleased(GLFW.GLFW_MOUSE_BUTTON_1) || 
+	        	mouseInput.isMouseButtonReleased(GLFW.GLFW_MOUSE_BUTTON_2) ||
+	        	mouseInput.isMouseButtonReleased(GLFW.GLFW_MOUSE_BUTTON_3)) {
+	        	Vector2f mouseNDC = guiManager.getNormalisedDeviceCoordinates(
+	        		(float) mouseInput.getMousePosition().x,
+	        		(float) mouseInput.getMousePosition().y, window);
+	        	nextBlock = guiManager.selectGuiItem(mouseNDC, guiItems);
+	        	toggleGui();
+	        }
         }
 
         if (mouseInput.isKeyReleased(GLFW.GLFW_KEY_E)) {

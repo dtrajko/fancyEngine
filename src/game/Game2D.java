@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
+
+import engine.GameEngine;
 import engine.IGameLogic;
 import engine.Window;
 import engine.graph.Camera;
@@ -22,7 +24,7 @@ public class Game2D implements IGameLogic {
 	private static int TOTAL_LEVELS = 2;
 	private static World level;
 	private final Camera camera;
-	private int level_scale = 26;
+	private int level_scale = 32;
 	private static Map<Gui, Transform> guis = new HashMap<Gui, Transform>();
 	public static Player player;
 	private static boolean switchLevel = true;
@@ -31,7 +33,7 @@ public class Game2D implements IGameLogic {
 	private static Window window;
 	private MouseInput mouseInput;
 	private static float SPEED = 0.1f;
-	double frame_cap = 1.0 / 120.0;
+	double frame_cap = 1.0 / GameEngine.TARGET_FPS;
 
 	public Game2D() {
 		renderer = new TileRenderer();
@@ -99,11 +101,11 @@ public class Game2D implements IGameLogic {
 
 	public void updateGui() {
 		guis.clear();
-		int lives_x = -600;
-		int lives_y = -320;
+		float lives_x = -0.93f;
+		float lives_y = -0.9f;
 		for (int i = 0; i < player.getLives(); i++) {
-			guis.put(new Gui(sheet, window), new Transform(new Vector3f(lives_x, lives_y, 0), 20));
-			lives_x += 45;
+			guis.put(new Gui(sheet, window), new Transform(new Vector3f(lives_x, lives_y, 0), new Vector3f(0.04f, 0.06f, 1.0f)));
+			lives_x += 0.075f;
 		}
 	}
 

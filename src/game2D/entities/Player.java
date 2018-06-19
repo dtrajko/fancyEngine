@@ -16,7 +16,7 @@ public class Player extends Entity {
 	public static final int ANIM_IDLE = 0;
 	public static final int ANIM_WALK = 1;
 	public static final int ANIM_SIZE = 2;
-	private static final float GRAVITY = 0.08f;
+	private static final float GRAVITY = 0.09f;
 	private static final float JUMP_FORCE = 3f;
 	private static boolean jump_allowed;
 	private static float previous_height;
@@ -39,7 +39,7 @@ public class Player extends Entity {
 	}
 
 	public void input(float delta, Camera camera, World world, Game2D game) {
-		
+
 		this.useAnimation(ANIM_IDLE);
 		Vector2f movement = new Vector2f();
 

@@ -20,14 +20,14 @@ public class Gui {
 	public Gui(TileSheet sheet, Window window) {
 		this.shader = new Shader("gui");
 		this.camera = new Camera();
-		this.camera.setOrthoProjection(window);
+		this.camera.setOrthoProjection();
 		this.sheet = sheet;
 	}
 
 	public Gui(Window window) {
 		this.shader = new Shader("gui");
 		this.camera = new Camera();
-		this.camera.setOrthoProjection(window);
+		this.camera.setOrthoProjection();
 		this.sheet = new TileSheet("gui", 9);
 		this.tmpButton = new Button(new Vector2f(0, 0), new Vector2f(96, 32));
 	}

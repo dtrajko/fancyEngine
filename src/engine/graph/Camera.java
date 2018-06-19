@@ -108,6 +108,10 @@ public class Camera {
 			  window.getHeight() / 2);
 	}
 
+	public void setOrthoProjection() {
+		orthoProjectionMatrix = new Matrix4f().setOrtho2D(-1, 1, -1, 1);
+	}
+
 	public Matrix4f getOrthoProjection() {
 		return orthoProjectionMatrix.translate(position, new Matrix4f());
 	}
