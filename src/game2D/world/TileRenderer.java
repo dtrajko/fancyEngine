@@ -3,9 +3,6 @@ package game2D.world;
 import java.util.HashMap;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-import org.lwjgl.opengl.GL11;
-
-import engine.Window;
 import engine.graph.Camera;
 import game2D.assets.Assets;
 import game2D.assets.Sprite;
@@ -21,11 +18,11 @@ public class TileRenderer {
 	private static Shader shader;
 
 	public TileRenderer() {
-		shader = new Shader("shader");
 		model = new Model(Sprite.getVertices(), Sprite.getTexCoords(), Sprite.getIndices());
 	}
 
 	public void init() {
+		shader = new Shader("shader");
 		model.renderInit();
 		Assets.getModel().renderInit();
 		tile_textures = new HashMap<String, Texture>();

@@ -34,13 +34,13 @@ public class Game2D implements IGameLogic {
 	double frame_cap = 1.0 / 120.0;
 
 	public Game2D() {
+		renderer = new TileRenderer();
 		camera = new Camera();
 	}
 
 	@Override
 	public void init(Window win) throws Exception {
 		window = win;
-		renderer = new TileRenderer();
 		renderer.init();
 		camera.setOrthoProjection(window);
 		sheet = new TileSheet("lives", 3);
