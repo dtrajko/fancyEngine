@@ -38,8 +38,8 @@ public class Player extends Entity {
 		previous_height = this.transform.position.y;
 	}
 
-	public void update(float delta, Window window, Camera camera, World world, Game2D game) {
-
+	public void input(float delta, Camera camera, World world, Game2D game) {
+		
 		this.useAnimation(ANIM_IDLE);
 		Vector2f movement = new Vector2f();
 
@@ -92,6 +92,9 @@ public class Player extends Entity {
 		camera.getPosition().lerp(this.transform.position.mul(-world.getScale(), new Vector3f()), 0.02f);
 		manageLives(game, world);
 		manageLevels(game, world);
+	}
+
+	public void update(float delta, Window window, Camera camera, World world, Game2D game) {
 	}
 
 	public void manageLevels(Game2D game, World world) {

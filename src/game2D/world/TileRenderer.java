@@ -21,8 +21,14 @@ public class TileRenderer {
 	private static Shader shader;
 
 	public TileRenderer() {
+		shader = new Shader("shader");
+		model = new Model(Sprite.getVertices(), Sprite.getTexCoords(), Sprite.getIndices());
+	}
+
+	public void init() {
+		model.renderInit();
+		Assets.getModel().renderInit();
 		tile_textures = new HashMap<String, Texture>();
-		this.model = new Model(Sprite.getVertices(), Sprite.getTexCoords(), Sprite.getIndices());
 		for (int i = 0; i < Tile.tiles.length; i++) {
 			if (Tile.tiles[i] != null) {
 				if (!tile_textures.containsKey(Tile.tiles[i].getTexture())) {
@@ -33,16 +39,11 @@ public class TileRenderer {
 		}
 	}
 
-	public void init() {
-		shader = new Shader("shader");
-		model.renderInit();
-		Assets.getModel().renderInit();
-	}
-
 	public void render(World world, Camera camera) {
 
 		int posX = (int)camera.getPosition().x / (world.getScale() * 2);
 		int posY = (int)camera.getPosition().y / (world.getScale() * 2);
+		
 		for (int i = 0; i < world.getViewWidth(); i++) {
 			for (int j = 0; j < world.getViewHeight(); j++) {
 				Tile tile = world.getTile(i - posX - (world.getViewWidth() / 2) + 1, j + posY - (world.getViewHeight() / 2));
@@ -59,6 +60,7 @@ public class TileRenderer {
 	public void renderTile(Tile tile, int x, int y, Matrix4f world, Camera camera) {
 
 		shader.bind();
+
 		if (tile_textures.containsKey(tile.getTexture())) {
 			tile_textures.get(tile.getTexture()).bind(0);
 		}
@@ -78,5 +80,4 @@ public class TileRenderer {
 	public void clear() {
 		// shader.finalize();
 	}
-
 }

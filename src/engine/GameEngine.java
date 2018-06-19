@@ -28,6 +28,14 @@ public class GameEngine implements Runnable {
         timer = new Timer();
     }
 
+    public GameEngine() {
+        this.window = null;
+        this.gameLoopThread = null;
+        this.timer = null;
+        this.gameLogic = null;
+        this.mouseInput = null;
+    }
+
     public void start() {
         String osName = System.getProperty("os.name");
         if ( osName.contains("Mac") ) {
@@ -42,8 +50,8 @@ public class GameEngine implements Runnable {
         try {
             init();
             gameLoop();
-        } catch (Exception excp) {
-            excp.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         } finally {
             cleanup();
         }
@@ -117,14 +125,5 @@ public class GameEngine implements Runnable {
         fps++;
         gameLogic.render(window);
         window.update();
-    }
-
-    public GameEngine() {
-        this.window = null;
-        this.gameLoopThread = null;
-        this.timer = null;
-        this.gameLogic = null;
-        this.mouseInput = null;
-    }
-    
+    }    
 }

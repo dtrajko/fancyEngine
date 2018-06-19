@@ -30,17 +30,19 @@ public class Game2D implements IGameLogic {
 	private static TileSheet sheet;
 	private static Window window;
 	private MouseInput mouseInput;
+	private static float SPEED = 0.1f;
+	double frame_cap = 1.0 / 120.0;
 
 	public Game2D() {
-		renderer = new TileRenderer();
 		camera = new Camera();
 	}
 
 	@Override
 	public void init(Window win) throws Exception {
 		window = win;
-		camera.setOrthoProjection(window);
+		renderer = new TileRenderer();
 		renderer.init();
+		camera.setOrthoProjection(window);
 		sheet = new TileSheet("lives", 3);
 		beginLevel();
 	}
@@ -66,29 +68,27 @@ public class Game2D implements IGameLogic {
 	@Override
 	public void input(Window window, MouseInput mouseInput) {
 		this.mouseInput = mouseInput;
-	}
-
-	@Override
-	public void update(float interval, MouseInput mouseInput) {
 		if (switchLevel == true) {
 			beginLevel();
 			switchLevel = false;
 		}
-		mouseInput.update(window);
-		player.update(interval * 5, window, camera, level, this);
-		level.update(interval * 5, window, camera, this);
+		player.input(SPEED, camera, level, this);
 		level.correctCamera(camera);
+	}
+
+	@Override
+	public void update(float interval, MouseInput mouseInput) {
+		mouseInput.update(window);
 		updateGui();
+		level.update((float) frame_cap, window, camera, this);
 	}
 
 	@Override
 	public void render(Window window) {
-		if ( window.isResized() ) {
-			GL11.glViewport(0, 0, window.getWidth(), window.getHeight());
-			window.setResized(false);
-		}
 		renderer.render(level, camera);
-		renderer.clear();
+		for (Gui gui : guis.keySet()) {
+			gui.render(guis.get(gui), 0);
+		}
 	}
 
 	public void onWindowResize() {

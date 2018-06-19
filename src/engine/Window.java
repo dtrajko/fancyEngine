@@ -1,6 +1,8 @@
 package engine;
 
 import static org.lwjgl.glfw.GLFW.*;
+
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
@@ -233,7 +235,9 @@ public class Window {
     }
 
     public void restoreState() {
-        glEnable(GL_DEPTH_TEST);
+        if (opts.mode3D) {
+        	glEnable(GL_DEPTH_TEST);        	
+        }
         glEnable(GL_STENCIL_TEST);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         if (opts.cullFace) {
