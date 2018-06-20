@@ -183,7 +183,7 @@ public class Game implements IGameLogic {
         materialCobble.setReflectance(1.0f);
         materialCobble.setTransparency(1.0f);
         meshCobble.setMaterial(materialCobble);
-        
+
         meshStairs = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/stairs.obj", 5000);
         Texture textureStairs = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_stairs.png", 2, 1);
         Material materialStairs = new Material(textureStairs);
