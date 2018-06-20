@@ -190,6 +190,7 @@ public class Game implements IGameLogic {
         materialStairs.setReflectance(1.0f);
         materialStairs.setTransparency(1.0f);
         meshStairs.setMaterial(materialStairs);
+        meshStairs.setSymetric(false);
 
         int blockScale = 1;
         int skyBoxScale = 100;

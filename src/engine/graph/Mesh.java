@@ -23,6 +23,7 @@ public class Mesh {
     private final int vertexCount;
     private Material material;
     private float boundingRadius;
+    private boolean symetric = true;
 
     public Mesh(float[] positions, float[] textCoords, float[] normals, int[] indices) {
         this(positions, textCoords, normals, indices, createEmptyIntArray(MAX_WEIGHTS * positions.length / 3, 0), createEmptyFloatArray(MAX_WEIGHTS * positions.length / 3, 0));
@@ -243,4 +244,12 @@ public class Mesh {
         Arrays.fill(result, defaultValue);
         return result;
     }
+
+    public void setSymetric(boolean value) {
+    	symetric = value;
+    }
+
+	public boolean isSymetric() {
+		return symetric;
+	}
 }

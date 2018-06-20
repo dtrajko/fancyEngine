@@ -28,7 +28,7 @@ public class CameraBoxSelectionDetector {
     }
 
     public void selectGameItem(Scene scene, Camera camera, MouseInput mouseInput, Mesh nextMesh) {
-
+    	
     	GameItem selectedGameItem = null;
         float closestDistance = Float.POSITIVE_INFINITY;
         dir = camera.getViewMatrix().positiveZ(dir).negate();
@@ -82,6 +82,11 @@ public class CameraBoxSelectionDetector {
         			selectedGameItem.getPosition().x,
         			selectedGameItem.getPosition().y + selectedGameItem.getScale() * 2,
         			selectedGameItem.getPosition().z);
+
+            	if (!nextMesh.isSymetric()) {
+                	newGameItem.setRotation(0, calculateItemOrientation(camera), 0);	
+            	}
+
             	newGameItem.setBoundingBox();
             	Vector3f pos = new Vector3f(newGameItem.getPosition().x + 1, newGameItem.getPosition().y + 1, newGameItem.getPosition().z + 1);
             	if (!scene.inCollision(pos, false)) {
@@ -120,6 +125,11 @@ public class CameraBoxSelectionDetector {
         			selectedGameItem.getPosition().x + offsetX,
         			selectedGameItem.getPosition().y + offsetY,
         			selectedGameItem.getPosition().z + offsetZ);
+
+            	if (!nextMesh.isSymetric()) {
+                	newGameItem.setRotation(0, calculateItemOrientation(camera), 0);	
+            	}
+
             	newGameItem.setBoundingBox();
             	Vector3f pos = new Vector3f(newGameItem.getPosition().x + 1, newGameItem.getPosition().y + 1, newGameItem.getPosition().z + 1);
             	if (!scene.inCollision(pos, false)) {
@@ -127,5 +137,21 @@ public class CameraBoxSelectionDetector {
             	}
             }
         }
+    }
+    
+    public float calculateItemOrientation(Camera camera) {
+    	double yaw = camera.getRotation().y % 360;
+    	yaw = yaw < 0 ? 360 + yaw : yaw;
+    	float angleY = 0;
+    	if(yaw >= 315 || yaw < 45) {
+    		angleY = 270;
+    	} else if(yaw >= 45 && yaw < 135) {
+    		angleY = 180;
+    	} else if(yaw >= 135 && yaw < 225) {
+    		angleY = 90;
+    	} else if(yaw >= 225 && yaw < 315) {
+    		angleY = 0;
+    	}
+    	return angleY;
     }
 }

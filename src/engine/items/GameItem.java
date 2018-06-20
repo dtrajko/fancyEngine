@@ -65,7 +65,7 @@ public class GameItem {
     }
 
     public final void setRotation(float x, float y, float z) {
-    	this.rotation.set(MD5Utils.calculateQuaternion(x, y, z));
+    	this.rotation.rotateXYZ((float)Math.toRadians(x), (float)Math.toRadians(y), (float)Math.toRadians(z));
     }
 
     public final void setRotation(Quaternionf q) {
