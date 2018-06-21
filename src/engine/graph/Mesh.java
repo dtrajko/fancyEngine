@@ -24,6 +24,7 @@ public class Mesh {
     private Material material;
     private float boundingRadius;
     private boolean symetric = true;
+    private boolean corner = false;
 
     public Mesh(float[] positions, float[] textCoords, float[] normals, int[] indices) {
         this(positions, textCoords, normals, indices, createEmptyIntArray(MAX_WEIGHTS * positions.length / 3, 0), createEmptyFloatArray(MAX_WEIGHTS * positions.length / 3, 0));
@@ -251,5 +252,13 @@ public class Mesh {
 
 	public boolean isSymetric() {
 		return symetric;
+	}
+
+	public void setCorner(boolean value) {
+		corner = value;
+	}
+	
+	public boolean isCorner() {
+		return corner;
 	}
 }

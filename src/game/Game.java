@@ -48,7 +48,7 @@ public class Game implements IGameLogic {
     private FlowParticleEmitter particleEmitter;
     private final SoundManager soundMgr;
 
-    private static final float GRAVITY = -0.5f;
+    private static final float GRAVITY = 0.0f; // -0.5f;
     private static final float WORLD_BOTTOM = -20f;
     private static float SPEED;
     private static boolean gravityOn = true;
@@ -69,6 +69,8 @@ public class Game implements IGameLogic {
     private Mesh meshCobble;
     private Mesh meshTreetop;
     private Mesh meshStairs;
+    private Mesh meshStairsCorner;
+    private Mesh meshStairsCornerInner;
 
     private boolean updateEnabled = true;
     private long toggleGuiLastTime;
@@ -192,6 +194,16 @@ public class Game implements IGameLogic {
         meshStairs.setMaterial(materialStairs);
         meshStairs.setSymetric(false);
 
+        meshStairsCorner = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/stairs_corner.obj", 5000);
+        meshStairsCorner.setMaterial(materialStairs);
+        meshStairsCorner.setSymetric(false);
+        meshStairsCorner.setCorner(true);
+
+        meshStairsCornerInner = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/stairs_inner_corner.obj", 5000);
+        meshStairsCornerInner.setMaterial(materialStairs);
+        meshStairsCornerInner.setSymetric(false);
+        meshStairsCornerInner.setCorner(true);
+
         int blockScale = 1;
         int skyBoxScale = 100;
         int extension = 2;
@@ -313,65 +325,77 @@ public class Game implements IGameLogic {
     	guiItems.add(guiBullseye);
 
     	// inventory
+    	Texture textureBtnStairs = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_stairs.png");
+    	GuiButton guiButtonStairs = new GuiButton(textureBtnStairs, new Vector3f(-0.21f, 0.56f, 1), new Vector2f(0.1f, 0.18f));
+    	guiButtonStairs.setInventory(true);
+    	guiButtonStairs.setMesh(meshStairs);
+    	guiItems.add(guiButtonStairs);
+
+    	Texture textureBtnStairsCorner = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_stairs_corner.png");
+    	GuiButton guiButtonStairsCorner = new GuiButton(textureBtnStairsCorner, new Vector3f(0.0f, 0.56f, 1), new Vector2f(0.1f, 0.18f));
+    	guiButtonStairsCorner.setInventory(true);
+    	guiButtonStairsCorner.setMesh(meshStairsCorner);
+    	guiItems.add(guiButtonStairsCorner);
+
+    	Texture textureBtnStairsCornerInner = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_stairs_corner_inner.png");
+    	GuiButton guiButtonStairsCornerInner = new GuiButton(textureBtnStairsCornerInner, new Vector3f(0.21f, 0.56f, 1), new Vector2f(0.1f, 0.18f));
+    	guiButtonStairsCornerInner.setInventory(true);
+    	guiButtonStairsCornerInner.setMesh(meshStairsCornerInner);
+    	guiItems.add(guiButtonStairsCornerInner);
+
+    	Texture textureBtnOakWood = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_oakwood.png");
+    	GuiButton guiButtonOakWood = new GuiButton(textureBtnOakWood, new Vector3f(-0.21f, 0.18f, 1), new Vector2f(0.1f, 0.18f));
+    	guiButtonOakWood.setInventory(true);
+    	guiButtonOakWood.setMesh(meshOakwood);
+    	guiItems.add(guiButtonOakWood);
+
+    	Texture textureBtnWood = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_wood.png");
+    	GuiButton guiButtonWood = new GuiButton(textureBtnWood, new Vector3f(0.0f, 0.18f, 1), new Vector2f(0.1f, 0.18f));
+    	guiButtonWood.setInventory(true);
+    	guiButtonWood.setMesh(meshWood);
+    	guiItems.add(guiButtonWood);
+
+    	Texture textureBtnCobble = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_cobble.png");
+    	GuiButton guiButtonCobble = new GuiButton(textureBtnCobble, new Vector3f(0.21f, 0.18f, 1), new Vector2f(0.1f, 0.18f));
+    	guiButtonCobble.setInventory(true);
+    	guiButtonCobble.setMesh(meshCobble);
+    	guiItems.add(guiButtonCobble);
+
     	Texture textureBtnGrass = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_grass.png");
-    	GuiButton guiButtonGrass = new GuiButton(textureBtnGrass, new Vector3f(-0.21f, 0.0f, 1), new Vector2f(0.1f, 0.18f));
+    	GuiButton guiButtonGrass = new GuiButton(textureBtnGrass, new Vector3f(-0.21f, -0.2f, 1), new Vector2f(0.1f, 0.18f));
     	guiButtonGrass.setInventory(true);
     	guiButtonGrass.setMesh(meshGrass);
     	guiItems.add(guiButtonGrass);
 
     	Texture textureBtnGround = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_ground.png");
-    	GuiButton guiButtonGround = new GuiButton(textureBtnGround, new Vector3f(0f, 0.0f, 1), new Vector2f(0.1f, 0.18f));
+    	GuiButton guiButtonGround = new GuiButton(textureBtnGround, new Vector3f(0f, -0.2f, 1), new Vector2f(0.1f, 0.18f));
     	guiButtonGround.setInventory(true);
     	guiButtonGround.setMesh(meshGround);
     	guiItems.add(guiButtonGround);
 
     	Texture textureBtnWater = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_water.png");
-    	GuiButton guiButtonWater = new GuiButton(textureBtnWater, new Vector3f(0.21f, 0.0f, 1), new Vector2f(0.1f, 0.18f));
+    	GuiButton guiButtonWater = new GuiButton(textureBtnWater, new Vector3f(0.21f, -0.2f, 1), new Vector2f(0.1f, 0.18f));
     	guiButtonWater.setInventory(true);
     	guiButtonWater.setMesh(meshWater);
     	guiItems.add(guiButtonWater);
 
-    	Texture textureBtnLava = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_lava.png");
-    	GuiButton guiButtonLava = new GuiButton(textureBtnLava, new Vector3f(0.0f, -0.38f, 1), new Vector2f(0.1f, 0.18f));
-    	guiButtonLava.setInventory(true);
-    	guiButtonLava.setMesh(meshLava);
-    	guiItems.add(guiButtonLava);
-
-    	Texture textureBtnWood = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_wood.png");
-    	GuiButton guiButtonWood = new GuiButton(textureBtnWood, new Vector3f(0.0f, 0.38f, 1), new Vector2f(0.1f, 0.18f));
-    	guiButtonWood.setInventory(true);
-    	guiButtonWood.setMesh(meshWood);
-    	guiItems.add(guiButtonWood);
-    	
-    	Texture textureBtnTreetop = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_treetop.png");
-    	GuiButton guiButtonTreetop = new GuiButton(textureBtnTreetop, new Vector3f(0.21f, -0.38f, 1), new Vector2f(0.1f, 0.18f));
-    	guiButtonTreetop.setInventory(true);
-    	guiButtonTreetop.setMesh(meshTreetop);
-    	guiItems.add(guiButtonTreetop);
-    	
-    	Texture textureBtnOakWood = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_oakwood.png");
-    	GuiButton guiButtonOakWood = new GuiButton(textureBtnOakWood, new Vector3f(-0.21f, 0.38f, 1), new Vector2f(0.1f, 0.18f));
-    	guiButtonOakWood.setInventory(true);
-    	guiButtonOakWood.setMesh(meshOakwood);
-    	guiItems.add(guiButtonOakWood);
-    	
     	Texture textureBtnGlass = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_glass.png");
-    	GuiButton guiButtonGlass = new GuiButton(textureBtnGlass, new Vector3f(-0.21f, -0.38f, 1), new Vector2f(0.1f, 0.18f));
+    	GuiButton guiButtonGlass = new GuiButton(textureBtnGlass, new Vector3f(-0.21f, -0.58f, 1), new Vector2f(0.1f, 0.18f));
     	guiButtonGlass.setInventory(true);
     	guiButtonGlass.setMesh(meshGlass);
     	guiItems.add(guiButtonGlass);
-    	
-    	Texture textureBtnCobble = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_cobble.png");
-    	GuiButton guiButtonCobble = new GuiButton(textureBtnCobble, new Vector3f(0.21f, 0.38f, 1), new Vector2f(0.1f, 0.18f));
-    	guiButtonCobble.setInventory(true);
-    	guiButtonCobble.setMesh(meshCobble);
-    	guiItems.add(guiButtonCobble);
 
-    	Texture textureBtnStairs = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_stairs.png");
-    	GuiButton guiButtonStairs = new GuiButton(textureBtnStairs, new Vector3f(0.21f, 0.76f, 1), new Vector2f(0.1f, 0.18f));
-    	guiButtonStairs.setInventory(true);
-    	guiButtonStairs.setMesh(meshStairs);
-    	guiItems.add(guiButtonStairs);
+    	Texture textureBtnTreetop = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_treetop.png");
+    	GuiButton guiButtonTreetop = new GuiButton(textureBtnTreetop, new Vector3f(0.21f, -0.58f, 1), new Vector2f(0.1f, 0.18f));
+    	guiButtonTreetop.setInventory(true);
+    	guiButtonTreetop.setMesh(meshTreetop);
+    	guiItems.add(guiButtonTreetop);
+
+    	Texture textureBtnLava = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_lava.png");
+    	GuiButton guiButtonLava = new GuiButton(textureBtnLava, new Vector3f(0.0f, -0.58f, 1), new Vector2f(0.1f, 0.18f));
+    	guiButtonLava.setInventory(true);
+    	guiButtonLava.setMesh(meshLava);
+    	guiItems.add(guiButtonLava);
 	}
 
 	private void setupLights() {

@@ -84,7 +84,8 @@ public class CameraBoxSelectionDetector {
         			selectedGameItem.getPosition().z);
 
             	if (!nextMesh.isSymetric()) {
-                	newGameItem.setRotation(0, calculateItemOrientation(camera), 0);	
+            		int cornerAngle = nextMesh.isCorner() ? 45 : 0;
+                	newGameItem.setRotation(0, calculateItemOrientation(camera, cornerAngle), 0);	
             	}
 
             	newGameItem.setBoundingBox();
@@ -127,7 +128,8 @@ public class CameraBoxSelectionDetector {
         			selectedGameItem.getPosition().z + offsetZ);
 
             	if (!nextMesh.isSymetric()) {
-                	newGameItem.setRotation(0, calculateItemOrientation(camera), 0);	
+            		int cornerAngle = nextMesh.isCorner() ? 45 : 0;
+                	newGameItem.setRotation(0, calculateItemOrientation(camera, cornerAngle), 0);	
             	}
 
             	newGameItem.setBoundingBox();
@@ -138,18 +140,18 @@ public class CameraBoxSelectionDetector {
             }
         }
     }
-    
-    public float calculateItemOrientation(Camera camera) {
+
+    public float calculateItemOrientation(Camera camera, int cornerAngle) {
     	double yaw = camera.getRotation().y % 360;
     	yaw = yaw < 0 ? 360 + yaw : yaw;
     	float angleY = 0;
-    	if(yaw >= 315 || yaw < 45) {
+    	if(yaw >= 315 - cornerAngle || yaw < 45 - cornerAngle) {
     		angleY = 270;
-    	} else if(yaw >= 45 && yaw < 135) {
+    	} else if(yaw >= 45 - cornerAngle && yaw < 135 - cornerAngle) {
     		angleY = 180;
-    	} else if(yaw >= 135 && yaw < 225) {
+    	} else if(yaw >= 135 - cornerAngle && yaw < 225 - cornerAngle) {
     		angleY = 90;
-    	} else if(yaw >= 225 && yaw < 315) {
+    	} else if(yaw >= 225 - cornerAngle && yaw < 315 - cornerAngle) {
     		angleY = 0;
     	}
     	return angleY;
