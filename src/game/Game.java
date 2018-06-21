@@ -48,7 +48,7 @@ public class Game implements IGameLogic {
     private FlowParticleEmitter particleEmitter;
     private final SoundManager soundMgr;
 
-    private static final float GRAVITY = 0.0f; // -0.5f;
+    private static float GRAVITY = -0.0f;
     private static final float WORLD_BOTTOM = -20f;
     private static float SPEED;
     private static boolean gravityOn = true;
@@ -76,7 +76,7 @@ public class Game implements IGameLogic {
     private long toggleGuiLastTime;
     private GuiManager guiManager;
     private List<GuiButton> guiItems = new ArrayList<GuiButton>();
-    
+
     private enum Sounds {
         FIRE,
         BACKGROUND,
@@ -451,6 +451,10 @@ public class Game implements IGameLogic {
         if (mouseInput.isKeyReleased(GLFW.GLFW_KEY_E)) {
         	sceneChanged = true;
         	toggleGui();
+        }
+
+        if (mouseInput.isKeyReleased(GLFW.GLFW_KEY_G)) {
+        	GRAVITY = (GRAVITY == 0.0f) ? -1.0f : 0.0f;
         }
 
         // reset camera position/rotation
