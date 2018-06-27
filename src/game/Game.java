@@ -309,10 +309,10 @@ public class Game implements IGameLogic {
         // Setup GUI
         setupGui();
 
-        camera.getPosition().x = -skyBoxScale;
-        camera.getPosition().y = 10.0f;
-        camera.getPosition().z = skyBoxScale;
-        camera.setRotation(0, 0, 0);
+        camera.getPosition().x = -skyBoxScale - 40;
+        camera.getPosition().y = 20.0f;
+        camera.getPosition().z = skyBoxScale + 20;
+        camera.setRotation(0, -45, 0);
 
         selectDetectorCamera = new CameraBoxSelectionDetector();
     }
