@@ -522,6 +522,9 @@ public class Renderer {
         // Render each mesh with the associated game Items
         Map<InstancedMesh, List<GameItem>> mapMeshes = scene.getGameInstancedMeshes();
         for (InstancedMesh mesh : mapMeshes.keySet()) {
+        	
+        	float transparency = mesh.getMaterial().getTransparency();
+
             Texture text = mesh.getMaterial().getTexture();
             if (text != null) {
                 sceneShaderProgram.setUniform("numCols", text.getNumCols());
@@ -529,7 +532,7 @@ public class Renderer {
             }
             
             sceneShaderProgram.setUniform("material", mesh.getMaterial());
-            sceneShaderProgram.setUniform("transparency", mesh.getMaterial().getTransparency());
+            sceneShaderProgram.setUniform("transparency", transparency);
 
             filteredItems.clear();
             for (GameItem gameItem : mapMeshes.get(mesh)) {
