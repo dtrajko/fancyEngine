@@ -87,7 +87,7 @@ public class Scene {
         // Create a map of meshes to speed up rendering
         for (GameItem gameItem : gameItems) {
             Mesh[] meshes = gameItem.getMeshes();
-            for (Mesh mesh : meshes) {            	
+            for (Mesh mesh : meshes) {
                 boolean instancedMesh = mesh instanceof InstancedMesh;
                 List<GameItem> list = instancedMesh ? instancedMeshMap.get(mesh) : meshMap.get(mesh);
                 if (list == null) {
