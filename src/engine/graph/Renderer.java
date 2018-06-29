@@ -1,8 +1,12 @@
 package engine.graph;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -530,9 +534,23 @@ public class Renderer {
 
         // Render each mesh with the associated game Items
         Map<InstancedMesh, List<GameItem>> mapMeshes = scene.getGameInstancedMeshes();
-        for (InstancedMesh mesh : mapMeshes.keySet()) {
+
+        Set<InstancedMesh> setMeshes = mapMeshes.keySet();
+        List<InstancedMesh> meshesSortedList = new ArrayList<InstancedMesh>(setMeshes);
+        Collections.sort(meshesSortedList, new Comparator<Mesh>() {
+			@Override
+			public int compare(Mesh mesh1, Mesh mesh2) {
+				if (mesh1.getMaterial().getTransparency() > mesh2.getMaterial().getTransparency()) return -1;
+				else if (mesh1.getMaterial().getTransparency() < mesh2.getMaterial().getTransparency()) return 1;
+				else return 0;
+			}
+        	
+        });
+
+        for (InstancedMesh mesh : meshesSortedList) {
         	
         	float transparency = mesh.getMaterial().getTransparency();
+        	// System.out.println("Renderer render mesh transparecy: " + transparency);
 
             Texture text = mesh.getMaterial().getTexture();
             if (text != null) {
@@ -554,7 +572,7 @@ public class Renderer {
             }
 
             mesh.renderListInstanced(filteredItems, transformation, viewMatrix);
-        }
+        }        
     }
 
     public void cleanup() {
