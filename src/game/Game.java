@@ -86,8 +86,8 @@ public class Game implements IGameLogic {
     public void init(Window win) throws Exception {
 
     	window = win;
-        renderer.init(window);
         scene = new Scene();
+        renderer.init(window, scene);
 
         List<GameItem> gameItems = new ArrayList<GameItem>();
 
@@ -204,6 +204,8 @@ public class Game implements IGameLogic {
         meshStairsCornerInner.setMaterial(materialStairs);
         meshStairsCornerInner.setSymetric(false);
         meshStairsCornerInner.setCorner(true);
+        
+        scene.initMeshMaps(meshTypesMap);
 
         int blockScale = 1;
         int skyBoxScale = 100;
@@ -257,7 +259,6 @@ public class Game implements IGameLogic {
             posZ -= increment;
         }
 
-        scene.initMeshMaps(meshTypesMap);
         scene.setGameItems(gameItems);
         gameItems.clear();
 

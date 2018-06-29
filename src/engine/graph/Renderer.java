@@ -64,8 +64,10 @@ public class Renderer {
         
     }
 
-    public void init(Window window) throws Exception {
-    	shadowRenderer.init(window);
+    public void init(Window window, Scene scene) throws Exception {
+        if (scene.isRenderShadows()) {
+        	shadowRenderer.init(window);
+        }
         setupSkyBoxShader();
         setupSceneShader();
         // setupParticlesShader();
@@ -506,7 +508,9 @@ public class Renderer {
                 sceneShaderProgram.setUniform("numRows", text.getNumRows());
             }
             
-            shadowRenderer.bindTextures(GL13.GL_TEXTURE2);
+            if (scene.isRenderShadows()) {
+            	shadowRenderer.bindTextures(GL13.GL_TEXTURE2);            	
+            }
 
             mesh.renderList(mapMeshes.get(mesh), (GameItem gameItem) -> {
             	sceneShaderProgram.setUniform("selectedNonInstanced", gameItem.isSelected() ? 1.0f : 0.0f);
@@ -545,7 +549,9 @@ public class Renderer {
                     filteredItems.add(gameItem);
                 }
             }
-            shadowRenderer.bindTextures(GL13.GL_TEXTURE2);
+            if (scene.isRenderShadows()) {
+            	shadowRenderer.bindTextures(GL13.GL_TEXTURE2);
+            }
 
             mesh.renderListInstanced(filteredItems, transformation, viewMatrix);
         }
