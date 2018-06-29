@@ -459,12 +459,14 @@ public class Renderer {
         sceneShaderProgram.setUniform("viewMatrix", viewMatrix);
         sceneShaderProgram.setUniform("projectionMatrix", projectionMatrix);
 
-        List<ShadowCascade> shadowCascades = shadowRenderer.getShadowCascades();
-        for (int i = 0; i < ShadowRenderer.NUM_CASCADES; i++) {
-            ShadowCascade shadowCascade = shadowCascades.get(i);
-            sceneShaderProgram.setUniform("orthoProjectionMatrix", shadowCascade.getOrthoProjMatrix(), i);
-            sceneShaderProgram.setUniform("cascadeFarPlanes", ShadowRenderer.CASCADE_SPLITS[i], i);
-            sceneShaderProgram.setUniform("lightViewMatrix", shadowCascade.getLightViewMatrix(), i);
+        if (scene.isRenderShadows()) {
+	        List<ShadowCascade> shadowCascades = shadowRenderer.getShadowCascades();
+	        for (int i = 0; i < ShadowRenderer.NUM_CASCADES; i++) {
+	            ShadowCascade shadowCascade = shadowCascades.get(i);
+	            sceneShaderProgram.setUniform("orthoProjectionMatrix", shadowCascade.getOrthoProjMatrix(), i);
+	            sceneShaderProgram.setUniform("cascadeFarPlanes", ShadowRenderer.CASCADE_SPLITS[i], i);
+	            sceneShaderProgram.setUniform("lightViewMatrix", shadowCascade.getLightViewMatrix(), i);
+	        }
         }
 
         SceneLight sceneLight = scene.getSceneLight();
@@ -473,11 +475,14 @@ public class Renderer {
         sceneShaderProgram.setUniform("fog", scene.getFog());
         sceneShaderProgram.setUniform("texture_sampler", 0);
         sceneShaderProgram.setUniform("normalMap", 1);
-        int start = 2;
-        for (int i = 0; i < ShadowRenderer.NUM_CASCADES; i++) {
-            sceneShaderProgram.setUniform("shadowMap_" + i, start + i);
+
+        if (scene.isRenderShadows()) {
+	        int start = 2;
+	        for (int i = 0; i < ShadowRenderer.NUM_CASCADES; i++) {
+	            sceneShaderProgram.setUniform("shadowMap_" + i, start + i);
+	        }
+	        sceneShaderProgram.setUniform("renderShadow", scene.isRenderShadows() ? 1 : 0);
         }
-        sceneShaderProgram.setUniform("renderShadow", scene.isRenderShadows() ? 1 : 0);
 
         renderNonInstancedMeshes(scene);
         renderInstancedMeshes(scene, viewMatrix);

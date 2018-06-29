@@ -1,8 +1,6 @@
 package engine;
 
 import static org.lwjgl.glfw.GLFW.*;
-
-import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
@@ -15,7 +13,7 @@ public class Window {
 
     public static final float FOV = (float) Math.toRadians(60.0f);
     public static final float Z_NEAR = 0.01f;
-    public static final float Z_FAR = 1000.f;
+    public static final float Z_FAR = 1000.0f;
 
     private final String title;
     private int width;

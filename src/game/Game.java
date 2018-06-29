@@ -526,19 +526,23 @@ public class Game implements IGameLogic {
 	public void updateConditional(MouseInput mouseInput) {
     	// Update camera based on mouse
         Vector2f rotVec = mouseInput.getDisplVec();
-        camera.moveRotation(rotVec.x * MOUSE_SENSITIVITY, rotVec.y * MOUSE_SENSITIVITY, 0);        	
+        camera.moveRotation(rotVec.x * MOUSE_SENSITIVITY, rotVec.y * MOUSE_SENSITIVITY, 0);
+        
+        Vector3f camPos = camera.getPosition();
 
         // Update camera position
-        Vector3f newPos = camera.calculateNewPosition(cameraInc.x * CAMERA_POS_STEP, cameraInc.y * CAMERA_POS_STEP, cameraInc.z * CAMERA_POS_STEP);
+        Vector3f newCamPos = camera.calculateNewPosition(cameraInc.x * CAMERA_POS_STEP, cameraInc.y * CAMERA_POS_STEP, cameraInc.z * CAMERA_POS_STEP);
 
 		// Check if there has been a collision
         // newPosCameraBase - the camera imaginary "tripod base" we use to check the collision. It's bellow the camera "lens"
-		if (scene.inCollision(newPos, true)) {
-			gravityOn = false;
-		} else {
-			camera.movePosition(newPos);
-			gravityOn = true;
-		}
+        if (!newCamPos.equals(camPos)) {
+        	if (scene.inCollision(newCamPos, true)) {
+        		gravityOn = false;
+        	} else {
+        		camera.movePosition(newCamPos);
+        		gravityOn = true;
+        	}        	
+        }
 
         lightAngle += angleInc;
         if (lightAngle < 0) {
@@ -565,9 +569,8 @@ public class Game implements IGameLogic {
         	selectDetectorCamera.selectGameItem(scene, camera, mouseInput, nextMesh);
         }
 
-		// Update view matrix
-		camera.updateViewMatrix();
-
+    	// Update view matrix
+    	camera.updateViewMatrix();
 	}
 
     @Override
