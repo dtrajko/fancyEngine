@@ -12,6 +12,11 @@ public class AABB {
 		this.half_extent = half_extent;
 	}
 	
+	public void update(Vector2f center, Vector2f half_extent) {
+		this.center = center;
+		this.half_extent = half_extent;
+	}
+
 	public boolean isIntersecting(AABB box2) {
 		Vector2f distance = box2.center.sub(center, new Vector2f());
 		distance.x = (float) Math.abs(distance.x);

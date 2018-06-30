@@ -95,7 +95,6 @@ public class World {
 					tile = null;
 				}
 				if (tile != null) {
-					
 					setTile(tile, x, y);						
 				}
 				
@@ -198,9 +197,22 @@ public class World {
 			new AABB(new Vector2f(x * 2, -y * 2), new Vector2f(1, 1)) : null;
 	}
 
+	public void updateAABB(int x, int y, float offsetX, float offsetY) {
+		AABB bb = bounding_boxes[x + y * width];
+		bb.update(new Vector2f(x * 2 + offsetX, -y * 2 + offsetY), new Vector2f(1, 1));
+	}
+
 	public Tile getTile(int x, int y) {
 		try {
 			return Tile.tiles[tiles[x + y * width]];
+		} catch (ArrayIndexOutOfBoundsException e) {
+			return null;
+		}
+	}
+
+	public MovingTile getMovingTile(int x, int y) {
+		try {
+			return (MovingTile) Tile.tiles[tiles[x + y * width]];
 		} catch (ArrayIndexOutOfBoundsException e) {
 			return null;
 		}

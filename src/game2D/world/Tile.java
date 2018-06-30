@@ -8,8 +8,8 @@ public class Tile {
 	private boolean nextLevel;
 	private boolean previousLevel;
 	
-	protected int x;
-	protected int y;
+	protected float x;
+	protected float y;
 
 	public static final Tile tile_0 = new Tile("brick_wall");
 	public static final Tile tile_1 = new Tile("stone").setSolid();
@@ -44,11 +44,11 @@ public class Tile {
 		this.y = y;
 	}
 
-	public int getX() {
+	public float getX() {
 		return x;
 	}
 
-	public int getY() {
+	public float getY() {
 		return y;
 	}
 

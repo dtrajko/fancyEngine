@@ -2,13 +2,13 @@ package game2D.world;
 
 public class MovingTile extends Tile {
 
-	private int minX = 0;
-	private int maxX = 0;
-	private int minY = 0;
-	private int maxY = 0;
+	private float minX = 0;
+	private float maxX = 0;
+	private float minY = 0;
+	private float maxY = 0;
 	private int directionX = 0;
 	private int directionY = 0;
-	private int speed = 1;
+	private float speed = 1.0f;
 
 	public MovingTile(String texture) {
 		super(texture);
@@ -16,13 +16,23 @@ public class MovingTile extends Tile {
 		maxX = 200;
 		directionX = 1;
 	}
-	
+
+	public void setRangeX(float min, float max) {
+		this.minX = min;
+		this.maxX = max;
+	}
+
+	public void setRangeY(float min, float max) {
+		this.minY = min;
+		this.maxY = max;
+	}
+
 	public void move() {
 		
 		if (minX == 0 && maxX == 0) directionX = 0;
 		if (minY == 0 && maxY == 0) directionY = 0;
 
-		x += directionX;
+		x += directionX * speed;
 		if (x <= minX) {
 			x = minX;
 			directionX = 1;
@@ -32,7 +42,7 @@ public class MovingTile extends Tile {
 			directionX = -1;
 		}
 
-		y += directionY;
+		y += directionY * speed;
 		if (y <= minY) {
 			y = minY;
 			directionY = 1;
