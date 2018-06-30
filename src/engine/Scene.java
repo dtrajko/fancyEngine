@@ -1,7 +1,11 @@
 package engine;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
@@ -16,6 +20,8 @@ import java.util.Map;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import config.Config;
+import de.matthiasmann.twl.utils.PNGDecoder;
+import engine.graph.HeightMapMesh;
 import engine.graph.InstancedMesh;
 import engine.graph.Mesh;
 import engine.graph.particles.IParticleEmitter;
@@ -288,5 +294,73 @@ public class Scene {
 			System.err.println("Unable to load the file [" + importFilePath + "]");
 			e.printStackTrace();
 		}
+	}
+
+	public void generateTerrain(HashMap<String, Mesh> meshTypesMap) throws Exception {
+
+		List<GameItem> gameItems = new ArrayList<GameItem>();
+		PNGDecoder decoder = new PNGDecoder(new FileInputStream(Config.RESOURCES_DIR + "/textures/heightmap_128.png"));
+        int height = decoder.getHeight();
+        int width = decoder.getWidth();
+        ByteBuffer buffer = ByteBuffer.allocateDirect(4 * width * height);
+        decoder.decode(buffer, width * 4, PNGDecoder.Format.RGBA);
+        buffer.flip();
+
+        int blockScale = 1;
+        int skyBoxScale = 100;
+        int extension = 2;
+        int startX = extension * (-skyBoxScale + blockScale);
+        int startZ = extension * (skyBoxScale - blockScale);
+        // int startY = -1;
+        int increment = blockScale * 2;
+        int posX = startX;
+        int posY = 0;
+        int posZ = startZ;
+        int topY = 0;
+        int terrainAltitude = 20;
+        int terrainDepth = 2;
+        int waterLevel = 8;
+        int grassLevel = 10;
+        int lavaLevel = 12;
+        int mountLevel = 14;
+
+        GameItem gameItem;
+
+        this.instancedMeshMap.clear();
+
+        for (int incX = 0; incX < height; incX++) {
+            for (int incZ = 0; incZ < width; incZ++) {
+            	int rgb = HeightMapMesh.getRGB(incX, incZ, width, buffer);
+            	topY = -rgb / (255 / terrainAltitude * 255 * 255);
+            	if (topY < waterLevel - terrainDepth - increment) {
+            		topY = waterLevel - terrainDepth - increment;
+            	}
+            	topY = topY - topY % increment;
+            	for (int incY = 0; incY < terrainDepth; incY++) {
+            		posY = topY + incY * increment;
+
+            		if (posY < waterLevel) {
+            			gameItem = new GameItem(meshTypesMap.get("WATER"));
+            		} else if (posY <= grassLevel) {
+            			gameItem = new GameItem(meshTypesMap.get("GRASS"));
+            		} else if (posY <= lavaLevel) {
+            			gameItem = new GameItem(meshTypesMap.get("GRASS"));
+            		} else {
+            			gameItem = new GameItem(meshTypesMap.get("GROUND"));
+            		}
+            		gameItem.setPosition(posX, posY, posZ);
+                	gameItem.setScale(blockScale);
+                	gameItem.setBoundingBox();
+                	
+                	gameItems.add(gameItem);                		     		
+                }
+                posX += increment;
+            }
+            posX = startX;
+            posZ -= increment;
+        }
+
+        setGameItems(gameItems);
+        gameItems.clear();
 	}
 }

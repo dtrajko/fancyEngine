@@ -89,15 +89,6 @@ public class Game implements IGameLogic {
         scene = new Scene();
         renderer.init(window, scene);
 
-        List<GameItem> gameItems = new ArrayList<GameItem>();
-
-        PNGDecoder decoder = new PNGDecoder(new FileInputStream(Config.RESOURCES_DIR + "/textures/heightmap_128.png"));
-        int height = decoder.getHeight();
-        int width = decoder.getWidth();
-        ByteBuffer buffer = ByteBuffer.allocateDirect(4 * width * height);
-        decoder.decode(buffer, width * 4, PNGDecoder.Format.RGBA);
-        buffer.flip();
-        
         /*
         Mesh meshCustom = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/minecraft_sword.obj");
         Texture textureCustom = new Texture(Config.RESOURCES_DIR +  "/textures/minecraft_sword.png");
@@ -110,7 +101,7 @@ public class Game implements IGameLogic {
         gameItemCustom.setPosition(-100, 30f, 50);
         gameItemCustom.setScale(10f);
         gameItems.add(gameItemCustom);
-		*/
+        */
 
         Mesh meshGrass = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
         meshTypesMap.put("GRASS", meshGrass.setLabel("GRASS"));
@@ -404,6 +395,15 @@ public class Game implements IGameLogic {
 
         if (mouseInput.isKeyReleased(GLFW.GLFW_KEY_L)) {
         	scene.load(meshTypesMap);
+        }
+
+        if (mouseInput.isKeyReleased(GLFW.GLFW_KEY_C)) {
+        	try {
+				scene.generateTerrain(meshTypesMap);
+			} catch (Exception e) {
+				System.err.println("Failed to generate terrain.");
+				e.printStackTrace();
+			}
         }
 
         if (mouseInput.isKeyReleased(GLFW.GLFW_KEY_G)) {
