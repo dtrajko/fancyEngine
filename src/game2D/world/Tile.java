@@ -7,9 +7,17 @@ public class Tile {
 	private boolean solid;
 	private boolean nextLevel;
 	private boolean previousLevel;
-	
-	protected float x;
-	protected float y;
+
+	protected float offsetX;
+	protected float offsetY;
+
+	private float minX = 0;
+	private float maxX = 0;
+	private float minY = 0;
+	private float maxY = 0;
+	private int directionX = 0;
+	private int directionY = 0;
+	private float speed = 1.0f;
 
 	public static final Tile tile_0 = new Tile("brick_wall");
 	public static final Tile tile_1 = new Tile("stone").setSolid();
@@ -36,20 +44,56 @@ public class Tile {
 		tiles[id] = this;
 	}
 	
-	public void setX(int x) {
-		this.x = x;
+	public void setOffsetX(int x) {
+		this.offsetX = x;
 	}
 
-	public void setY(int y) {
-		this.y = y;
+	public void setOffsetY(int y) {
+		this.offsetY = y;
 	}
 
-	public float getX() {
-		return x;
+	public float getOffsetX() {
+		return offsetX;
 	}
 
-	public float getY() {
-		return y;
+	public float getOffsetY() {
+		return offsetY;
+	}
+
+	public void setRangeX(float min, float max) {
+		this.minX = min;
+		this.maxX = max;
+	}
+
+	public void setRangeY(float min, float max) {
+		this.minY = min;
+		this.maxY = max;
+	}
+
+	public void move() {
+		
+		if (minX == 0 && maxX == 0) directionX = 0;
+		if (minY == 0 && maxY == 0) directionY = 0;
+
+		offsetX += directionX * speed;
+		if (offsetX <= offsetX + minX) {
+			offsetX = offsetX + minX;
+			directionX = 1;
+		}
+		if (offsetX >= offsetX + maxX) {
+			offsetX = offsetX + maxX;
+			directionX = -1;
+		}
+
+		offsetY += directionY * speed;
+		if (offsetY <= offsetY + minY) {
+			offsetY = offsetY + minY;
+			directionY = 1;
+		}
+		if (offsetY >= offsetY + maxY) {
+			offsetY = offsetY + maxY;
+			directionY = -1;
+		}
 	}
 
 	public Tile setSolid() {
@@ -71,5 +115,5 @@ public class Tile {
 	public boolean isNextLevel() { return nextLevel; }
 	public boolean isPreviousLevel() { return previousLevel; }
 	public byte getId() { return id; }
-	public String getTexture() { return texture; }
+	public String getTexture() { return texture; }	
 }

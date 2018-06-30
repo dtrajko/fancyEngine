@@ -95,9 +95,9 @@ public class World {
 					tile = null;
 				}
 				if (tile != null) {
-					setTile(tile, x, y);						
+					setTile(tile, x, y);
 				}
-				
+
 				if (entity_alpha > 0) {
 					transform = new Transform();
 					transform.position.x = x * 2;
@@ -166,6 +166,17 @@ public class World {
 			}
 			entities.get(e1).collideWithTiles(this);
 		}
+		
+		for (int x = 0; x < view_width; x++) {
+			for (int y = 0; y < view_height; y++) {
+				Tile tile = getTile(x, y);
+				tile.move();
+				if (tile.getOffsetX() != 0 || tile.getOffsetY() != 0) {
+					updateAABB(x, y, tile.getOffsetX(), tile.getOffsetY());
+					// System.out.println("World update tileX = " + tile.getX() + " tileY = " + tile.getY());					
+				}
+			}
+		}
 	}
 
 	public void correctCamera(Camera camera) {
@@ -190,8 +201,8 @@ public class World {
 	}
 
 	public void setTile(Tile tile, int x, int y) {
-		tile.setX(x);
-		tile.setY(y);
+		tile.setOffsetX(x);
+		tile.setOffsetY(y);
 		tiles[x + y * width] = tile.getId();
 		bounding_boxes[x + y * width] = tile.isSolid() ?
 			new AABB(new Vector2f(x * 2, -y * 2), new Vector2f(1, 1)) : null;
@@ -199,20 +210,14 @@ public class World {
 
 	public void updateAABB(int x, int y, float offsetX, float offsetY) {
 		AABB bb = bounding_boxes[x + y * width];
-		bb.update(new Vector2f(x * 2 + offsetX, -y * 2 + offsetY), new Vector2f(1, 1));
+		if (bb != null) {
+			bb.update(new Vector2f(x * 2 + offsetX, -y * 2 + offsetY), new Vector2f(1, 1));			
+		}
 	}
 
 	public Tile getTile(int x, int y) {
 		try {
 			return Tile.tiles[tiles[x + y * width]];
-		} catch (ArrayIndexOutOfBoundsException e) {
-			return null;
-		}
-	}
-
-	public MovingTile getMovingTile(int x, int y) {
-		try {
-			return (MovingTile) Tile.tiles[tiles[x + y * width]];
 		} catch (ArrayIndexOutOfBoundsException e) {
 			return null;
 		}
