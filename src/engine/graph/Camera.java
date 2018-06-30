@@ -11,7 +11,7 @@ public class Camera {
 	private final Vector3f rotation;
 	private Matrix4f viewMatrix;
 	private Matrix4f orthoProjectionMatrix;
-	public static final float HEIGHT = 1.0f;
+	public static final float HEIGHT = 2.8f;
 
 	public Camera() {
 		position = new Vector3f(0, 0, 0);

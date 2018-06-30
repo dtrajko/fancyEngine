@@ -95,6 +95,7 @@ public class World {
 					tile = null;
 				}
 				if (tile != null) {
+					
 					setTile(tile, x, y);						
 				}
 				
@@ -190,6 +191,8 @@ public class World {
 	}
 
 	public void setTile(Tile tile, int x, int y) {
+		tile.setX(x);
+		tile.setY(y);
 		tiles[x + y * width] = tile.getId();
 		bounding_boxes[x + y * width] = tile.isSolid() ?
 			new AABB(new Vector2f(x * 2, -y * 2), new Vector2f(1, 1)) : null;

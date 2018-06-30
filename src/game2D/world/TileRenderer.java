@@ -61,7 +61,11 @@ public class TileRenderer {
 		if (tile_textures.containsKey(tile.getTexture())) {
 			tile_textures.get(tile.getTexture()).bind(0);
 		}
-		Matrix4f tile_pos = new Matrix4f().translate(new Vector3f(x * 2, y * 2, 0));
+		
+		int tile_x = 0; // tile.getX();
+		int tile_y = 0; // tile.getY();
+		
+		Matrix4f tile_pos = new Matrix4f().translate(new Vector3f(x * 2 + tile_x, y * 2 + tile_y, 0));
 		Matrix4f target = new Matrix4f();
 		camera.getOrthoProjection().mul(world, target);
 		target.mul(tile_pos);

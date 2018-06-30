@@ -7,6 +7,9 @@ public class Tile {
 	private boolean solid;
 	private boolean nextLevel;
 	private boolean previousLevel;
+	
+	protected int x;
+	protected int y;
 
 	public static final Tile tile_0 = new Tile("brick_wall");
 	public static final Tile tile_1 = new Tile("stone").setSolid();
@@ -33,6 +36,22 @@ public class Tile {
 		tiles[id] = this;
 	}
 	
+	public void setX(int x) {
+		this.x = x;
+	}
+
+	public void setY(int y) {
+		this.y = y;
+	}
+
+	public int getX() {
+		return x;
+	}
+
+	public int getY() {
+		return y;
+	}
+
 	public Tile setSolid() {
 		this.solid = true;
 		return this;
