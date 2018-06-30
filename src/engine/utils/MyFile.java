@@ -74,5 +74,4 @@ public class MyFile {
 	public String getName() {
 		return name;
 	}
-
 }

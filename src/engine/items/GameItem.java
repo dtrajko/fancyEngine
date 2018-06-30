@@ -64,8 +64,17 @@ public class GameItem {
         return rotation;
     }
 
-    public final void setRotation(float x, float y, float z) {
+    public Vector3f getRotationEulerRadians() {
+    	Vector3f eulerAngles = new Vector3f();
+        return rotation.getEulerAnglesXYZ(eulerAngles);
+    }
+
+    public final void setRotationEulerDegrees(float x, float y, float z) {
     	this.rotation.rotateXYZ((float)Math.toRadians(x), (float)Math.toRadians(y), (float)Math.toRadians(z));
+    }
+
+    public final void setRotationEulerRadians(float x, float y, float z) {
+    	this.rotation.rotateXYZ(x, y, z);
     }
 
     public final void setRotation(Quaternionf q) {

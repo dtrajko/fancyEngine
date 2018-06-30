@@ -69,7 +69,7 @@ public class Game implements IGameLogic {
         FIRE,
         BACKGROUND,
     };
-    
+
     private HashMap<String, Mesh> meshTypesMap= new HashMap<String, Mesh>();
 
     public Game() {
@@ -113,7 +113,7 @@ public class Game implements IGameLogic {
 		*/
 
         Mesh meshGrass = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
-        meshTypesMap.put("GRASS", meshGrass);
+        meshTypesMap.put("GRASS", meshGrass.setLabel("GRASS"));
         Texture textureGrass = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_grass.png", 2, 1);
         Material materialGrass = new Material(textureGrass);
         materialGrass.setReflectance(1.0f);
@@ -121,7 +121,7 @@ public class Game implements IGameLogic {
         meshGrass.setMaterial(materialGrass);
 
         Mesh meshGround = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
-        meshTypesMap.put("GROUND", meshGround);
+        meshTypesMap.put("GROUND", meshGround.setLabel("GROUND"));
         Texture textureGround = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_ground.png", 2, 1);
         Material materialGround = new Material(textureGround);
         materialGround.setReflectance(1.0f);
@@ -129,7 +129,7 @@ public class Game implements IGameLogic {
         meshGround.setMaterial(materialGround);
 
         Mesh meshWater = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
-        meshTypesMap.put("WATER", meshWater);
+        meshTypesMap.put("WATER", meshWater.setLabel("WATER"));
         Texture textureWater = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_water.png", 2, 1);
         Material materialWater = new Material(textureWater);
         materialWater.setReflectance(1.0f);
@@ -137,7 +137,7 @@ public class Game implements IGameLogic {
         meshWater.setMaterial(materialWater);
 
         Mesh meshLava = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
-        meshTypesMap.put("LAVA", meshLava);
+        meshTypesMap.put("LAVA", meshLava.setLabel("LAVA"));
         Texture textureLava = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_lava.png", 2, 1);
         Material materialLava = new Material(textureLava);
         materialLava.setReflectance(1.0f);
@@ -145,7 +145,7 @@ public class Game implements IGameLogic {
         meshLava.setMaterial(materialLava);
 
         Mesh meshWood = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
-        meshTypesMap.put("WOOD", meshWood);
+        meshTypesMap.put("WOOD", meshWood.setLabel("WOOD"));
         Texture textureWood = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_wood.png", 2, 1);
         Material materialWood = new Material(textureWood);
         materialWood.setReflectance(1.0f);
@@ -153,7 +153,7 @@ public class Game implements IGameLogic {
         meshWood.setMaterial(materialWood);
 
         Mesh meshTreetop = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
-        meshTypesMap.put("TREETOP", meshTreetop);
+        meshTypesMap.put("TREETOP", meshTreetop.setLabel("TREETOP"));
         Texture textureTreetop = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_treetop.png", 2, 1);
         Material materialTreetop = new Material(textureTreetop);
         materialTreetop.setReflectance(1.0f);
@@ -161,7 +161,7 @@ public class Game implements IGameLogic {
         meshTreetop.setMaterial(materialTreetop);
 
         Mesh meshOakwood = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
-        meshTypesMap.put("OAKWOOD", meshOakwood);
+        meshTypesMap.put("OAKWOOD", meshOakwood.setLabel("OAKWOOD"));
         Texture textureOakwood = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_oakwood.png", 2, 1);
         Material materialOakwood = new Material(textureOakwood);
         materialOakwood.setReflectance(1.0f);
@@ -169,7 +169,7 @@ public class Game implements IGameLogic {
         meshOakwood.setMaterial(materialOakwood);
 
         Mesh meshGlass = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
-        meshTypesMap.put("GLASS", meshGlass);
+        meshTypesMap.put("GLASS", meshGlass.setLabel("GLASS"));
         Texture textureGlass = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_glass.png", 2, 1);
         Material materialGlass = new Material(textureGlass);
         materialGlass.setReflectance(1.0f);
@@ -177,7 +177,7 @@ public class Game implements IGameLogic {
         meshGlass.setMaterial(materialGlass);
 
         Mesh meshCobble = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
-        meshTypesMap.put("COBBLE", meshCobble);
+        meshTypesMap.put("COBBLE", meshCobble.setLabel("COBBLE"));
         Texture textureCobble = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_cobble.png", 2, 1);
         Material materialCobble = new Material(textureCobble);
         materialCobble.setReflectance(1.0f);
@@ -185,7 +185,7 @@ public class Game implements IGameLogic {
         meshCobble.setMaterial(materialCobble);
 
         Mesh meshStairs = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/stairs.obj", 5000);
-        meshTypesMap.put("STAIRS", meshStairs);
+        meshTypesMap.put("STAIRS", meshStairs.setLabel("STAIRS"));
         Texture textureStairs = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_stairs.png", 2, 1);
         Material materialStairs = new Material(textureStairs);
         materialStairs.setReflectance(1.0f);
@@ -194,73 +194,21 @@ public class Game implements IGameLogic {
         meshStairs.setSymetric(false);
 
         Mesh meshStairsCorner = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/stairs_corner.obj", 5000);
-        meshTypesMap.put("STAIRS_CORNER", meshStairsCorner);
+        meshTypesMap.put("STAIRS_CORNER", meshStairsCorner.setLabel("STAIRS_CORNER"));
         meshStairsCorner.setMaterial(materialStairs);
         meshStairsCorner.setSymetric(false);
         meshStairsCorner.setCorner(true);
 
         Mesh meshStairsCornerInner = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/stairs_inner_corner.obj", 5000);
-        meshTypesMap.put("STAIRS_CORNER_INNER", meshStairsCornerInner);
+        meshTypesMap.put("STAIRS_CORNER_INNER", meshStairsCornerInner.setLabel("STAIRS_CORNER_INNER"));
         meshStairsCornerInner.setMaterial(materialStairs);
         meshStairsCornerInner.setSymetric(false);
         meshStairsCornerInner.setCorner(true);
         
-        scene.initMeshMaps(meshTypesMap);
+        // scene.initMeshMaps(meshTypesMap);
 
-        int blockScale = 1;
         int skyBoxScale = 100;
-        int extension = 2;
-        int startX = extension * (-skyBoxScale + blockScale);
-        int startZ = extension * (skyBoxScale - blockScale);
-        // int startY = -1;
-        int increment = blockScale * 2;
-        int posX = startX;
-        int posY = 0;
-        int posZ = startZ;
-        int topY = 0;
-        int terrainAltitude = 20;
-        int terrainDepth = 2;
-        int waterLevel = 8;
-        int grassLevel = 10;
-        int lavaLevel = 12;
-        int mountLevel = 14;
-
-        GameItem gameItem;
-
-        for (int incX = 0; incX < height; incX++) {
-            for (int incZ = 0; incZ < width; incZ++) {
-            	int rgb = HeightMapMesh.getRGB(incX, incZ, width, buffer);
-            	topY = -rgb / (255 / terrainAltitude * 255 * 255);
-            	if (topY < waterLevel - terrainDepth - increment) {
-            		topY = waterLevel - terrainDepth - increment;
-            	}
-            	topY = topY - topY % increment;
-            	for (int incY = 0; incY < terrainDepth; incY++) {
-            		posY = topY + incY * increment;
-
-            		if (posY < waterLevel) {
-            			gameItem = new GameItem(meshWater);
-            		} else if (posY <= grassLevel) {
-            			gameItem = new GameItem(meshGrass);
-            		} else if (posY <= lavaLevel) {
-            			gameItem = new GameItem(meshGrass); // meshLava
-            		} else {
-            			gameItem = new GameItem(meshGround);
-            		}
-            		gameItem.setPosition(posX, posY, posZ);
-                	gameItem.setScale(blockScale);
-                	gameItem.setBoundingBox();
-                	
-                	gameItems.add(gameItem);                		     		
-                }
-                posX += increment;
-            }
-            posX = startX;
-            posZ -= increment;
-        }
-
-        scene.setGameItems(gameItems);
-        gameItems.clear();
+        scene.load(meshTypesMap);
 
         // Particles
         int maxParticles = 200;
@@ -450,6 +398,14 @@ public class Game implements IGameLogic {
         	toggleGui();
         }
 
+        if (mouseInput.isKeyReleased(GLFW.GLFW_KEY_K)) {
+        	scene.save();
+        }
+
+        if (mouseInput.isKeyReleased(GLFW.GLFW_KEY_L)) {
+        	scene.load(meshTypesMap);
+        }
+
         if (mouseInput.isKeyReleased(GLFW.GLFW_KEY_G)) {
         	GRAVITY = (GRAVITY == 0.0f) ? -1.0f : 0.0f;
         }
@@ -586,6 +542,7 @@ public class Game implements IGameLogic {
 
     @Override
     public void cleanup() {
+    	scene.save();
         renderer.cleanup();
         scene.cleanup();
         soundMgr.cleanup();

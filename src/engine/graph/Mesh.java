@@ -25,6 +25,7 @@ public class Mesh {
     private float boundingRadius;
     private boolean symetric = true;
     private boolean corner = false;
+	private String label;
 
     public Mesh(float[] positions, float[] textCoords, float[] normals, int[] indices) {
         this(positions, textCoords, normals, indices, createEmptyIntArray(MAX_WEIGHTS * positions.length / 3, 0), createEmptyFloatArray(MAX_WEIGHTS * positions.length / 3, 0));
@@ -260,5 +261,14 @@ public class Mesh {
 	
 	public boolean isCorner() {
 		return corner;
+	}
+
+	public Mesh setLabel(String value) {
+		this.label = value;
+		return this;
+	}
+	
+	public String getLabel() {
+		return this.label;
 	}
 }

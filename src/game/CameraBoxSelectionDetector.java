@@ -85,7 +85,7 @@ public class CameraBoxSelectionDetector {
 
             	if (!nextMesh.isSymetric()) {
             		int cornerAngle = nextMesh.isCorner() ? 45 : 0;
-                	newGameItem.setRotation(0, calculateItemOrientation(camera, cornerAngle), 0);	
+                	newGameItem.setRotationEulerDegrees(0, calculateItemOrientation(camera, cornerAngle), 0);	
             	}
 
             	newGameItem.setBoundingBox();
@@ -129,7 +129,7 @@ public class CameraBoxSelectionDetector {
 
             	if (!nextMesh.isSymetric()) {
             		int cornerAngle = nextMesh.isCorner() ? 45 : 0;
-                	newGameItem.setRotation(0, calculateItemOrientation(camera, cornerAngle), 0);	
+                	newGameItem.setRotationEulerDegrees(0, calculateItemOrientation(camera, cornerAngle), 0);	
             	}
 
             	newGameItem.setBoundingBox();

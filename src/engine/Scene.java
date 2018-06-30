@@ -1,5 +1,11 @@
 package engine;
 
+import java.io.File;
+import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -7,8 +13,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
-
+import config.Config;
 import engine.graph.InstancedMesh;
 import engine.graph.Mesh;
 import engine.graph.particles.IParticleEmitter;
@@ -217,5 +224,69 @@ public class Scene {
     		}        	
         }
 		return inCollision;
+	}
+
+	public void save() {
+		PrintWriter out;
+		try {
+			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy_MM_dd"); // yyyy_MM_dd_HH_mm_ss
+			LocalDateTime now = LocalDateTime.now();
+			out = new PrintWriter(Config.RESOURCES_DIR + "/saves/snapshot.txt");
+			
+			for (InstancedMesh mesh : instancedMeshMap.keySet()) {
+				String meshLabel = mesh.getLabel();
+				for (GameItem gameItem : instancedMeshMap.get(mesh)) {
+					out.println(
+						meshLabel + "\t" + 
+						gameItem.getPosition().x + "\t" +
+						gameItem.getPosition().y + "\t" +
+						gameItem.getPosition().z + "\t" +
+						gameItem.getRotationEulerRadians().x + "\t" +
+						gameItem.getRotationEulerRadians().y + "\t" +
+						gameItem.getRotationEulerRadians().z + "\t" +
+						gameItem.getScale());
+				}
+			}
+			out.close();
+			Files.copy(
+				new File(Config.RESOURCES_DIR + "/saves/snapshot.txt").toPath(),
+				new File(Config.RESOURCES_DIR + "/saves/snapshot_" + dtf.format(now) + ".txt").toPath(),
+				StandardCopyOption.REPLACE_EXISTING);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void load(HashMap<String, Mesh> meshTypesMap) {
+		
+		String importFilePath = Config.RESOURCES_DIR + "/saves/snapshot.txt";
+		List<GameItem> gameItems = new ArrayList<GameItem>();
+		GameItem gameItem;
+		List<String> lines;
+
+		try {
+			lines = Utils.readAllLines(importFilePath);
+			if (lines.isEmpty()) return;
+
+			instancedMeshMap.clear();
+			for (String line : lines) {
+				String[] lineParts = line.split("\t");
+				if (lineParts.length != 8) {
+					System.err.println("Expected number of items in each line is 8.");
+					return;
+				}
+    			gameItem = new GameItem(meshTypesMap.get(lineParts[0]));
+    			gameItem.setPosition(Float.valueOf(lineParts[1]), Float.valueOf(lineParts[2]), Float.valueOf(lineParts[3]));
+    			gameItem.setRotationEulerRadians(Float.valueOf(lineParts[4]), Float.valueOf(lineParts[5]), Float.valueOf(lineParts[6]));
+    			gameItem.setScale(Float.valueOf(lineParts[7]));
+    			gameItem.setBoundingBox();
+    			gameItems.add(gameItem);
+    		}
+			setGameItems(gameItems);
+			gameItems.clear();
+		} catch (Exception e) {
+			System.err.println("Unable to load the file [" + importFilePath + "]");
+			e.printStackTrace();
+		}
 	}
 }
