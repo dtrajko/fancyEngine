@@ -45,7 +45,7 @@ public class TileRenderer {
 			for (int j = 0; j < world.getViewHeight(); j++) {
 				Tile tile = world.getTile(i - posX - (world.getViewWidth() / 2) + 1, j + posY - (world.getViewHeight() / 2));
 				if (tile != null) {
-					renderTile(tile, i - posX - (world.getViewWidth() / 2) + 1, -j - posY + (world.getViewHeight() / 2), world.getWorldMatrix(), camera);
+					renderTile(tile, i - posX - (world.getViewWidth() / 2) + 1, -j - posY + (world.getViewHeight() / 2), world, camera);
 				}
 			}
 		}
@@ -54,20 +54,35 @@ public class TileRenderer {
 		}
 	}
 
-	public void renderTile(Tile tile, int x, int y, Matrix4f world, Camera camera) {
+	public void renderTile(Tile tile, int x, int y, World world, Camera camera) {
 
 		shader.bind();
+		
+		Matrix4f worldMatrix = world.getWorldMatrix();
+
+		/* BEGIN render background tile */
+		if (tile_textures.containsKey(Tile.tiles[world.getBackgroundTile()])) {
+			tile_textures.get(Tile.tiles[world.getBackgroundTile()].getTexture()).bind(0);			
+		}
+		Matrix4f tile_pos_bg = new Matrix4f().translate(new Vector3f(x * 2, y * 2, 0));
+		Matrix4f target_bg = new Matrix4f();
+		camera.getOrthoProjection().mul(worldMatrix, target_bg);
+		target_bg.mul(tile_pos_bg);
+		shader.setUniform("sampler", 0);
+		shader.setUniform("projection", target_bg);
+		model.render();			
+		/* END render background tile */
 
 		if (tile_textures.containsKey(tile.getTexture())) {
 			tile_textures.get(tile.getTexture()).bind(0);
 		}
 
-		float tile_x = 0.0f; // tile.getX();
-		float tile_y = 0.0f; // tile.getY();
+		float tileOffsetX = tile.getOffsetX();
+		float tileOffsetY = tile.getOffsetY();
 
-		Matrix4f tile_pos = new Matrix4f().translate(new Vector3f((x + tile_x) * 2, (y + tile_y) * 2, 0));
+		Matrix4f tile_pos = new Matrix4f().translate(new Vector3f(x * 2 + tileOffsetX, y * 2 + tileOffsetY, 0));
 		Matrix4f target = new Matrix4f();
-		camera.getOrthoProjection().mul(world, target);
+		camera.getOrthoProjection().mul(worldMatrix, target);
 		target.mul(tile_pos);
 		shader.setUniform("sampler", 0);
 		shader.setUniform("projection", target);

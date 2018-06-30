@@ -31,6 +31,7 @@ public class World {
 	private Matrix4f worldMatrix;
 	private Window window;
 	private Player player;
+	private int backgroundTile = 0;
 
 	public World(Window window, int width, int height, int scale) {
 		this.window = window;
@@ -46,6 +47,8 @@ public class World {
 	public World(String worldName, Camera camera, int scale, int bg_tile, Game2D game) {
 
 		window = game.getWindow();
+		
+		backgroundTile = bg_tile;
 
 		String tileSheetPath = Config.RESOURCES_DIR + "/levels/" + worldName + "/tiles.png";
 		String entitySheetPath = Config.RESOURCES_DIR + "/levels/" + worldName + "/entities.png";
@@ -85,6 +88,7 @@ public class World {
 				this.tiles[x + y * width] = (byte) bg_tile;
 
 				int red = (colorTileSheet[x + y * width] >> 16) & 0xFF;
+				
 				int entity_index = (colorEntitySheet[x + y * width] >> 16) & 0xFF;
 				int entity_alpha = (colorEntitySheet[x + y * width] >> 24) & 0xFF;
 
@@ -95,6 +99,8 @@ public class World {
 					tile = null;
 				}
 				if (tile != null) {
+					tile.setOffsetRangeX(-0.2f, 0.2f);
+					tile.setOffsetDirectionX(-1);
 					setTile(tile, x, y);
 				}
 
@@ -155,6 +161,10 @@ public class World {
 	public List<Entity> getEntities() {
 		return entities;
 	}
+	
+	public int getBackgroundTile() {
+		return backgroundTile;
+	}
 
 	public void update(float delta, Window window, Camera camera, Game2D game) {
 		for (Entity entity : entities) {
@@ -171,11 +181,15 @@ public class World {
 			for (int y = 0; y < view_height; y++) {
 				Tile tile = getTile(x, y);
 				tile.move();
-				if (tile.getOffsetX() != 0 || tile.getOffsetY() != 0) {
-					updateAABB(x, y, tile.getOffsetX(), tile.getOffsetY());
-					// System.out.println("World update tileX = " + tile.getX() + " tileY = " + tile.getY());					
-				}
+				updateAABB(x, y, tile.getOffsetX(), tile.getOffsetY());
 			}
+		}
+	}
+
+	public void updateAABB(int x, int y, float offsetX, float offsetY) {
+		AABB bb = bounding_boxes[x + y * width];
+		if (bb instanceof AABB) {
+			bb.update(new Vector2f(x * 2 + offsetX, -y * 2 + offsetY), new Vector2f(1, 1));			
 		}
 	}
 
@@ -201,18 +215,9 @@ public class World {
 	}
 
 	public void setTile(Tile tile, int x, int y) {
-		tile.setOffsetX(x);
-		tile.setOffsetY(y);
 		tiles[x + y * width] = tile.getId();
 		bounding_boxes[x + y * width] = tile.isSolid() ?
 			new AABB(new Vector2f(x * 2, -y * 2), new Vector2f(1, 1)) : null;
-	}
-
-	public void updateAABB(int x, int y, float offsetX, float offsetY) {
-		AABB bb = bounding_boxes[x + y * width];
-		if (bb != null) {
-			bb.update(new Vector2f(x * 2 + offsetX, -y * 2 + offsetY), new Vector2f(1, 1));			
-		}
 	}
 
 	public Tile getTile(int x, int y) {

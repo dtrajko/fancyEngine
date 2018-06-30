@@ -8,16 +8,16 @@ public class Tile {
 	private boolean nextLevel;
 	private boolean previousLevel;
 
-	protected float offsetX;
-	protected float offsetY;
+	protected float offsetX = 0;
+	protected float offsetY = 0;
 
-	private float minX = 0;
-	private float maxX = 0;
-	private float minY = 0;
-	private float maxY = 0;
-	private int directionX = 0;
-	private int directionY = 0;
-	private float speed = 1.0f;
+	private float minOffsetX = 0;
+	private float maxOffsetX = 0;
+	private float minOffsetY = 0;
+	private float maxOffsetY = 0;
+	private int offsetDirX = 0;
+	private int offsetDirY = 0;
+	private float speed = 0.001f;
 
 	public static final Tile tile_0 = new Tile("brick_wall");
 	public static final Tile tile_1 = new Tile("stone").setSolid();
@@ -60,39 +60,63 @@ public class Tile {
 		return offsetY;
 	}
 
-	public void setRangeX(float min, float max) {
-		this.minX = min;
-		this.maxX = max;
+	public void setOffsetDirectionX(int value) {
+		this.offsetDirX = value;
 	}
 
-	public void setRangeY(float min, float max) {
-		this.minY = min;
-		this.maxY = max;
+	public void setOffsetDirectionY(int value) {
+		this.offsetDirY = value;
+	}
+
+	public int getOffsetDirectionX() {
+		return this.offsetDirX;
+	}
+
+	public int getOffsetDirectionY() {
+		return this.offsetDirY;
+	}
+
+	public void setOffsetRangeX(float min, float max) {
+		this.minOffsetX = min;
+		this.maxOffsetX = max;
+	}
+
+	public void setOffsetRangeY(float min, float max) {
+		this.minOffsetY = min;
+		this.maxOffsetY = max;
+	}
+
+	public void setSpeed(float speed) {
+		this.speed = speed;
 	}
 
 	public void move() {
-		
-		if (minX == 0 && maxX == 0) directionX = 0;
-		if (minY == 0 && maxY == 0) directionY = 0;
 
-		offsetX += directionX * speed;
-		if (offsetX <= offsetX + minX) {
-			offsetX = offsetX + minX;
-			directionX = 1;
-		}
-		if (offsetX >= offsetX + maxX) {
-			offsetX = offsetX + maxX;
-			directionX = -1;
+		if (minOffsetX == 0 && maxOffsetX == 0) offsetDirX = 0;
+		if (minOffsetY == 0 && maxOffsetY == 0) offsetDirY = 0;
+
+		if (offsetDirX != 0) {
+			offsetX += offsetDirX * speed;
+			if (offsetX <= minOffsetX) {
+				offsetX = minOffsetX;
+				offsetDirX = -offsetDirX;
+			}
+			if (offsetX >= maxOffsetX) {
+				offsetX = maxOffsetX;
+				offsetDirX = -offsetDirX;
+			}			
 		}
 
-		offsetY += directionY * speed;
-		if (offsetY <= offsetY + minY) {
-			offsetY = offsetY + minY;
-			directionY = 1;
-		}
-		if (offsetY >= offsetY + maxY) {
-			offsetY = offsetY + maxY;
-			directionY = -1;
+		if (offsetDirY != 0) {
+			offsetY += offsetDirY * speed;
+			if (offsetY <= minOffsetY) {
+				offsetY = minOffsetY;
+				offsetDirY = -offsetDirY;
+			}
+			if (offsetY >= maxOffsetY) {
+				offsetY = maxOffsetY;
+				offsetDirY = -offsetDirY;
+			}			
 		}
 	}
 
