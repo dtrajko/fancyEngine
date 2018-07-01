@@ -31,7 +31,7 @@ public class Window {
         this.vSync = vSync;
         this.resized = false;
         this.opts = opts;
-        projectionMatrix = new Matrix4f();        
+        projectionMatrix = new Matrix4f();
     }
 
     public void init() {

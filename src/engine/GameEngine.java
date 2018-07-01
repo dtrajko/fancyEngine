@@ -4,7 +4,7 @@ import engine.graph.MouseInput;
 
 public class GameEngine implements Runnable {
 
-    public static final int TARGET_FPS = 75;
+    public static final int TARGET_FPS = 120;
     public static final int TARGET_UPS = 30;
     private final Window window;
     private final Thread gameLoopThread;

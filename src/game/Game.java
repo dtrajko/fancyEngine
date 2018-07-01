@@ -198,7 +198,7 @@ public class Game implements IGameLogic {
         
         // scene.initMeshMaps(meshTypesMap);
 
-        int skyBoxScale = 100;
+        int skyBoxScale = 150;
         scene.load(meshTypesMap);
 
         // Particles
@@ -245,10 +245,10 @@ public class Game implements IGameLogic {
         // Setup GUI
         setupGui();
 
-        camera.getPosition().x = -skyBoxScale - 40;
+        camera.getPosition().x = -skyBoxScale;
         camera.getPosition().y = 20.0f;
-        camera.getPosition().z = skyBoxScale + 20;
-        camera.setRotation(0, -45, 0);
+        camera.getPosition().z = skyBoxScale;
+        camera.setRotation(0, 0, 0);
 
         selectDetectorCamera = new CameraBoxSelectionDetector();
     }
@@ -373,13 +373,19 @@ public class Game implements IGameLogic {
         cameraInc.set(0, 0, 0);
         
         if (inventoryOn) {
+        	Vector2f mouseNDC = guiManager.getNormalisedDeviceCoordinates(
+	        		(float) mouseInput.getMousePosition().x,
+	        		(float) mouseInput.getMousePosition().y, window);
+        		for (GuiButton gb : guiItems) {
+        			gb.setMouseOver(false);
+        		}
+	        	nextBlock = guiManager.selectGuiItem(mouseNDC, guiItems);
+	        	if (nextBlock instanceof GuiButton) {
+	        		nextBlock.setMouseOver(true);
+	        	}
 	        if (mouseInput.isMouseButtonReleased(GLFW.GLFW_MOUSE_BUTTON_1) || 
 	        	mouseInput.isMouseButtonReleased(GLFW.GLFW_MOUSE_BUTTON_2) ||
 	        	mouseInput.isMouseButtonReleased(GLFW.GLFW_MOUSE_BUTTON_3)) {
-	        	Vector2f mouseNDC = guiManager.getNormalisedDeviceCoordinates(
-	        		(float) mouseInput.getMousePosition().x,
-	        		(float) mouseInput.getMousePosition().y, window);
-	        	nextBlock = guiManager.selectGuiItem(mouseNDC, guiItems);
 	        	toggleGui();
 	        }
         }

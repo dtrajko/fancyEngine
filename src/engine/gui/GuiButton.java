@@ -12,6 +12,7 @@ public class GuiButton {
 	private GuiTexture texture;
 	private Box2D aabb;
 	private boolean selected;
+	private boolean mouseOver;
 	private boolean inventory;
 	private Mesh mesh = null;
 
@@ -20,6 +21,7 @@ public class GuiButton {
 		this.texture = new GuiTexture(texture.getId(), position, scale);
 		setAABB();
 		selected = false;
+		mouseOver = false;
 		inventory = false;
 	}
 
@@ -29,6 +31,15 @@ public class GuiButton {
 
 	public int getTexture() {
 		return texture.getTexture();
+	}
+	
+	public GuiButton setMouseOver(boolean value) {
+		mouseOver = value;
+		return this;
+	}
+
+	public boolean isMouseOver() {
+		return mouseOver;
 	}
 
     public void setAABB() {

@@ -41,6 +41,7 @@ public class GuiRenderer {
         // Create uniforms for orthographic-model transformationMatrix and GUI texture
     	guiShaderProgram.createUniform("transformationMatrix");
     	guiShaderProgram.createUniform("guiTexture");
+    	guiShaderProgram.createUniform("mouseOver");
     }
 
 	public void render(List<GuiButton> guis, Window window, boolean renderInventory) {
@@ -57,6 +58,8 @@ public class GuiRenderer {
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, gui.getTexture());
 			Matrix4f orthoMatrix = Maths.createTransformationMatrix(gui.getGuiTexture().getPosition(), gui.getGuiTexture().getRotation(), gui.getGuiTexture().getScale());
 			guiShaderProgram.setUniform("transformationMatrix", orthoMatrix);
+			int mouseOver = gui.isMouseOver() ? 1 : 0;
+			guiShaderProgram.setUniform("mouseOver", mouseOver);
 			GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
 		}
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
