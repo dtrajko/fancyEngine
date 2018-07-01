@@ -17,7 +17,7 @@ public class Box3D {
     }
 
     public boolean contains(float x2, float y2, float z2, boolean camera) {
-    	float offsetXYZ = camera ? 0.02f : 0.0f;
+    	float offsetXYZ = camera ? 0.02f : 0.0f; // 0.001f
     	float offsetY = camera ? Camera.HEIGHT - offsetXYZ : 0;
     	boolean contains =
         	x2 > x - offsetXYZ && x2 <= x + scale + offsetXYZ &&

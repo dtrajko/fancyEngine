@@ -49,7 +49,8 @@ public class Game implements IGameLogic {
     private FlowParticleEmitter particleEmitter;
     private final SoundManager soundMgr;
 
-    private static float GRAVITY = -0.0f;
+    private static float GRAVITY = -2.0f;
+    private static float actualGravity = 0;
     private static final float WORLD_BOTTOM = -20f;
     private static float SPEED;
     private static boolean gravityOn = true;
@@ -413,7 +414,7 @@ public class Game implements IGameLogic {
         }
 
         if (mouseInput.isKeyReleased(GLFW.GLFW_KEY_G)) {
-        	GRAVITY = (GRAVITY == 0.0f) ? -1.0f : 0.0f;
+        	actualGravity = (actualGravity == 0.0f) ? GRAVITY : 0.0f;
         }
 
         // reset camera position/rotation
@@ -448,7 +449,7 @@ public class Game implements IGameLogic {
             cameraInc.y = -SPEED;
         } else if (gravityOn && camera.getPosition().y > WORLD_BOTTOM) {
         	sceneChanged = true;
-        	cameraInc.y = GRAVITY;
+        	cameraInc.y = actualGravity;
         }
 
         if (window.isKeyPressed(GLFW.GLFW_KEY_LEFT)) {
@@ -498,14 +499,13 @@ public class Game implements IGameLogic {
 
 		// Check if there has been a collision
         // newPosCameraBase - the camera imaginary "tripod base" we use to check the collision. It's bellow the camera "lens"
-        if (!newCamPos.equals(camPos)) {
-        	if (scene.inCollision(newCamPos, true)) {
-        		gravityOn = false;
-        	} else {
-        		camera.movePosition(newCamPos);
-        		gravityOn = true;
-        	}        	
-        }
+        // if (!newCamPos.equals(camPos)) { // disabled, because of problems with disabled gravity when camera is close to block
+    	if (scene.inCollision(newCamPos, true)) {
+    		gravityOn = false;
+    	} else {
+    		camera.movePosition(newCamPos);
+    		gravityOn = true;
+    	}        	
 
         lightAngle += angleInc;
         if (lightAngle < 0) {

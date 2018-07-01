@@ -218,7 +218,7 @@ public class Scene {
     				inCollision = true;
     				break;
     			}
-    		}        	
+    		}
         }
         Map<InstancedMesh, List<GameItem>> mapInstancedMeshes = getGameInstancedMeshes();
         for (Mesh mesh : mapInstancedMeshes.keySet()) {
@@ -227,7 +227,7 @@ public class Scene {
     				inCollision = true;
     				break;
     			}
-    		}        	
+    		}    	
         }
 		return inCollision;
 	}
