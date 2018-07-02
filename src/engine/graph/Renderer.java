@@ -453,8 +453,8 @@ public class Renderer {
         }
     }
     
-    public void renderGui(List<GuiButton> guis, Window window, boolean renderInventory) {
-    	this.guiRenderer.render(guis, window, renderInventory);
+    public void renderGui(List<GuiButton> guis, Window window, boolean renderInventory, boolean renderImportDialog) {
+    	this.guiRenderer.render(guis, window, renderInventory, renderImportDialog);
     }
 
     public void renderScene(Window window, Camera camera, Scene scene) {

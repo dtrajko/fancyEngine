@@ -59,12 +59,17 @@ public class Game implements IGameLogic {
     private boolean firstTime;
     private boolean sceneChanged;
     private boolean inventoryOn = false;
+    private boolean importDialogOn = false;
     private GuiButton nextBlock;
 
     private boolean updateEnabled = true;
     private long toggleGuiLastTime;
     private GuiManager guiManager;
     private List<GuiButton> guiItems = new ArrayList<GuiButton>();
+    
+    private boolean crouchEnabled = false;
+    
+    public static final int blockScale = 1;
 
     private enum Sounds {
         FIRE,
@@ -262,77 +267,106 @@ public class Game implements IGameLogic {
     	guiItems.add(guiBullseye);
 
     	// inventory
+    	Texture texturePanelInventory = new Texture(Config.RESOURCES_DIR +  "/textures/window.png");
+    	GuiButton guiPanelInventory = new GuiButton(texturePanelInventory, new Vector3f(0.0f, -0.01f, 1), new Vector2f(0.33f, 0.790f));
+    	guiPanelInventory.setInventory(true);
+    	guiItems.add(guiPanelInventory);
+
     	Texture textureBtnStairs = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_stairs.png");
     	GuiButton guiButtonStairs = new GuiButton(textureBtnStairs, new Vector3f(-0.21f, 0.56f, 1), new Vector2f(0.1f, 0.18f));
-    	guiButtonStairs.setInventory(true);
+    	guiButtonStairs.setInventory(true).setClickable(true);
     	guiButtonStairs.setMesh(meshTypesMap.get("STAIRS"));
     	guiItems.add(guiButtonStairs);
 
     	Texture textureBtnStairsCorner = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_stairs_corner.png");
     	GuiButton guiButtonStairsCorner = new GuiButton(textureBtnStairsCorner, new Vector3f(0.0f, 0.56f, 1), new Vector2f(0.1f, 0.18f));
-    	guiButtonStairsCorner.setInventory(true);
+    	guiButtonStairsCorner.setInventory(true).setClickable(true);
     	guiButtonStairsCorner.setMesh(meshTypesMap.get("STAIRS_CORNER"));
     	guiItems.add(guiButtonStairsCorner);
 
     	Texture textureBtnStairsCornerInner = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_stairs_corner_inner.png");
     	GuiButton guiButtonStairsCornerInner = new GuiButton(textureBtnStairsCornerInner, new Vector3f(0.21f, 0.56f, 1), new Vector2f(0.1f, 0.18f));
-    	guiButtonStairsCornerInner.setInventory(true);
+    	guiButtonStairsCornerInner.setInventory(true).setClickable(true);
     	guiButtonStairsCornerInner.setMesh(meshTypesMap.get("STAIRS_CORNER_INNER"));
     	guiItems.add(guiButtonStairsCornerInner);
 
     	Texture textureBtnOakWood = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_oakwood.png");
     	GuiButton guiButtonOakWood = new GuiButton(textureBtnOakWood, new Vector3f(-0.21f, 0.18f, 1), new Vector2f(0.1f, 0.18f));
-    	guiButtonOakWood.setInventory(true);
+    	guiButtonOakWood.setInventory(true).setClickable(true);
     	guiButtonOakWood.setMesh(meshTypesMap.get("OAKWOOD"));
     	guiItems.add(guiButtonOakWood);
 
     	Texture textureBtnWood = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_wood.png");
     	GuiButton guiButtonWood = new GuiButton(textureBtnWood, new Vector3f(0.0f, 0.18f, 1), new Vector2f(0.1f, 0.18f));
-    	guiButtonWood.setInventory(true);
+    	guiButtonWood.setInventory(true).setClickable(true);
     	guiButtonWood.setMesh(meshTypesMap.get("WOOD"));
     	guiItems.add(guiButtonWood);
 
     	Texture textureBtnCobble = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_cobble.png");
     	GuiButton guiButtonCobble = new GuiButton(textureBtnCobble, new Vector3f(0.21f, 0.18f, 1), new Vector2f(0.1f, 0.18f));
-    	guiButtonCobble.setInventory(true);
+    	guiButtonCobble.setInventory(true).setClickable(true);
     	guiButtonCobble.setMesh(meshTypesMap.get("COBBLE"));
     	guiItems.add(guiButtonCobble);
 
     	Texture textureBtnGrass = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_grass.png");
     	GuiButton guiButtonGrass = new GuiButton(textureBtnGrass, new Vector3f(-0.21f, -0.2f, 1), new Vector2f(0.1f, 0.18f));
-    	guiButtonGrass.setInventory(true);
+    	guiButtonGrass.setInventory(true).setClickable(true);
     	guiButtonGrass.setMesh(meshTypesMap.get("GRASS"));
     	guiItems.add(guiButtonGrass);
 
     	Texture textureBtnGround = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_ground.png");
     	GuiButton guiButtonGround = new GuiButton(textureBtnGround, new Vector3f(0f, -0.2f, 1), new Vector2f(0.1f, 0.18f));
-    	guiButtonGround.setInventory(true);
+    	guiButtonGround.setInventory(true).setClickable(true);
     	guiButtonGround.setMesh(meshTypesMap.get("GROUND"));
     	guiItems.add(guiButtonGround);
 
     	Texture textureBtnWater = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_water.png");
     	GuiButton guiButtonWater = new GuiButton(textureBtnWater, new Vector3f(0.21f, -0.2f, 1), new Vector2f(0.1f, 0.18f));
-    	guiButtonWater.setInventory(true);
+    	guiButtonWater.setInventory(true).setClickable(true);
     	guiButtonWater.setMesh(meshTypesMap.get("WATER"));
     	guiItems.add(guiButtonWater);
 
     	Texture textureBtnGlass = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_glass.png");
     	GuiButton guiButtonGlass = new GuiButton(textureBtnGlass, new Vector3f(-0.21f, -0.58f, 1), new Vector2f(0.1f, 0.18f));
-    	guiButtonGlass.setInventory(true);
+    	guiButtonGlass.setInventory(true).setClickable(true);
     	guiButtonGlass.setMesh(meshTypesMap.get("GLASS"));
     	guiItems.add(guiButtonGlass);
 
     	Texture textureBtnTreetop = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_treetop.png");
     	GuiButton guiButtonTreetop = new GuiButton(textureBtnTreetop, new Vector3f(0.21f, -0.58f, 1), new Vector2f(0.1f, 0.18f));
-    	guiButtonTreetop.setInventory(true);
+    	guiButtonTreetop.setInventory(true).setClickable(true);
     	guiButtonTreetop.setMesh(meshTypesMap.get("TREETOP"));
     	guiItems.add(guiButtonTreetop);
 
     	Texture textureBtnLava = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_lava.png");
     	GuiButton guiButtonLava = new GuiButton(textureBtnLava, new Vector3f(0.0f, -0.58f, 1), new Vector2f(0.1f, 0.18f));
-    	guiButtonLava.setInventory(true);
+    	guiButtonLava.setInventory(true).setClickable(true);
     	guiButtonLava.setMesh(meshTypesMap.get("LAVA"));
     	guiItems.add(guiButtonLava);
+    	
+    	// import dialog
+    	Texture texturePanel = new Texture(Config.RESOURCES_DIR +  "/textures/window.png");
+    	GuiButton guiPanel = new GuiButton(texturePanel, new Vector3f(0.0f, -0.01f, 1), new Vector2f(0.3304f, 0.790f));
+    	guiPanel.setImportDialog(true);
+    	guiItems.add(guiPanel);
+    	
+    	Texture textureLongButton = new Texture(Config.RESOURCES_DIR +  "/textures/button_long.png");
+
+    	GuiButton guiLongButton01 = new GuiButton(textureLongButton, new Vector3f(0.0f, 0.682f, 1), new Vector2f(0.31f, 0.06f)); // 0.14
+    	guiLongButton01.setImportDialog(true).setClickable(true);
+    	guiItems.add(guiLongButton01);
+
+    	GuiButton guiLongButton02 = new GuiButton(textureLongButton, new Vector3f(0.0f, 0.542f, 1), new Vector2f(0.31f, 0.06f));
+    	guiLongButton02.setImportDialog(true).setClickable(true);
+    	guiItems.add(guiLongButton02);
+    	
+    	GuiButton guiLongButton03 = new GuiButton(textureLongButton, new Vector3f(0.0f, 0.402f, 1), new Vector2f(0.31f, 0.06f));
+    	guiLongButton03.setImportDialog(true).setClickable(true);
+    	guiItems.add(guiLongButton03);
+    	
+    	GuiButton guiLongButton04 = new GuiButton(textureLongButton, new Vector3f(0.0f, 0.262f, 1), new Vector2f(0.31f, 0.06f));
+    	guiLongButton04.setImportDialog(true).setClickable(true);
+    	guiItems.add(guiLongButton04);
 	}
 
 	private void setupLights() {
@@ -372,7 +406,7 @@ public class Game implements IGameLogic {
     public void input(Window window, MouseInput mouseInput) {
     	sceneChanged = false;
         cameraInc.set(0, 0, 0);
-        
+
         if (inventoryOn) {
         	Vector2f mouseNDC = guiManager.getNormalisedDeviceCoordinates(
 	        		(float) mouseInput.getMousePosition().x,
@@ -380,14 +414,32 @@ public class Game implements IGameLogic {
         		for (GuiButton gb : guiItems) {
         			gb.setMouseOver(false);
         		}
-	        	nextBlock = guiManager.selectGuiItem(mouseNDC, guiItems);
-	        	if (nextBlock instanceof GuiButton) {
+	        	nextBlock = guiManager.selectGuiItem(mouseNDC, guiItems, inventoryOn, importDialogOn);
+	        	if (nextBlock instanceof GuiButton && nextBlock.isInventory()) {
 	        		nextBlock.setMouseOver(true);
 	        	}
 	        if (mouseInput.isMouseButtonReleased(GLFW.GLFW_MOUSE_BUTTON_1) || 
 	        	mouseInput.isMouseButtonReleased(GLFW.GLFW_MOUSE_BUTTON_2) ||
 	        	mouseInput.isMouseButtonReleased(GLFW.GLFW_MOUSE_BUTTON_3)) {
 	        	toggleGui();
+	        }
+        }
+
+        if (importDialogOn) {
+        	Vector2f mouseNDC = guiManager.getNormalisedDeviceCoordinates(
+	        		(float) mouseInput.getMousePosition().x,
+	        		(float) mouseInput.getMousePosition().y, window);
+        		for (GuiButton gb : guiItems) {
+        			gb.setMouseOver(false);
+        		}
+	        	nextBlock = guiManager.selectGuiItem(mouseNDC, guiItems, inventoryOn, importDialogOn);
+	        	if (nextBlock instanceof GuiButton && nextBlock.isImportDialog()) {
+	        		nextBlock.setMouseOver(true);
+	        	}
+	        if (mouseInput.isMouseButtonReleased(GLFW.GLFW_MOUSE_BUTTON_1) || 
+	        	mouseInput.isMouseButtonReleased(GLFW.GLFW_MOUSE_BUTTON_2) ||
+	        	mouseInput.isMouseButtonReleased(GLFW.GLFW_MOUSE_BUTTON_3)) {
+	        	this.toggleImportDialog();
 	        }
         }
 
@@ -401,7 +453,9 @@ public class Game implements IGameLogic {
         }
 
         if (mouseInput.isKeyReleased(GLFW.GLFW_KEY_L)) {
-        	scene.load(meshTypesMap);
+        	sceneChanged = true;
+        	toggleImportDialog();
+        	// scene.load(meshTypesMap);
         }
 
         if (mouseInput.isKeyReleased(GLFW.GLFW_KEY_C)) {
@@ -427,6 +481,11 @@ public class Game implements IGameLogic {
         } else {
         	SPEED = 5;
         }
+
+        float mouseWheelDelta = mouseInput.getMouseWheelDelta();
+        if (mouseWheelDelta != 0) {
+        	cameraInc.z = SPEED * 4 * mouseWheelDelta;
+        }
         if (window.isKeyPressed(GLFW.GLFW_KEY_W)) {
         	sceneChanged = true;
             cameraInc.z = -SPEED;
@@ -446,11 +505,25 @@ public class Game implements IGameLogic {
             cameraInc.y = SPEED;
         } else if (window.isKeyPressed(GLFW.GLFW_KEY_LEFT_SHIFT)) {
         	sceneChanged = true;
-            cameraInc.y = -SPEED;
+        	cameraInc.y = -SPEED;
         } else if (gravityOn && camera.getPosition().y > WORLD_BOTTOM) {
         	sceneChanged = true;
         	cameraInc.y = actualGravity;
         }
+
+        /* crouch mode not working yet
+        if (actualGravity < 0 && mouseInput.isKeyReleased(GLFW.GLFW_KEY_LEFT_SHIFT)) {
+        	if (!crouchEnabled) {
+        		camera.setActualHeight(Camera.HEIGHT - blockScale * 2);
+        		crouchEnabled = true;
+        	} else {
+        		camera.setActualHeight(Camera.HEIGHT);
+        		crouchEnabled = false;
+        	}
+        	cameraInc.y = 0;
+        }
+        System.out.println("Camera height = " + camera.getActualHeight() + " crouchEnabled = " + crouchEnabled + " actualGravity = " + actualGravity);
+        */
 
         if (window.isKeyPressed(GLFW.GLFW_KEY_LEFT)) {
         	sceneChanged = true;
@@ -463,13 +536,34 @@ public class Game implements IGameLogic {
         }
     }
 
-    private void toggleGui() {
+    private void toggleImportDialog() {
     	long currentTime = System.currentTimeMillis();
     	if (currentTime - toggleGuiLastTime < 100) {
     		return;
     	}
     	toggleGuiLastTime = currentTime;
+    	
+    	if (!importDialogOn) {
+    		closeAllGuis();
+    		importDialogOn = true;
+    		updateEnabled = false;
+    		GLFW.glfwSetInputMode(window.getWindowHandle(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
+    	} else {
+    		importDialogOn = false;
+    		updateEnabled = true;
+    		GLFW.glfwSetInputMode(window.getWindowHandle(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_DISABLED);
+    	}
+	}
+
+	private void toggleGui() {
+    	long currentTime = System.currentTimeMillis();
+    	if (currentTime - toggleGuiLastTime < 100) {
+    		return;
+    	}
+    	toggleGuiLastTime = currentTime;
+
     	if (!inventoryOn) {
+    		closeAllGuis();
     		inventoryOn = true;
     		updateEnabled = false;
     		GLFW.glfwSetInputMode(window.getWindowHandle(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
@@ -478,6 +572,11 @@ public class Game implements IGameLogic {
     		updateEnabled = true;
     		GLFW.glfwSetInputMode(window.getWindowHandle(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_DISABLED);
     	}
+	}
+	
+	private void closeAllGuis() {
+		inventoryOn = false;
+		importDialogOn = false;
 	}
 
 	@Override
@@ -500,7 +599,7 @@ public class Game implements IGameLogic {
 		// Check if there has been a collision
         // newPosCameraBase - the camera imaginary "tripod base" we use to check the collision. It's bellow the camera "lens"
         // if (!newCamPos.equals(camPos)) { // disabled, because of problems with disabled gravity when camera is close to block
-    	if (scene.inCollision(newCamPos, true)) {
+    	if (scene.inCollision(newCamPos, true, camera)) {
     		gravityOn = false;
     	} else {
     		camera.movePosition(newCamPos);
@@ -543,7 +642,7 @@ public class Game implements IGameLogic {
             firstTime = false;
         }
         renderer.render(window, camera, scene, sceneChanged);
-        renderer.renderGui(guiItems, window, inventoryOn);
+        renderer.renderGui(guiItems, window, inventoryOn, importDialogOn);
     }
 
     @Override

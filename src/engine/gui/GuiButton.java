@@ -14,6 +14,8 @@ public class GuiButton {
 	private boolean selected;
 	private boolean mouseOver;
 	private boolean inventory;
+	private boolean importDialog;
+	private boolean isClickable;
 	private Mesh mesh = null;
 
 	public GuiButton(Texture texture, Vector3f position, Vector2f scale) {
@@ -23,6 +25,8 @@ public class GuiButton {
 		selected = false;
 		mouseOver = false;
 		inventory = false;
+		importDialog = false;
+		isClickable = false;
 	}
 
 	public GuiTexture getGuiTexture() {
@@ -65,12 +69,31 @@ public class GuiButton {
 		return selected;
 	}
 	
-	public void setInventory(boolean value) {
+	public GuiButton setInventory(boolean value) {
 		inventory = value;
+		return this;
 	}
 
 	public boolean isInventory() {
 		return inventory;
+	}
+
+	public GuiButton setClickable(boolean value) {
+		this.isClickable = value;
+		return this;
+	}
+
+	public boolean isClickable() {
+		return isClickable;
+	}
+
+	public GuiButton setImportDialog(boolean value) {
+		importDialog = value;
+		return this;
+	}
+
+	public boolean isImportDialog() {
+		return importDialog;
 	}
 
 	public void setMesh(Mesh mesh) {

@@ -1,0 +1,26 @@
+{
+    "rdocCaptureSettings": 1,
+    "settings": {
+        "autoStart": false,
+        "commandLine": "-Djava.library.path=D:\\workspace\\java\\fancyEngine\\lib\\jars\\lwjgl3\\lwjgl;D:\\workspace\\java\\fancyEngine\\lib\\jars\\lwjgl3\\lwjgl-assimp;D:\\workspace\\java\\fancyEngine\\lib\\jars\\lwjgl3\\lwjgl-glfw;D:\\workspace\\java\\fancyEngine\\lib\\jars\\lwjgl3\\lwjgl-openal;D:\\workspace\\java\\fancyEngine\\lib\\jars\\lwjgl3\\lwjgl-opengl;D:\\workspace\\java\\fancyEngine\\lib\\jars\\lwjgl3\\lwjgl-stb;D:\\workspace\\java\\fancyEngine\\lib\\jars\\lwjgl3\\lwjgl-nanovg -Dfile.encoding=UTF-8 -classpath \"C:\\Program Files\\Java\\jre1.8.0_171\\lib\\resources.jar;C:\\Program Files\\Java\\jre1.8.0_171\\lib\\rt.jar;C:\\Program Files\\Java\\jre1.8.0_171\\lib\\jsse.jar;C:\\Program Files\\Java\\jre1.8.0_171\\lib\\jce.jar;C:\\Program Files\\Java\\jre1.8.0_171\\lib\\charsets.jar;C:\\Program Files\\Java\\jre1.8.0_171\\lib\\jfr.jar;C:\\Program Files\\Java\\jre1.8.0_171\\lib\\ext\\access-bridge-64.jar;C:\\Program Files\\Java\\jre1.8.0_171\\lib\\ext\\cldrdata.jar;C:\\Program Files\\Java\\jre1.8.0_171\\lib\\ext\\dnsns.jar;C:\\Program Files\\Java\\jre1.8.0_171\\lib\\ext\\jaccess.jar;C:\\Program Files\\Java\\jre1.8.0_171\\lib\\ext\\jfxrt.jar;C:\\Program Files\\Java\\jre1.8.0_171\\lib\\ext\\localedata.jar;C:\\Program Files\\Java\\jre1.8.0_171\\lib\\ext\\nashorn.jar;C:\\Program Files\\Java\\jre1.8.0_171\\lib\\ext\\sunec.jar;C:\\Program Files\\Java\\jre1.8.0_171\\lib\\ext\\sunjce_provider.jar;C:\\Program Files\\Java\\jre1.8.0_171\\lib\\ext\\sunmscapi.jar;C:\\Program Files\\Java\\jre1.8.0_171\\lib\\ext\\sunpkcs11.jar;C:\\Program Files\\Java\\jre1.8.0_171\\lib\\ext\\zipfs.jar;D:\\workspace\\java\\fancyEngine\\bin;D:\\workspace\\java\\fancyEngine\\lib\\jars\\joml\\joml-1.9.9.jar;D:\\workspace\\java\\fancyEngine\\lib\\jars\\lwjgl3\\lwjgl\\lwjgl.jar;D:\\workspace\\java\\fancyEngine\\lib\\jars\\lwjgl3\\lwjgl-assimp\\lwjgl-assimp.jar;D:\\workspace\\java\\fancyEngine\\lib\\jars\\lwjgl3\\lwjgl-glfw\\lwjgl-glfw.jar;D:\\workspace\\java\\fancyEngine\\lib\\jars\\lwjgl3\\lwjgl-openal\\lwjgl-openal.jar;D:\\workspace\\java\\fancyEngine\\lib\\jars\\lwjgl3\\lwjgl-opengl\\lwjgl-opengl.jar;D:\\workspace\\java\\fancyEngine\\lib\\jars\\lwjgl3\\lwjgl-stb\\lwjgl-stb.jar;D:\\workspace\\java\\fancyEngine\\lib\\jars\\PNGDecoder.jar;D:\\workspace\\java\\fancyEngine\\lib\\jars\\lwjgl3\\lwjgl-nanovg\\lwjgl-nanovg.jar\" game.Main",
+        "environment": [
+        ],
+        "executable": "C:\\Program Files\\Java\\jre1.8.0_171\\bin\\javaw.exe",
+        "inject": false,
+        "options": {
+            "allowFullscreen": true,
+            "allowVSync": true,
+            "apiValidation": false,
+            "captureAllCmdLists": false,
+            "captureCallstacks": false,
+            "captureCallstacksOnlyDraws": false,
+            "debugOutputMute": true,
+            "delayForDebugger": 0,
+            "hookIntoChildren": false,
+            "refAllResources": false,
+            "saveAllInitials": false,
+            "verifyMapWrites": false
+        },
+        "workingDir": "D:\\workspace\\java\\fancyEngine"
+    }
+}

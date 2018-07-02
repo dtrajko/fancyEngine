@@ -21,6 +21,7 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import config.Config;
 import de.matthiasmann.twl.utils.PNGDecoder;
+import engine.graph.Camera;
 import engine.graph.HeightMapMesh;
 import engine.graph.InstancedMesh;
 import engine.graph.Mesh;
@@ -28,6 +29,7 @@ import engine.graph.particles.IParticleEmitter;
 import engine.graph.weather.Fog;
 import engine.items.GameItem;
 import engine.items.SkyBox;
+import game.Game;
 
 public class Scene {
 
@@ -209,12 +211,12 @@ public class Scene {
         this.particleEmitters = particleEmitters;
     }
 
-	public boolean inCollision(Vector3f newPos, boolean camera) {
+	public boolean inCollision(Vector3f newPos, boolean cameraCollision, Camera camera) {
 		boolean inCollision = false;
         Map<Mesh, List<GameItem>> mapMeshes = getGameMeshes();
         for (Mesh mesh : mapMeshes.keySet()) {
     		for (GameItem gameItem : mapMeshes.get(mesh)) {
-    			if (gameItem.getBoundingBox().contains(newPos.x, newPos.y, newPos.z, camera)) {
+    			if (gameItem.getBoundingBox().contains(newPos.x, newPos.y, newPos.z, cameraCollision, camera)) {
     				inCollision = true;
     				break;
     			}
@@ -223,7 +225,7 @@ public class Scene {
         Map<InstancedMesh, List<GameItem>> mapInstancedMeshes = getGameInstancedMeshes();
         for (Mesh mesh : mapInstancedMeshes.keySet()) {
     		for (GameItem gameItem : mapInstancedMeshes.get(mesh)) {
-    			if (gameItem.getBoundingBox().contains(newPos.x, newPos.y, newPos.z, camera)) {
+    			if (gameItem.getBoundingBox().contains(newPos.x, newPos.y, newPos.z, cameraCollision, camera)) {
     				inCollision = true;
     				break;
     			}
@@ -278,8 +280,8 @@ public class Scene {
 			for (String line : lines) {
 				String[] lineParts = line.split("\t");
 				if (lineParts.length != 8) {
-					System.err.println("Expected number of items in each line is 8.");
-					return;
+					System.err.println("[WARNING] Scene::load() Expected number of items in each line is 8. Line content [" + line + "]");
+					continue;
 				}
     			gameItem = new GameItem(meshTypesMap.get(lineParts[0]));
     			gameItem.setPosition(Float.valueOf(lineParts[1]), Float.valueOf(lineParts[2]), Float.valueOf(lineParts[3]));
@@ -306,13 +308,13 @@ public class Scene {
         decoder.decode(buffer, width * 4, PNGDecoder.Format.RGBA);
         buffer.flip();
 
-        int blockScale = 1;
+        
         int skyBoxScale = 100;
         int extension = 2;
-        int startX = extension * (-skyBoxScale + blockScale);
-        int startZ = extension * (skyBoxScale - blockScale);
+        int startX = extension * (-skyBoxScale + Game.blockScale);
+        int startZ = extension * (skyBoxScale - Game.blockScale);
         // int startY = -1;
-        int increment = blockScale * 2;
+        int increment = Game.blockScale * 2;
         int posX = startX;
         int posY = 0;
         int posZ = startZ;
@@ -349,7 +351,7 @@ public class Scene {
             			gameItem = new GameItem(meshTypesMap.get("GROUND"));
             		}
             		gameItem.setPosition(posX, posY, posZ);
-                	gameItem.setScale(blockScale);
+                	gameItem.setScale(Game.blockScale);
                 	gameItem.setBoundingBox();
                 	
                 	gameItems.add(gameItem);                		     		

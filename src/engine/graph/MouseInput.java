@@ -21,6 +21,9 @@ public class MouseInput {
     private boolean keys[];
     private boolean buttons[];
     private long window;
+    
+    private float mouseWheelDirection;
+    private float mouseWheelDirectionPrev;
 
     public MouseInput(Window window) {
         previousPos = new Vector2d(0, 0);
@@ -48,6 +51,9 @@ public class MouseInput {
             leftButtonPressed = button == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS;
             rightButtonPressed = button == GLFW_MOUSE_BUTTON_2 && action == GLFW_PRESS;
         });
+        glfwSetScrollCallback(window.getWindowHandle(), (windowHandle, dx, dy) -> {
+                mouseWheelDirection = (float) dy;
+        });
 
 		this.keys = new boolean[GLFW.GLFW_KEY_LAST];
 		for (int k = 32; k < GLFW.GLFW_KEY_LAST; k++) {
@@ -65,6 +71,12 @@ public class MouseInput {
     
     public Vector2d getMousePosition() {
     	return this.currentPos;
+    }
+    
+    public float getMouseWheelDelta() {
+    	float mouseWheelDelta = mouseWheelDirection;
+    	mouseWheelDirection = 0;
+    	return mouseWheelDelta;
     }
 
     public void input(Window window) {

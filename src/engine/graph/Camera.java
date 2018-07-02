@@ -12,6 +12,7 @@ public class Camera {
 	private Matrix4f viewMatrix;
 	private Matrix4f orthoProjectionMatrix;
 	public static final float HEIGHT = 2.8f;
+	public float actualHeight = HEIGHT;
 
 	public Camera() {
 		position = new Vector3f(0, 0, 0);
@@ -38,6 +39,14 @@ public class Camera {
 
 	public Vector3f getPosition() {
 		return position;
+	}
+	
+	public void setActualHeight(float height) {
+		this.actualHeight = height;
+	}
+	
+	public float getActualHeight() {
+		return this.actualHeight;
 	}
 
 	public void setPosition(float x, float y, float z) {

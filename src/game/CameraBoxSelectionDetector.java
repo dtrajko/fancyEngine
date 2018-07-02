@@ -90,7 +90,7 @@ public class CameraBoxSelectionDetector {
 
             	newGameItem.setBoundingBox();
             	Vector3f pos = new Vector3f(newGameItem.getPosition().x + 1, newGameItem.getPosition().y + 1, newGameItem.getPosition().z + 1);
-            	if (!scene.inCollision(pos, false)) {
+            	if (!scene.inCollision(pos, false, camera)) {
             		scene.appendGameItem(newGameItem);
             	}
             }
@@ -134,7 +134,7 @@ public class CameraBoxSelectionDetector {
 
             	newGameItem.setBoundingBox();
             	Vector3f pos = new Vector3f(newGameItem.getPosition().x + 1, newGameItem.getPosition().y + 1, newGameItem.getPosition().z + 1);
-            	if (!scene.inCollision(pos, false)) {
+            	if (!scene.inCollision(pos, false, camera)) {
             		scene.appendGameItem(newGameItem);
             	}
             }

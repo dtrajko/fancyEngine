@@ -17,11 +17,19 @@ public class GuiManager {
 		return new Vector2f(x, y);
 	}
 	
-    public GuiButton selectGuiItem(Vector2f mousePos, List<GuiButton> guiItems) {
+    public GuiButton selectGuiItem(Vector2f mousePos, List<GuiButton> guiItems, boolean renderInventory, boolean renderImportDialog) {
     	GuiButton selectedGuiItem = null;
         for (GuiButton guiItem : guiItems) {
+        	if (!guiItem.isClickable()) {
+        		continue;
+        	}
+			if (guiItem.isImportDialog() && !renderImportDialog) {
+				continue;
+			}
+			if (guiItem.isInventory() && !renderInventory) {
+				continue;
+			}
         	guiItem.setSelected(false);
-        	
         	if (guiItem.getAABB().contains(mousePos.x, mousePos.y)) {
         		selectedGuiItem = guiItem;
         	}
