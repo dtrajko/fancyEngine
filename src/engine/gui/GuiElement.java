@@ -2,12 +2,11 @@ package engine.gui;
 
 import org.joml.Vector2f;
 import org.joml.Vector3f;
-
 import engine.graph.Mesh;
 import engine.graph.Texture;
 import engine.items.Box2D;
 
-public class GuiButton {
+public class GuiElement {
 
 	private GuiTexture texture;
 	private Box2D aabb;
@@ -18,7 +17,7 @@ public class GuiButton {
 	private boolean isClickable;
 	private Mesh mesh = null;
 
-	public GuiButton(Texture texture, Vector3f position, Vector2f scale) {
+	public GuiElement(Texture texture, Vector3f position, Vector2f scale) {
 		super();
 		this.texture = new GuiTexture(texture.getId(), position, scale);
 		setAABB();
@@ -37,7 +36,7 @@ public class GuiButton {
 		return texture.getTexture();
 	}
 	
-	public GuiButton setMouseOver(boolean value) {
+	public GuiElement setMouseOver(boolean value) {
 		mouseOver = value;
 		return this;
 	}
@@ -69,7 +68,7 @@ public class GuiButton {
 		return selected;
 	}
 	
-	public GuiButton setInventory(boolean value) {
+	public GuiElement setInventory(boolean value) {
 		inventory = value;
 		return this;
 	}
@@ -78,7 +77,7 @@ public class GuiButton {
 		return inventory;
 	}
 
-	public GuiButton setClickable(boolean value) {
+	public GuiElement setClickable(boolean value) {
 		this.isClickable = value;
 		return this;
 	}
@@ -87,7 +86,7 @@ public class GuiButton {
 		return isClickable;
 	}
 
-	public GuiButton setImportDialog(boolean value) {
+	public GuiElement setImportDialog(boolean value) {
 		importDialog = value;
 		return this;
 	}

@@ -17,9 +17,9 @@ public class GuiManager {
 		return new Vector2f(x, y);
 	}
 	
-    public GuiButton selectGuiItem(Vector2f mousePos, List<GuiButton> guiItems, boolean renderInventory, boolean renderImportDialog) {
-    	GuiButton selectedGuiItem = null;
-        for (GuiButton guiItem : guiItems) {
+    public GuiElement selectGuiItem(Vector2f mousePos, List<GuiElement> guiItems, boolean renderInventory, boolean renderImportDialog) {
+    	GuiElement selectedGuiItem = null;
+        for (GuiElement guiItem : guiItems) {
         	if (!guiItem.isClickable()) {
         		continue;
         	}

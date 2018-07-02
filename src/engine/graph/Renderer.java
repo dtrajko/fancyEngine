@@ -26,7 +26,7 @@ import engine.graph.lights.PointLight;
 import engine.graph.lights.SpotLight;
 import engine.graph.shadow.ShadowCascade;
 import engine.graph.shadow.ShadowRenderer;
-import engine.gui.GuiButton;
+import engine.gui.GuiElement;
 import engine.gui.GuiRenderer;
 import engine.items.GameItem;
 import engine.items.SkyBox;
@@ -453,7 +453,7 @@ public class Renderer {
         }
     }
     
-    public void renderGui(List<GuiButton> guis, Window window, boolean renderInventory, boolean renderImportDialog) {
+    public void renderGui(List<GuiElement> guis, Window window, boolean renderInventory, boolean renderImportDialog) {
     	this.guiRenderer.render(guis, window, renderInventory, renderImportDialog);
     }
 
