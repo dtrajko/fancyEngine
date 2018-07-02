@@ -349,19 +349,19 @@ public class Game implements IGameLogic {
     	
     	Texture textureLongButton = new Texture(Config.RESOURCES_DIR +  "/textures/button_long.png");
 
-    	GuiElement guiLongButton01 = new GuiElement(textureLongButton, new Vector3f(0.0f, 0.682f, 1), new Vector2f(0.31f, 0.06f)); // 0.14
+    	GuiElement guiLongButton01 = new GuiElement(textureLongButton, new Vector3f(0.0f, 0.685f, 1), new Vector2f(0.31f, 0.055f)); // 0.130
     	guiLongButton01.setImportDialog(true).setClickable(true);
     	guiItems.add(guiLongButton01);
 
-    	GuiElement guiLongButton02 = new GuiElement(textureLongButton, new Vector3f(0.0f, 0.542f, 1), new Vector2f(0.31f, 0.06f));
+    	GuiElement guiLongButton02 = new GuiElement(textureLongButton, new Vector3f(0.0f, 0.555f, 1), new Vector2f(0.31f, 0.055f));
     	guiLongButton02.setImportDialog(true).setClickable(true);
     	guiItems.add(guiLongButton02);
     	
-    	GuiElement guiLongButton03 = new GuiElement(textureLongButton, new Vector3f(0.0f, 0.402f, 1), new Vector2f(0.31f, 0.06f));
+    	GuiElement guiLongButton03 = new GuiElement(textureLongButton, new Vector3f(0.0f, 0.425f, 1), new Vector2f(0.31f, 0.055f));
     	guiLongButton03.setImportDialog(true).setClickable(true);
     	guiItems.add(guiLongButton03);
     	
-    	GuiElement guiLongButton04 = new GuiElement(textureLongButton, new Vector3f(0.0f, 0.262f, 1), new Vector2f(0.31f, 0.06f));
+    	GuiElement guiLongButton04 = new GuiElement(textureLongButton, new Vector3f(0.0f, 0.295f, 1), new Vector2f(0.31f, 0.055f));
     	guiLongButton04.setImportDialog(true).setClickable(true);
     	guiItems.add(guiLongButton04);
 	}
