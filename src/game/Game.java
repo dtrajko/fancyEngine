@@ -3,8 +3,6 @@ package game;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
@@ -31,7 +29,6 @@ import engine.gui.fonts.FontType;
 import engine.gui.fonts.GUIText;
 import engine.gui.fonts.TextMaster;
 import engine.items.SkyBox;
-import engine.loaders.RawModelLoader;
 import engine.loaders.obj.OBJLoader;
 import engine.sound.SoundBuffer;
 import engine.sound.SoundListener;
@@ -50,7 +47,6 @@ public class Game implements IGameLogic {
     private float lightAngle;
     private FlowParticleEmitter particleEmitter;
     private final SoundManager soundMgr;
-
     private static float GRAVITY = -2.0f;
     private static float actualGravity = 0;
     private static final float WORLD_BOTTOM = -20f;
@@ -63,12 +59,11 @@ public class Game implements IGameLogic {
     private boolean inventoryOn = false;
     private boolean importDialogOn = false;
     private GuiElement nextBlock;
-
     private boolean updateEnabled = true;
     private long toggleGuiLastTime;
     private GuiManager guiManager;
     private List<GuiElement> guiItems = new ArrayList<GuiElement>();
-    private boolean crouchEnabled = false;
+    // private boolean crouchEnabled = false;
     
     public static final int blockScale = 1;
 
@@ -599,8 +594,8 @@ public class Game implements IGameLogic {
     	// Update camera based on mouse
         Vector2f rotVec = mouseInput.getDisplVec();
         camera.moveRotation(rotVec.x * MOUSE_SENSITIVITY, rotVec.y * MOUSE_SENSITIVITY, 0);
-        
-        Vector3f camPos = camera.getPosition();
+
+        // Vector3f camPos = camera.getPosition();
 
         // Update camera position
         Vector3f newCamPos = camera.calculateNewPosition(cameraInc.x * CAMERA_POS_STEP, cameraInc.y * CAMERA_POS_STEP, cameraInc.z * CAMERA_POS_STEP);
