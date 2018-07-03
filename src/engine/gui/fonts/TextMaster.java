@@ -1,12 +1,13 @@
-package engine.gui.font;
+package engine.gui.fonts;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import engine.gui.font.FontType;
-import engine.gui.font.GUIText;
-import engine.gui.font.TextMeshData;
+
+import engine.gui.fonts.FontType;
+import engine.gui.fonts.GUIText;
+import engine.gui.fonts.TextMeshData;
 import engine.loaders.RawModelLoader;
 
 public class TextMaster {

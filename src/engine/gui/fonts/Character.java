@@ -1,4 +1,4 @@
-package engine.gui.font;
+package engine.gui.fonts;
 
 /**
  * Simple data structure class holding information about a certain glyph in the

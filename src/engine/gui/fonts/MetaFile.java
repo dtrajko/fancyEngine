@@ -1,4 +1,4 @@
-package engine.gui.font;
+package engine.gui.fonts;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;

@@ -1,4 +1,4 @@
-package engine.gui.font;
+package engine.gui.fonts;
 
 /**
  * Stores the vertex data for all the quads on which a text will be rendered.

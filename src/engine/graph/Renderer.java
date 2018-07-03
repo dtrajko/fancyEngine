@@ -28,7 +28,7 @@ import engine.graph.shadow.ShadowCascade;
 import engine.graph.shadow.ShadowRenderer;
 import engine.gui.GuiElement;
 import engine.gui.GuiRenderer;
-import engine.gui.font.TextMaster;
+import engine.gui.fonts.TextMaster;
 import engine.items.GameItem;
 import engine.items.SkyBox;
 import game.Hud;

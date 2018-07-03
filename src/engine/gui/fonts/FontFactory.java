@@ -1,4 +1,4 @@
-package engine.gui.font;
+package engine.gui.fonts;
 
 import engine.Window;
 import engine.loaders.LoaderFactory;
