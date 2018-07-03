@@ -3,6 +3,8 @@ package game;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
@@ -24,7 +26,12 @@ import engine.graph.particles.Particle;
 import engine.graph.weather.Fog;
 import engine.gui.GuiElement;
 import engine.gui.GuiManager;
+import engine.gui.font.FontFactory;
+import engine.gui.font.FontType;
+import engine.gui.font.GUIText;
+import engine.gui.font.TextMaster;
 import engine.items.SkyBox;
+import engine.loaders.RawModelLoader;
 import engine.loaders.obj.OBJLoader;
 import engine.sound.SoundBuffer;
 import engine.sound.SoundListener;
@@ -61,7 +68,6 @@ public class Game implements IGameLogic {
     private long toggleGuiLastTime;
     private GuiManager guiManager;
     private List<GuiElement> guiItems = new ArrayList<GuiElement>();
-    
     private boolean crouchEnabled = false;
     
     public static final int blockScale = 1;
@@ -89,6 +95,7 @@ public class Game implements IGameLogic {
     	window = win;
         scene = new Scene();
         renderer.init(window, scene);
+        TextMaster.init();
 
         /*
         Mesh meshCustom = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/minecraft_sword.obj");
@@ -196,7 +203,7 @@ public class Game implements IGameLogic {
         meshStairsCornerInner.setMaterial(materialStairs);
         meshStairsCornerInner.setSymetric(false);
         meshStairsCornerInner.setCorner(true);
-        
+
         // scene.initMeshMaps(meshTypesMap);
 
         int skyBoxScale = 150;
@@ -364,6 +371,11 @@ public class Game implements IGameLogic {
     	GuiElement guiLongButton04 = new GuiElement(textureLongButton, new Vector3f(0.0f, 0.295f, 1), new Vector2f(0.31f, 0.055f));
     	guiLongButton04.setImportDialog(true).setClickable(true);
     	guiItems.add(guiLongButton04);
+
+		FontType font = FontFactory.getFont("candara", window);
+		GUIText guiText = new GUIText("snapshot_2018_06_30.txt", 2.5f, font, new Vector2f(0.0f, 0.685f), 1f, false);
+		guiText.setColor(1.0f, 1.0f, 0.9f);
+		TextMaster.setGuiText(0, guiText);
 	}
 
 	private void setupLights() {
@@ -640,6 +652,7 @@ public class Game implements IGameLogic {
         }
         renderer.render(window, camera, scene, sceneChanged);
         renderer.renderGui(guiItems, window, inventoryOn, importDialogOn);
+        // renderer.renderGuiText();
     }
 
     @Override

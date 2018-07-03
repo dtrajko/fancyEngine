@@ -28,6 +28,7 @@ import engine.graph.shadow.ShadowCascade;
 import engine.graph.shadow.ShadowRenderer;
 import engine.gui.GuiElement;
 import engine.gui.GuiRenderer;
+import engine.gui.font.TextMaster;
 import engine.items.GameItem;
 import engine.items.SkyBox;
 import game.Hud;
@@ -51,6 +52,7 @@ public class Renderer {
     private ShaderProgram hudShaderProgram;
     private ShaderProgram skyBoxShaderProgram;
     private ShaderProgram particlesShaderProgram;
+    private ShaderProgram fontShaderProgram;
     
     private GuiRenderer guiRenderer;
 
@@ -76,6 +78,7 @@ public class Renderer {
         setupSceneShader();
         // setupParticlesShader();
         setupHudShader();
+        setupFontShader();
         guiRenderer = new GuiRenderer();
         guiRenderer.setupGuiShader();
     }
@@ -196,6 +199,16 @@ public class Renderer {
         sceneShaderProgram.createUniform("texture_sampler");
         // Create uniform for material
         // sceneShaderProgram.createTextureUniform("material");
+    }
+
+    private void setupFontShader() throws Exception {
+    	fontShaderProgram = new ShaderProgram();
+    	fontShaderProgram.createVertexShader(Utils.loadResource(Config.RESOURCES_DIR + "/shaders/font_vertex.vs"));
+    	fontShaderProgram.createFragmentShader(Utils.loadResource(Config.RESOURCES_DIR + "/shaders/font_fragment.fs"));
+    	fontShaderProgram.link();
+
+    	fontShaderProgram.createUniform("colour");
+    	fontShaderProgram.createUniform("translation");
     }
 
 	public void render(Window window, Camera camera, List<GameItem> gameItems, Hud hud) {
@@ -456,6 +469,10 @@ public class Renderer {
     public void renderGui(List<GuiElement> guis, Window window, boolean renderInventory, boolean renderImportDialog) {
     	this.guiRenderer.render(guis, window, renderInventory, renderImportDialog);
     }
+
+	public void renderGuiText() {
+		TextMaster.render();
+	}
 
     public void renderScene(Window window, Camera camera, Scene scene) {
         sceneShaderProgram.bind();

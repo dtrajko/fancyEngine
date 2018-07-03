@@ -11,6 +11,10 @@ import static org.lwjgl.opengl.GL13.*;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
+
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
+import org.lwjgl.opengl.GL30;
 import org.lwjgl.system.MemoryUtil;
 
 import engine.items.GameItem;
@@ -146,6 +150,7 @@ public class Mesh {
         Texture texture = material.getTexture();
         
         if (texture != null) {
+
             // Activate first texture bank
             glActiveTexture(GL_TEXTURE0);
             // Bind the texture
