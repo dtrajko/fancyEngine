@@ -1,10 +1,6 @@
 package engine.gui;
 
-import java.util.List;
-
 import org.joml.Matrix4f;
-import org.joml.Vector2f;
-import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
@@ -44,18 +40,17 @@ public class GuiRenderer {
     	guiShaderProgram.createUniform("mouseOver");
     }
 
-	public void render(List<GuiElement> guis, Window window, boolean renderInventory, boolean renderImportDialog) {
-
+	public void render(GuiManager guiManager, Window window) {
 		guiShaderProgram.bind();
 		GL30.glBindVertexArray(quad.getVaoID());
 		GL20.glEnableVertexAttribArray(0);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
-		for (GuiElement gui:guis) {
-			if (gui.isImportDialog() && !renderImportDialog) {
+		for (GuiElement gui:guiManager.getGuiIElements()) {
+			if (gui.isInventory() && !guiManager.isInventoryOn()) {
 				continue;
 			}
-			if (gui.isInventory() && !renderInventory) {
+			if (gui.isImportDialog() && !guiManager.isImportDialogOn()) {
 				continue;
 			}
 			GL13.glActiveTexture(GL13.GL_TEXTURE0);

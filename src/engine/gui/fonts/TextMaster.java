@@ -14,11 +14,10 @@ public class TextMaster {
 
 	private static RawModelLoader loader;
 	private static Map<FontType, List<GUIText>> guiTextsMap = new HashMap<FontType, List<GUIText>>();
-	private static FontRenderer renderer;	
+	private static FontRenderer renderer;
 	private static List<GUIText> guiTexts;
 
 	public static void init() {
-		renderer = new FontRenderer();
 		loader = new RawModelLoader();
 		guiTexts = new ArrayList<GUIText>();
 	}
@@ -26,8 +25,15 @@ public class TextMaster {
 	public static void render() {
 		renderer.render(guiTextsMap);
 	}
-
 	
+	public static List<GUIText> getGuiTexts() {
+		return guiTexts;
+	}
+
+	public static Map<FontType, List<GUIText>> getGuiTextsMap() {
+		return guiTextsMap;
+	}
+
 	public static GUIText getGuiText(int index) {
 		return guiTexts.get(index);
 	}
@@ -37,6 +43,7 @@ public class TextMaster {
 	}
 
 	public static void loadText(GUIText text) {
+
 		FontType font = text.getFont();
 		TextMeshData textMeshData = font.loadText(text);
 		int vao = loader.loadToVAO(textMeshData.getVertexPositions(), textMeshData.getTextureCoords());
@@ -51,9 +58,11 @@ public class TextMaster {
 
 	public static void removeText(GUIText text) {
 		List<GUIText> textBatch = guiTextsMap.get(text.getFont());
-		textBatch.remove(text);
-		if (textBatch.isEmpty()) {
-			guiTextsMap.remove(text.getFont());
+		if (textBatch != null) {
+			textBatch.remove(text);
+			if (textBatch.isEmpty()) {
+				guiTextsMap.remove(text.getFont());
+			}			
 		}
 	}
 

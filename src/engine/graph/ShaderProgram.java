@@ -7,6 +7,7 @@ import java.nio.FloatBuffer;
 import java.util.HashMap;
 import java.util.Map;
 import org.joml.Matrix4f;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import static org.lwjgl.opengl.GL20.*;
@@ -127,6 +128,10 @@ public class ShaderProgram {
         setUniform(uniformName + "[" + index  + "]", value);
     }
 
+    public void setUniform(String uniformName, Vector2f value) {
+        glUniform2f(uniforms.get(uniformName), value.x, value.y);
+    }
+
     public void setUniform(String uniformName, Vector3f value) {
         glUniform3f(uniforms.get(uniformName), value.x, value.y, value.z);
     }
@@ -193,6 +198,14 @@ public class ShaderProgram {
         setUniform(uniformName + ".colour", fog.getColour());
         setUniform(uniformName + ".density", fog.getDensity());
     }
+
+    public void loadColor(Vector3f color) {
+		setUniform("color", color);
+	}
+
+    public void loadTranslation(Vector2f translation) {
+		setUniform("translation", translation);
+	}
 
     public void createVertexShader(String shaderCode) throws Exception {
         vertexShaderId = createShader(shaderCode, GL_VERTEX_SHADER);

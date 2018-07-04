@@ -28,6 +28,7 @@ import engine.graph.shadow.ShadowRenderer;
 import engine.gui.GuiManager;
 import engine.gui.GuiRenderer;
 import engine.gui.fonts.TextMaster;
+import engine.gui.fonts.FontRenderer;
 import engine.items.GameItem;
 import engine.items.SkyBox;
 import game.Hud;
@@ -54,6 +55,7 @@ public class Renderer {
     private ShaderProgram fontShaderProgram;
     
     private GuiRenderer guiRenderer;
+    private FontRenderer textRenderer;
 
 	private final float specularPower;
 	private ShadowMap shadowMap;
@@ -80,6 +82,8 @@ public class Renderer {
         setupFontShader();
         guiRenderer = new GuiRenderer();
         guiRenderer.setupGuiShader();
+        textRenderer = new FontRenderer();
+        textRenderer.setupShader();
     }
 
     private void setupParticlesShader() throws Exception {
@@ -206,7 +210,7 @@ public class Renderer {
     	fontShaderProgram.createFragmentShader(Utils.loadResource(Config.RESOURCES_DIR + "/shaders/font_fragment.fs"));
     	fontShaderProgram.link();
 
-    	fontShaderProgram.createUniform("colour");
+    	fontShaderProgram.createUniform("color");
     	fontShaderProgram.createUniform("translation");
     }
 
@@ -466,11 +470,13 @@ public class Renderer {
     }
     
     public void renderGui(GuiManager guiManager, Window window) {
-    	this.guiRenderer.render(guiManager.getGuiIElements(), window, guiManager.isInventoryOn(), guiManager.isImportDialogOn());
+    	this.guiRenderer.render(guiManager, window);
     }
 
-	public void renderGuiText() {
-		TextMaster.render();
+	public void renderGuiText(GuiManager guiManager) {
+		if(guiManager.isImportDialogOn()) {
+			textRenderer.render(TextMaster.getGuiTextsMap());			
+		}
 	}
 
     public void renderScene(Window window, Camera camera, Scene scene) {
@@ -566,7 +572,7 @@ public class Renderer {
         for (InstancedMesh mesh : meshesSortedList) {
         	
         	float transparency = mesh.getMaterial().getTransparency();
-        	// System.out.println("Renderer render mesh transparecy: " + transparency);
+        	// System.out.println("Renderer render mesh transparency: " + transparency);
 
             Texture text = mesh.getMaterial().getTexture();
             if (text != null) {

@@ -14,6 +14,7 @@ import engine.graph.Renderer;
 import engine.graph.particles.FlowParticleEmitter;
 import engine.gui.GuiElement;
 import engine.gui.GuiManager;
+import engine.gui.fonts.GUIText;
 import engine.gui.fonts.TextMaster;
 import engine.sound.SoundManager;
 
@@ -40,7 +41,7 @@ public class Game implements IGameLogic {
     private boolean sceneChanged;
     private GuiManager guiManager;
     // private boolean crouchEnabled = false;
-    
+
     public static final int blockScale = 1;
 
     private HashMap<String, Mesh> meshTypesMap = new HashMap<String, Mesh>();
@@ -57,13 +58,23 @@ public class Game implements IGameLogic {
 
     @Override
     public void init(Window win) throws Exception {
-
     	window = win;
         scene = new Scene();
         renderer.init(window, scene);
         TextMaster.init();
-        scene.init(meshTypesMap, particleEmitter, soundMgr, camera, guiManager.getGuiIElements(), window);
+        scene.init(meshTypesMap, particleEmitter, soundMgr, camera, guiManager, window);
         selectDetectorCamera = new CameraBoxSelectionDetector();
+    }
+
+    @Override
+    public void render(Window window) {
+        if (firstTime) {
+            sceneChanged = true;
+            firstTime = false;
+        }
+        renderer.render(window, camera, scene, sceneChanged);
+        renderer.renderGui(guiManager, window);
+        renderer.renderGuiText(guiManager);
     }
 
     @Override
@@ -221,17 +232,6 @@ public class Game implements IGameLogic {
     	// Update view matrix
     	camera.updateViewMatrix();
 	}
-
-    @Override
-    public void render(Window window) {
-        if (firstTime) {
-            sceneChanged = true;
-            firstTime = false;
-        }
-        renderer.render(window, camera, scene, sceneChanged);
-        renderer.renderGui(guiManager, window);
-        // renderer.renderGuiText();
-    }
 
     @Override
     public void cleanup() {

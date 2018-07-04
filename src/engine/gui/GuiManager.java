@@ -144,4 +144,8 @@ public class GuiManager {
 	public boolean getUpdateEnabled() {
 		return updateEnabled;
 	}
+
+	public void addGuiElement(GuiElement guiElement) {
+		guiElements.add(guiElement);
+	}
 }

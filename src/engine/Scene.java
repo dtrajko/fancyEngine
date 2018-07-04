@@ -31,6 +31,7 @@ import engine.graph.particles.IParticleEmitter;
 import engine.graph.particles.Particle;
 import engine.graph.weather.Fog;
 import engine.gui.GuiElement;
+import engine.gui.GuiManager;
 import engine.gui.fonts.FontFactory;
 import engine.gui.fonts.FontType;
 import engine.gui.fonts.GUIText;
@@ -66,7 +67,7 @@ public class Scene {
         renderShadows = true;
     }
 
-    public void init(HashMap<String, Mesh> meshTypesMap, FlowParticleEmitter particleEmitter, SoundManager soundMgr, Camera camera, List<GuiElement> guiItems, Window window) throws Exception {
+    public void init(HashMap<String, Mesh> meshTypesMap, FlowParticleEmitter particleEmitter, SoundManager soundMgr, Camera camera, GuiManager guiManager, Window window) throws Exception {
         /*
         Mesh meshCustom = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/minecraft_sword.obj");
         Texture textureCustom = new Texture(Config.RESOURCES_DIR +  "/textures/minecraft_sword.png");
@@ -221,7 +222,7 @@ public class Scene {
         setupSounds(soundMgr, camera);
 
         // Setup GUI
-        setupGui(meshTypesMap, guiItems, window);
+        setupGui(meshTypesMap, guiManager, window);
 
         camera.getPosition().x = -skyBoxScale;
         camera.getPosition().y = 20.0f;
@@ -262,121 +263,138 @@ public class Scene {
         soundMgr.setListener(new SoundListener(new Vector3f(0, 0, 0)));
     }
 
-    private void setupGui(HashMap<String, Mesh> meshTypesMap, List<GuiElement> guiItems, Window window) throws Exception {
+    private void setupGui(HashMap<String, Mesh> meshTypesMap, GuiManager guiManager, Window window) throws Exception {
 
     	// bullseye
     	Texture textureBullseye = new Texture(Config.RESOURCES_DIR +  "/textures/bullseye.png");
     	GuiElement guiBullseye = new GuiElement(textureBullseye, new Vector3f(0f, 0f, 1), new Vector2f(0.026f, 0.04f));
-    	guiItems.add(guiBullseye);
+    	guiManager.addGuiElement(guiBullseye);
 
     	// inventory
     	Texture texturePanelInventory = new Texture(Config.RESOURCES_DIR +  "/textures/window.png");
     	GuiElement guiPanelInventory = new GuiElement(texturePanelInventory, new Vector3f(0.0f, -0.01f, 1), new Vector2f(0.3304f, 0.790f));
     	// GuiButton guiPanelInventory = new GuiButton(texturePanelInventory, new Vector3f(0.0f, -0.01f, 1), new Vector2f(0.33f, 0.790f));
     	guiPanelInventory.setInventory(true);
-    	guiItems.add(guiPanelInventory);
+    	guiManager.addGuiElement(guiPanelInventory);
 
     	Texture textureBtnStairs = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_stairs.png");
     	GuiElement guiButtonStairs = new GuiElement(textureBtnStairs, new Vector3f(-0.21f, 0.56f, 1), new Vector2f(0.1f, 0.18f));
     	guiButtonStairs.setInventory(true).setClickable(true);
     	guiButtonStairs.setMesh(meshTypesMap.get("STAIRS"));
-    	guiItems.add(guiButtonStairs);
+    	guiManager.addGuiElement(guiButtonStairs);
 
     	Texture textureBtnStairsCorner = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_stairs_corner.png");
     	GuiElement guiButtonStairsCorner = new GuiElement(textureBtnStairsCorner, new Vector3f(0.0f, 0.56f, 1), new Vector2f(0.1f, 0.18f));
     	guiButtonStairsCorner.setInventory(true).setClickable(true);
     	guiButtonStairsCorner.setMesh(meshTypesMap.get("STAIRS_CORNER"));
-    	guiItems.add(guiButtonStairsCorner);
+    	guiManager.addGuiElement(guiButtonStairsCorner);
 
     	Texture textureBtnStairsCornerInner = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_stairs_corner_inner.png");
     	GuiElement guiButtonStairsCornerInner = new GuiElement(textureBtnStairsCornerInner, new Vector3f(0.21f, 0.56f, 1), new Vector2f(0.1f, 0.18f));
     	guiButtonStairsCornerInner.setInventory(true).setClickable(true);
     	guiButtonStairsCornerInner.setMesh(meshTypesMap.get("STAIRS_CORNER_INNER"));
-    	guiItems.add(guiButtonStairsCornerInner);
+    	guiManager.addGuiElement(guiButtonStairsCornerInner);
 
     	Texture textureBtnOakWood = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_oakwood.png");
     	GuiElement guiButtonOakWood = new GuiElement(textureBtnOakWood, new Vector3f(-0.21f, 0.18f, 1), new Vector2f(0.1f, 0.18f));
     	guiButtonOakWood.setInventory(true).setClickable(true);
     	guiButtonOakWood.setMesh(meshTypesMap.get("OAKWOOD"));
-    	guiItems.add(guiButtonOakWood);
+    	guiManager.addGuiElement(guiButtonOakWood);
 
     	Texture textureBtnWood = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_wood.png");
     	GuiElement guiButtonWood = new GuiElement(textureBtnWood, new Vector3f(0.0f, 0.18f, 1), new Vector2f(0.1f, 0.18f));
     	guiButtonWood.setInventory(true).setClickable(true);
     	guiButtonWood.setMesh(meshTypesMap.get("WOOD"));
-    	guiItems.add(guiButtonWood);
+    	guiManager.addGuiElement(guiButtonWood);
 
     	Texture textureBtnCobble = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_cobble.png");
     	GuiElement guiButtonCobble = new GuiElement(textureBtnCobble, new Vector3f(0.21f, 0.18f, 1), new Vector2f(0.1f, 0.18f));
     	guiButtonCobble.setInventory(true).setClickable(true);
     	guiButtonCobble.setMesh(meshTypesMap.get("COBBLE"));
-    	guiItems.add(guiButtonCobble);
+    	guiManager.addGuiElement(guiButtonCobble);
 
     	Texture textureBtnGrass = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_grass.png");
     	GuiElement guiButtonGrass = new GuiElement(textureBtnGrass, new Vector3f(-0.21f, -0.2f, 1), new Vector2f(0.1f, 0.18f));
     	guiButtonGrass.setInventory(true).setClickable(true);
     	guiButtonGrass.setMesh(meshTypesMap.get("GRASS"));
-    	guiItems.add(guiButtonGrass);
+    	guiManager.addGuiElement(guiButtonGrass);
 
     	Texture textureBtnGround = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_ground.png");
     	GuiElement guiButtonGround = new GuiElement(textureBtnGround, new Vector3f(0f, -0.2f, 1), new Vector2f(0.1f, 0.18f));
     	guiButtonGround.setInventory(true).setClickable(true);
     	guiButtonGround.setMesh(meshTypesMap.get("GROUND"));
-    	guiItems.add(guiButtonGround);
+    	guiManager.addGuiElement(guiButtonGround);
 
     	Texture textureBtnWater = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_water.png");
     	GuiElement guiButtonWater = new GuiElement(textureBtnWater, new Vector3f(0.21f, -0.2f, 1), new Vector2f(0.1f, 0.18f));
     	guiButtonWater.setInventory(true).setClickable(true);
     	guiButtonWater.setMesh(meshTypesMap.get("WATER"));
-    	guiItems.add(guiButtonWater);
+    	guiManager.addGuiElement(guiButtonWater);
 
     	Texture textureBtnGlass = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_glass.png");
     	GuiElement guiButtonGlass = new GuiElement(textureBtnGlass, new Vector3f(-0.21f, -0.58f, 1), new Vector2f(0.1f, 0.18f));
     	guiButtonGlass.setInventory(true).setClickable(true);
     	guiButtonGlass.setMesh(meshTypesMap.get("GLASS"));
-    	guiItems.add(guiButtonGlass);
+    	guiManager.addGuiElement(guiButtonGlass);
 
     	Texture textureBtnTreetop = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_treetop.png");
     	GuiElement guiButtonTreetop = new GuiElement(textureBtnTreetop, new Vector3f(0.21f, -0.58f, 1), new Vector2f(0.1f, 0.18f));
     	guiButtonTreetop.setInventory(true).setClickable(true);
     	guiButtonTreetop.setMesh(meshTypesMap.get("TREETOP"));
-    	guiItems.add(guiButtonTreetop);
+    	guiManager.addGuiElement(guiButtonTreetop);
 
     	Texture textureBtnLava = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_lava.png");
     	GuiElement guiButtonLava = new GuiElement(textureBtnLava, new Vector3f(0.0f, -0.58f, 1), new Vector2f(0.1f, 0.18f));
     	guiButtonLava.setInventory(true).setClickable(true);
     	guiButtonLava.setMesh(meshTypesMap.get("LAVA"));
-    	guiItems.add(guiButtonLava);
+    	guiManager.addGuiElement(guiButtonLava);
     	
     	// import dialog
     	Texture texturePanel = new Texture(Config.RESOURCES_DIR +  "/textures/window.png");
     	GuiElement guiPanel = new GuiElement(texturePanel, new Vector3f(0.0f, -0.01f, 1), new Vector2f(0.3304f, 0.790f));
     	// GuiButton guiPanel = new GuiButton(texturePanel, new Vector3f(0.0f, -0.01f, 1), new Vector2f(0.33f, 0.790f));
     	guiPanel.setImportDialog(true);
-    	guiItems.add(guiPanel);
+    	guiManager.addGuiElement(guiPanel);
     	
     	Texture textureLongButton = new Texture(Config.RESOURCES_DIR +  "/textures/button_long.png");
 
     	GuiElement guiLongButton01 = new GuiElement(textureLongButton, new Vector3f(0.0f, 0.685f, 1), new Vector2f(0.31f, 0.055f)); // 0.130
     	guiLongButton01.setImportDialog(true).setClickable(true);
-    	guiItems.add(guiLongButton01);
+    	guiManager.addGuiElement(guiLongButton01);
 
     	GuiElement guiLongButton02 = new GuiElement(textureLongButton, new Vector3f(0.0f, 0.555f, 1), new Vector2f(0.31f, 0.055f));
     	guiLongButton02.setImportDialog(true).setClickable(true);
-    	guiItems.add(guiLongButton02);
-    	
+    	guiManager.addGuiElement(guiLongButton02);
+
     	GuiElement guiLongButton03 = new GuiElement(textureLongButton, new Vector3f(0.0f, 0.425f, 1), new Vector2f(0.31f, 0.055f));
     	guiLongButton03.setImportDialog(true).setClickable(true);
-    	guiItems.add(guiLongButton03);
-    	
+    	guiManager.addGuiElement(guiLongButton03);
+
     	GuiElement guiLongButton04 = new GuiElement(textureLongButton, new Vector3f(0.0f, 0.295f, 1), new Vector2f(0.31f, 0.055f));
     	guiLongButton04.setImportDialog(true).setClickable(true);
-    	guiItems.add(guiLongButton04);
+    	guiManager.addGuiElement(guiLongButton04);
 
 		FontType font = FontFactory.getFont("candara", window);
-		GUIText guiText = new GUIText("snapshot_2018_06_30.txt", 2.5f, font, new Vector2f(0.0f, 0.685f), 1f, false);
-		guiText.setColor(1.0f, 1.0f, 0.9f);
-		TextMaster.setGuiText(0, guiText);
+
+		GUIText guiText01 = new GUIText("snapshot_2018_07_04.txt", 1.2f, font, new Vector2f(0.355f, 0.139f), 1f, false); // 0.065
+		guiText01.setColor(1.0f, 1.0f, 1.0f);
+		TextMaster.setGuiText(0, guiText01);
+		TextMaster.loadText(guiText01);
+		
+		GUIText guiText02 = new GUIText("snapshot_2018_07_03.txt", 1.2f, font, new Vector2f(0.355f, 0.204f), 1f, false);
+		guiText02.setColor(1.0f, 1.0f, 1.0f);
+		TextMaster.setGuiText(0, guiText02);
+		TextMaster.loadText(guiText02);
+		
+		GUIText guiText03 = new GUIText("snapshot_2018_07_02.txt", 1.2f, font, new Vector2f(0.355f, 0.269f), 1f, false);
+		guiText03.setColor(1.0f, 1.0f, 1.0f);
+		TextMaster.setGuiText(0, guiText03);
+		TextMaster.loadText(guiText03);
+		
+		GUIText guiText04 = new GUIText("snapshot_2018_07_01.txt", 1.2f, font, new Vector2f(0.355f, 0.334f), 1f, false);
+		guiText04.setColor(1.0f, 1.0f, 1.0f);
+		TextMaster.setGuiText(0, guiText04);
+		TextMaster.loadText(guiText04);
 	}
 
     public Map<Mesh, List<GameItem>> getGameMeshes() {
