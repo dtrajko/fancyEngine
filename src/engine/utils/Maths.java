@@ -4,8 +4,6 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
-import engine.graph.Camera;
-
 public class Maths {
 
 	public static Matrix4f createTransformationMatrix(Vector3f translation, Vector3f rotation, Vector2f scale) {

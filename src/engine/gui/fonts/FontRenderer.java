@@ -2,26 +2,13 @@ package engine.gui.fonts;
 
 import java.util.List;
 import java.util.Map;
-
-import org.joml.Matrix4f;
-import org.joml.Vector2f;
-import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
-
 import config.Config;
 import engine.Utils;
-import engine.Window;
 import engine.graph.ShaderProgram;
-import engine.graph.Transformation;
-import engine.gui.GuiElement;
-import engine.gui.GuiLoader;
-import engine.gui.GuiManager;
-import engine.models.RawModel;
-import engine.utils.Maths;
-import game2D.shaders.Shader;
 
 public class FontRenderer {
 	
