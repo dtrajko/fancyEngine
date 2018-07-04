@@ -2,8 +2,6 @@ package engine;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
@@ -16,19 +14,34 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.joml.Quaternionf;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.lwjgl.openal.AL11;
 import config.Config;
 import de.matthiasmann.twl.utils.PNGDecoder;
 import engine.graph.Camera;
 import engine.graph.HeightMapMesh;
 import engine.graph.InstancedMesh;
+import engine.graph.Material;
 import engine.graph.Mesh;
+import engine.graph.Texture;
+import engine.graph.lights.DirectionalLight;
+import engine.graph.particles.FlowParticleEmitter;
 import engine.graph.particles.IParticleEmitter;
+import engine.graph.particles.Particle;
 import engine.graph.weather.Fog;
+import engine.gui.GuiElement;
+import engine.gui.fonts.FontFactory;
+import engine.gui.fonts.FontType;
+import engine.gui.fonts.GUIText;
+import engine.gui.fonts.TextMaster;
 import engine.items.GameItem;
 import engine.items.SkyBox;
+import engine.loaders.obj.OBJLoader;
+import engine.sound.SoundBuffer;
+import engine.sound.SoundListener;
+import engine.sound.SoundManager;
+import engine.sound.SoundSource;
 import game.Game;
 
 public class Scene {
@@ -41,12 +54,330 @@ public class Scene {
     private boolean renderShadows;
     private IParticleEmitter[] particleEmitters;
 
+    public enum Sounds {
+        FIRE,
+        BACKGROUND,
+    };
+
     public Scene() {
-        meshMap = new HashMap();
-        instancedMeshMap = new HashMap();
+        meshMap = new HashMap<Mesh, List<GameItem>>();
+        instancedMeshMap = new HashMap<InstancedMesh, List<GameItem>>();
         fog = Fog.NOFOG;
         renderShadows = true;
     }
+
+    public void init(HashMap<String, Mesh> meshTypesMap, FlowParticleEmitter particleEmitter, SoundManager soundMgr, Camera camera, List<GuiElement> guiItems, Window window) throws Exception {
+        /*
+        Mesh meshCustom = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/minecraft_sword.obj");
+        Texture textureCustom = new Texture(Config.RESOURCES_DIR +  "/textures/minecraft_sword.png");
+        Material materialCustom = new Material(textureCustom);
+        materialCustom.setReflectance(1.0f);
+        materialCustom.setTransparency(1.0f);
+        meshCustom.setMaterial(materialCustom);
+        GameItem gameItemCustom = new GameItem(meshCustom);
+        gameItemCustom.setRotation(0.5f, 0.5f, 0.5f);
+        gameItemCustom.setPosition(-100, 30f, 50);
+        gameItemCustom.setScale(10f);
+        gameItems.add(gameItemCustom);
+        */
+
+        Mesh meshGrass = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
+        meshTypesMap.put("GRASS", meshGrass.setLabel("GRASS"));
+        Texture textureGrass = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_grass.png", 2, 1);
+        Material materialGrass = new Material(textureGrass);
+        materialGrass.setReflectance(1.0f);
+        materialGrass.setTransparency(1.0f);
+        meshGrass.setMaterial(materialGrass);
+
+        Mesh meshGround = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
+        meshTypesMap.put("GROUND", meshGround.setLabel("GROUND"));
+        Texture textureGround = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_ground.png", 2, 1);
+        Material materialGround = new Material(textureGround);
+        materialGround.setReflectance(1.0f);
+        materialGround.setTransparency(1.0f);
+        meshGround.setMaterial(materialGround);
+
+        Mesh meshWater = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
+        meshTypesMap.put("WATER", meshWater.setLabel("WATER"));
+        Texture textureWater = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_water.png", 2, 1);
+        Material materialWater = new Material(textureWater);
+        materialWater.setReflectance(1.0f);
+        materialWater.setTransparency(0.7f); // 0.7f
+        meshWater.setMaterial(materialWater);
+
+        Mesh meshLava = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
+        meshTypesMap.put("LAVA", meshLava.setLabel("LAVA"));
+        Texture textureLava = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_lava.png", 2, 1);
+        Material materialLava = new Material(textureLava);
+        materialLava.setReflectance(1.0f);
+        materialLava.setTransparency(1.0f);
+        meshLava.setMaterial(materialLava);
+
+        Mesh meshWood = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
+        meshTypesMap.put("WOOD", meshWood.setLabel("WOOD"));
+        Texture textureWood = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_wood.png", 2, 1);
+        Material materialWood = new Material(textureWood);
+        materialWood.setReflectance(1.0f);
+        materialWood.setTransparency(1.0f);
+        meshWood.setMaterial(materialWood);
+
+        Mesh meshTreetop = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
+        meshTypesMap.put("TREETOP", meshTreetop.setLabel("TREETOP"));
+        Texture textureTreetop = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_treetop.png", 2, 1);
+        Material materialTreetop = new Material(textureTreetop);
+        materialTreetop.setReflectance(1.0f);
+        materialTreetop.setTransparency(0.8f);
+        meshTreetop.setMaterial(materialTreetop);
+
+        Mesh meshOakwood = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
+        meshTypesMap.put("OAKWOOD", meshOakwood.setLabel("OAKWOOD"));
+        Texture textureOakwood = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_oakwood.png", 2, 1);
+        Material materialOakwood = new Material(textureOakwood);
+        materialOakwood.setReflectance(1.0f);
+        materialOakwood.setTransparency(1.0f);
+        meshOakwood.setMaterial(materialOakwood);
+
+        Mesh meshGlass = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
+        meshTypesMap.put("GLASS", meshGlass.setLabel("GLASS"));
+        Texture textureGlass = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_glass.png", 2, 1);
+        Material materialGlass = new Material(textureGlass);
+        materialGlass.setReflectance(1.0f);
+        materialGlass.setTransparency(0.6f);
+        meshGlass.setMaterial(materialGlass);
+
+        Mesh meshCobble = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
+        meshTypesMap.put("COBBLE", meshCobble.setLabel("COBBLE"));
+        Texture textureCobble = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_cobble.png", 2, 1);
+        Material materialCobble = new Material(textureCobble);
+        materialCobble.setReflectance(1.0f);
+        materialCobble.setTransparency(1.0f);
+        meshCobble.setMaterial(materialCobble);
+
+        Mesh meshStairs = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/stairs.obj", 5000);
+        meshTypesMap.put("STAIRS", meshStairs.setLabel("STAIRS"));
+        Texture textureStairs = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_stairs.png", 2, 1);
+        Material materialStairs = new Material(textureStairs);
+        materialStairs.setReflectance(1.0f);
+        materialStairs.setTransparency(1.0f);
+        meshStairs.setMaterial(materialStairs);
+        meshStairs.setSymetric(false);
+
+        Mesh meshStairsCorner = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/stairs_corner.obj", 5000);
+        meshTypesMap.put("STAIRS_CORNER", meshStairsCorner.setLabel("STAIRS_CORNER"));
+        meshStairsCorner.setMaterial(materialStairs);
+        meshStairsCorner.setSymetric(false);
+        meshStairsCorner.setCorner(true);
+
+        Mesh meshStairsCornerInner = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/stairs_inner_corner.obj", 5000);
+        meshTypesMap.put("STAIRS_CORNER_INNER", meshStairsCornerInner.setLabel("STAIRS_CORNER_INNER"));
+        meshStairsCornerInner.setMaterial(materialStairs);
+        meshStairsCornerInner.setSymetric(false);
+        meshStairsCornerInner.setCorner(true);
+
+        // scene.initMeshMaps(meshTypesMap);
+
+        int skyBoxScale = 150;
+        load(meshTypesMap);
+
+        // Particles
+        int maxParticles = 200;
+        Vector3f particleSpeed = new Vector3f(0, 1, 0);
+        particleSpeed.mul(2.5f);
+        long ttl = 4000;
+        long creationPeriodMillis = 300;
+        float range = 0.2f;
+        float scale = 1.0f;
+        Mesh partMesh = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/particle.obj", maxParticles);
+        Texture particleTexture = new Texture(Config.RESOURCES_DIR + "/textures/particle_anim.png", 4, 4);
+        Material partMaterial = new Material(particleTexture);
+        partMaterial.setReflectance(1.0f);
+        partMesh.setMaterial(partMaterial);
+        Particle particle = new Particle(partMesh, particleSpeed, ttl, 100);
+        particle.setScale(scale);
+        particleEmitter = new FlowParticleEmitter(particle, maxParticles, creationPeriodMillis);
+        particleEmitter.setActive(true);
+        particleEmitter.setPositionRndRange(range);
+        particleEmitter.setSpeedRndRange(range);
+        particleEmitter.setAnimRange(10);
+        setParticleEmitters(new FlowParticleEmitter[]{particleEmitter});
+
+        // Shadows
+        setRenderShadows(false);
+
+        // Fog
+        Vector3f fogColour = new Vector3f(0.5f, 0.5f, 0.5f);
+        setFog(new Fog(true, fogColour, 0.01f));
+
+        // Setup  SkyBox
+        SkyBox skyBox = new SkyBox(Config.RESOURCES_DIR + "/models/skybox.obj", Config.RESOURCES_DIR + "/textures/skybox_minecraft.png");
+
+        skyBox.setScale(skyBoxScale);
+        setSkyBox(skyBox);
+
+        // Setup Lights
+        setupLights();        
+
+        // Setup Sounds
+        setupSounds(soundMgr, camera);
+
+        // Setup GUI
+        setupGui(meshTypesMap, guiItems, window);
+
+        camera.getPosition().x = -skyBoxScale;
+        camera.getPosition().y = 20.0f;
+        camera.getPosition().z = skyBoxScale;
+        camera.setRotation(0, 0, 0);
+    }
+
+	private void setupLights() {
+        SceneLight sceneLight = new SceneLight();
+        setSceneLight(sceneLight);
+
+        // Ambient Light
+        sceneLight.setAmbientLight(new Vector3f(0.3f, 0.3f, 0.3f));
+        sceneLight.setSkyBoxLight(new Vector3f(1.0f, 1.0f, 1.0f));
+
+        // Directional Light
+        float lightIntensity = 1.0f;
+        Vector3f lightDirection = new Vector3f(0, 1, 1);
+        DirectionalLight directionalLight = new DirectionalLight(new Vector3f(1, 1, 1), lightDirection, lightIntensity);
+        directionalLight.setShadowPosMult(10);
+        directionalLight.setOrthoCords(-10.0f, 10.0f, -10.0f, 10.0f, -1.0f, 20.0f);
+        sceneLight.setDirectionalLight(directionalLight);
+    }
+
+    private void setupSounds(SoundManager soundMgr, Camera camera) throws Exception {
+
+        soundMgr.init();
+        soundMgr.setAttenuationModel(AL11.AL_EXPONENT_DISTANCE);
+
+        SoundBuffer buffBackground = new SoundBuffer(Config.RESOURCES_DIR + "/sounds/tomb_raider_01.ogg");
+        soundMgr.addSoundBuffer(buffBackground);
+        SoundSource sourceBackground = new SoundSource(true, true);
+        sourceBackground.setPosition(camera.getPosition());
+        sourceBackground.setBuffer(buffBackground.getBufferId());
+        soundMgr.addSoundSource(Sounds.BACKGROUND.toString(), sourceBackground);
+        sourceBackground.play();
+        sourceBackground.setGain(0.3f);
+        soundMgr.setListener(new SoundListener(new Vector3f(0, 0, 0)));
+    }
+
+    private void setupGui(HashMap<String, Mesh> meshTypesMap, List<GuiElement> guiItems, Window window) throws Exception {
+
+    	// bullseye
+    	Texture textureBullseye = new Texture(Config.RESOURCES_DIR +  "/textures/bullseye.png");
+    	GuiElement guiBullseye = new GuiElement(textureBullseye, new Vector3f(0f, 0f, 1), new Vector2f(0.026f, 0.04f));
+    	guiItems.add(guiBullseye);
+
+    	// inventory
+    	Texture texturePanelInventory = new Texture(Config.RESOURCES_DIR +  "/textures/window.png");
+    	GuiElement guiPanelInventory = new GuiElement(texturePanelInventory, new Vector3f(0.0f, -0.01f, 1), new Vector2f(0.3304f, 0.790f));
+    	// GuiButton guiPanelInventory = new GuiButton(texturePanelInventory, new Vector3f(0.0f, -0.01f, 1), new Vector2f(0.33f, 0.790f));
+    	guiPanelInventory.setInventory(true);
+    	guiItems.add(guiPanelInventory);
+
+    	Texture textureBtnStairs = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_stairs.png");
+    	GuiElement guiButtonStairs = new GuiElement(textureBtnStairs, new Vector3f(-0.21f, 0.56f, 1), new Vector2f(0.1f, 0.18f));
+    	guiButtonStairs.setInventory(true).setClickable(true);
+    	guiButtonStairs.setMesh(meshTypesMap.get("STAIRS"));
+    	guiItems.add(guiButtonStairs);
+
+    	Texture textureBtnStairsCorner = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_stairs_corner.png");
+    	GuiElement guiButtonStairsCorner = new GuiElement(textureBtnStairsCorner, new Vector3f(0.0f, 0.56f, 1), new Vector2f(0.1f, 0.18f));
+    	guiButtonStairsCorner.setInventory(true).setClickable(true);
+    	guiButtonStairsCorner.setMesh(meshTypesMap.get("STAIRS_CORNER"));
+    	guiItems.add(guiButtonStairsCorner);
+
+    	Texture textureBtnStairsCornerInner = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_stairs_corner_inner.png");
+    	GuiElement guiButtonStairsCornerInner = new GuiElement(textureBtnStairsCornerInner, new Vector3f(0.21f, 0.56f, 1), new Vector2f(0.1f, 0.18f));
+    	guiButtonStairsCornerInner.setInventory(true).setClickable(true);
+    	guiButtonStairsCornerInner.setMesh(meshTypesMap.get("STAIRS_CORNER_INNER"));
+    	guiItems.add(guiButtonStairsCornerInner);
+
+    	Texture textureBtnOakWood = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_oakwood.png");
+    	GuiElement guiButtonOakWood = new GuiElement(textureBtnOakWood, new Vector3f(-0.21f, 0.18f, 1), new Vector2f(0.1f, 0.18f));
+    	guiButtonOakWood.setInventory(true).setClickable(true);
+    	guiButtonOakWood.setMesh(meshTypesMap.get("OAKWOOD"));
+    	guiItems.add(guiButtonOakWood);
+
+    	Texture textureBtnWood = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_wood.png");
+    	GuiElement guiButtonWood = new GuiElement(textureBtnWood, new Vector3f(0.0f, 0.18f, 1), new Vector2f(0.1f, 0.18f));
+    	guiButtonWood.setInventory(true).setClickable(true);
+    	guiButtonWood.setMesh(meshTypesMap.get("WOOD"));
+    	guiItems.add(guiButtonWood);
+
+    	Texture textureBtnCobble = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_cobble.png");
+    	GuiElement guiButtonCobble = new GuiElement(textureBtnCobble, new Vector3f(0.21f, 0.18f, 1), new Vector2f(0.1f, 0.18f));
+    	guiButtonCobble.setInventory(true).setClickable(true);
+    	guiButtonCobble.setMesh(meshTypesMap.get("COBBLE"));
+    	guiItems.add(guiButtonCobble);
+
+    	Texture textureBtnGrass = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_grass.png");
+    	GuiElement guiButtonGrass = new GuiElement(textureBtnGrass, new Vector3f(-0.21f, -0.2f, 1), new Vector2f(0.1f, 0.18f));
+    	guiButtonGrass.setInventory(true).setClickable(true);
+    	guiButtonGrass.setMesh(meshTypesMap.get("GRASS"));
+    	guiItems.add(guiButtonGrass);
+
+    	Texture textureBtnGround = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_ground.png");
+    	GuiElement guiButtonGround = new GuiElement(textureBtnGround, new Vector3f(0f, -0.2f, 1), new Vector2f(0.1f, 0.18f));
+    	guiButtonGround.setInventory(true).setClickable(true);
+    	guiButtonGround.setMesh(meshTypesMap.get("GROUND"));
+    	guiItems.add(guiButtonGround);
+
+    	Texture textureBtnWater = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_water.png");
+    	GuiElement guiButtonWater = new GuiElement(textureBtnWater, new Vector3f(0.21f, -0.2f, 1), new Vector2f(0.1f, 0.18f));
+    	guiButtonWater.setInventory(true).setClickable(true);
+    	guiButtonWater.setMesh(meshTypesMap.get("WATER"));
+    	guiItems.add(guiButtonWater);
+
+    	Texture textureBtnGlass = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_glass.png");
+    	GuiElement guiButtonGlass = new GuiElement(textureBtnGlass, new Vector3f(-0.21f, -0.58f, 1), new Vector2f(0.1f, 0.18f));
+    	guiButtonGlass.setInventory(true).setClickable(true);
+    	guiButtonGlass.setMesh(meshTypesMap.get("GLASS"));
+    	guiItems.add(guiButtonGlass);
+
+    	Texture textureBtnTreetop = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_treetop.png");
+    	GuiElement guiButtonTreetop = new GuiElement(textureBtnTreetop, new Vector3f(0.21f, -0.58f, 1), new Vector2f(0.1f, 0.18f));
+    	guiButtonTreetop.setInventory(true).setClickable(true);
+    	guiButtonTreetop.setMesh(meshTypesMap.get("TREETOP"));
+    	guiItems.add(guiButtonTreetop);
+
+    	Texture textureBtnLava = new Texture(Config.RESOURCES_DIR +  "/textures/button_cube_lava.png");
+    	GuiElement guiButtonLava = new GuiElement(textureBtnLava, new Vector3f(0.0f, -0.58f, 1), new Vector2f(0.1f, 0.18f));
+    	guiButtonLava.setInventory(true).setClickable(true);
+    	guiButtonLava.setMesh(meshTypesMap.get("LAVA"));
+    	guiItems.add(guiButtonLava);
+    	
+    	// import dialog
+    	Texture texturePanel = new Texture(Config.RESOURCES_DIR +  "/textures/window.png");
+    	GuiElement guiPanel = new GuiElement(texturePanel, new Vector3f(0.0f, -0.01f, 1), new Vector2f(0.3304f, 0.790f));
+    	// GuiButton guiPanel = new GuiButton(texturePanel, new Vector3f(0.0f, -0.01f, 1), new Vector2f(0.33f, 0.790f));
+    	guiPanel.setImportDialog(true);
+    	guiItems.add(guiPanel);
+    	
+    	Texture textureLongButton = new Texture(Config.RESOURCES_DIR +  "/textures/button_long.png");
+
+    	GuiElement guiLongButton01 = new GuiElement(textureLongButton, new Vector3f(0.0f, 0.685f, 1), new Vector2f(0.31f, 0.055f)); // 0.130
+    	guiLongButton01.setImportDialog(true).setClickable(true);
+    	guiItems.add(guiLongButton01);
+
+    	GuiElement guiLongButton02 = new GuiElement(textureLongButton, new Vector3f(0.0f, 0.555f, 1), new Vector2f(0.31f, 0.055f));
+    	guiLongButton02.setImportDialog(true).setClickable(true);
+    	guiItems.add(guiLongButton02);
+    	
+    	GuiElement guiLongButton03 = new GuiElement(textureLongButton, new Vector3f(0.0f, 0.425f, 1), new Vector2f(0.31f, 0.055f));
+    	guiLongButton03.setImportDialog(true).setClickable(true);
+    	guiItems.add(guiLongButton03);
+    	
+    	GuiElement guiLongButton04 = new GuiElement(textureLongButton, new Vector3f(0.0f, 0.295f, 1), new Vector2f(0.31f, 0.055f));
+    	guiLongButton04.setImportDialog(true).setClickable(true);
+    	guiItems.add(guiLongButton04);
+
+		FontType font = FontFactory.getFont("candara", window);
+		GUIText guiText = new GUIText("snapshot_2018_06_30.txt", 2.5f, font, new Vector2f(0.0f, 0.685f), 1f, false);
+		guiText.setColor(1.0f, 1.0f, 0.9f);
+		TextMaster.setGuiText(0, guiText);
+	}
 
     public Map<Mesh, List<GameItem>> getGameMeshes() {
         return meshMap;
@@ -324,7 +655,7 @@ public class Scene {
         int waterLevel = 8;
         int grassLevel = 10;
         int lavaLevel = 12;
-        int mountLevel = 14;
+        // int mountLevel = 14;
 
         GameItem gameItem;
 

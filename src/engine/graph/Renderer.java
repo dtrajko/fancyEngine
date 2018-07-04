@@ -6,7 +6,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -26,7 +25,7 @@ import engine.graph.lights.PointLight;
 import engine.graph.lights.SpotLight;
 import engine.graph.shadow.ShadowCascade;
 import engine.graph.shadow.ShadowRenderer;
-import engine.gui.GuiElement;
+import engine.gui.GuiManager;
 import engine.gui.GuiRenderer;
 import engine.gui.fonts.TextMaster;
 import engine.items.GameItem;
@@ -466,8 +465,8 @@ public class Renderer {
         }
     }
     
-    public void renderGui(List<GuiElement> guis, Window window, boolean renderInventory, boolean renderImportDialog) {
-    	this.guiRenderer.render(guis, window, renderInventory, renderImportDialog);
+    public void renderGui(GuiManager guiManager, Window window) {
+    	this.guiRenderer.render(guiManager.getGuiIElements(), window, guiManager.isInventoryOn(), guiManager.isImportDialogOn());
     }
 
 	public void renderGuiText() {
