@@ -61,7 +61,6 @@ public class Game implements IGameLogic {
     	window = win;
         scene = new Scene();
         renderer.init(window, scene);
-        TextMaster.init();
         scene.init(meshTypesMap, particleEmitter, soundMgr, camera, guiManager, window);
         selectDetectorCamera = new CameraBoxSelectionDetector();
     }
@@ -74,7 +73,7 @@ public class Game implements IGameLogic {
         }
         renderer.render(window, camera, scene, sceneChanged);
         renderer.renderGui(guiManager, window);
-        renderer.renderGuiText(guiManager);
+        renderer.renderGuiText(guiManager, scene);
     }
 
     @Override
@@ -84,9 +83,18 @@ public class Game implements IGameLogic {
 
         guiManager.input(mouseInput, window);
 
+        if (mouseInput.isKeyReleased(GLFW.GLFW_KEY_ESCAPE)) {
+        	if (!guiManager.areAllGuisClosed()) {
+        		guiManager.closeAllGuis(window);        		
+        	} else {
+        		guiManager.toggleQuitPopup(window);        		
+        	}
+        	sceneChanged = true;
+        }
+
         if (mouseInput.isKeyReleased(GLFW.GLFW_KEY_E)) {
         	sceneChanged = true;
-        	guiManager.toggleGui(window);
+        	guiManager.toggleInventoryDialog(window);
         }
 
         if (mouseInput.isKeyReleased(GLFW.GLFW_KEY_K)) {

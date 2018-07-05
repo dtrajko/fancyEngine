@@ -13,37 +13,46 @@ import engine.loaders.RawModelLoader;
 public class TextMaster {
 
 	private static RawModelLoader loader;
-	private static Map<FontType, List<GUIText>> guiTextsMap = new HashMap<FontType, List<GUIText>>();
 	private static FontRenderer renderer;
-	private static List<GUIText> guiTexts;
+	private Map<FontType, List<GUIText>> guiTextsMap = new HashMap<FontType, List<GUIText>>();
+	private List<GUIText> guiTexts;
+	
+	public TextMaster() {
+		renderer = new FontRenderer();
+	}
 
-	public static void init() {
+	public void init() {
 		loader = new RawModelLoader();
 		guiTexts = new ArrayList<GUIText>();
+		try {
+			renderer.setupShader();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
-	public static void render() {
+	public void render() {
 		renderer.render(guiTextsMap);
 	}
-	
-	public static List<GUIText> getGuiTexts() {
+
+	public List<GUIText> getGuiTexts() {
 		return guiTexts;
 	}
 
-	public static Map<FontType, List<GUIText>> getGuiTextsMap() {
+	public Map<FontType, List<GUIText>> getGuiTextsMap() {
 		return guiTextsMap;
 	}
 
-	public static GUIText getGuiText(int index) {
+	public GUIText getGuiText(int index) {
 		return guiTexts.get(index);
 	}
 
-	public static void setGuiText(int index, GUIText newGuiText) {
+	public void setGuiText(int index, GUIText newGuiText) {
 		guiTexts.add(index, newGuiText);
+		loadText(newGuiText);
 	}
 
-	public static void loadText(GUIText text) {
-
+	public void loadText(GUIText text) {
 		FontType font = text.getFont();
 		TextMeshData textMeshData = font.loadText(text);
 		int vao = loader.loadToVAO(textMeshData.getVertexPositions(), textMeshData.getTextureCoords());
@@ -56,7 +65,7 @@ public class TextMaster {
 		textBatch.add(text);
 	}
 
-	public static void removeText(GUIText text) {
+	public void removeText(GUIText text) {
 		List<GUIText> textBatch = guiTextsMap.get(text.getFont());
 		if (textBatch != null) {
 			textBatch.remove(text);

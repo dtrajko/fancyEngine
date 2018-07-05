@@ -36,6 +36,7 @@ import engine.gui.fonts.FontFactory;
 import engine.gui.fonts.FontType;
 import engine.gui.fonts.GUIText;
 import engine.gui.fonts.TextMaster;
+import engine.gui.popups.QuitPopup;
 import engine.items.GameItem;
 import engine.items.SkyBox;
 import engine.loaders.obj.OBJLoader;
@@ -54,6 +55,8 @@ public class Scene {
     private Fog fog;
     private boolean renderShadows;
     private IParticleEmitter[] particleEmitters;
+    private static QuitPopup quit_popup;
+    private static TextMaster textMasterImportDialog;
 
     public enum Sounds {
         FIRE,
@@ -65,6 +68,7 @@ public class Scene {
         instancedMeshMap = new HashMap<InstancedMesh, List<GameItem>>();
         fog = Fog.NOFOG;
         renderShadows = true;
+        textMasterImportDialog = new TextMaster();
     }
 
     public void init(HashMap<String, Mesh> meshTypesMap, FlowParticleEmitter particleEmitter, SoundManager soundMgr, Camera camera, GuiManager guiManager, Window window) throws Exception {
@@ -81,6 +85,8 @@ public class Scene {
         gameItemCustom.setScale(10f);
         gameItems.add(gameItemCustom);
         */
+    	
+    	textMasterImportDialog.init();
 
         Mesh meshGrass = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
         meshTypesMap.put("GRASS", meshGrass.setLabel("GRASS"));
@@ -374,28 +380,35 @@ public class Scene {
     	guiLongButton04.setImportDialog(true).setClickable(true);
     	guiManager.addGuiElement(guiLongButton04);
 
-		FontType font = FontFactory.getFont("candara", window);
+    	FontType font = FontFactory.getFont("candara", window);
 
 		GUIText guiText01 = new GUIText("snapshot_2018_07_04.txt", 1.2f, font, new Vector2f(0.355f, 0.139f), 1f, false); // 0.065
 		guiText01.setColor(1.0f, 1.0f, 1.0f);
-		TextMaster.setGuiText(0, guiText01);
-		TextMaster.loadText(guiText01);
+		textMasterImportDialog.setGuiText(0, guiText01);
 		
 		GUIText guiText02 = new GUIText("snapshot_2018_07_03.txt", 1.2f, font, new Vector2f(0.355f, 0.204f), 1f, false);
 		guiText02.setColor(1.0f, 1.0f, 1.0f);
-		TextMaster.setGuiText(0, guiText02);
-		TextMaster.loadText(guiText02);
+		textMasterImportDialog.setGuiText(0, guiText02);
 		
 		GUIText guiText03 = new GUIText("snapshot_2018_07_02.txt", 1.2f, font, new Vector2f(0.355f, 0.269f), 1f, false);
 		guiText03.setColor(1.0f, 1.0f, 1.0f);
-		TextMaster.setGuiText(0, guiText03);
-		TextMaster.loadText(guiText03);
+		textMasterImportDialog.setGuiText(0, guiText03);
 		
 		GUIText guiText04 = new GUIText("snapshot_2018_07_01.txt", 1.2f, font, new Vector2f(0.355f, 0.334f), 1f, false);
 		guiText04.setColor(1.0f, 1.0f, 1.0f);
-		TextMaster.setGuiText(0, guiText04);
-		TextMaster.loadText(guiText04);
+		textMasterImportDialog.setGuiText(0, guiText04);
+		
+		quit_popup = new QuitPopup();
+		quit_popup.init(guiManager, window);
 	}
+
+    public QuitPopup getQuitPopup() {
+    	return quit_popup;
+    }
+
+    public TextMaster getTextMasterImportDialog() {
+    	return textMasterImportDialog;
+    }
 
     public Map<Mesh, List<GameItem>> getGameMeshes() {
         return meshMap;
@@ -584,6 +597,12 @@ public class Scene {
 	}
 
 	public void save() {
+		
+		if (instancedMeshMap.isEmpty()) {
+			System.err.println("[Scene::save()] Failed to save the scene, instancedMeshMap is empty.");
+			return;
+		}
+
 		PrintWriter out;
 		try {
 			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy_MM_dd"); // yyyy_MM_dd_HH_mm_ss

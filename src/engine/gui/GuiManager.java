@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFW;
+
+import engine.Scene;
 import engine.Window;
 import engine.graph.MouseInput;
 
@@ -12,11 +14,12 @@ public class GuiManager {
 	private long toggleGuiLastTime;
     private boolean inventoryOn = false;
     private boolean importDialogOn = false;
+    private boolean quitPopupOn = false;
     private List<GuiElement> guiElements = new ArrayList<GuiElement>();
     GuiElement nextBlock;
     private boolean updateEnabled = true;
 
-    public List<GuiElement> getGuiIElements() {
+    public List<GuiElement> getGuiElements() {
     	return guiElements;
     }
 
@@ -26,16 +29,16 @@ public class GuiManager {
 		return new Vector2f(x, y);
 	}
 	
-    public GuiElement selectGuiItem(Vector2f mousePos, List<GuiElement> guiItems, boolean renderInventory, boolean renderImportDialog) {
+    public GuiElement selectGuiItem(Vector2f mousePos) {
     	GuiElement selectedGuiItem = null;
-        for (GuiElement guiItem : guiItems) {
+        for (GuiElement guiItem : guiElements) {
         	if (!guiItem.isClickable()) {
         		continue;
         	}
-			if (guiItem.isImportDialog() && !renderImportDialog) {
+			if (guiItem.isImportDialog() && !importDialogOn) {
 				continue;
 			}
-			if (guiItem.isInventory() && !renderInventory) {
+			if (guiItem.isInventory() && !inventoryOn) {
 				continue;
 			}
         	guiItem.setSelected(false);
@@ -55,14 +58,14 @@ public class GuiManager {
         		for (GuiElement gb : guiElements) {
         			gb.setMouseOver(false);
         		}
-	        	nextBlock = selectGuiItem(mouseNDC, guiElements, inventoryOn, importDialogOn);
+	        	nextBlock = selectGuiItem(mouseNDC);
 	        	if (nextBlock instanceof GuiElement && nextBlock.isInventory()) {
 	        		nextBlock.setMouseOver(true);
 	        	}
 	        if (mouseInput.isMouseButtonReleased(GLFW.GLFW_MOUSE_BUTTON_1) || 
 	        	mouseInput.isMouseButtonReleased(GLFW.GLFW_MOUSE_BUTTON_2) ||
 	        	mouseInput.isMouseButtonReleased(GLFW.GLFW_MOUSE_BUTTON_3)) {
-	        	toggleGui(window);
+	        	toggleInventoryDialog(window);
 	        }
         }
 
@@ -73,7 +76,7 @@ public class GuiManager {
         		for (GuiElement gb : guiElements) {
         			gb.setMouseOver(false);
         		}
-	        	nextBlock = selectGuiItem(mouseNDC, guiElements, inventoryOn, importDialogOn);
+	        	nextBlock = selectGuiItem(mouseNDC);
 	        	if (nextBlock instanceof GuiElement && nextBlock.isImportDialog()) {
 	        		nextBlock.setMouseOver(true);
 	        	}
@@ -83,18 +86,48 @@ public class GuiManager {
 	        	this.toggleImportDialog(window);
 	        }
         }
+        
+        if (quitPopupOn) {
+        	Vector2f mouseNDC = getNormalisedDeviceCoordinates(
+	        		(float) mouseInput.getMousePosition().x,
+	        		(float) mouseInput.getMousePosition().y, window);
+        		for (GuiElement gb : guiElements) {
+        			gb.setMouseOver(false);
+        		}
+	        	GuiElement nextBlock = selectGuiItem(mouseNDC);
+	        	if (nextBlock instanceof GuiElement && nextBlock.isQuitPopup()) {
+	        		nextBlock.setMouseOver(true);
+	        	}
+	        if (mouseInput.isMouseButtonReleased(GLFW.GLFW_MOUSE_BUTTON_1) || 
+	        	mouseInput.isMouseButtonReleased(GLFW.GLFW_MOUSE_BUTTON_2) ||
+	        	mouseInput.isMouseButtonReleased(GLFW.GLFW_MOUSE_BUTTON_3)) {
+	        	toggleQuitPopup(window);
+	        	if (nextBlock instanceof GuiElement && nextBlock.isCancelButton()) {
+	        		// do nothing, close the popup
+	        	}
+	        	if (nextBlock instanceof GuiElement && nextBlock.isConfirmButton()) {
+	        		window.close();	        		
+	        	}	        	
+	        }
+        }
+
+        // Scene.getQuitPopup().input(this, mouseInput, window, updateEnabled);
+
         return updateEnabled;
 	}
 
-	public void toggleGui(Window window) {
+    private void slowdownGuiUpdates() {
     	long currentTime = System.currentTimeMillis();
     	if (currentTime - toggleGuiLastTime < 100) {
     		return;
     	}
     	toggleGuiLastTime = currentTime;
+	}
 
+	public void toggleInventoryDialog(Window window) {
+		slowdownGuiUpdates();
     	if (!inventoryOn) {
-    		closeAllGuis();
+    		closeAllGuis(window);
     		inventoryOn = true;
     		updateEnabled = false;
     		GLFW.glfwSetInputMode(window.getWindowHandle(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
@@ -105,15 +138,10 @@ public class GuiManager {
     	}
 	}
 
-    public void toggleImportDialog(Window window) {
-    	long currentTime = System.currentTimeMillis();
-    	if (currentTime - toggleGuiLastTime < 100) {
-    		return;
-    	}
-    	toggleGuiLastTime = currentTime;
-    	
+	public void toggleImportDialog(Window window) {
+		slowdownGuiUpdates();
     	if (!importDialogOn) {
-    		closeAllGuis();
+    		closeAllGuis(window);
     		importDialogOn = true;
     		updateEnabled = false;
     		GLFW.glfwSetInputMode(window.getWindowHandle(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
@@ -124,10 +152,18 @@ public class GuiManager {
     	}
 	}
 	
-	private void closeAllGuis() {
+    public void closeAllGuis(Window window) {
+    	slowdownGuiUpdates();
 		inventoryOn = false;
 		importDialogOn = false;
+		quitPopupOn = false;
+		updateEnabled = true;
+		GLFW.glfwSetInputMode(window.getWindowHandle(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_DISABLED);
 	}
+    
+    public boolean areAllGuisClosed() {
+    	return !inventoryOn && !importDialogOn && !quitPopupOn;
+    }
 
 	public boolean isInventoryOn() {
 		return inventoryOn;
@@ -147,5 +183,28 @@ public class GuiManager {
 
 	public void addGuiElement(GuiElement guiElement) {
 		guiElements.add(guiElement);
+	}
+
+	public void toggleQuitPopup(Window window) {
+    	long currentTime = System.currentTimeMillis();
+    	if (currentTime - toggleGuiLastTime < 100) {
+    		return;
+    	}
+    	toggleGuiLastTime = currentTime;
+
+    	if (!quitPopupOn) {
+    		closeAllGuis(window);
+    		quitPopupOn = true;
+    		updateEnabled = false;
+    		GLFW.glfwSetInputMode(window.getWindowHandle(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
+    	} else {
+    		quitPopupOn = false;
+    		updateEnabled = true;
+    		GLFW.glfwSetInputMode(window.getWindowHandle(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_DISABLED);
+    	}
+	}
+
+	public boolean isQuitDialogOn() {
+		return quitPopupOn;
 	}
 }

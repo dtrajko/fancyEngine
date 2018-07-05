@@ -46,11 +46,14 @@ public class GuiRenderer {
 		GL20.glEnableVertexAttribArray(0);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
-		for (GuiElement gui:guiManager.getGuiIElements()) {
+		for (GuiElement gui:guiManager.getGuiElements()) {
 			if (gui.isInventory() && !guiManager.isInventoryOn()) {
 				continue;
 			}
 			if (gui.isImportDialog() && !guiManager.isImportDialogOn()) {
+				continue;
+			}
+			if (gui.isQuitPopup() && !guiManager.isQuitDialogOn()) {
 				continue;
 			}
 			GL13.glActiveTexture(GL13.GL_TEXTURE0);

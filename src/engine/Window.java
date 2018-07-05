@@ -82,8 +82,8 @@ public class Window {
 
         // Setup a key callback. It will be called every time a key is pressed, repeated or released.
         glfwSetKeyCallback(windowHandle, (window, key, scancode, action, mods) -> {
-            if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
-                glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop
+            if (key == GLFW_KEY_F4 && action == GLFW_RELEASE) {
+            	glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop
             }
         });
 
@@ -138,6 +138,10 @@ public class Window {
         }        
     }
     
+    public void close() {
+    	glfwSetWindowShouldClose(windowHandle, true);
+    }
+
     public void setMousePositionCenter() {
     	int xpos = getWidth() / 2;
     	int ypos = getHeight() / 2;

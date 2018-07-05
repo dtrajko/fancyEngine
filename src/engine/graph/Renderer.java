@@ -28,7 +28,10 @@ import engine.graph.shadow.ShadowRenderer;
 import engine.gui.GuiManager;
 import engine.gui.GuiRenderer;
 import engine.gui.fonts.TextMaster;
+import engine.gui.popups.QuitPopup;
 import engine.gui.fonts.FontRenderer;
+import engine.gui.fonts.FontType;
+import engine.gui.fonts.GUIText;
 import engine.items.GameItem;
 import engine.items.SkyBox;
 import game.Hud;
@@ -473,9 +476,12 @@ public class Renderer {
     	this.guiRenderer.render(guiManager, window);
     }
 
-	public void renderGuiText(GuiManager guiManager) {
+	public void renderGuiText(GuiManager guiManager, Scene scene) {
 		if(guiManager.isImportDialogOn()) {
-			textRenderer.render(TextMaster.getGuiTextsMap());			
+			textRenderer.render(scene.getTextMasterImportDialog().getGuiTextsMap());			
+		}
+		if(guiManager.isQuitDialogOn()) {
+			scene.getQuitPopup().render();
 		}
 	}
 

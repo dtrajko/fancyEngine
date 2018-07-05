@@ -13,6 +13,9 @@ import engine.graph.ShaderProgram;
 public class FontRenderer {
 	
 	private ShaderProgram guiShaderProgram;
+	
+	public FontRenderer() {
+	}
 
 	public void setupShader() throws Exception {
 		guiShaderProgram = new ShaderProgram();

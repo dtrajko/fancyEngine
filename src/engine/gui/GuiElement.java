@@ -14,8 +14,11 @@ public class GuiElement {
 	private boolean mouseOver;
 	private boolean inventory;
 	private boolean importDialog;
+	private boolean quitPopup;
 	private boolean isClickable;
 	private Mesh mesh = null;
+	private boolean isCancelButton;
+	private boolean isConfirmButton;
 
 	public GuiElement(Texture texture, Vector3f position, Vector2f scale) {
 		super();
@@ -25,6 +28,7 @@ public class GuiElement {
 		mouseOver = false;
 		inventory = false;
 		importDialog = false;
+		quitPopup = false;
 		isClickable = false;
 	}
 
@@ -101,5 +105,32 @@ public class GuiElement {
 	
 	public Mesh getMesh() {
 		return mesh;
+	}
+
+	public GuiElement setQuitPopup(boolean value) {
+		this.quitPopup = value;
+		return this;
+	}
+
+	public boolean isQuitPopup() {
+		return quitPopup;
+	}
+
+	public boolean isCancelButton() {
+		return isCancelButton;
+	}
+
+	public boolean isConfirmButton() {
+		return isConfirmButton;
+	}
+	
+	public GuiElement setCancelButton(boolean value) {
+		isCancelButton = value;
+		return this;
+	}
+
+	public GuiElement setConfirmButton(boolean value) {
+		isConfirmButton = value;
+		return this;
 	}
 }
