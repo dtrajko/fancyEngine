@@ -70,6 +70,7 @@ public class Scene {
     }
 
     public void init(HashMap<String, Mesh> meshTypesMap, FlowParticleEmitter particleEmitter, SoundManager soundMgr, Camera camera, GuiManager guiManager, Window window) throws Exception {
+
         /*
         Mesh meshCustom = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/minecraft_sword.obj");
         Texture textureCustom = new Texture(Config.RESOURCES_DIR +  "/textures/minecraft_sword.png");
@@ -180,7 +181,7 @@ public class Scene {
         // scene.initMeshMaps(meshTypesMap);
 
         int skyBoxScale = 150;
-        load(meshTypesMap);
+        load(meshTypesMap, "snapshot.txt");
 
         // Particles
         int maxParticles = 200;
@@ -577,9 +578,9 @@ public class Scene {
 		}
 	}
 
-	public void load(HashMap<String, Mesh> meshTypesMap) {
-		
-		String importFilePath = Config.RESOURCES_DIR + "/saves/snapshot.txt";
+	public void load(HashMap<String, Mesh> meshTypesMap, String saveFile) {
+
+		String importFilePath = Config.RESOURCES_DIR + "/saves/" + saveFile;
 		List<GameItem> gameItems = new ArrayList<GameItem>();
 		GameItem gameItem;
 		List<String> lines;

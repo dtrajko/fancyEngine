@@ -20,6 +20,7 @@ public class GuiElement {
 	private boolean isCancelButton;
 	private boolean isConfirmButton;
 	private boolean isSplashBackground;
+	private String title;
 
 	public GuiElement(Texture texture, Vector3f position, Vector2f scale) {
 		super();
@@ -142,5 +143,13 @@ public class GuiElement {
 	public GuiElement setSplashBackground(boolean value) {
 		isSplashBackground = value;
 		return this;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+	
+	public String getTitle() {
+		return title;
 	}
 }

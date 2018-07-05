@@ -22,7 +22,7 @@ public class Game implements IGameLogic {
     private final Vector3f cameraInc;
     private final Renderer renderer;
     private final Camera camera;
-    private Scene scene;
+    private static Scene scene;
     private static final float CAMERA_POS_STEP = 0.1f;
     private float angleInc;
     private float lightAngle;
@@ -42,7 +42,7 @@ public class Game implements IGameLogic {
 
     public static final int blockScale = 1;
 
-    private HashMap<String, Mesh> meshTypesMap = new HashMap<String, Mesh>();
+    private static HashMap<String, Mesh> meshTypesMap = new HashMap<String, Mesh>();
 
     public Game() {
         renderer = new Renderer();
@@ -79,7 +79,7 @@ public class Game implements IGameLogic {
     	sceneChanged = false;
         cameraInc.set(0, 0, 0);
 
-        guiManager.input(mouseInput, window);
+        guiManager.input(mouseInput, window, scene);
 
         if (mouseInput.isKeyReleased(GLFW.GLFW_KEY_ESCAPE)) {
         	if (!guiManager.areAllGuisClosed()) {
@@ -245,5 +245,13 @@ public class Game implements IGameLogic {
         renderer.cleanup();
         scene.cleanup();
         soundMgr.cleanup();
-    }    
+    }
+    
+    public static HashMap<String, Mesh> getMeshTypesMap() {
+    	return meshTypesMap;
+    }
+
+    public static Scene getScene() {
+    	return scene;
+    }
 }

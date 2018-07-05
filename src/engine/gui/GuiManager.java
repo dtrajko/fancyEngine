@@ -7,6 +7,7 @@ import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
 import config.Config;
+import engine.Scene;
 import engine.Window;
 import engine.graph.MouseInput;
 import engine.graph.Texture;
@@ -56,7 +57,7 @@ public class GuiManager {
     	return guiElements;
     }
 
-	public boolean input(MouseInput mouseInput, Window window) {
+	public boolean input(MouseInput mouseInput, Window window, Scene scene) {
 
         if (inventoryOn) {
         	Vector2f mouseNDC = getNormalisedDeviceCoordinates(
@@ -77,7 +78,7 @@ public class GuiManager {
         }
 
         if (import_popup.isEnabled()) {
-        	import_popup.input(this, mouseInput, window);
+        	import_popup.input(this, mouseInput, window, scene);
         }
         
         if (quit_popup.isEnabled()) {
