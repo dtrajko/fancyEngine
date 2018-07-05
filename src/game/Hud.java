@@ -26,7 +26,7 @@ public class Hud implements IHud {
     private TextItem statusTextItem;
     private TextItem bullseyeTextItem;
     private Window window;
-    
+
     private static final String FONT_NAME = "BOLD";
     private long vg;
     private NVGColor colour;

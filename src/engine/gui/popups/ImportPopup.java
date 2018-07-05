@@ -5,7 +5,6 @@ import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
 import config.Config;
-import engine.Scene;
 import engine.Window;
 import engine.graph.MouseInput;
 import engine.graph.Texture;

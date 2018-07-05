@@ -1,7 +1,5 @@
 package engine.gui.fonts;
 
-import java.io.File;
-
 import engine.Window;
 
 /**

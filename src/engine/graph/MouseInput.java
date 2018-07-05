@@ -17,13 +17,11 @@ public class MouseInput {
     private boolean inWindow = false;
     private boolean leftButtonPressed = false;
     private boolean rightButtonPressed = false;
-    
     private boolean keys[];
     private boolean buttons[];
     private long window;
-    
     private float mouseWheelDirection;
-    private float mouseWheelDirectionPrev;
+    // private float mouseWheelDirectionPrev;
 
     public MouseInput(Window window) {
         previousPos = new Vector2d(0, 0);

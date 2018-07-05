@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFW;
-
-import engine.Scene;
 import engine.Window;
 import engine.graph.MouseInput;
 import engine.gui.popups.ImportPopup;

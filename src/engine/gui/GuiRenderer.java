@@ -7,11 +7,9 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
 import config.Config;
-import engine.Scene;
 import engine.Utils;
 import engine.Window;
 import engine.graph.ShaderProgram;
-import engine.graph.Transformation;
 import engine.models.RawModel;
 import engine.utils.Maths;
 
@@ -19,14 +17,12 @@ public class GuiRenderer {
 
 	private final RawModel quad;
 	private ShaderProgram guiShaderProgram;
-	private final Transformation transformation;
 	private GuiLoader loader;
 
 	public GuiRenderer() {
 		float[] positions = { -1, 1, -1, -1, 1, 1, 1, -1};
 		loader = new GuiLoader();
 		this.quad = loader.loadToVAO(positions);
-		transformation = new Transformation();
 	}
 
 	public void setupGuiShader() throws Exception {

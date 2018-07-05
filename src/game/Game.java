@@ -14,8 +14,6 @@ import engine.graph.Renderer;
 import engine.graph.particles.FlowParticleEmitter;
 import engine.gui.GuiElement;
 import engine.gui.GuiManager;
-import engine.gui.fonts.GUIText;
-import engine.gui.fonts.TextMaster;
 import engine.sound.SoundManager;
 
 public class Game implements IGameLogic {
