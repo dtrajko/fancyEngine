@@ -19,6 +19,7 @@ public class GuiElement {
 	private Mesh mesh = null;
 	private boolean isCancelButton;
 	private boolean isConfirmButton;
+	private boolean isSplashBackground;
 
 	public GuiElement(Texture texture, Vector3f position, Vector2f scale) {
 		super();
@@ -123,7 +124,11 @@ public class GuiElement {
 	public boolean isConfirmButton() {
 		return isConfirmButton;
 	}
-	
+
+	public boolean isSplashBackground() {
+		return isSplashBackground;
+	}
+
 	public GuiElement setCancelButton(boolean value) {
 		isCancelButton = value;
 		return this;
@@ -131,6 +136,11 @@ public class GuiElement {
 
 	public GuiElement setConfirmButton(boolean value) {
 		isConfirmButton = value;
+		return this;
+	}
+
+	public GuiElement setSplashBackground(boolean value) {
+		isSplashBackground = value;
 		return this;
 	}
 }

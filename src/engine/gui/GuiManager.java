@@ -3,9 +3,13 @@ package engine.gui;
 import java.util.ArrayList;
 import java.util.List;
 import org.joml.Vector2f;
+import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
+
+import config.Config;
 import engine.Window;
 import engine.graph.MouseInput;
+import engine.graph.Texture;
 import engine.gui.popups.ImportPopup;
 import engine.gui.popups.QuitPopup;
 
@@ -21,6 +25,18 @@ public class GuiManager {
     private static ImportPopup import_popup;
 
 	public void init(Window window) {
+
+    	// import dialog
+    	Texture txSplashBackground;
+		try {
+			txSplashBackground = new Texture(Config.RESOURCES_DIR +  "/textures/splash_background.png");
+			GuiElement guiSplashBackground = new GuiElement(txSplashBackground, new Vector3f(0.0f, 0.0f, 1), new Vector2f(1.0f, 1.0f));
+			guiSplashBackground.setSplashBackground(true);
+			addGuiElement(guiSplashBackground);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 		import_popup = new ImportPopup();
 		import_popup.init(this, window);
 		

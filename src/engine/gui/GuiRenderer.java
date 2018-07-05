@@ -53,6 +53,9 @@ public class GuiRenderer {
 			if (gui.isQuitPopup() && !guiManager.getQuitPopup().isEnabled()) {
 				continue;
 			}
+			if (gui.isSplashBackground() && guiManager.areAllGuisClosed()) {
+				continue;
+			}
 			GL13.glActiveTexture(GL13.GL_TEXTURE0);
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, gui.getTexture());
 			Matrix4f orthoMatrix = Maths.createTransformationMatrix(gui.getGuiTexture().getPosition(), gui.getGuiTexture().getRotation(), gui.getGuiTexture().getScale());

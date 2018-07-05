@@ -272,6 +272,8 @@ public class Scene {
     	GuiElement guiBullseye = new GuiElement(textureBullseye, new Vector3f(0f, 0f, 1), new Vector2f(0.026f, 0.04f));
     	guiManager.addGuiElement(guiBullseye);
 
+    	guiManager.init(window);
+
     	// inventory
     	Texture texturePanelInventory = new Texture(Config.RESOURCES_DIR +  "/textures/window.png");
     	GuiElement guiPanelInventory = new GuiElement(texturePanelInventory, new Vector3f(0.0f, -0.01f, 1), new Vector2f(0.3304f, 0.790f));
@@ -350,8 +352,6 @@ public class Scene {
     	guiButtonLava.setInventory(true).setClickable(true);
     	guiButtonLava.setMesh(meshTypesMap.get("LAVA"));
     	guiManager.addGuiElement(guiButtonLava);
-
-    	guiManager.init(window);
 	}
 
     public Map<Mesh, List<GameItem>> getGameMeshes() {
