@@ -7,6 +7,7 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
 import config.Config;
+import engine.Scene;
 import engine.Utils;
 import engine.Window;
 import engine.graph.ShaderProgram;
@@ -50,10 +51,10 @@ public class GuiRenderer {
 			if (gui.isInventory() && !guiManager.isInventoryOn()) {
 				continue;
 			}
-			if (gui.isImportDialog() && !guiManager.isImportDialogOn()) {
+			if (gui.isImportDialog() && !guiManager.getImportPopup().isEnabled()) {
 				continue;
 			}
-			if (gui.isQuitPopup() && !guiManager.isQuitDialogOn()) {
+			if (gui.isQuitPopup() && !guiManager.getQuitPopup().isEnabled()) {
 				continue;
 			}
 			GL13.glActiveTexture(GL13.GL_TEXTURE0);

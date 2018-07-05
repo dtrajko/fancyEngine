@@ -476,12 +476,12 @@ public class Renderer {
     	this.guiRenderer.render(guiManager, window);
     }
 
-	public void renderGuiText(GuiManager guiManager, Scene scene) {
-		if(guiManager.isImportDialogOn()) {
-			textRenderer.render(scene.getTextMasterImportDialog().getGuiTextsMap());			
+	public void renderGuiText(GuiManager guiManager) {
+		if (guiManager.getImportPopup().isEnabled()) {
+			guiManager.getImportPopup().render();
 		}
-		if(guiManager.isQuitDialogOn()) {
-			scene.getQuitPopup().render();
+		if(guiManager.getQuitPopup().isEnabled()) {
+			guiManager.getQuitPopup().render();
 		}
 	}
 

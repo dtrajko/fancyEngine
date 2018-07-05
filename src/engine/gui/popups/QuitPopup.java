@@ -5,6 +5,7 @@ import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
 import config.Config;
+import engine.Scene;
 import engine.Window;
 import engine.graph.MouseInput;
 import engine.graph.Texture;
@@ -17,7 +18,7 @@ import engine.gui.fonts.TextMaster;
 
 public class QuitPopup {
 	
-	boolean quitDialogOn = false;
+	boolean enabled = false;
 	TextMaster textMaster;
 	
 	public QuitPopup() {
@@ -69,15 +70,43 @@ public class QuitPopup {
 		textMaster.setGuiText(0, guiConfirm);
 	}
 
-	public boolean input(GuiManager guiManager, MouseInput mouseInput, Window window, boolean updateEnabled) {
-        return updateEnabled;
+	public void input(GuiManager guiManager, MouseInput mouseInput, Window window) {
+    	Vector2f mouseNDC = guiManager.getNormalisedDeviceCoordinates(
+        		(float) mouseInput.getMousePosition().x,
+        		(float) mouseInput.getMousePosition().y, window);
+    		for (GuiElement gb : guiManager.getGuiElements()) {
+    			gb.setMouseOver(false);
+    		}
+        	GuiElement nextBlock = guiManager.selectGuiItem(mouseNDC);
+        	if (nextBlock instanceof GuiElement && nextBlock.isQuitPopup()) {
+        		nextBlock.setMouseOver(true);
+        	}
+        if (mouseInput.isMouseButtonReleased(GLFW.GLFW_MOUSE_BUTTON_1) || 
+        	mouseInput.isMouseButtonReleased(GLFW.GLFW_MOUSE_BUTTON_2) ||
+        	mouseInput.isMouseButtonReleased(GLFW.GLFW_MOUSE_BUTTON_3)) {
+        	guiManager.toggleQuitPopup(window);
+        	if (nextBlock instanceof GuiElement && nextBlock.isCancelButton()) {
+        		// do nothing, close the popup
+        	}
+        	if (nextBlock instanceof GuiElement && nextBlock.isConfirmButton()) {
+        		window.close();	        		
+        	}	        	
+        }
 	}
-	
+
     public TextMaster getTextMaster() {
     	return textMaster;
     }
 
 	public void render() {
 		textMaster.render();
+	}
+	
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean value) {
+		enabled = value;
 	}
 }

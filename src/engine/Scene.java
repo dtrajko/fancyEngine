@@ -36,6 +36,7 @@ import engine.gui.fonts.FontFactory;
 import engine.gui.fonts.FontType;
 import engine.gui.fonts.GUIText;
 import engine.gui.fonts.TextMaster;
+import engine.gui.popups.ImportPopup;
 import engine.gui.popups.QuitPopup;
 import engine.items.GameItem;
 import engine.items.SkyBox;
@@ -55,8 +56,6 @@ public class Scene {
     private Fog fog;
     private boolean renderShadows;
     private IParticleEmitter[] particleEmitters;
-    private static QuitPopup quit_popup;
-    private static TextMaster textMasterImportDialog;
 
     public enum Sounds {
         FIRE,
@@ -68,7 +67,6 @@ public class Scene {
         instancedMeshMap = new HashMap<InstancedMesh, List<GameItem>>();
         fog = Fog.NOFOG;
         renderShadows = true;
-        textMasterImportDialog = new TextMaster();
     }
 
     public void init(HashMap<String, Mesh> meshTypesMap, FlowParticleEmitter particleEmitter, SoundManager soundMgr, Camera camera, GuiManager guiManager, Window window) throws Exception {
@@ -85,8 +83,6 @@ public class Scene {
         gameItemCustom.setScale(10f);
         gameItems.add(gameItemCustom);
         */
-    	
-    	textMasterImportDialog.init();
 
         Mesh meshGrass = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
         meshTypesMap.put("GRASS", meshGrass.setLabel("GRASS"));
@@ -354,61 +350,9 @@ public class Scene {
     	guiButtonLava.setInventory(true).setClickable(true);
     	guiButtonLava.setMesh(meshTypesMap.get("LAVA"));
     	guiManager.addGuiElement(guiButtonLava);
-    	
-    	// import dialog
-    	Texture texturePanel = new Texture(Config.RESOURCES_DIR +  "/textures/window.png");
-    	GuiElement guiPanel = new GuiElement(texturePanel, new Vector3f(0.0f, -0.01f, 1), new Vector2f(0.3304f, 0.790f));
-    	// GuiButton guiPanel = new GuiButton(texturePanel, new Vector3f(0.0f, -0.01f, 1), new Vector2f(0.33f, 0.790f));
-    	guiPanel.setImportDialog(true);
-    	guiManager.addGuiElement(guiPanel);
-    	
-    	Texture textureLongButton = new Texture(Config.RESOURCES_DIR +  "/textures/button_long.png");
 
-    	GuiElement guiLongButton01 = new GuiElement(textureLongButton, new Vector3f(0.0f, 0.685f, 1), new Vector2f(0.31f, 0.055f)); // 0.130
-    	guiLongButton01.setImportDialog(true).setClickable(true);
-    	guiManager.addGuiElement(guiLongButton01);
-
-    	GuiElement guiLongButton02 = new GuiElement(textureLongButton, new Vector3f(0.0f, 0.555f, 1), new Vector2f(0.31f, 0.055f));
-    	guiLongButton02.setImportDialog(true).setClickable(true);
-    	guiManager.addGuiElement(guiLongButton02);
-
-    	GuiElement guiLongButton03 = new GuiElement(textureLongButton, new Vector3f(0.0f, 0.425f, 1), new Vector2f(0.31f, 0.055f));
-    	guiLongButton03.setImportDialog(true).setClickable(true);
-    	guiManager.addGuiElement(guiLongButton03);
-
-    	GuiElement guiLongButton04 = new GuiElement(textureLongButton, new Vector3f(0.0f, 0.295f, 1), new Vector2f(0.31f, 0.055f));
-    	guiLongButton04.setImportDialog(true).setClickable(true);
-    	guiManager.addGuiElement(guiLongButton04);
-
-    	FontType font = FontFactory.getFont("candara", window);
-
-		GUIText guiText01 = new GUIText("snapshot_2018_07_04.txt", 1.2f, font, new Vector2f(0.355f, 0.139f), 1f, false); // 0.065
-		guiText01.setColor(1.0f, 1.0f, 1.0f);
-		textMasterImportDialog.setGuiText(0, guiText01);
-		
-		GUIText guiText02 = new GUIText("snapshot_2018_07_03.txt", 1.2f, font, new Vector2f(0.355f, 0.204f), 1f, false);
-		guiText02.setColor(1.0f, 1.0f, 1.0f);
-		textMasterImportDialog.setGuiText(0, guiText02);
-		
-		GUIText guiText03 = new GUIText("snapshot_2018_07_02.txt", 1.2f, font, new Vector2f(0.355f, 0.269f), 1f, false);
-		guiText03.setColor(1.0f, 1.0f, 1.0f);
-		textMasterImportDialog.setGuiText(0, guiText03);
-		
-		GUIText guiText04 = new GUIText("snapshot_2018_07_01.txt", 1.2f, font, new Vector2f(0.355f, 0.334f), 1f, false);
-		guiText04.setColor(1.0f, 1.0f, 1.0f);
-		textMasterImportDialog.setGuiText(0, guiText04);
-		
-		quit_popup = new QuitPopup();
-		quit_popup.init(guiManager, window);
+    	guiManager.init(window);
 	}
-
-    public QuitPopup getQuitPopup() {
-    	return quit_popup;
-    }
-
-    public TextMaster getTextMasterImportDialog() {
-    	return textMasterImportDialog;
-    }
 
     public Map<Mesh, List<GameItem>> getGameMeshes() {
         return meshMap;

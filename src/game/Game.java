@@ -73,7 +73,7 @@ public class Game implements IGameLogic {
         }
         renderer.render(window, camera, scene, sceneChanged);
         renderer.renderGui(guiManager, window);
-        renderer.renderGuiText(guiManager, scene);
+        renderer.renderGuiText(guiManager);
     }
 
     @Override
