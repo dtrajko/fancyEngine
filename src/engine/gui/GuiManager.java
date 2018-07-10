@@ -114,6 +114,7 @@ public class GuiManager {
 		slowdownGuiUpdates();
     	if (!import_popup.isEnabled()) {
     		closeAllGuis(window);
+    		import_popup.init(this, window);
     		import_popup.setEnabled(true);
     		updateEnabled = false;
     		GLFW.glfwSetInputMode(window.getWindowHandle(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);

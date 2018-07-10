@@ -218,7 +218,7 @@ public class Game implements IGameLogic {
         }
         float zValue = (float) Math.cos(Math.toRadians(lightAngle));
         float yValue = (float) Math.sin(Math.toRadians(lightAngle));
-        Vector3f lightDirection = this.scene.getSceneLight().getDirectionalLight().getDirection();
+        Vector3f lightDirection = scene.getSceneLight().getDirectionalLight().getDirection();
         lightDirection.x = 0;
         lightDirection.y = yValue;
         lightDirection.z = zValue;

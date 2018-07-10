@@ -27,11 +27,11 @@ public class ImportPopup {
 	TextMaster textMaster;
 	
 	public ImportPopup() {
-		textMaster = new TextMaster();
 	}
 
 	public void init(GuiManager guiManager, Window window) {
-		
+
+		textMaster = new TextMaster();
 		textMaster.init();
 
     	// import dialog
@@ -49,13 +49,13 @@ public class ImportPopup {
 			guiManager.addGuiElement(guiPanel);
 			
 			float buttonY = 0.685f;
-			float buttonStepY = -0.13f;
-			float buttonTextY = 0.139f;
-			float buttonTextStepY = 0.065f;
+			float buttonStepY = -0.1265f;
+			float buttonTextY = 0.140f;
+			float buttonTextStepY = 0.0632f;
 
 			for (String file : files) {
 
-				GuiElement guiLongButton = new GuiElement(textureLongButton, new Vector3f(0.0f, buttonY, 1), new Vector2f(0.31f, 0.055f)); // 0.130
+				GuiElement guiLongButton = new GuiElement(textureLongButton, new Vector3f(0.0f, buttonY, 1), new Vector2f(0.31f, 0.053f)); // 0.130
 				guiLongButton.setImportDialog(true).setClickable(true).setTitle(file);
 				guiManager.addGuiElement(guiLongButton);
 
@@ -88,7 +88,7 @@ public class ImportPopup {
         	mouseInput.isMouseButtonReleased(GLFW.GLFW_MOUSE_BUTTON_3)) {
 
         	if (nextBlock instanceof GuiElement && nextBlock.isClickable() && nextBlock.getTitle() != null) {
-        		System.out.println("ImportPopup importing the selected save file: [" + nextBlock.getTitle() + "]");
+        		// System.out.println("ImportPopup importing the selected save file: [" + nextBlock.getTitle() + "]");
         		scene.load(Game.getMeshTypesMap(), nextBlock.getTitle());
         	}
 
@@ -113,9 +113,11 @@ public class ImportPopup {
 	}
 	
 	public List<String> listSaveFiles() {
+		int listMaxSize = 12;
 		String savesDirPath = Config.RESOURCES_DIR + "/saves/";
 		final File savesDir = new File(savesDirPath);
 		List<String> files = FileSystem.listFilesForFolder(savesDir);
+		files = files.subList(0, files.size() < listMaxSize ? files.size() : listMaxSize);
 		return files;
 	}
 }
