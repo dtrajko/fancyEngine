@@ -509,7 +509,7 @@ public class Scene {
 		boolean inCollision = false;
         Map<Mesh, List<GameItem>> mapMeshes = getGameMeshes();
         for (Mesh mesh : mapMeshes.keySet()) {
-        	if (mesh.getMaterial().isSolid()) {
+        	if (!cameraCollision || mesh.getMaterial().isSolid()) {
 	    		for (GameItem gameItem : mapMeshes.get(mesh)) {
 	    			if (gameItem.getBoundingBox().contains(newPos.x, newPos.y, newPos.z, cameraCollision, camera)) {
 	    				inCollision = true;
@@ -520,7 +520,7 @@ public class Scene {
         }
         Map<InstancedMesh, List<GameItem>> mapInstancedMeshes = getGameInstancedMeshes();
         for (Mesh mesh : mapInstancedMeshes.keySet()) {
-        	if (mesh.getMaterial().isSolid()) {
+        	if (!cameraCollision || mesh.getMaterial().isSolid()) {
         		for (GameItem gameItem : mapInstancedMeshes.get(mesh)) {
         			if (gameItem.getBoundingBox().contains(newPos.x, newPos.y, newPos.z, cameraCollision, camera)) {
         				inCollision = true;
