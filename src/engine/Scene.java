@@ -71,20 +71,6 @@ public class Scene {
 
     public void init(HashMap<String, Mesh> meshTypesMap, FlowParticleEmitter particleEmitter, SoundManager soundMgr, Camera camera, GuiManager guiManager, Window window) throws Exception {
 
-        /*
-        Mesh meshCustom = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/minecraft_sword.obj");
-        Texture textureCustom = new Texture(Config.RESOURCES_DIR +  "/textures/minecraft_sword.png");
-        Material materialCustom = new Material(textureCustom);
-        materialCustom.setReflectance(1.0f);
-        materialCustom.setTransparency(1.0f);
-        meshCustom.setMaterial(materialCustom);
-        GameItem gameItemCustom = new GameItem(meshCustom);
-        gameItemCustom.setRotation(0.5f, 0.5f, 0.5f);
-        gameItemCustom.setPosition(-100, 30f, 50);
-        gameItemCustom.setScale(10f);
-        gameItems.add(gameItemCustom);
-        */
-
         Mesh meshGrass = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
         meshTypesMap.put("GRASS", meshGrass.setLabel("GRASS"));
         Texture textureGrass = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_grass.png", 2, 1);
@@ -107,6 +93,7 @@ public class Scene {
         Material materialWater = new Material(textureWater);
         materialWater.setReflectance(1.0f);
         materialWater.setTransparency(0.7f); // 0.7f
+        materialWater.setSolid(false);
         meshWater.setMaterial(materialWater);
 
         Mesh meshLava = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
@@ -522,21 +509,25 @@ public class Scene {
 		boolean inCollision = false;
         Map<Mesh, List<GameItem>> mapMeshes = getGameMeshes();
         for (Mesh mesh : mapMeshes.keySet()) {
-    		for (GameItem gameItem : mapMeshes.get(mesh)) {
-    			if (gameItem.getBoundingBox().contains(newPos.x, newPos.y, newPos.z, cameraCollision, camera)) {
-    				inCollision = true;
-    				break;
-    			}
-    		}
+        	if (mesh.getMaterial().isSolid()) {
+	    		for (GameItem gameItem : mapMeshes.get(mesh)) {
+	    			if (gameItem.getBoundingBox().contains(newPos.x, newPos.y, newPos.z, cameraCollision, camera)) {
+	    				inCollision = true;
+	    				break;
+	    			}
+	    		}
+        	}
         }
         Map<InstancedMesh, List<GameItem>> mapInstancedMeshes = getGameInstancedMeshes();
         for (Mesh mesh : mapInstancedMeshes.keySet()) {
-    		for (GameItem gameItem : mapInstancedMeshes.get(mesh)) {
-    			if (gameItem.getBoundingBox().contains(newPos.x, newPos.y, newPos.z, cameraCollision, camera)) {
-    				inCollision = true;
-    				break;
-    			}
-    		}    	
+        	if (mesh.getMaterial().isSolid()) {
+        		for (GameItem gameItem : mapInstancedMeshes.get(mesh)) {
+        			if (gameItem.getBoundingBox().contains(newPos.x, newPos.y, newPos.z, cameraCollision, camera)) {
+        				inCollision = true;
+        				break;
+        			}
+        		}
+        	}
         }
 		return inCollision;
 	}

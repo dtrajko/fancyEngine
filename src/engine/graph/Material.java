@@ -12,6 +12,7 @@ public class Material {
     private float transparency;
     private Texture texture;
     private Texture normalMap;
+    private boolean solid;
 
     public Material() {
         this.ambientColour = DEFAULT_COLOUR;
@@ -20,6 +21,7 @@ public class Material {
         this.texture = null;
         this.reflectance = 0;
         this.transparency = 0;
+        this.solid = true;
     }
 
     public Material(Vector4f colour, float reflectance) {
@@ -40,6 +42,7 @@ public class Material {
         this.specularColour = specularColour;
         this.texture = texture;
         this.reflectance = reflectance;
+        this.solid = true;
     }
 
     public Vector4f getAmbientColour() {
@@ -72,6 +75,14 @@ public class Material {
 
     public void setTransparency(float transparency) {
         this.transparency = transparency;
+    }
+
+    public boolean isSolid() {
+        return solid;
+    }
+
+    public void setSolid(boolean value) {
+        solid = value;
     }
 
     public float getReflectance() {
