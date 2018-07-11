@@ -11,10 +11,6 @@ import static org.lwjgl.opengl.GL13.*;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
-
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL14;
-import org.lwjgl.opengl.GL30;
 import org.lwjgl.system.MemoryUtil;
 
 import engine.items.GameItem;
@@ -44,7 +40,7 @@ public class Mesh {
         IntBuffer indicesBuffer = null;
         try {
             vertexCount = indices.length;
-            vboIdList = new ArrayList();
+            vboIdList = new ArrayList<Integer>();
 
             vaoId = glGenVertexArrays();
             glBindVertexArray(vaoId);

@@ -1,6 +1,7 @@
 package engine.gui;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -9,9 +10,11 @@ import org.lwjgl.glfw.GLFW;
 import config.Config;
 import engine.Scene;
 import engine.Window;
+import engine.graph.Mesh;
 import engine.graph.MouseInput;
 import engine.graph.Texture;
 import engine.gui.popups.ImportPopup;
+import engine.gui.popups.InventoryPopup;
 import engine.gui.popups.QuitPopup;
 
 public class GuiManager {
@@ -19,13 +22,14 @@ public class GuiManager {
 	private long toggleGuiLastTime;
     private boolean inventoryOn = false;
     private List<GuiElement> guiElements = new ArrayList<GuiElement>();
-    GuiElement nextBlock;
+    private GuiElement nextBlock;
     private boolean updateEnabled = true;
-    
-    private static QuitPopup quit_popup;
-    private static ImportPopup import_popup;
 
-	public void init(Window window) {
+    private static InventoryPopup inventory_popup;
+    private static ImportPopup import_popup;
+    private static QuitPopup quit_popup;
+
+	public void init(Window window, HashMap<String, Mesh> meshTypesMap) {
 
     	// import dialog
     	Texture txSplashBackground;
@@ -37,6 +41,9 @@ public class GuiManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		inventory_popup = new InventoryPopup();
+		inventory_popup.init(this, window, meshTypesMap);
 
 		import_popup = new ImportPopup();
 		import_popup.init(this, window);
@@ -58,23 +65,10 @@ public class GuiManager {
     }
 
 	public boolean input(MouseInput mouseInput, Window window, Scene scene) {
-
-        if (inventoryOn) {
-        	Vector2f mouseNDC = getNormalisedDeviceCoordinates(
-	        		(float) mouseInput.getMousePosition().x,
-	        		(float) mouseInput.getMousePosition().y, window);
-        		for (GuiElement gb : guiElements) {
-        			gb.setMouseOver(false);
-        		}
-	        	nextBlock = selectGuiItem(mouseNDC);
-	        	if (nextBlock instanceof GuiElement && nextBlock.isInventory()) {
-	        		nextBlock.setMouseOver(true);
-	        	}
-	        if (mouseInput.isMouseButtonReleased(GLFW.GLFW_MOUSE_BUTTON_1) || 
-	        	mouseInput.isMouseButtonReleased(GLFW.GLFW_MOUSE_BUTTON_2) ||
-	        	mouseInput.isMouseButtonReleased(GLFW.GLFW_MOUSE_BUTTON_3)) {
-	        	toggleInventoryDialog(window);
-	        }
+        
+        if (inventory_popup.isEnabled()) {
+        	inventory_popup.input(this, mouseInput, window, scene);
+            nextBlock = inventory_popup.getNextBlock();
         }
 
         if (import_popup.isEnabled()) {
@@ -101,10 +95,12 @@ public class GuiManager {
     	if (!inventoryOn) {
     		closeAllGuis(window);
     		inventoryOn = true;
+    		inventory_popup.setEnabled(true);
     		updateEnabled = false;
     		GLFW.glfwSetInputMode(window.getWindowHandle(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
     	} else {
     		inventoryOn = false;
+    		inventory_popup.setEnabled(false);
     		updateEnabled = true;
     		GLFW.glfwSetInputMode(window.getWindowHandle(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_DISABLED);
     	}
