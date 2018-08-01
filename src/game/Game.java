@@ -83,7 +83,7 @@ public class Game implements IGameLogic {
 
         if (mouseInput.isKeyReleased(GLFW.GLFW_KEY_ESCAPE)) {
         	if (!guiManager.areAllGuisClosed()) {
-        		guiManager.closeAllGuis(window);        		
+        		guiManager.closeAllGuis(window);
         	} else {
         		guiManager.toggleQuitPopup(window);        		
         	}

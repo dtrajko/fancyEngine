@@ -127,7 +127,9 @@ public class InventoryPopup {
         if (mouseInput.isMouseButtonReleased(GLFW.GLFW_MOUSE_BUTTON_1) || 
         	mouseInput.isMouseButtonReleased(GLFW.GLFW_MOUSE_BUTTON_2) ||
         	mouseInput.isMouseButtonReleased(GLFW.GLFW_MOUSE_BUTTON_3)) {
-        	guiManager.toggleInventoryDialog(window);
+        	if (nextBlock instanceof GuiElement && nextBlock.isInventory()) {
+        		guiManager.toggleInventoryDialog(window);
+        	}
         }
 	}
 

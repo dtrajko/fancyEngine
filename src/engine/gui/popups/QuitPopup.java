@@ -25,7 +25,7 @@ public class QuitPopup {
 	}
 
 	public void init(GuiManager guiManager, Window window) {
-		
+
 		textMaster.init();
 
     	Texture txQuitPopup;
@@ -88,8 +88,8 @@ public class QuitPopup {
         		// do nothing, close the popup
         	}
         	if (nextBlock instanceof GuiElement && nextBlock.isConfirmButton()) {
-        		window.close();	        		
-        	}	        	
+        		window.close();
+        	}
         }
 	}
 
