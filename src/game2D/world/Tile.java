@@ -92,8 +92,8 @@ public class Tile {
 	}
 
 	public void move() {
-		
-		if (id == 10) offsetX += 0.01f;
+
+		if (this.id == 10) this.offsetX += 0.01f;
 
 		/*
 		if (minOffsetX == 0 && maxOffsetX == 0) offsetDirX = 0;
