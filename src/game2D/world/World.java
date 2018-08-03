@@ -21,7 +21,7 @@ import game2D.entities.Transform;
 public class World {
 
 	public int view_width = 26;
-	public int view_height = 16;
+	public int view_height = 18;
 	private byte[] tiles;
 	private AABB[] bounding_boxes;
 	private List<Entity> entities;
@@ -32,6 +32,7 @@ public class World {
 	private Window window;
 	private Player player;
 	private int backgroundTile = 0;
+	private Tile[] tile_grid;
 
 	public World(Window window, int width, int height, int scale) {
 		this.window = window;
@@ -39,6 +40,7 @@ public class World {
 		this.height = height; // 16
 		this.scale = scale;   // 16
 		tiles = new byte[width * height];
+		tile_grid = new Tile[width * height];
 		bounding_boxes = new AABB[width * height];
 		this.worldMatrix = new Matrix4f().setTranslation(new Vector3f(0));
 		this.worldMatrix.scale(scale);
@@ -47,7 +49,7 @@ public class World {
 	public World(String worldName, Camera camera, int scale, int bg_tile, Game2D game) {
 
 		window = game.getWindow();
-		
+
 		backgroundTile = bg_tile;
 
 		String tileSheetPath = Config.RESOURCES_DIR + "/levels/" + worldName + "/tiles.png";
@@ -75,12 +77,15 @@ public class World {
 		int[] colorTileSheet = tile_sheet.getRGB(0, 0, width, height, null, 0, width);
 		int[] colorEntitySheet = entity_sheet.getRGB(0, 0, width, height, null, 0, width);
 		this.tiles = new byte[width * height];
+		this.tile_grid = new Tile[width * height];
 		this.bounding_boxes = new AABB[width * height];
 		this.entities = new ArrayList<Entity>();
 		this.worldMatrix = new Matrix4f().setTranslation(new Vector3f(0));
 		this.worldMatrix.scale(scale);
 
 		Transform transform;
+		TileType tileType;
+		Tile tileObject;
 
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
@@ -92,23 +97,19 @@ public class World {
 				int entity_index = (colorEntitySheet[x + y * width] >> 16) & 0xFF;
 				int entity_alpha = (colorEntitySheet[x + y * width] >> 24) & 0xFF;
 
-				Tile tile;
-				
 				try {
-					tile = Tile.tiles[red];
+					tileType = TileType.tileTypes[red];
+					tileObject = new Tile(tileType);
 				} catch (ArrayIndexOutOfBoundsException e) {
-					tile = null;
+					tileType = TileType.tileTypes[getBackgroundTile()];
+					tileObject = new Tile(tileType);
 				}
 
-				if (tile != null) {
-
-					if (tile.getId() == 10) { // 10 stands for mario_tile tile, class Tile line 32
-						tile.setOffsetRangeX(-4.0f, 4.0f);
-						tile.setOffsetDirectionX(-1);
-					}
-
-					setTile(tile, x, y);
+				if (tileObject.getType().getId() == 10) { // 10 stands for mario_tile tile, class Tile line 32
+					tileObject.setOffsetRangeX(-3.0f, 3.0f);
+					tileObject.setOffsetDirectionX(-1);
 				}
+				setTile(tileObject, x, y);
 
 				if (entity_alpha > 0) {
 					transform = new Transform();
@@ -127,6 +128,10 @@ public class World {
 				}
 			}
 		}
+	}
+	
+	public Tile[] getTileGrid() {
+		return this.tile_grid;
 	}
 
 	public void calculateView(Window window) {
@@ -182,12 +187,12 @@ public class World {
 			}
 			entities.get(e1).collideWithTiles(this);
 		}
-		
-		for (int x = 0; x < view_width; x++) {
-			for (int y = 0; y < view_height; y++) {
+
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
 				Tile tile = getTile(x, y);
 				tile.move();
-				updateAABB(x, y, tile.getOffsetX(), tile.getOffsetY());
+				updateAABB(x, y, tile.getOffsetX(), tile.getOffsetY());					
 			}
 		}
 	}
@@ -221,14 +226,15 @@ public class World {
 	}
 
 	public void setTile(Tile tile, int x, int y) {
-		tiles[x + y * width] = tile.getId();
-		bounding_boxes[x + y * width] = tile.isSolid() ?
+		tiles[x + y * width] = tile.getType().getId();
+		tile_grid[x + y * width] = tile;
+		bounding_boxes[x + y * width] = tile.getType().isSolid() ?
 			new AABB(new Vector2f(x * 2, -y * 2), new Vector2f(1, 1)) : null;
 	}
 
 	public Tile getTile(int x, int y) {
 		try {
-			return Tile.tiles[tiles[x + y * width]];
+			return this.tile_grid[x + y * width];
 		} catch (ArrayIndexOutOfBoundsException e) {
 			return null;
 		}

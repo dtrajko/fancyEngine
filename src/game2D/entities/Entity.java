@@ -12,6 +12,7 @@ import game2D.collision.Collision;
 import game2D.render.Animation;
 import game2D.render.Model;
 import game2D.shaders.Shader;
+import game2D.world.Tile;
 import game2D.world.World;
 
 public abstract class Entity {

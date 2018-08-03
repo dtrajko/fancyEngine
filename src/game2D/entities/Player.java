@@ -1,4 +1,4 @@
-package game2D.entities;
+package game2D.entities; 
 
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -9,6 +9,7 @@ import engine.graph.MouseInput;
 import game.Game2D;
 import game2D.render.Animation;
 import game2D.world.Tile;
+import game2D.world.TileType;
 import game2D.world.World;
 
 public class Player extends Entity {
@@ -44,7 +45,11 @@ public class Player extends Entity {
 		Vector2f movement = new Vector2f();
 
 		movement.add(0, -GRAVITY);
-		
+
+		Tile tileBellow = getTileBellow(world);
+		float tileDeltaCoef = delta * 2.75f; // adjustment to sync speed with tile bellow
+		movement.add(tileBellow.deltaX * tileDeltaCoef, tileBellow.deltaY * tileDeltaCoef);
+
 		if (this.transform.position.y >= previous_height) {
 			jump_allowed = true;
 		} else {
@@ -89,6 +94,7 @@ public class Player extends Entity {
 		move(movement);
 		collideWithTiles(world);
 		correctPosition(window, world);
+
 		camera.getPosition().lerp(this.transform.position.mul(-world.getScale(), new Vector3f()), 0.02f);
 		manageLives(game, world);
 		manageLevels(game, world);
@@ -112,12 +118,25 @@ public class Player extends Entity {
 		return tile;
 	}
 
+	public Tile getTileBellow(World world) {
+		int x = (int)(transform.position.x / 2);
+		int y = (int)(-transform.position.y / 2 + 1);
+		Tile tile = world.getTile(x, y);
+		return tile;
+	}
+
 	public boolean isNextLevel(World world) {
-		return getCurrentTile(world).isNextLevel();
+		if (getCurrentTile(world) != null) {
+			return getCurrentTile(world).getType().isNextLevel();			
+		}
+		return false;
 	}
 
 	public boolean isPreviousLevel(World world) {
-		return getCurrentTile(world).isPreviousLevel();
+		if (getCurrentTile(world) != null) {
+			return getCurrentTile(world).getType().isPreviousLevel();
+		}
+		return false;
 	}
 
 	public void manageLives(Game2D game, World world) {

@@ -14,8 +14,8 @@ import game2D.assets.Assets;
 import game2D.entities.Player;
 import game2D.entities.Transform;
 import game2D.gui.Gui;
+import game2D.render.TileRenderer;
 import game2D.render.TileSheet;
-import game2D.world.TileRenderer;
 import game2D.world.World;
 
 public class Game2D implements IGameLogic {

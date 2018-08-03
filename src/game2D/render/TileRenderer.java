@@ -1,4 +1,4 @@
-package game2D.world;
+package game2D.render;
 
 import java.util.HashMap;
 import org.joml.Matrix4f;
@@ -7,9 +7,11 @@ import engine.graph.Camera;
 import game2D.assets.Assets;
 import game2D.assets.Sprite;
 import game2D.entities.Entity;
-import game2D.render.Model;
 import game2D.shaders.Shader;
 import game2D.textures.Texture;
+import game2D.world.Tile;
+import game2D.world.TileType;
+import game2D.world.World;
 
 public class TileRenderer {
 
@@ -26,10 +28,10 @@ public class TileRenderer {
 		model.renderInit();
 		Assets.getModel().renderInit();
 		tile_textures = new HashMap<String, Texture>();
-		for (int i = 0; i < Tile.tiles.length; i++) {
-			if (Tile.tiles[i] != null) {
-				if (!tile_textures.containsKey(Tile.tiles[i].getTexture())) {
-					String texturePath = Tile.tiles[i].getTexture();
+		for (int i = 0; i < TileType.tileTypes.length; i++) {
+			if (TileType.tileTypes[i] != null) {
+				if (!tile_textures.containsKey(TileType.tileTypes[i].getTexture())) {
+					String texturePath = TileType.tileTypes[i].getTexture();
 					tile_textures.put(texturePath, new Texture(texturePath));
 				}
 			}
@@ -50,10 +52,10 @@ public class TileRenderer {
 				int renderX = getX;
 				int renderY = -getY;
 
-				Tile tile = Tile.tiles[world.getBackgroundTile()];
-				if (tile != null) {
-					renderBackgroundTile(tile, renderX, renderY, world, camera);
-				}
+				TileType tileType = TileType.tileTypes[world.getBackgroundTile()];
+				Tile tile = new Tile(tileType);
+
+				renderBackgroundTile(tile, renderX, renderY, world, camera);
 			}
 		}
 
@@ -66,9 +68,10 @@ public class TileRenderer {
 				int renderX = getX;
 				int renderY = -getY;
 
+				// TileType tile = world.getTile(getX, getY);
 				Tile tile = world.getTile(getX, getY);
-				
-				if (tile != null && tile.getId() != world.getBackgroundTile()) {					
+
+				if (tile != null && tile.getType().getId() != world.getBackgroundTile()) {					
 					renderTile(tile, renderX, renderY, world, camera);
 				}
 			}
@@ -84,7 +87,7 @@ public class TileRenderer {
 
 		Matrix4f worldMatrix = world.getWorldMatrix();
 
-		tile_textures.get(tile.getTexture()).bind(0);
+		tile_textures.get(tile.getType().getTexture()).bind(0);
 
 		Matrix4f tile_pos_bg = new Matrix4f().translate(new Vector3f(x * 2, y * 2 + 2, 0));
 		Matrix4f target_bg = new Matrix4f();
@@ -104,10 +107,10 @@ public class TileRenderer {
 		float tileOffsetX = tile.getOffsetX();
 		float tileOffsetY = tile.getOffsetY();
 		
-		System.out.println("Tile ID: " + tile.getId() + " tileOffsetX: " + tileOffsetX + " tileOffsetY: " + tileOffsetY);
+		// System.out.println("Tile ID: " + tile.getId() + " tileOffsetX: " + tileOffsetX + " tileOffsetY: " + tileOffsetY);
 
-		if (tile_textures.containsKey(tile.getTexture())) {
-			tile_textures.get(tile.getTexture()).bind(0);
+		if (tile_textures.containsKey(tile.getType().getTexture())) {
+			tile_textures.get(tile.getType().getTexture()).bind(0);
 		}
 
 		Matrix4f tile_pos = new Matrix4f().translate(new Vector3f(x * 2 + tileOffsetX, y * 2 + tileOffsetY, 0));
