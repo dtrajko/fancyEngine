@@ -40,12 +40,36 @@ public class TileRenderer {
 
 		int posX = (int) camera.getPosition().x / (world.getScale() * 2);
 		int posY = (int) camera.getPosition().y / (world.getScale() * 2);
-		
+
+		// render background tiles
 		for (int i = 0; i < world.getViewWidth(); i++) {
 			for (int j = 0; j < world.getViewHeight(); j++) {
-				Tile tile = world.getTile(i - posX - (world.getViewWidth() / 2) + 1, j + posY - (world.getViewHeight() / 2));
+				
+				int getX = i - posX - (world.getViewWidth() / 2);
+				int getY = j + posY - (world.getViewHeight() / 2);
+				int renderX = getX;
+				int renderY = -getY;
+
+				Tile tile = Tile.tiles[world.getBackgroundTile()];
 				if (tile != null) {
-					renderTile(tile, i - posX - (world.getViewWidth() / 2) + 1, -j - posY + (world.getViewHeight() / 2), world, camera);
+					renderBackgroundTile(tile, renderX, renderY, world, camera);
+				}
+			}
+		}
+
+		// render front tiles
+		for (int i = 0; i < world.getViewWidth(); i++) {
+			for (int j = 0; j < world.getViewHeight(); j++) {
+				
+				int getX = i - posX - (world.getViewWidth() / 2);
+				int getY = j + posY - (world.getViewHeight() / 2);
+				int renderX = getX;
+				int renderY = -getY;
+
+				Tile tile = world.getTile(getX, getY);
+				
+				if (tile != null && tile.getId() != world.getBackgroundTile()) {					
+					renderTile(tile, renderX, renderY, world, camera);
 				}
 			}
 		}
@@ -54,31 +78,37 @@ public class TileRenderer {
 		}
 	}
 
-	public void renderTile(Tile tile, int x, int y, World world, Camera camera) {
+	public void renderBackgroundTile(Tile tile, int x, int y, World world, Camera camera) {
 
 		shader.bind();
-		
+
 		Matrix4f worldMatrix = world.getWorldMatrix();
 
-		/* BEGIN render background tile */
-		if (tile_textures.containsKey(Tile.tiles[world.getBackgroundTile()])) {
-			tile_textures.get(Tile.tiles[world.getBackgroundTile()].getTexture()).bind(0);			
-		}
-		Matrix4f tile_pos_bg = new Matrix4f().translate(new Vector3f(x * 2, y * 2, 0));
+		tile_textures.get(tile.getTexture()).bind(0);
+
+		Matrix4f tile_pos_bg = new Matrix4f().translate(new Vector3f(x * 2, y * 2 + 2, 0));
 		Matrix4f target_bg = new Matrix4f();
 		camera.getOrthoProjection().mul(worldMatrix, target_bg);
 		target_bg.mul(tile_pos_bg);
 		shader.setUniform("sampler", 0);
 		shader.setUniform("projection", target_bg);
-		model.render();			
-		/* END render background tile */
+		model.render();
+	}
+
+	public void renderTile(Tile tile, int x, int y, World world, Camera camera) {
+
+		shader.bind();
+
+		Matrix4f worldMatrix = world.getWorldMatrix();
+
+		float tileOffsetX = tile.getOffsetX();
+		float tileOffsetY = tile.getOffsetY();
+		
+		System.out.println("Tile ID: " + tile.getId() + " tileOffsetX: " + tileOffsetX + " tileOffsetY: " + tileOffsetY);
 
 		if (tile_textures.containsKey(tile.getTexture())) {
 			tile_textures.get(tile.getTexture()).bind(0);
 		}
-
-		float tileOffsetX = tile.getOffsetX();
-		float tileOffsetY = tile.getOffsetY();
 
 		Matrix4f tile_pos = new Matrix4f().translate(new Vector3f(x * 2 + tileOffsetX, y * 2 + tileOffsetY, 0));
 		Matrix4f target = new Matrix4f();

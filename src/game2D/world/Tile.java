@@ -19,16 +19,17 @@ public class Tile {
 	private int offsetDirY = 0;
 	private float speed = 0.001f;
 
-	public static final Tile tile_0 = new Tile("brick_wall");
-	public static final Tile tile_1 = new Tile("stone").setSolid();
-	public static final Tile tile_2 = new Tile("wall").setSolid();
-	public static final Tile tile_3 = new Tile("lava");
-	public static final Tile tile_4 = new Tile("door").setNextLevel();
-	public static final Tile tile_5 = new Tile("sky");
-	public static final Tile tile_6 = new Tile("water");
-	public static final Tile tile_7 = new Tile("dirt").setSolid();
-	public static final Tile tile_8 = new Tile("dirt_grass").setSolid();
-	public static final Tile tile_9 = new Tile("door").setPreviousLevel();
+	public static final Tile tile_0  = new Tile("brick_wall");
+	public static final Tile tile_1  = new Tile("stone").setSolid();
+	public static final Tile tile_2  = new Tile("wall").setSolid();
+	public static final Tile tile_3  = new Tile("lava");
+	public static final Tile tile_4  = new Tile("door").setNextLevel();
+	public static final Tile tile_5  = new Tile("sky");
+	public static final Tile tile_6  = new Tile("water");
+	public static final Tile tile_7  = new Tile("dirt").setSolid();
+	public static final Tile tile_8  = new Tile("dirt_grass").setSolid();
+	public static final Tile tile_9  = new Tile("door").setPreviousLevel();
+	public static final Tile tile_10 = new Tile("mario_tile").setSolid();
 
 	private byte id;
 	private String texture;
@@ -40,7 +41,7 @@ public class Tile {
 		this.solid = false;
 		if (tiles[id] != null) {
 			throw new IllegalStateException("Tile slot [" + id + "] is already being used!");
-		}
+		}		
 		tiles[id] = this;
 	}
 	
@@ -53,11 +54,11 @@ public class Tile {
 	}
 
 	public float getOffsetX() {
-		return offsetX;
+		return this.offsetX;
 	}
 
 	public float getOffsetY() {
-		return offsetY;
+		return this.offsetY;
 	}
 
 	public void setOffsetDirectionX(int value) {
@@ -91,7 +92,10 @@ public class Tile {
 	}
 
 	public void move() {
+		
+		if (id == 10) offsetX += 0.01f;
 
+		/*
 		if (minOffsetX == 0 && maxOffsetX == 0) offsetDirX = 0;
 		if (minOffsetY == 0 && maxOffsetY == 0) offsetDirY = 0;
 
@@ -104,9 +108,8 @@ public class Tile {
 			if (offsetX >= maxOffsetX) {
 				offsetX = maxOffsetX;
 				offsetDirX = -offsetDirX;
-			}			
+			}	
 		}
-
 		if (offsetDirY != 0) {
 			offsetY += offsetDirY * speed;
 			if (offsetY <= minOffsetY) {
@@ -116,8 +119,9 @@ public class Tile {
 			if (offsetY >= maxOffsetY) {
 				offsetY = maxOffsetY;
 				offsetDirY = -offsetDirY;
-			}			
+			}	
 		}
+		*/
 	}
 
 	public Tile setSolid() {

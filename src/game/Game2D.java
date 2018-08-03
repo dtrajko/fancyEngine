@@ -46,10 +46,10 @@ public class Game2D implements IGameLogic {
 		renderer.init();
 		camera.setOrthoProjection(window);
 		sheet = new TileSheet("lives", 3);
-		beginLevel();
+		// beginLevel();
 	}
 
-	public void beginLevel() {
+	public void beginLevel() {		
 		switch (current_level) {
 		case 1:
 			level = new World("level_1", camera, this.level_scale, 5, this);

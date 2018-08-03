@@ -93,14 +93,20 @@ public class World {
 				int entity_alpha = (colorEntitySheet[x + y * width] >> 24) & 0xFF;
 
 				Tile tile;
+				
 				try {
 					tile = Tile.tiles[red];
 				} catch (ArrayIndexOutOfBoundsException e) {
 					tile = null;
 				}
+
 				if (tile != null) {
-					tile.setOffsetRangeX(-0.2f, 0.2f);
-					tile.setOffsetDirectionX(-1);
+
+					if (tile.getId() == 10) { // 10 stands for mario_tile tile, class Tile line 32
+						tile.setOffsetRangeX(-4.0f, 4.0f);
+						tile.setOffsetDirectionX(-1);
+					}
+
 					setTile(tile, x, y);
 				}
 
@@ -124,7 +130,7 @@ public class World {
 	}
 
 	public void calculateView(Window window) {
-		view_width = window.getWidth() / (scale * 2) + 2;
+		view_width = window.getWidth() / (scale * 2) + 4;
 		view_height = window.getHeight() / (scale * 2) + 4;
 	}
 

@@ -6,7 +6,7 @@ import engine.Window;
 
 public class Main {
 
-	private static boolean mode3D = true;
+	private static boolean mode3D = false;
 	private static int width = 0;
 	private static int height = 0;
 
