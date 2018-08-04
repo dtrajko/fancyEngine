@@ -90,7 +90,7 @@ public class Game2D implements IGameLogic {
 		renderer.render(level, camera);
 		for (Gui gui : guis.keySet()) {
 			gui.render(guis.get(gui), 0);
-		}
+		}		
 	}
 
 	public void onWindowResize() {
@@ -109,15 +109,15 @@ public class Game2D implements IGameLogic {
 		}
 	}
 
-	private boolean gameOver() {
+	public boolean gameOver() {
 		if (player instanceof Player) {
 			return player.getLives() <= 0;
 		}
 		return false;
 	}
 
-	public void setPlayer(Player player) {
-		player = player;
+	public void setPlayer(Player p) {
+		player = p;
 	}
 
 	public Player getPlayer() {

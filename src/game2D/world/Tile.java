@@ -3,6 +3,9 @@ package game2D.world;
 public class Tile {
 
 	public TileType tileType;
+	
+	private int x; // place in grid
+	private int y; // place in grid
 
 	protected float offsetX = 0;
 	protected float offsetY = 0;
@@ -20,10 +23,28 @@ public class Tile {
 
 	public Tile(TileType type) {
 		this.tileType = type;
+		this.x = 0;
+		this.y = 0;
 	}
 	
 	public TileType getType() {
 		return tileType;
+	}
+	
+	public void setX(int x) {
+		this.x = x;
+	}
+
+	public void setY(int y) {
+		this.y = y;
+	}
+
+	public int getX() {
+		return x;
+	}
+
+	public int getY() {
+		return y;
 	}
 
 	public void setOffsetX(int x) {
@@ -72,7 +93,7 @@ public class Tile {
 		this.speed = speed;
 	}
 
-	public void move() {
+	public void move(World world) {
 
 		if (minOffsetX == 0 && maxOffsetX == 0) offsetDirX = 0;
 		if (minOffsetY == 0 && maxOffsetY == 0) offsetDirY = 0;
@@ -101,7 +122,7 @@ public class Tile {
 				offsetDirY = -offsetDirY;
 			}
 		}
-		
+
 		deltaX = offsetDirX * speed;
 		deltaY = offsetDirY * speed;
 	}

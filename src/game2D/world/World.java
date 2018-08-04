@@ -31,8 +31,10 @@ public class World {
 	private Matrix4f worldMatrix;
 	private Window window;
 	private Player player;
-	private int backgroundTile = 0;
+	private int bgTileID = 0;
 	private Tile[] tile_grid;
+	private TileType bgTileType;
+	private Tile bgTile;
 
 	public World(Window window, int width, int height, int scale) {
 		this.window = window;
@@ -44,13 +46,16 @@ public class World {
 		bounding_boxes = new AABB[width * height];
 		this.worldMatrix = new Matrix4f().setTranslation(new Vector3f(0));
 		this.worldMatrix.scale(scale);
+		this.bgTileType = TileType.tileTypes[getBackgroundTile()];
+		this.bgTile = new Tile(bgTileType);
 	}
 
 	public World(String worldName, Camera camera, int scale, int bg_tile, Game2D game) {
 
 		window = game.getWindow();
-
-		backgroundTile = bg_tile;
+		bgTileID = bg_tile;
+		this.bgTileType = TileType.tileTypes[bgTileID];
+		this.bgTile = new Tile(bgTileType);
 
 		String tileSheetPath = Config.RESOURCES_DIR + "/levels/" + worldName + "/tiles.png";
 		String entitySheetPath = Config.RESOURCES_DIR + "/levels/" + worldName + "/entities.png";
@@ -101,8 +106,8 @@ public class World {
 					tileType = TileType.tileTypes[red];
 					tileObject = new Tile(tileType);
 				} catch (ArrayIndexOutOfBoundsException e) {
-					tileType = TileType.tileTypes[getBackgroundTile()];
-					tileObject = new Tile(tileType);
+					tileType = this.bgTileType;
+					tileObject = this.bgTile;
 				}
 
 				if (tileObject.getType().getId() == 10) { // 10 stands for mario_tile tile, class Tile line 32
@@ -174,10 +179,11 @@ public class World {
 	}
 	
 	public int getBackgroundTile() {
-		return backgroundTile;
+		return bgTileID;
 	}
 
 	public void update(float delta, Window window, Camera camera, Game2D game) {
+
 		for (Entity entity : entities) {
 			entity.update(delta, window, camera, this, game);
 		}
@@ -191,7 +197,18 @@ public class World {
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
 				Tile tile = getTile(x, y);
-				tile.move();
+				tile.move(this);
+				
+				// update grid location based on current offsets
+				if (tile.getOffsetX() != 0 || tile.getOffsetY() != 0) {
+					int newX = x + (int) tile.getOffsetX();
+					int newY = y + (int) tile.getOffsetY();
+					if (newX != x || newY != y) {
+						// System.out.println("Tile old XY: " + x +  "|"+ y + " new XY: " + newX + "|" + newY);
+						// setTile(this.bgTile, x, y);
+						// setTile(tile, newX, newY);
+					}
+				}
 				updateAABB(x, y, tile.getOffsetX(), tile.getOffsetY());					
 			}
 		}
@@ -227,6 +244,8 @@ public class World {
 
 	public void setTile(Tile tile, int x, int y) {
 		tiles[x + y * width] = tile.getType().getId();
+		tile.setX(x);
+		tile.setY(y);
 		tile_grid[x + y * width] = tile;
 		bounding_boxes[x + y * width] = tile.getType().isSolid() ?
 			new AABB(new Vector2f(x * 2, -y * 2), new Vector2f(1, 1)) : null;
