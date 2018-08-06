@@ -87,10 +87,10 @@ public class Player extends Entity {
 			window.toggleFullscreen();
 		}
 		if (input.isKeyReleased(GLFW.GLFW_KEY_1)) {
-			((Game2D) game).setLevel(1);
+			game.setLevel(1);
 		}
 		if (input.isKeyReleased(GLFW.GLFW_KEY_2)) {
-			((Game2D) game).setLevel(2);
+			game.setLevel(2);
 		}
 
 		move(movement);
