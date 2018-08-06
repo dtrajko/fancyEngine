@@ -13,7 +13,6 @@ import config.Config;
 import engine.IGameLogic;
 import engine.Window;
 import engine.graph.Camera;
-import game.Game2D;
 import game2D.collision.AABB;
 import game2D.entities.Entity;
 import game2D.entities.Player;
@@ -53,7 +52,7 @@ public class World implements IScene {
 
 	public World(String worldName, Camera camera, int scale, int bg_tile, IGameLogic game) {
 
-		window = ((Game2D) game).getWindow();
+		window = game.getWindow();
 		bgTileID = bg_tile;
 		this.bgTileType = TileType.tileTypes[bgTileID];
 		this.bgTile = new Tile(bgTileType);
@@ -123,8 +122,8 @@ public class World implements IScene {
 					transform.position.y = -y * 2;
 					switch (entity_index) {
 						case 1:
-							player = new Player(transform, ((Game2D) game).getInput());
-							((Game2D) game).setPlayer(player);							
+							player = new Player(transform, game.getInput());
+							game.setPlayer(player);							
 							entities.add(player);
 							camera.getPosition().set(transform.position.mul(-scale, new Vector3f()));
 							break;
