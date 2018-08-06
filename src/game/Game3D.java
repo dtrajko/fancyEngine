@@ -15,8 +15,9 @@ import engine.graph.particles.FlowParticleEmitter;
 import engine.gui.GuiElement;
 import engine.gui.GuiManager;
 import engine.sound.SoundManager;
+import game2D.entities.Player;
 
-public class Game implements IGameLogic {
+public class Game3D implements IGameLogic {
 
     private static final float MOUSE_SENSITIVITY = 0.2f;
     private final Vector3f cameraInc;
@@ -44,7 +45,7 @@ public class Game implements IGameLogic {
 
     private static HashMap<String, Mesh> meshTypesMap = new HashMap<String, Mesh>();
 
-    public Game() {
+    public Game3D() {
         renderer = new Renderer();
         camera = new Camera();
         soundMgr = new SoundManager();
@@ -254,4 +255,34 @@ public class Game implements IGameLogic {
     public static Scene getScene() {
     	return scene;
     }
+
+	@Override
+	public int getCurrentLevel() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void setLevel(int currentLevel) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Window getWindow() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public MouseInput getInput() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setPlayer(Player player) {
+		// TODO Auto-generated method stub
+		
+	}
 }

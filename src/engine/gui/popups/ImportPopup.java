@@ -19,7 +19,7 @@ import engine.gui.fonts.FontType;
 import engine.gui.fonts.GUIText;
 import engine.gui.fonts.TextMaster;
 import engine.utils.FileSystem;
-import game.Game;
+import game.Game3D;
 
 public class ImportPopup {
 	
@@ -89,7 +89,7 @@ public class ImportPopup {
 
         	if (nextBlock instanceof GuiElement && nextBlock.isClickable() && nextBlock.getTitle() != null) {
         		// System.out.println("ImportPopup importing the selected save file: [" + nextBlock.getTitle() + "]");
-        		scene.load(Game.getMeshTypesMap(), nextBlock.getTitle());
+        		scene.load(Game3D.getMeshTypesMap(), nextBlock.getTitle());
         	}
 
         	guiManager.toggleImportDialog(window);

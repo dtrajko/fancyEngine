@@ -10,4 +10,9 @@ public interface IGameLogic {
     void update(float interval, MouseInput mouseInput);
     void render(Window window);
     void cleanup();
+	int getCurrentLevel();
+	void setLevel(int currentLevel);
+	Window getWindow();
+	MouseInput getInput();
+	void setPlayer(Player player);
 }

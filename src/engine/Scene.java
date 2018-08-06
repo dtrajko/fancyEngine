@@ -39,7 +39,7 @@ import engine.sound.SoundBuffer;
 import engine.sound.SoundListener;
 import engine.sound.SoundManager;
 import engine.sound.SoundSource;
-import game.Game;
+import game.Game3D;
 
 public class Scene {
 
@@ -543,10 +543,10 @@ public class Scene {
         
         int skyBoxScale = 100;
         int extension = 2;
-        int startX = extension * (-skyBoxScale + Game.blockScale);
-        int startZ = extension * (skyBoxScale - Game.blockScale);
+        int startX = extension * (-skyBoxScale + Game3D.blockScale);
+        int startZ = extension * (skyBoxScale - Game3D.blockScale);
         // int startY = -1;
-        int increment = Game.blockScale * 2;
+        int increment = Game3D.blockScale * 2;
         int posX = startX;
         int posY = 0;
         int posZ = startZ;
@@ -583,7 +583,7 @@ public class Scene {
             			gameItem = new GameItem(meshTypesMap.get("GROUND"));
             		}
             		gameItem.setPosition(posX, posY, posZ);
-                	gameItem.setScale(Game.blockScale);
+                	gameItem.setScale(Game3D.blockScale);
                 	gameItem.setBoundingBox();
                 	
                 	gameItems.add(gameItem);                		     		

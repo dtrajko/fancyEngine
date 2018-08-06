@@ -1,4 +1,4 @@
-package game2D.world;
+package game2D.frogger;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -18,11 +18,14 @@ import game2D.collision.AABB;
 import game2D.entities.Entity;
 import game2D.entities.Player;
 import game2D.entities.Transform;
+import game2D.world.IScene;
+import game2D.world.Tile;
+import game2D.world.TileType;
 
-public class World implements IScene {
+public class FroggerScene implements IScene {
 
-	public int view_width = 26;
-	public int view_height = 18;
+	public int view_width = 22;
+	public int view_height = 16;
 	private byte[] tiles;
 	private AABB[] bounding_boxes;
 	private List<Entity> entities;
@@ -37,29 +40,15 @@ public class World implements IScene {
 	private TileType bgTileType;
 	private Tile bgTile;
 
-	public World(Window window, int width, int height, int scale) {
-		this.window = window;
-		this.width = width;   // 16
-		this.height = height; // 16
-		this.scale = scale;   // 16
-		tiles = new byte[width * height];
-		tile_grid = new Tile[width * height];
-		bounding_boxes = new AABB[width * height];
-		this.worldMatrix = new Matrix4f().setTranslation(new Vector3f(0));
-		this.worldMatrix.scale(scale);
-		this.bgTileType = TileType.tileTypes[getBackgroundTile()];
-		this.bgTile = new Tile(bgTileType);
-	}
+	public FroggerScene(String worldName, Camera camera, int scale, int bg_tile, IGameLogic game) {
 
-	public World(String worldName, Camera camera, int scale, int bg_tile, IGameLogic game) {
-
-		window = ((Game2D) game).getWindow();
+		window = game.getWindow();
 		bgTileID = bg_tile;
 		this.bgTileType = TileType.tileTypes[bgTileID];
 		this.bgTile = new Tile(bgTileType);
 
-		String tileSheetPath = Config.RESOURCES_DIR + "/levels/" + worldName + "/tiles.png";
-		String entitySheetPath = Config.RESOURCES_DIR + "/levels/" + worldName + "/entities.png";
+		String tileSheetPath = Config.RESOURCES_DIR + "/frogger/levels/" + worldName + "/tiles.png";
+		String entitySheetPath = Config.RESOURCES_DIR + "/frogger/levels/" + worldName + "/entities.png";
 		BufferedImage tile_sheet = null;
 		BufferedImage entity_sheet = null;
 
@@ -123,8 +112,8 @@ public class World implements IScene {
 					transform.position.y = -y * 2;
 					switch (entity_index) {
 						case 1:
-							player = new Player(transform, ((Game2D) game).getInput());
-							((Game2D) game).setPlayer(player);							
+							player = new Player(transform, game.getInput());
+							game.setPlayer(player);							
 							entities.add(player);
 							camera.getPosition().set(transform.position.mul(-scale, new Vector3f()));
 							break;

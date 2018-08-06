@@ -3,6 +3,8 @@ package game2D.entities;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+
+import engine.IGameLogic;
 import engine.Window;
 import engine.graph.Camera;
 import game.Game2D;
@@ -12,6 +14,7 @@ import game2D.collision.Collision;
 import game2D.render.Animation;
 import game2D.render.Model;
 import game2D.shaders.Shader;
+import game2D.world.IScene;
 import game2D.world.Tile;
 import game2D.world.World;
 
@@ -35,7 +38,7 @@ public abstract class Entity {
 			new Vector2f(this.transform.scale.x, this.transform.scale.y));
 	}
 
-	public abstract void update(float delta, Window window, Camera camera, World world, Game2D game);
+	public abstract void update(float delta, Window window, Camera camera, IScene scene, IGameLogic game);
 
 	public void setAnimation(int index, Animation animation) {
 		try {
@@ -55,11 +58,11 @@ public abstract class Entity {
 		bounding_box.getCenter().set(transform.position.x, transform.position.y);
 	}
 
-	public void collideWithTiles(World world) {
+	public void collideWithTiles(IScene scene) {
 		AABB[] boxes = new AABB[25];
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 5; j++) {
-				boxes[i + j * 5] = world.getTileBoundingBox(
+				boxes[i + j * 5] = scene.getTileBoundingBox(
 					(int)((transform.position.x / 2 + 0.5f) - 5/2) + i,
 					(int)((-transform.position.y / 2 + 0.5f) - 5/2) + j
 				);
@@ -102,27 +105,27 @@ public abstract class Entity {
 		}
 	}
 
-	public void correctPosition(Window window, World world) {
+	public void correctPosition(Window window, IScene scene) {
 
 		Vector3f pos = this.transform.position;
 
 		if (pos.x < 0) {
 			pos.x = 0;
 		}
-		if (pos.x > world.getWidth() * 2 - 2) {
-			pos.x = world.getWidth() * 2 - 2;
+		if (pos.x > scene.getWidth() * 2 - 2) {
+			pos.x = scene.getWidth() * 2 - 2;
 		}
 		if (pos.y > 0) {
 			pos.y = 0;
 		}
-		if (pos.y < -world.getHeight() * 2 + 2) {
-			pos.y = -world.getHeight() * 2 + 2;
+		if (pos.y < -scene.getHeight() * 2 + 2) {
+			pos.y = -scene.getHeight() * 2 + 2;
 		}		
 	}
 
-	public void render(Shader shader, Camera camera, World world) {
+	public void render(Shader shader, Camera camera, IScene scene) {
 		Matrix4f target = camera.getOrthoProjection();
-		target.mul(world.getWorldMatrix());
+		target.mul(scene.getWorldMatrix());
 		shader.bind();
 		shader.setUniform("sampler", 0);
 		shader.setUniform("projection", this.transform.getProjection(target));

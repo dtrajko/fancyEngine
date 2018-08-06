@@ -3,13 +3,15 @@ package game2D.entities;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
+
+import engine.IGameLogic;
 import engine.Window;
 import engine.graph.Camera;
 import engine.graph.MouseInput;
 import game.Game2D;
 import game2D.render.Animation;
+import game2D.world.IScene;
 import game2D.world.Tile;
-import game2D.world.TileType;
 import game2D.world.World;
 
 public class Player extends Entity {
@@ -39,14 +41,14 @@ public class Player extends Entity {
 		previous_height = this.transform.position.y;
 	}
 
-	public void input(float delta, Camera camera, World world, Game2D game) {
+	public void input(float delta, Camera camera, IScene scene, IGameLogic game) {
 
 		this.useAnimation(ANIM_IDLE);
 		Vector2f movement = new Vector2f();
 
 		movement.add(0, -GRAVITY);
 
-		Tile tileBellow = getTileBellow(world);
+		Tile tileBellow = getTileBellow(scene);
 		float tileDeltaCoef = delta * 2.75f; // adjustment to sync speed with tile bellow
 		movement.add(tileBellow.deltaX * tileDeltaCoef, tileBellow.deltaY * tileDeltaCoef);
 
@@ -85,66 +87,66 @@ public class Player extends Entity {
 			window.toggleFullscreen();
 		}
 		if (input.isKeyReleased(GLFW.GLFW_KEY_1)) {
-			game.setLevel(1);
+			((Game2D) game).setLevel(1);
 		}
 		if (input.isKeyReleased(GLFW.GLFW_KEY_2)) {
-			game.setLevel(2);
+			((Game2D) game).setLevel(2);
 		}
 
 		move(movement);
-		collideWithTiles(world);
-		correctPosition(window, world);
+		collideWithTiles(scene);
+		correctPosition(window, scene);
 
-		camera.getPosition().lerp(this.transform.position.mul(-world.getScale(), new Vector3f()), 0.02f);
-		manageLives(game, world);
-		manageLevels(game, world);
+		camera.getPosition().lerp(this.transform.position.mul(-scene.getScale(), new Vector3f()), 0.02f);
+		manageLives(game, scene);
+		manageLevels(game, scene);
 	}
 
-	public void update(float delta, Window window, Camera camera, World world, Game2D game) {
+	public void update(float delta, Window window, Camera camera, IScene scene, IGameLogic game) {
 	}
 
-	public void manageLevels(Game2D game, World world) {
-		if (isNextLevel(world)) {
+	public void manageLevels(IGameLogic game, IScene scene) {
+		if (isNextLevel(scene)) {
 			game.setLevel(game.getCurrentLevel() + 1);
-		} else if (isPreviousLevel(world)) {
+		} else if (isPreviousLevel(scene)) {
 			// game.setLevel(game.getCurrentLevel() - 1);
 		}
 	}
 
-	public Tile getCurrentTile(World world) {
+	public Tile getCurrentTile(IScene scene) {
 		int x = (int)(transform.position.x / 2);
 		int y = (int)(-transform.position.y / 2);
-		Tile tile = world.getTile(x, y);
+		Tile tile = scene.getTile(x, y);
 		return tile;
 	}
 
-	public Tile getTileBellow(World world) {
+	public Tile getTileBellow(IScene scene) {
 		int x = (int)(transform.position.x / 2);
 		int y = (int)(-transform.position.y / 2 + 1);
-		Tile tile = world.getTile(x, y);
+		Tile tile = scene.getTile(x, y);
 		return tile;
 	}
 
-	public boolean isNextLevel(World world) {
-		if (getCurrentTile(world) != null) {
-			return getCurrentTile(world).getType().isNextLevel();			
+	public boolean isNextLevel(IScene scene) {
+		if (getCurrentTile(scene) != null) {
+			return getCurrentTile(scene).getType().isNextLevel();			
 		}
 		return false;
 	}
 
-	public boolean isPreviousLevel(World world) {
-		if (getCurrentTile(world) != null) {
-			return getCurrentTile(world).getType().isPreviousLevel();
+	public boolean isPreviousLevel(IScene scene) {
+		if (getCurrentTile(scene) != null) {
+			return getCurrentTile(scene).getType().isPreviousLevel();
 		}
 		return false;
 	}
 
-	public void manageLives(Game2D game, World world) {
+	public void manageLives(IGameLogic game, IScene scene) {
 		if (previous_height == this.transform.position.y) {
 			return;
 		}
 		int y = (int)(-transform.position.y / 2);
-		if (y >= world.getHeight() - 1) {
+		if (y >= scene.getHeight() - 1) {
 			lives--;
 			if (lives < 0) lives = 0;
 			game.setLevel(game.getCurrentLevel());

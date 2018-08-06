@@ -9,6 +9,7 @@ import game2D.assets.Sprite;
 import game2D.entities.Entity;
 import game2D.shaders.Shader;
 import game2D.textures.Texture;
+import game2D.world.IScene;
 import game2D.world.Tile;
 import game2D.world.TileType;
 import game2D.world.World;
@@ -38,54 +39,54 @@ public class TileRenderer {
 		}
 	}
 
-	public void render(World world, Camera camera) {
+	public void render(IScene scene, Camera camera) {
 
-		int posX = (int) camera.getPosition().x / (world.getScale() * 2);
-		int posY = (int) camera.getPosition().y / (world.getScale() * 2);
+		int posX = (int) camera.getPosition().x / (scene.getScale() * 2);
+		int posY = (int) camera.getPosition().y / (scene.getScale() * 2);
 
 		// render background tiles
-		for (int i = 0; i < world.getViewWidth(); i++) {
-			for (int j = 0; j < world.getViewHeight(); j++) {
+		for (int i = 0; i < scene.getViewWidth(); i++) {
+			for (int j = 0; j < scene.getViewHeight(); j++) {
 				
-				int getX = i - posX - (world.getViewWidth() / 2);
-				int getY = j + posY - (world.getViewHeight() / 2);
+				int getX = i - posX - (scene.getViewWidth() / 2);
+				int getY = j + posY - (scene.getViewHeight() / 2);
 				int renderX = getX;
 				int renderY = -getY;
 
-				TileType tileType = TileType.tileTypes[world.getBackgroundTile()];
+				TileType tileType = TileType.tileTypes[scene.getBackgroundTile()];
 				Tile tile = new Tile(tileType);
 
-				renderBackgroundTile(tile, renderX, renderY, world, camera);
+				renderBackgroundTile(tile, renderX, renderY, scene, camera);
 			}
 		}
 
 		// render front tiles
-		for (int i = 0; i < world.getViewWidth(); i++) {
-			for (int j = 0; j < world.getViewHeight(); j++) {
+		for (int i = 0; i < scene.getViewWidth(); i++) {
+			for (int j = 0; j < scene.getViewHeight(); j++) {
 				
-				int getX = i - posX - (world.getViewWidth() / 2);
-				int getY = j + posY - (world.getViewHeight() / 2);
+				int getX = i - posX - (scene.getViewWidth() / 2);
+				int getY = j + posY - (scene.getViewHeight() / 2);
 				int renderX = getX;
 				int renderY = -getY;
 
 				// TileType tile = world.getTile(getX, getY);
-				Tile tile = world.getTile(getX, getY);
+				Tile tile = scene.getTile(getX, getY);
 
-				if (tile != null && tile.getType().getId() != world.getBackgroundTile()) {					
-					renderTile(tile, renderX, renderY, world, camera);
+				if (tile != null && tile.getType().getId() != scene.getBackgroundTile()) {					
+					renderTile(tile, renderX, renderY, scene, camera);
 				}
 			}
 		}
-		for (Entity entity : world.getEntities()) {
-			entity.render(shader, camera, world);
+		for (Entity entity : scene.getEntities()) {
+			entity.render(shader, camera, scene);
 		}
 	}
 
-	public void renderBackgroundTile(Tile tile, int x, int y, World world, Camera camera) {
+	public void renderBackgroundTile(Tile tile, int x, int y, IScene scene, Camera camera) {
 
 		shader.bind();
 
-		Matrix4f worldMatrix = world.getWorldMatrix();
+		Matrix4f worldMatrix = scene.getWorldMatrix();
 
 		tile_textures.get(tile.getType().getTexture()).bind(0);
 
@@ -98,11 +99,11 @@ public class TileRenderer {
 		model.render();
 	}
 
-	public void renderTile(Tile tile, int x, int y, World world, Camera camera) {
+	public void renderTile(Tile tile, int x, int y, IScene scene, Camera camera) {
 
 		shader.bind();
 
-		Matrix4f worldMatrix = world.getWorldMatrix();
+		Matrix4f worldMatrix = scene.getWorldMatrix();
 
 		float tileOffsetX = tile.getOffsetX();
 		float tileOffsetY = tile.getOffsetY();
