@@ -7,12 +7,11 @@ import engine.graph.Camera;
 import game2D.assets.Assets;
 import game2D.assets.Sprite;
 import game2D.entities.Entity;
+import game2D.frogger.ITileType;
 import game2D.shaders.Shader;
 import game2D.textures.Texture;
 import game2D.world.IScene;
 import game2D.world.Tile;
-import game2D.world.TileType;
-import game2D.world.World;
 
 public class TileRenderer {
 
@@ -29,10 +28,13 @@ public class TileRenderer {
 		model.renderInit();
 		Assets.getModel().renderInit();
 		tile_textures = new HashMap<String, Texture>();
-		for (int i = 0; i < TileType.tileTypes.length; i++) {
-			if (TileType.tileTypes[i] != null) {
-				if (!tile_textures.containsKey(TileType.tileTypes[i].getTexture())) {
-					String texturePath = TileType.tileTypes[i].getTexture();
+	}
+
+	public void loadTextures(IScene scene) {
+		for (int i = 0; i < scene.getTileTypes().length; i++) {
+			if (scene.getTileTypes()[i] != null) {
+				if (!tile_textures.containsKey(scene.getTileTypes()[i].getTexture())) {
+					String texturePath = scene.getTileTypes()[i].getTexture();
 					tile_textures.put(texturePath, new Texture(texturePath));
 				}
 			}
@@ -40,6 +42,10 @@ public class TileRenderer {
 	}
 
 	public void render(IScene scene, Camera camera) {
+
+		if (tile_textures.isEmpty()) {
+			loadTextures(scene);
+		}
 
 		int posX = (int) camera.getPosition().x / (scene.getScale() * 2);
 		int posY = (int) camera.getPosition().y / (scene.getScale() * 2);
@@ -53,7 +59,7 @@ public class TileRenderer {
 				int renderX = getX;
 				int renderY = -getY;
 
-				TileType tileType = TileType.tileTypes[scene.getBackgroundTile()];
+				ITileType tileType = scene.getTileTypes()[scene.getBackgroundTile()];
 				Tile tile = new Tile(tileType);
 
 				renderBackgroundTile(tile, renderX, renderY, scene, camera);
@@ -87,7 +93,7 @@ public class TileRenderer {
 		shader.bind();
 
 		Matrix4f worldMatrix = scene.getWorldMatrix();
-
+		
 		tile_textures.get(tile.getType().getTexture()).bind(0);
 
 		Matrix4f tile_pos_bg = new Matrix4f().translate(new Vector3f(x * 2, y * 2 + 2, 0));

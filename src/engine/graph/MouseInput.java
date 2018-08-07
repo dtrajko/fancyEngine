@@ -80,7 +80,6 @@ public class MouseInput {
     public void input(Window window) {
         displVec.x = 0;
         displVec.y = 0;
-        // if (previousPos.x > 0 && previousPos.y > 0 && inWindow) {
         if (previousPos.x != 0 && previousPos.y != 0) {
             double deltax = currentPos.x - previousPos.x;
             double deltay = currentPos.y - previousPos.y;

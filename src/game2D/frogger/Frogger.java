@@ -16,7 +16,6 @@ import game2D.entities.Transform;
 import game2D.gui.Gui;
 import game2D.render.TileRenderer;
 import game2D.render.TileSheet;
-import game2D.world.World;
 
 public class Frogger implements IGameLogic {
 
@@ -24,7 +23,7 @@ public class Frogger implements IGameLogic {
 	private static int TOTAL_LEVELS = 2;
 	private static FroggerScene scene;
 	private final Camera camera;
-	private int level_scale = 32;
+	private int level_scale = 20;
 	private static Map<Gui, Transform> guis = new HashMap<Gui, Transform>();
 	public static Player player;
 	private static boolean switchLevel = true;
@@ -32,7 +31,7 @@ public class Frogger implements IGameLogic {
 	private static TileSheet sheet;
 	private static Window window;
 	private MouseInput mouseInput;
-	private static float SPEED = 0.1f;
+	private static float SPEED = 0.01f;
 	double frame_cap = 1.0 / GameEngine.TARGET_FPS;
 
 	public Frogger() {
@@ -45,13 +44,13 @@ public class Frogger implements IGameLogic {
 		window = win;
 		renderer.init();
 		camera.setOrthoProjection(window);
-		sheet = new TileSheet("lives", 3);
+		sheet = new TileSheet("textures/game2D/sheets/lives", 3);
 	}
 
 	public void beginLevel() {
 		switch (current_level) {
 		case 1:
-			scene = new FroggerScene("01", camera, this.level_scale, 5, this);
+			scene = new FroggerScene("01", camera, this.level_scale, 0, this);
 			scene.calculateView(window);
 			player = scene.getPlayer();
 			break;
@@ -141,6 +140,6 @@ public class Frogger implements IGameLogic {
 	public void cleanup() {
 		Assets.deleteAsset();
 		renderer.clear();
-		scene.cleanup();
+		if (scene != null) scene.cleanup();
 	}
 }

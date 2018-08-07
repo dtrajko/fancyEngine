@@ -13,7 +13,7 @@ public class TileSheet {
 	private int amountOfTiles;
 
 	public TileSheet(String textureName, int amountOfTiles) {
-		this.texture = new Texture("sheets/" + textureName);
+		this.texture = new Texture(textureName);
 		this.amountOfTiles = amountOfTiles;
 		this.scale = new Matrix4f().scale(1.0f / (float)amountOfTiles);
 		this.translation = new Matrix4f();

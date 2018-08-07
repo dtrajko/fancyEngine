@@ -45,7 +45,7 @@ public class Game2D implements IGameLogic {
 		window = win;
 		renderer.init();
 		camera.setOrthoProjection(window);
-		sheet = new TileSheet("lives", 3);
+		sheet = new TileSheet("textures/game2D/sheets/lives", 3);
 		// beginLevel();
 	}
 

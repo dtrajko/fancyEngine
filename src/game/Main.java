@@ -9,7 +9,7 @@ public class Main {
 
 	private static int width = 0;
 	private static int height = 0;
-	private static String app = "2D"; // 3D, 2D, Frogger
+	private static String app = "Frogger"; // 3D, 2D, Frogger
 
     public static void main(String[] args) {
         try {
@@ -26,18 +26,23 @@ public class Main {
 			case "3D":
 				gameLogic = new Game3D();
 				opts.mode3D = true;
+				width = height = 0;
 				break;
 			case "2D":
 				gameLogic = new Game2D();
 				opts.mode3D = false;
+				width = height = 0;
 				break;
 			case "Frogger":
 				gameLogic = new Frogger();
 				opts.mode3D = false;
+				width = 880;
+				height = 640;
 				break;
 			default:
 				gameLogic = new Game3D();
 				opts.mode3D = true;
+				width = height = 0;
             }
 
         	gameEng = new GameEngine("Java / LWJGL3 / lwjglbook", width, height, vSync, opts, gameLogic);

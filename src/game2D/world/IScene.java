@@ -6,6 +6,7 @@ import org.joml.Matrix4f;
 
 import game2D.collision.AABB;
 import game2D.entities.Entity;
+import game2D.frogger.ITileType;
 
 public interface IScene {
 
@@ -19,4 +20,5 @@ public interface IScene {
 	Matrix4f getWorldMatrix();
 	List<Entity> getEntities();
 	AABB getTileBoundingBox(int i, int j);
+	ITileType[] getTileTypes();
 }

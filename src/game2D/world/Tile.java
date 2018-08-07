@@ -1,9 +1,12 @@
 package game2D.world;
 
+import game2D.frogger.ITileType;
+import game2D.frogger.TileTypeFrogger;
+
 public class Tile {
 
-	public TileType tileType;
-	
+	public ITileType tileType;
+
 	private int x; // place in grid
 	private int y; // place in grid
 
@@ -21,16 +24,16 @@ public class Tile {
 	public float deltaX = 0;
 	public float deltaY = 0;
 
-	public Tile(TileType type) {
-		this.tileType = type;
+	public Tile(ITileType bgTileType) {
+		this.tileType = bgTileType;
 		this.x = 0;
 		this.y = 0;
 	}
 	
-	public TileType getType() {
+	public ITileType getType() {
 		return tileType;
 	}
-	
+
 	public void setX(int x) {
 		this.x = x;
 	}

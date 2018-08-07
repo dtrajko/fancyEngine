@@ -13,14 +13,12 @@ import config.Config;
 import engine.IGameLogic;
 import engine.Window;
 import engine.graph.Camera;
-import game.Game2D;
 import game2D.collision.AABB;
 import game2D.entities.Entity;
 import game2D.entities.Player;
 import game2D.entities.Transform;
 import game2D.world.IScene;
 import game2D.world.Tile;
-import game2D.world.TileType;
 
 public class FroggerScene implements IScene {
 
@@ -34,17 +32,19 @@ public class FroggerScene implements IScene {
 	private int scale;
 	private Matrix4f worldMatrix;
 	private Window window;
-	private Player player;
+	private FroggerPlayer player;
 	private int bgTileID = 0;
 	private Tile[] tile_grid;
-	private TileType bgTileType;
+	private ITileType bgTileType;
 	private Tile bgTile;
+	private final ITileType[] tileTypes;
 
 	public FroggerScene(String worldName, Camera camera, int scale, int bg_tile, IGameLogic game) {
 
+		tileTypes = TileTypeFrogger.tileTypes;
 		window = game.getWindow();
 		bgTileID = bg_tile;
-		this.bgTileType = TileType.tileTypes[bgTileID];
+		this.bgTileType = tileTypes[bgTileID];
 		this.bgTile = new Tile(bgTileType);
 
 		String tileSheetPath = Config.RESOURCES_DIR + "/frogger/levels/" + worldName + "/tiles.png";
@@ -79,7 +79,7 @@ public class FroggerScene implements IScene {
 		this.worldMatrix.scale(scale);
 
 		Transform transform;
-		TileType tileType;
+		ITileType tileType;
 		Tile tileObject;
 
 		for (int y = 0; y < height; y++) {
@@ -91,9 +91,9 @@ public class FroggerScene implements IScene {
 				
 				int entity_index = (colorEntitySheet[x + y * width] >> 16) & 0xFF;
 				int entity_alpha = (colorEntitySheet[x + y * width] >> 24) & 0xFF;
-
+				
 				try {
-					tileType = TileType.tileTypes[red];
+					tileType = TileTypeFrogger.tileTypes[red];					
 					tileObject = new Tile(tileType);
 				} catch (ArrayIndexOutOfBoundsException e) {
 					tileType = this.bgTileType;
@@ -112,7 +112,7 @@ public class FroggerScene implements IScene {
 					transform.position.y = -y * 2;
 					switch (entity_index) {
 						case 1:
-							player = new Player(transform, game.getInput());
+							player = new FroggerPlayer(transform, game.getInput());
 							game.setPlayer(player);							
 							entities.add(player);
 							camera.getPosition().set(transform.position.mul(-scale, new Vector3f()));
@@ -125,6 +125,10 @@ public class FroggerScene implements IScene {
 		}
 	}
 	
+	public ITileType[] getTileTypes() {
+		return this.tileTypes;
+	}
+
 	public Tile[] getTileGrid() {
 		return this.tile_grid;
 	}

@@ -19,7 +19,7 @@ public class Texture {
 
 	public Texture(String filename) {
 
-		String filePath = "./" + Config.RESOURCES_DIR + "/textures/game2D/" + filename + ".png";
+		String filePath = "./" + Config.RESOURCES_DIR + "/" + filename + ".png";
 		try {
 			 BufferedImage bi = ImageIO.read(new File(filePath));
 			 width  = bi.getWidth();

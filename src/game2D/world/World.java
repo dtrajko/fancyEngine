@@ -17,6 +17,8 @@ import game2D.collision.AABB;
 import game2D.entities.Entity;
 import game2D.entities.Player;
 import game2D.entities.Transform;
+import game2D.frogger.ITileType;
+import game2D.frogger.TileTypeFrogger;
 
 public class World implements IScene {
 
@@ -33,8 +35,9 @@ public class World implements IScene {
 	private Player player;
 	private int bgTileID = 0;
 	private Tile[] tile_grid;
-	private TileType bgTileType;
+	private ITileType bgTileType;
 	private Tile bgTile;
+	private ITileType[] tileTypes;
 
 	public World(Window window, int width, int height, int scale) {
 		this.window = window;
@@ -46,15 +49,16 @@ public class World implements IScene {
 		bounding_boxes = new AABB[width * height];
 		this.worldMatrix = new Matrix4f().setTranslation(new Vector3f(0));
 		this.worldMatrix.scale(scale);
-		this.bgTileType = TileType.tileTypes[getBackgroundTile()];
+		this.bgTileType = TileType2D.tileTypes[getBackgroundTile()];
 		this.bgTile = new Tile(bgTileType);
 	}
 
 	public World(String worldName, Camera camera, int scale, int bg_tile, IGameLogic game) {
 
+		tileTypes = TileType2D.tileTypes;
 		window = game.getWindow();
 		bgTileID = bg_tile;
-		this.bgTileType = TileType.tileTypes[bgTileID];
+		this.bgTileType = TileType2D.tileTypes[bgTileID];
 		this.bgTile = new Tile(bgTileType);
 
 		String tileSheetPath = Config.RESOURCES_DIR + "/levels/" + worldName + "/tiles.png";
@@ -89,7 +93,7 @@ public class World implements IScene {
 		this.worldMatrix.scale(scale);
 
 		Transform transform;
-		TileType tileType;
+		ITileType tileType;
 		Tile tileObject;
 
 		for (int y = 0; y < height; y++) {
@@ -103,7 +107,7 @@ public class World implements IScene {
 				int entity_alpha = (colorEntitySheet[x + y * width] >> 24) & 0xFF;
 
 				try {
-					tileType = TileType.tileTypes[red];
+					tileType = TileType2D.tileTypes[red];
 					tileObject = new Tile(tileType);
 				} catch (ArrayIndexOutOfBoundsException e) {
 					tileType = this.bgTileType;
@@ -134,7 +138,12 @@ public class World implements IScene {
 			}
 		}
 	}
-	
+
+	@Override
+	public ITileType[] getTileTypes() {
+		return this.tileTypes;
+	}
+
 	public Tile[] getTileGrid() {
 		return this.tile_grid;
 	}
