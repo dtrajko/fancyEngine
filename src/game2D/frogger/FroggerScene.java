@@ -85,7 +85,6 @@ public class FroggerScene implements IScene {
 		this.worldMatrix = new Matrix4f().setTranslation(new Vector3f(0));
 		this.worldMatrix.scale(scale);
 
-		Transform transform;
 		ITileType tileType;
 		Tile tileObject;
 
@@ -95,9 +94,6 @@ public class FroggerScene implements IScene {
 				this.tiles[x + y * width] = (byte) bg_tile;
 
 				int red = (colorTileSheet[x + y * width] >> 16) & 0xFF;
-				
-				int entity_index = (colorEntitySheet[x + y * width] >> 16) & 0xFF;
-				int entity_alpha = (colorEntitySheet[x + y * width] >> 24) & 0xFF;
 				
 				try {
 					tileType = TileTypeFrogger.tileTypes[red];					
@@ -112,41 +108,41 @@ public class FroggerScene implements IScene {
 					tileObject.setOffsetDirectionX(-1);
 				}
 				setTile(tileObject, x, y);
-
-				if (entity_alpha > 0) {
-					transform = new Transform();
-					transform.position.x = x * 2;
-					transform.position.y = -y * 2;
-					switch (entity_index) {
-						case 1:
-							player = new FroggerPlayer(transform, game.getInput());
-							game.setPlayer(player);							
-							entities.add(player);
-							camera.getPosition().set(transform.position.mul(-scale, new Vector3f()));
-							break;
-						default:
-							break;
-					}
-				}
 			}
 		}
+
 		setupObstacles(window);
+		setupPlayer(window, game, camera);
 	}
 	
+	public void setupPlayer(Window window, IGameLogic game, Camera camera) {
+		Transform transform = new Transform();
+		transform.position.x = window.getWidth() / scale / 2 - 1;
+		transform.position.y = -window.getHeight() / scale + 6;
+		player = new FroggerPlayer(transform, game.getInput());
+		game.setPlayer(player);							
+		entities.add(player);
+		camera.getPosition().set(transform.position.mul(-scale, new Vector3f()));
+	}
+
 	public void setupObstacles(Window window) {
 
-		obstacles = new Entity[10];
+		obstacles = new Entity[50];
 		Texture txtCar = new Texture("frogger/textures/car_01");
 		Texture txtTruck = new Texture("frogger/textures/truck_01");
+		Texture txtLog = new Texture("frogger/textures/log_x3");
+		Texture txtTurtles = new Texture("frogger/textures/turtles_x3");
 		int lanes = 5;
 		int grid_width = window.getWidth() / scale;
 		int grid_height = -window.getHeight() / scale;
 		int gridOffsetY = 8;
+		float randSpeed;
+		int randOffsetX;
 		
+		// road
 		for (int i = 0; i < lanes; i++) {
-
-			int randSpeed = rand.nextInt(lanes * 2);
-			int randOffsetX = rand.nextInt(5);
+			randSpeed = (float) (rand.nextInt(10) + 5) / 50;
+			randOffsetX = rand.nextInt(5);
 			Transform transform = new Transform();
 			transform.position.x = grid_width + randOffsetX * 2;
 			transform.position.y = grid_height + gridOffsetY + i * 2;
@@ -158,6 +154,25 @@ public class FroggerScene implements IScene {
 			transform2.position.y = transform.position.y;
 			transform2.scale.x = transform2.scale.y * 2;
 			obstacles[lanes + i] = new Obstacle(transform2, txtTruck, randSpeed);
+			entities.add(obstacles[lanes + i]);
+		}
+		// river
+		gridOffsetY = 20;
+		for (int i = 0; i < lanes; i++) {
+			randSpeed = (float) (rand.nextInt(10) + 5) / 100;
+			randOffsetX = rand.nextInt(5);
+			Transform transform = new Transform();
+			transform.position.x = grid_width + randOffsetX * 2;
+			transform.position.y = grid_height + gridOffsetY + i * 2;
+			transform.scale.x = transform.scale.y * 3;
+			obstacles[i] = new Obstacle(transform, txtLog, randSpeed);
+			entities.add(obstacles[i]);
+			
+			Transform transform2 = new Transform();
+			transform2.position.x = transform.position.x + grid_width / 2;
+			transform2.position.y = transform.position.y;
+			transform2.scale.x = transform2.scale.y * 3;
+			obstacles[lanes + i] = new Obstacle(transform2, txtTurtles, randSpeed);
 			entities.add(obstacles[lanes + i]);
 		}
 	}

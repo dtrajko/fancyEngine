@@ -12,9 +12,10 @@ import game2D.world.IScene;
 public class Obstacle extends Entity {
 
 	private Texture texture;
-	private int speed;
+	private float speed;
+	private int maxLength = 6;
 
-	public Obstacle(Transform transform, Texture tx, int spd) {
+	public Obstacle(Transform transform, Texture tx, float spd) {
 		super(transform);
 		this.texture = tx;
 		this.speed = spd;
@@ -22,9 +23,9 @@ public class Obstacle extends Entity {
 
 	@Override
 	public void update(float delta, Window window, Camera camera, IScene scene, IGameLogic game) {
-		transform.position.x -= (float) speed / 20;
-		if (transform.position.x < 0 - 2) {
-			transform.position.x = window.getWidth() / scene.getScale();
+		transform.position.x -= speed;
+		if (transform.position.x < 0 - maxLength) {
+			transform.position.x = window.getWidth() / scene.getScale() + maxLength;
 		}
 	}
 
