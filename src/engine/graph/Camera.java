@@ -83,10 +83,7 @@ public class Camera {
 			newPos.x += (float) Math.sin(Math.toRadians(rotation.y - 90)) * -1.0f * offsetX;
 			newPos.z += (float) Math.cos(Math.toRadians(rotation.y - 90)) * offsetX;
 		}
-		newPos.y += offsetY;
-		
-		// System.out("Camera new position: " + newPos);
-		
+		newPos.y += offsetY;		
 		return newPos;
 	}
 

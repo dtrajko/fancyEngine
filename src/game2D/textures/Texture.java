@@ -30,7 +30,7 @@ public class Texture {
 
 			 for (int i = 0; i < width; i++) {
 				 for (int j = 0; j < height; j++) {
-					 int pixel = pixels_raw[i * width + j];
+					 int pixel = pixels_raw[i * height + j];
 					 pixels.put((byte)((pixel >> 16) & 0xFF)); // RED
 					 pixels.put((byte)((pixel >>  8) & 0xFF)); // GREEN
 					 pixels.put((byte)((pixel >>  0) & 0xFF)); // BLUE

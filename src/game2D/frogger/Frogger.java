@@ -31,7 +31,7 @@ public class Frogger implements IGameLogic {
 	private static TileSheet sheet;
 	private static Window window;
 	private MouseInput mouseInput;
-	private static float SPEED = 0.01f;
+	private static float SPEED = 0.001f;
 	double frame_cap = 1.0 / GameEngine.TARGET_FPS;
 
 	public Frogger() {
@@ -44,13 +44,13 @@ public class Frogger implements IGameLogic {
 		window = win;
 		renderer.init();
 		camera.setOrthoProjection(window);
-		sheet = new TileSheet("textures/game2D/sheets/lives", 3);
+		sheet = new TileSheet("frogger/textures/sheets/lives", 3);
 	}
 
 	public void beginLevel() {
 		switch (current_level) {
 		case 1:
-			scene = new FroggerScene("01", camera, this.level_scale, 0, this);
+			scene = new FroggerScene("01", camera, this.level_scale, 4, this);
 			scene.calculateView(window);
 			player = scene.getPlayer();
 			break;
@@ -95,10 +95,10 @@ public class Frogger implements IGameLogic {
 	public void updateGui() {
 		guis.clear();
 		float lives_x = -0.93f;
-		float lives_y = -0.9f;
+		float lives_y = -0.81f;
 		for (int i = 0; i < player.getLives(); i++) {
-			guis.put(new Gui(sheet, window), new Transform(new Vector3f(lives_x, lives_y, 0), new Vector3f(0.04f, 0.06f, 1.0f)));
-			lives_x += 0.075f;
+			guis.put(new Gui(sheet, window), new Transform(new Vector3f(lives_x, lives_y, 0), new Vector3f(0.052f, 0.052f, 1f)));
+			lives_x += 0.1f;
 		}
 	}
 

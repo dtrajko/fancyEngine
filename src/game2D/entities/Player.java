@@ -8,13 +8,12 @@ import engine.IGameLogic;
 import engine.Window;
 import engine.graph.Camera;
 import engine.graph.MouseInput;
-import game.Game2D;
+import game2D.collision.Collision;
 import game2D.render.Animation;
 import game2D.world.IScene;
 import game2D.world.Tile;
-import game2D.world.World;
 
-public class Player extends Entity {
+public class Player extends AnimatedEntity {
 
 	public static final int ANIM_IDLE = 0;
 	public static final int ANIM_WALK = 1;
@@ -94,7 +93,7 @@ public class Player extends Entity {
 		}
 
 		move(movement);
-		collideWithTiles(scene);
+		collideWithTiles(scene, Collision.BOUNCE_DIR_UP);
 		correctPosition(window, scene);
 
 		camera.getPosition().lerp(this.transform.position.mul(-scene.getScale(), new Vector3f()), 0.02f);

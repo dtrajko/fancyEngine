@@ -7,31 +7,20 @@ import org.joml.Vector3f;
 import engine.IGameLogic;
 import engine.Window;
 import engine.graph.Camera;
-import game.Game2D;
 import game2D.assets.Assets;
 import game2D.collision.AABB;
 import game2D.collision.Collision;
-import game2D.render.Animation;
 import game2D.render.Model;
 import game2D.shaders.Shader;
 import game2D.world.IScene;
-import game2D.world.Tile;
-import game2D.world.World;
 
 public abstract class Entity {
 
 	protected static Model model;
 	protected AABB bounding_box;
-	// private Texture texture;
 	protected Transform transform;
-	protected Animation[] animations;
-	private int max_animations;
-	private int use_animation;
 
-	public Entity(int max_animations, Transform transform) {
-		this.max_animations = max_animations;
-		this.animations = new Animation[this.max_animations];
-		this.use_animation = 0;
+	public Entity(Transform transform) {
 		this.transform = transform;
 		this.bounding_box = new AABB(
 			new Vector2f(transform.position.x, transform.position.y), 
@@ -40,25 +29,12 @@ public abstract class Entity {
 
 	public abstract void update(float delta, Window window, Camera camera, IScene scene, IGameLogic game);
 
-	public void setAnimation(int index, Animation animation) {
-		try {
-			this.animations[index] = animation;
-		} catch (ArrayIndexOutOfBoundsException e) {
-			System.err.println("Index is out of boundaries (max_animations=" + this.max_animations + ")");
-			e.printStackTrace();
-		}
-	}
-	
-	public void useAnimation(int index) {
-		this.use_animation = index;
-	}
-
 	public void move(Vector2f direction) {
 		transform.position.add(new Vector3f(direction, 0));
 		bounding_box.getCenter().set(transform.position.x, transform.position.y);
 	}
 
-	public void collideWithTiles(IScene scene) {
+	public void collideWithTiles(IScene scene, int direction) {
 		AABB[] boxes = new AABB[25];
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 5; j++) {
@@ -84,23 +60,23 @@ public abstract class Entity {
 		if (box != null) {
 			Collision data = this.bounding_box.getCollision(box);
 			if (data.isIntersecting) {
-				bounding_box.correctPosition(box, data);
+				bounding_box.correctPosition(box, data, direction);
 				transform.position.set(bounding_box.getCenter(), 0);
 			}			
 		}
 	}
 
-	public void collideWithEntity(Entity entity) {
+	public void collideWithEntity(Entity entity, int direction) {
 		Collision collision = this.bounding_box.getCollision(entity.bounding_box);
 		if (collision.isIntersecting) {
 
 			collision.distance.x /= 2;
 			collision.distance.y /= 2;
 
-			this.bounding_box.correctPosition(entity.bounding_box, collision);
+			this.bounding_box.correctPosition(entity.bounding_box, collision, direction);
 			this.transform.position.set(this.bounding_box.getCenter().x, this.bounding_box.getCenter().y, 0);
 			
-			entity.bounding_box.correctPosition(this.bounding_box, collision);
+			entity.bounding_box.correctPosition(this.bounding_box, collision, direction);
 			entity.transform.position.set(entity.bounding_box.getCenter().x, entity.bounding_box.getCenter().y, 0);
 		}
 	}
@@ -129,7 +105,6 @@ public abstract class Entity {
 		shader.bind();
 		shader.setUniform("sampler", 0);
 		shader.setUniform("projection", this.transform.getProjection(target));
-		this.animations[this.use_animation].bind(0);
 		Assets.getModel().render();
 	}
 }

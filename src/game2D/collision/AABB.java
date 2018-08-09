@@ -4,7 +4,7 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 public class AABB {
-	
+
 	private Vector2f center, half_extent;
 
 	public AABB(Vector2f center, Vector2f half_extent) {
@@ -33,7 +33,7 @@ public class AABB {
 		return new Collision(distance, distance.x < 0 && distance.y < 0);
 	}
 	
-	public void correctPosition(AABB box2, Collision data) {
+	public void correctPosition(AABB box2, Collision data, int direction) {
 		Vector2f correction = box2.center.sub(center, new Vector2f());
 		if (data.distance.x > data.distance.y) {
 			if (correction.x > 0) {
@@ -43,9 +43,9 @@ public class AABB {
 			}
 		} else {
 			if (correction.y > 0) {
-				center.add(0, data.distance.y);
+				center.add(0, data.distance.y * direction);
 			} else {
-				center.add(0, -data.distance.y);
+				center.add(0, -data.distance.y * direction);
 			}
 		}
 	}

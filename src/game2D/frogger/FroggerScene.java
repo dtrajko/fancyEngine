@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+
 import javax.imageio.ImageIO;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
@@ -14,15 +16,17 @@ import engine.IGameLogic;
 import engine.Window;
 import engine.graph.Camera;
 import game2D.collision.AABB;
+import game2D.collision.Collision;
 import game2D.entities.Entity;
 import game2D.entities.Player;
 import game2D.entities.Transform;
+import game2D.textures.Texture;
 import game2D.world.IScene;
 import game2D.world.Tile;
 
 public class FroggerScene implements IScene {
 
-	public int view_width = 22;
+	public int view_width = 15;
 	public int view_height = 16;
 	private byte[] tiles;
 	private AABB[] bounding_boxes;
@@ -38,6 +42,9 @@ public class FroggerScene implements IScene {
 	private ITileType bgTileType;
 	private Tile bgTile;
 	private final ITileType[] tileTypes;
+	private Random rand = new Random();
+
+	private Entity[] obstacles;
 
 	public FroggerScene(String worldName, Camera camera, int scale, int bg_tile, IGameLogic game) {
 
@@ -123,8 +130,38 @@ public class FroggerScene implements IScene {
 				}
 			}
 		}
+		setupObstacles(window);
 	}
 	
+	public void setupObstacles(Window window) {
+
+		obstacles = new Entity[10];
+		Texture txtCar = new Texture("frogger/textures/car_01");
+		Texture txtTruck = new Texture("frogger/textures/truck_01");
+		int lanes = 5;
+		int grid_width = window.getWidth() / scale;
+		int grid_height = -window.getHeight() / scale;
+		int gridOffsetY = 8;
+		
+		for (int i = 0; i < lanes; i++) {
+
+			int randSpeed = rand.nextInt(lanes * 2);
+			int randOffsetX = rand.nextInt(5);
+			Transform transform = new Transform();
+			transform.position.x = grid_width + randOffsetX * 2;
+			transform.position.y = grid_height + gridOffsetY + i * 2;
+			obstacles[i] = new Obstacle(transform, txtCar, randSpeed);
+			entities.add(obstacles[i]);
+			
+			Transform transform2 = new Transform();
+			transform2.position.x = transform.position.x + grid_width / 2;
+			transform2.position.y = transform.position.y;
+			transform2.scale.x = transform2.scale.y * 2;
+			obstacles[lanes + i] = new Obstacle(transform2, txtTruck, randSpeed);
+			entities.add(obstacles[lanes + i]);
+		}
+	}
+
 	public ITileType[] getTileTypes() {
 		return this.tileTypes;
 	}
@@ -181,31 +218,15 @@ public class FroggerScene implements IScene {
 		for (Entity entity : entities) {
 			entity.update(delta, window, camera, this, game);
 		}
+
 		for (int e1 = 0; e1 < entities.size(); e1++) {
 			for (int e2 = e1 + 1; e2 < entities.size(); e2++) {
-				entities.get(e1).collideWithEntity(entities.get(e2));
+				entities.get(e1).collideWithEntity(entities.get(e2), Collision.BOUNCE_DIR_DOWN);
 			}
-			entities.get(e1).collideWithTiles(this);
+			entities.get(e1).collideWithTiles(this, Collision.BOUNCE_DIR_DOWN);
 		}
-
-		for (int x = 0; x < width; x++) {
-			for (int y = 0; y < height; y++) {
-				Tile tile = getTile(x, y);
-				tile.move(this);
-				
-				// update grid location based on current offsets
-				if (tile.getOffsetX() != 0 || tile.getOffsetY() != 0) {
-					int newX = x + (int) tile.getOffsetX();
-					int newY = y + (int) tile.getOffsetY();
-					if (newX != x || newY != y) {
-						// System.out.println("Tile old XY: " + x +  "|"+ y + " new XY: " + newX + "|" + newY);
-						// setTile(this.bgTile, x, y);
-						// setTile(tile, newX, newY);
-					}
-				}
-				updateAABB(x, y, tile.getOffsetX(), tile.getOffsetY());					
-			}
-		}
+		
+		
 	}
 
 	public void updateAABB(int x, int y, float offsetX, float offsetY) {

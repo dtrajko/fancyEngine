@@ -75,7 +75,6 @@ public class TileRenderer {
 				int renderX = getX;
 				int renderY = -getY;
 
-				// TileType tile = world.getTile(getX, getY);
 				Tile tile = scene.getTile(getX, getY);
 
 				if (tile != null && tile.getType().getId() != scene.getBackgroundTile()) {					

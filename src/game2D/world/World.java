@@ -14,6 +14,7 @@ import engine.IGameLogic;
 import engine.Window;
 import engine.graph.Camera;
 import game2D.collision.AABB;
+import game2D.collision.Collision;
 import game2D.entities.Entity;
 import game2D.entities.Player;
 import game2D.entities.Transform;
@@ -198,9 +199,9 @@ public class World implements IScene {
 		}
 		for (int e1 = 0; e1 < entities.size(); e1++) {
 			for (int e2 = e1 + 1; e2 < entities.size(); e2++) {
-				entities.get(e1).collideWithEntity(entities.get(e2));
+				entities.get(e1).collideWithEntity(entities.get(e2), Collision.BOUNCE_DIR_UP);
 			}
-			entities.get(e1).collideWithTiles(this);
+			entities.get(e1).collideWithTiles(this, Collision.BOUNCE_DIR_UP);
 		}
 
 		for (int x = 0; x < width; x++) {

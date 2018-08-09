@@ -11,7 +11,10 @@ public class TileTypeFrogger implements ITileType {
 	protected String texture;
 
 	public static final ITileType tile_0  = new TileTypeFrogger("frogger/textures/black").setSolid();
-	public static final ITileType tile_1  = new TileTypeFrogger("frogger/textures/purple").setSolid();
+	public static final ITileType tile_1  = new TileTypeFrogger("frogger/textures/purple");
+	public static final ITileType tile_2  = new TileTypeFrogger("frogger/textures/green").setSolid();
+	public static final ITileType tile_3  = new TileTypeFrogger("frogger/textures/asphalt");
+	public static final ITileType tile_4  = new TileTypeFrogger("frogger/textures/dark_blue");
 
 	public TileTypeFrogger(String texture) {
 		this.id = not;
