@@ -82,9 +82,6 @@ public class FroggerPlayer extends Player {
 			correctPosition(window, scene);
 			camera.getPosition().lerp(this.transform.position.mul(-scene.getScale(), new Vector3f()), 0.02f);
 			lastMovementTime = currentTime;
-			
-			System.out.println("Total entities: " + scene.getEntities().size());
-			
 		} 
 	}
 
