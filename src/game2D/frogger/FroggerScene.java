@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
 import javax.imageio.ImageIO;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
@@ -16,7 +15,6 @@ import engine.IGameLogic;
 import engine.Window;
 import engine.graph.Camera;
 import game2D.collision.AABB;
-import game2D.collision.Collision;
 import game2D.entities.Entity;
 import game2D.entities.Player;
 import game2D.entities.Transform;
@@ -55,19 +53,10 @@ public class FroggerScene implements IScene {
 		this.bgTile = new Tile(bgTileType);
 
 		String tileSheetPath = Config.RESOURCES_DIR + "/frogger/levels/" + worldName + "/tiles.png";
-		String entitySheetPath = Config.RESOURCES_DIR + "/frogger/levels/" + worldName + "/entities.png";
 		BufferedImage tile_sheet = null;
-		BufferedImage entity_sheet = null;
 
 		try {
 			tile_sheet = ImageIO.read(new File(tileSheetPath));
-		} catch (IOException e) {
-			System.out.println("Failed to load file '" + tileSheetPath + "'");
-			e.printStackTrace();
-		}
-
-		try {
-			entity_sheet = ImageIO.read(new File(entitySheetPath));
 		} catch (IOException e) {
 			System.out.println("Failed to load file '" + tileSheetPath + "'");
 			e.printStackTrace();
@@ -77,7 +66,6 @@ public class FroggerScene implements IScene {
 		this.height = tile_sheet.getHeight();
 		this.scale = scale;
 		int[] colorTileSheet = tile_sheet.getRGB(0, 0, width, height, null, 0, width);
-		int[] colorEntitySheet = entity_sheet.getRGB(0, 0, width, height, null, 0, width);
 		this.tiles = new byte[width * height];
 		this.tile_grid = new Tile[width * height];
 		this.bounding_boxes = new AABB[width * height];
@@ -117,64 +105,86 @@ public class FroggerScene implements IScene {
 	
 	public void setupPlayer(Window window, IGameLogic game, Camera camera) {
 		Transform transform = new Transform();
-		transform.position.x = window.getWidth() / scale / 2 - 1;
-		transform.position.y = -window.getHeight() / scale + 6;
 		player = new FroggerPlayer(transform, game.getInput());
+		player.resetPosition(camera, this, game);
 		game.setPlayer(player);							
 		entities.add(player);
-		camera.getPosition().set(transform.position.mul(-scale, new Vector3f()));
 	}
 
 	public void setupObstacles(Window window) {
 
 		obstacles = new Entity[50];
-		Texture txtCar = new Texture("frogger/textures/car_01");
-		Texture txtTruck = new Texture("frogger/textures/truck_01");
-		Texture txtLog = new Texture("frogger/textures/log_x3");
-		Texture txtTurtles = new Texture("frogger/textures/turtles_x3");
-		int lanes = 5;
+
+		Texture[] txtObstaclesRoad = new Texture[2];
+		txtObstaclesRoad[0] = new Texture("frogger/textures/car_01");
+		txtObstaclesRoad[1] = new Texture("frogger/textures/truck_01");
+		Texture[] txtObstaclesRiver = new Texture[2];
+		txtObstaclesRiver[0] = new Texture("frogger/textures/log_x3");
+		txtObstaclesRiver[1] = new Texture("frogger/textures/turtles_x3");
+		
+		int lanes = 10;
 		int grid_width = window.getWidth() / scale;
 		int grid_height = -window.getHeight() / scale;
-		int gridOffsetY = 8;
+		int gridOffsetY;
 		float randSpeed;
 		int randOffsetX;
+		boolean collideFatal;
 		
 		// road
 		for (int i = 0; i < lanes; i++) {
-			randSpeed = (float) (rand.nextInt(10) + 5) / 50;
-			randOffsetX = rand.nextInt(5);
+
 			Transform transform = new Transform();
-			transform.position.x = grid_width + randOffsetX * 2;
-			transform.position.y = grid_height + gridOffsetY + i * 2;
-			obstacles[i] = new Obstacle(transform, txtCar, randSpeed);
-			entities.add(obstacles[i]);
+			int randomObstacleIndex = rand.nextInt(2);
+			Texture randomObstacle;
 			
+			randSpeed = (float) (rand.nextInt(10) + 5);
+
+			if (i < 5) {
+				gridOffsetY = 8;
+				randomObstacle = txtObstaclesRoad[randomObstacleIndex];
+				collideFatal = true;
+				randSpeed /= 50;
+			} else {
+				gridOffsetY = 10;
+				randomObstacle = txtObstaclesRiver[randomObstacleIndex];
+				collideFatal = false;
+				randSpeed /= 100;
+			}
+
+			int direction = getRandomDirectionX(rand);
+			randOffsetX = rand.nextInt(5);
+
+			switch (direction) {
+			case 1:
+				transform.position.x = 0 - randOffsetX * 2;
+				transform.rotation = new Vector3f(180, 180, 0);
+				break;
+			case -1:
+				transform.position.x = grid_width + randOffsetX * 2;
+				break;
+			}
+			randSpeed = (float) (randSpeed * direction);
+			transform.position.y = grid_height + gridOffsetY + i * 2;
+			transform.scale.x = transform.scale.y * randomObstacle.getLengthX();
+
+			obstacles[i] = new Obstacle(transform, randomObstacle, randSpeed, collideFatal);
+			entities.add(obstacles[i]);
+
+			// second instance same lane
 			Transform transform2 = new Transform();
-			transform2.position.x = transform.position.x + grid_width / 2;
+			transform2.position.x = transform.position.x + grid_width / 2 * direction;
 			transform2.position.y = transform.position.y;
-			transform2.scale.x = transform2.scale.y * 2;
-			obstacles[lanes + i] = new Obstacle(transform2, txtTruck, randSpeed);
+			transform2.scale = transform.scale;
+			transform2.rotation = transform.rotation;
+
+			obstacles[lanes + i] = new Obstacle(transform2, randomObstacle, randSpeed, collideFatal);
 			entities.add(obstacles[lanes + i]);
 		}
-		// river
-		gridOffsetY = 20;
-		for (int i = 0; i < lanes; i++) {
-			randSpeed = (float) (rand.nextInt(10) + 5) / 100;
-			randOffsetX = rand.nextInt(5);
-			Transform transform = new Transform();
-			transform.position.x = grid_width + randOffsetX * 2;
-			transform.position.y = grid_height + gridOffsetY + i * 2;
-			transform.scale.x = transform.scale.y * 3;
-			obstacles[i] = new Obstacle(transform, txtLog, randSpeed);
-			entities.add(obstacles[i]);
-			
-			Transform transform2 = new Transform();
-			transform2.position.x = transform.position.x + grid_width / 2;
-			transform2.position.y = transform.position.y;
-			transform2.scale.x = transform2.scale.y * 3;
-			obstacles[lanes + i] = new Obstacle(transform2, txtTurtles, randSpeed);
-			entities.add(obstacles[lanes + i]);
-		}
+	}
+
+	public int getRandomDirectionX(Random rand) {
+		if (rand.nextBoolean()) return 1;
+		else return -1;
 	}
 
 	public ITileType[] getTileTypes() {
@@ -229,19 +239,10 @@ public class FroggerScene implements IScene {
 	}
 
 	public void update(float delta, Window window, Camera camera, IGameLogic game) {
-
 		for (Entity entity : entities) {
 			entity.update(delta, window, camera, this, game);
 		}
-
-		for (int e1 = 0; e1 < entities.size(); e1++) {
-			for (int e2 = e1 + 1; e2 < entities.size(); e2++) {
-				entities.get(e1).collideWithEntity(entities.get(e2), Collision.BOUNCE_DIR_DOWN);
-			}
-			entities.get(e1).collideWithTiles(this, Collision.BOUNCE_DIR_DOWN);
-		}
-		
-		
+		player.checkObstacles(camera, this, game);
 	}
 
 	public void updateAABB(int x, int y, float offsetX, float offsetY) {

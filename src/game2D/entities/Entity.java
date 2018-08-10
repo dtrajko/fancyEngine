@@ -10,6 +10,7 @@ import engine.graph.Camera;
 import game2D.assets.Assets;
 import game2D.collision.AABB;
 import game2D.collision.Collision;
+import game2D.frogger.TextureEntity;
 import game2D.render.Model;
 import game2D.shaders.Shader;
 import game2D.world.IScene;
@@ -28,6 +29,14 @@ public abstract class Entity {
 	}
 
 	public abstract void update(float delta, Window window, Camera camera, IScene scene, IGameLogic game);
+
+	public AABB getBoundingBox() {
+		return bounding_box;
+	}
+	
+	public Transform getTransform() {
+		return transform;
+	}
 
 	public void move(Vector2f direction) {
 		transform.position.add(new Vector3f(direction, 0));
