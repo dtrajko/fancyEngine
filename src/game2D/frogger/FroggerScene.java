@@ -129,6 +129,7 @@ public class FroggerScene implements IScene {
 		float randSpeed;
 		int randOffsetX;
 		boolean collideFatal;
+		int direction = 0;
 		
 		// road
 		for (int i = 0; i < lanes; i++) {
@@ -137,6 +138,8 @@ public class FroggerScene implements IScene {
 			int randomObstacleIndex = rand.nextInt(2);
 			Texture randomObstacle;
 			
+			direction = (direction == 0) ? getRandomDirectionX(rand) : -direction;
+
 			randSpeed = (float) (rand.nextInt(10) + 5);
 
 			if (i < 5) {
@@ -151,7 +154,6 @@ public class FroggerScene implements IScene {
 				randSpeed /= 100;
 			}
 
-			int direction = getRandomDirectionX(rand);
 			randOffsetX = rand.nextInt(5);
 
 			switch (direction) {

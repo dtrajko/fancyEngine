@@ -67,12 +67,15 @@ public class Frogger implements IGameLogic {
 			beginLevel();
 			switchLevel = false;
 		}
-		player.input(SPEED, camera, scene, this);
+		if (!gameOver()) {
+			player.input(SPEED, camera, scene, this);			
+		}
 		scene.correctCamera(camera);
 	}
 
 	@Override
 	public void update(float interval, MouseInput mouseInput) {
+		if (gameOver()) return;
 		mouseInput.update(window);
 		updateGui();
 		scene.update((float) frame_cap, window, camera, this);
@@ -96,7 +99,7 @@ public class Frogger implements IGameLogic {
 		guis.clear();
 		float lives_x = -0.93f;
 		float lives_y = -0.81f;
-		for (int i = 0; i < player.getLives(); i++) {
+		for (int i = 0; i < player.getLives() - 1; i++) {
 			guis.put(new Gui(sheet, window), new Transform(new Vector3f(lives_x, lives_y, 0), new Vector3f(0.052f, 0.052f, 1f)));
 			lives_x += 0.1f;
 		}

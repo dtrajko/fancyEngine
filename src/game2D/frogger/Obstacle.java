@@ -12,7 +12,6 @@ import game2D.world.IScene;
 
 public class Obstacle extends TextureEntity {
 
-	private float speed;
 	private int maxLength;
 	private boolean collideFatal;
 
@@ -20,8 +19,14 @@ public class Obstacle extends TextureEntity {
 		super(transform, tx);
 		this.speed = spd;
 		this.maxLength = 6;
-		this.collideFatal = false;
 		this.collideFatal = collFatal;
+	}
+
+	public Obstacle(Transform transform) {
+		super(transform);
+		this.speed = 0;
+		this.maxLength = 0;
+		this.collideFatal = false;
 	}
 
 	@Override
@@ -42,5 +47,4 @@ public class Obstacle extends TextureEntity {
 	public boolean isCollideFatal() {
 		return collideFatal;
 	}
-
 }

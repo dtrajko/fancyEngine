@@ -84,6 +84,10 @@ public class FroggerPlayer extends Player {
 			lastMovementTime = currentTime;
 		} 
 	}
+	
+	public void update(float delta, Window window, Camera camera, IScene scene, IGameLogic game) {
+		move(new Vector2f(speed, 0));
+	}
 
 	public void checkObstacles(Camera camera, IScene scene, IGameLogic game) {
 		List<Entity> entities = scene.getEntities();
@@ -108,7 +112,10 @@ public class FroggerPlayer extends Player {
 		}
 		
 		if (inRiverArea(scene) && isIntersecting && intersectingObstacle instanceof Obstacle && !intersectingObstacle.isCollideFatal()) {
-			transform.position.x = intersectingObstacle.getTransform().position.x;
+			speed = intersectingObstacle.getSpeed();
+			// transform.position.x = intersectingObstacle.getTransform().position.x;
+		} else {
+			speed = 0;
 		}
 
 		if (inRiverArea(scene) && !isIntersecting) {
@@ -122,7 +129,7 @@ public class FroggerPlayer extends Player {
 			resetPosition(camera, scene, game);
 		}
 	}
-	
+
 	public boolean inBasket() {
 		if (transform.position.y == -2 &&
 			(transform.position.x == 2 ||
@@ -149,9 +156,6 @@ public class FroggerPlayer extends Player {
 		} else {
 			return false;			
 		}
-	}
-
-	public void update(float delta, Window window, Camera camera, IScene scene, IGameLogic game) {
 	}
 
 	public void manageLevels(IGameLogic game, IScene scene) {

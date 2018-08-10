@@ -10,7 +10,6 @@ import engine.graph.Camera;
 import game2D.assets.Assets;
 import game2D.collision.AABB;
 import game2D.collision.Collision;
-import game2D.frogger.TextureEntity;
 import game2D.render.Model;
 import game2D.shaders.Shader;
 import game2D.world.IScene;
@@ -20,9 +19,11 @@ public abstract class Entity {
 	protected static Model model;
 	protected AABB bounding_box;
 	protected Transform transform;
+	protected float speed;
 
 	public Entity(Transform transform) {
 		this.transform = transform;
+		this.speed = 0;
 		this.bounding_box = new AABB(
 			new Vector2f(transform.position.x, transform.position.y), 
 			new Vector2f(this.transform.scale.x, this.transform.scale.y));
@@ -36,6 +37,14 @@ public abstract class Entity {
 	
 	public Transform getTransform() {
 		return transform;
+	}
+
+	public float getSpeed() {
+		return speed;
+	}
+	
+	public void setSpeed(float spd) {
+		this.speed = spd;
 	}
 
 	public void move(Vector2f direction) {

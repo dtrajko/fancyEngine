@@ -18,12 +18,19 @@ public class TextureEntity extends Entity {
 		this.texture = tx;
 	}
 
+	public TextureEntity(Transform transform) {
+		super(transform);
+		this.texture = null;
+	}
+
 	@Override
 	public void update(float delta, Window window, Camera camera, IScene scene, IGameLogic game) {
 	}
 	
 	public void render(Shader shader, Camera camera, IScene scene) {
-		texture.bind(0);
+		if (this.texture instanceof Texture) {
+			this.texture.bind(0);						
+		}
 		super.render(shader, camera, scene);
 	}
 }

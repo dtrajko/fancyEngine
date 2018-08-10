@@ -1,11 +1,13 @@
 package game2D.entities;
 
 import engine.graph.Camera;
+import game2D.frogger.Obstacle;
+import game2D.frogger.TextureEntity;
 import game2D.render.Animation;
 import game2D.shaders.Shader;
 import game2D.world.IScene;
 
-public abstract class AnimatedEntity extends Entity {
+public abstract class AnimatedEntity extends TextureEntity {
 
 	protected Animation[] animations;
 	private int max_animations;

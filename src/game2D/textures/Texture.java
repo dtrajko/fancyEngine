@@ -16,6 +16,8 @@ public class Texture {
 	private int id;
 	private int width;
 	private int height;
+	
+	public Texture() {}
 
 	public Texture(String filename) {
 
