@@ -19,7 +19,6 @@ import game2D.entities.Entity;
 import game2D.entities.Player;
 import game2D.entities.Transform;
 import game2D.frogger.ITileType;
-import game2D.frogger.TileTypeFrogger;
 
 public class World implements IScene {
 
@@ -281,5 +280,11 @@ public class World implements IScene {
 		tiles = null;
 		bounding_boxes = null;
 		entities.clear();
+	}
+
+	@Override
+	public void resetLevel(Window window, Camera camera, IGameLogic game) {
+		// TODO Auto-generated method stub
+		
 	}
 }

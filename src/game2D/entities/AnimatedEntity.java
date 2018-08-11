@@ -1,7 +1,6 @@
 package game2D.entities;
 
 import engine.graph.Camera;
-import game2D.frogger.Obstacle;
 import game2D.frogger.TextureEntity;
 import game2D.render.Animation;
 import game2D.shaders.Shader;

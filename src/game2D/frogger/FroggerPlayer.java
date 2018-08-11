@@ -15,7 +15,6 @@ import game2D.entities.Entity;
 import game2D.entities.Player;
 import game2D.entities.Transform;
 import game2D.render.Animation;
-import game2D.textures.Texture;
 import game2D.world.IScene;
 import game2D.world.Tile;
 
@@ -24,21 +23,23 @@ public class FroggerPlayer extends Player {
 	public static final int ANIM_IDLE = 0;
 	public static final int ANIM_WALK = 1;
 	public static final int ANIM_SIZE = 2;
-	private static int lives = 5;
+	private static final int TOTAL_LIVES = 5;
+	private static int lives;
 	private MouseInput input;
 	private Window window;
 	private final Timer timer;
 	private double lastMovementTime;
 	private double lastSubtractTime;
-	private final double KEYBOARD_SENSIVITY = 100;
+	private final double KEYBOARD_SENSIVITY = 120;
 
 	public FroggerPlayer(Transform transform, MouseInput input) {
 		super(transform, input);
 		this.input = input;
-		this.setAnimation(ANIM_IDLE, new Animation(4, 10, "frogger/player/idle"));
-		this.setAnimation(ANIM_WALK, new Animation(4, 10, "frogger/player/walking"));
+		this.setAnimation(ANIM_IDLE, new Animation(1, 10, "frogger/player/idle"));
+		this.setAnimation(ANIM_WALK, new Animation(1, 10, "frogger/player/walking"));
 		timer = new Timer();
 		lastMovementTime = lastSubtractTime = timer.getTime();
+		lives = TOTAL_LIVES;
 	}
 
 	public void input(float delta, Camera camera, IScene scene, IGameLogic game) {
@@ -108,6 +109,7 @@ public class FroggerPlayer extends Player {
 		if (!inRiverArea(scene) && isIntersecting && intersectingObstacle instanceof Obstacle && intersectingObstacle.isCollideFatal()) {
 			if (substractLife()) {
 				resetPosition(camera, scene, game);
+				scene.resetLevel(window, camera, game);
 			}
 		}
 		
@@ -120,13 +122,13 @@ public class FroggerPlayer extends Player {
 
 		if (inRiverArea(scene) && !isIntersecting) {
 			if (substractLife()) {
-				resetPosition(camera, scene, game);
+				scene.resetLevel(window, camera, game);
 			}
 		}
 		
 		if (inBasket()) {
-			copyFrogToBasket(scene);
-			resetPosition(camera, scene, game);
+			((FroggerScene) scene).copyFrogToBasket();
+			scene.resetLevel(window, camera, game);
 		}
 	}
 
@@ -140,15 +142,6 @@ public class FroggerPlayer extends Player {
 		return false;
 	}
 	
-	public void copyFrogToBasket(IScene scene) {
-		Transform transform = new Transform();
-		transform.position.x = this.transform.position.x;
-		transform.position.y = this.transform.position.y;
-		Texture txFrog = new Texture("frogger/player/idle/0");
-		TextureEntity frogCopy = new TextureEntity(transform, txFrog);
-		scene.getEntities().add(frogCopy);
-	}
-
 	public boolean inRiverArea(IScene scene) {
 		int playerGridY = (int) transform.position.y;
 		if (playerGridY >= -12 && playerGridY <= -4) {

@@ -24,6 +24,7 @@ import game2D.world.Tile;
 
 public class FroggerScene implements IScene {
 
+	private final int EMPTY_BASKETS = 5;
 	public int view_width = 15;
 	public int view_height = 16;
 	private byte[] tiles;
@@ -41,6 +42,7 @@ public class FroggerScene implements IScene {
 	private Tile bgTile;
 	private final ITileType[] tileTypes;
 	private Random rand = new Random();
+	public int emptyBaskets;
 
 	private Entity[] obstacles;
 
@@ -51,6 +53,7 @@ public class FroggerScene implements IScene {
 		bgTileID = bg_tile;
 		this.bgTileType = tileTypes[bgTileID];
 		this.bgTile = new Tile(bgTileType);
+		emptyBaskets = EMPTY_BASKETS;
 
 		String tileSheetPath = Config.RESOURCES_DIR + "/frogger/levels/" + worldName + "/tiles.png";
 		BufferedImage tile_sheet = null;
@@ -99,7 +102,7 @@ public class FroggerScene implements IScene {
 			}
 		}
 
-		setupObstacles(window);
+		setupObstacles();
 		setupPlayer(window, game, camera);
 	}
 	
@@ -111,9 +114,22 @@ public class FroggerScene implements IScene {
 		entities.add(player);
 	}
 
-	public void setupObstacles(Window window) {
+	public void copyFrogToBasket() {
+		Transform transform = new Transform();
+		transform.position.x = player.getTransform().position.x;
+		transform.position.y = player.getTransform().position.y;
+		Texture txFrog = new Texture("frogger/player/idle/1");
+		TextureEntity frogCopy = new TextureEntity(transform, txFrog);
+		entities.add(frogCopy);
+		emptyBaskets--;
+	}
+
+	public void setupObstacles() {
 
 		obstacles = new Entity[50];
+		
+		// remove existing obstables from the scene.entities array
+		List<Entity> entitiesNew = new ArrayList<Entity>();
 
 		Texture[] txtObstaclesRoad = new Texture[2];
 		txtObstaclesRoad[0] = new Texture("frogger/textures/car_01");
@@ -130,7 +146,7 @@ public class FroggerScene implements IScene {
 		int randOffsetX;
 		boolean collideFatal;
 		int direction = 0;
-		
+
 		// road
 		for (int i = 0; i < lanes; i++) {
 
@@ -170,7 +186,7 @@ public class FroggerScene implements IScene {
 			transform.scale.x = transform.scale.y * randomObstacle.getLengthX();
 
 			obstacles[i] = new Obstacle(transform, randomObstacle, randSpeed, collideFatal);
-			entities.add(obstacles[i]);
+			entitiesNew.add(obstacles[i]);
 
 			// second instance same lane
 			Transform transform2 = new Transform();
@@ -180,8 +196,15 @@ public class FroggerScene implements IScene {
 			transform2.rotation = transform.rotation;
 
 			obstacles[lanes + i] = new Obstacle(transform2, randomObstacle, randSpeed, collideFatal);
-			entities.add(obstacles[lanes + i]);
+			entitiesNew.add(obstacles[lanes + i]);
 		}
+	
+		for (int i = 0; i < entities.size(); i++) {
+			if (!(entities.get(i) instanceof Obstacle)) {
+				entitiesNew.add(entities.get(i));
+			}
+		}
+		entities = entitiesNew;
 	}
 
 	public int getRandomDirectionX(Random rand) {
@@ -252,6 +275,11 @@ public class FroggerScene implements IScene {
 		if (bb instanceof AABB) {
 			bb.update(new Vector2f(x * 2 + offsetX, -y * 2 + offsetY), new Vector2f(1, 1));			
 		}
+	}
+	
+	public void resetLevel(Window window, Camera camera, IGameLogic game) {
+		setupObstacles();
+		player.resetPosition(camera, this, game);
 	}
 
 	public void correctCamera(Camera camera) {

@@ -63,19 +63,17 @@ public class Frogger implements IGameLogic {
 	@Override
 	public void input(Window window, MouseInput mouseInput) {
 		this.mouseInput = mouseInput;
-		if (switchLevel == true) {
+		if (switchLevel == true || gameOver()) {
 			beginLevel();
 			switchLevel = false;
 		}
-		if (!gameOver()) {
-			player.input(SPEED, camera, scene, this);			
-		}
+		player.input(SPEED, camera, scene, this);			
 		scene.correctCamera(camera);
 	}
 
 	@Override
 	public void update(float interval, MouseInput mouseInput) {
-		if (gameOver()) return;
+		// if (gameOver()) return;
 		mouseInput.update(window);
 		updateGui();
 		scene.update((float) frame_cap, window, camera, this);
@@ -106,9 +104,8 @@ public class Frogger implements IGameLogic {
 	}
 
 	public boolean gameOver() {
-		if (player instanceof Player) {
-			return player.getLives() <= 0;
-		}
+		if (player instanceof Player && player.getLives() <= 0) return true;
+		if (scene.emptyBaskets <= 0) return true;
 		return false;
 	}
 
