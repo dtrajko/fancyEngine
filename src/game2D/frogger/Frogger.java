@@ -10,6 +10,7 @@ import engine.IGameLogic;
 import engine.Window;
 import engine.graph.Camera;
 import engine.graph.MouseInput;
+import engine.sound.SoundManager;
 import game2D.assets.Assets;
 import game2D.entities.Player;
 import game2D.entities.Transform;
@@ -23,7 +24,7 @@ public class Frogger implements IGameLogic {
 	private static int TOTAL_LEVELS = 2;
 	private static FroggerScene scene;
 	private final Camera camera;
-	private int level_scale = 20;
+	private int level_scale = 25;
 	private static Map<Gui, Transform> guis = new HashMap<Gui, Transform>();
 	public static Player player;
 	private static boolean switchLevel = true;
@@ -33,6 +34,7 @@ public class Frogger implements IGameLogic {
 	private MouseInput mouseInput;
 	private static float SPEED = 0.001f;
 	double frame_cap = 1.0 / GameEngine.TARGET_FPS;
+	public SoundManager soundMgr;
 
 	public Frogger() {
 		renderer = new TileRenderer();
@@ -45,6 +47,7 @@ public class Frogger implements IGameLogic {
 		renderer.init();
 		camera.setOrthoProjection(window);
 		sheet = new TileSheet("frogger/textures/sheets/lives", 3);
+		soundMgr = new SoundManager();
 	}
 
 	public void beginLevel() {
@@ -58,6 +61,10 @@ public class Frogger implements IGameLogic {
 			System.err.println("Level index is not correct.");
 			break;
 		}
+	}
+	
+	public SoundManager getSoundManager() {
+		return soundMgr;
 	}
 
 	@Override
@@ -141,5 +148,6 @@ public class Frogger implements IGameLogic {
 		Assets.deleteAsset();
 		renderer.clear();
 		if (scene != null) scene.cleanup();
+		soundMgr.cleanup();
 	}
 }

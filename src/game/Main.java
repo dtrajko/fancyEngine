@@ -36,8 +36,8 @@ public class Main {
 			case "Frogger":
 				gameLogic = new Frogger();
 				opts.mode3D = false;
-				width = 600;
-				height = 640;
+				width = 750;
+				height = 800;
 				break;
 			default:
 				gameLogic = new Game3D();

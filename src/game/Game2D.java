@@ -10,6 +10,7 @@ import engine.IGameLogic;
 import engine.Window;
 import engine.graph.Camera;
 import engine.graph.MouseInput;
+import engine.sound.SoundManager;
 import game2D.assets.Assets;
 import game2D.entities.Player;
 import game2D.entities.Transform;
@@ -34,10 +35,12 @@ public class Game2D implements IGameLogic {
 	private MouseInput mouseInput;
 	private static float SPEED = 0.1f;
 	double frame_cap = 1.0 / GameEngine.TARGET_FPS;
+	private final SoundManager soundMgr;
 
 	public Game2D() {
 		renderer = new TileRenderer();
 		camera = new Camera();
+		soundMgr = new SoundManager();
 	}
 
 	@Override
@@ -148,5 +151,10 @@ public class Game2D implements IGameLogic {
 		Assets.deleteAsset();
 		renderer.clear();
 		level.cleanup();
+	}
+
+	@Override
+	public SoundManager getSoundManager() {
+		return soundMgr;
 	}
 }

@@ -108,7 +108,7 @@ public class FroggerScene implements IScene {
 	
 	public void setupPlayer(Window window, IGameLogic game, Camera camera) {
 		Transform transform = new Transform();
-		player = new FroggerPlayer(transform, game.getInput());
+		player = new FroggerPlayer(transform, game.getInput(), game.getSoundManager());
 		player.resetPosition(camera, this, game);
 		game.setPlayer(player);							
 		entities.add(player);
@@ -131,9 +131,11 @@ public class FroggerScene implements IScene {
 		// remove existing obstables from the scene.entities array
 		List<Entity> entitiesNew = new ArrayList<Entity>();
 
-		Texture[] txtObstaclesRoad = new Texture[2];
-		txtObstaclesRoad[0] = new Texture("frogger/textures/car_01");
-		txtObstaclesRoad[1] = new Texture("frogger/textures/truck_01");
+		Texture[] txtObstaclesRoad = new Texture[4];
+		txtObstaclesRoad[0] = new Texture("frogger/textures/car_i");
+		txtObstaclesRoad[1] = new Texture("frogger/textures/car_ii");
+		txtObstaclesRoad[2] = new Texture("frogger/textures/car_iii");
+		txtObstaclesRoad[3] = new Texture("frogger/textures/truck");
 		Texture[] txtObstaclesRiver = new Texture[2];
 		txtObstaclesRiver[0] = new Texture("frogger/textures/log_x3");
 		txtObstaclesRiver[1] = new Texture("frogger/textures/turtles_x3");
@@ -151,7 +153,8 @@ public class FroggerScene implements IScene {
 		for (int i = 0; i < lanes; i++) {
 
 			Transform transform = new Transform();
-			int randomObstacleIndex = rand.nextInt(2);
+			int randomIndexRoad = rand.nextInt(txtObstaclesRoad.length);
+			int randomIndexRiver = rand.nextInt(txtObstaclesRiver.length);
 			Texture randomObstacle;
 			
 			direction = (direction == 0) ? getRandomDirectionX(rand) : -direction;
@@ -160,12 +163,12 @@ public class FroggerScene implements IScene {
 
 			if (i < 5) {
 				gridOffsetY = 8;
-				randomObstacle = txtObstaclesRoad[randomObstacleIndex];
+				randomObstacle = txtObstaclesRoad[randomIndexRoad];
 				collideFatal = true;
 				randSpeed /= 50;
 			} else {
 				gridOffsetY = 10;
-				randomObstacle = txtObstaclesRiver[randomObstacleIndex];
+				randomObstacle = txtObstaclesRiver[randomIndexRiver];
 				collideFatal = false;
 				randSpeed /= 100;
 			}
@@ -332,5 +335,6 @@ public class FroggerScene implements IScene {
 		tiles = null;
 		bounding_boxes = null;
 		entities.clear();
+		player.cleanup();
 	}
 }

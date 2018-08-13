@@ -40,6 +40,7 @@ public class Game3D implements IGameLogic {
     private boolean sceneChanged;
     private GuiManager guiManager;
     // private boolean crouchEnabled = false;
+    private MouseInput mouseInput;
 
     public static final int blockScale = 1;
 
@@ -76,7 +77,9 @@ public class Game3D implements IGameLogic {
     }
 
     @Override
-    public void input(Window window, MouseInput mouseInput) {
+    public void input(Window window, MouseInput mi) {
+ 
+    	mouseInput = mi;
     	sceneChanged = false;
         cameraInc.set(0, 0, 0);
 
@@ -276,13 +279,17 @@ public class Game3D implements IGameLogic {
 
 	@Override
 	public MouseInput getInput() {
-		// TODO Auto-generated method stub
-		return null;
+		return mouseInput;
 	}
 
 	@Override
 	public void setPlayer(Player player) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public SoundManager getSoundManager() {
+		return soundMgr;
 	}
 }

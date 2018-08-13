@@ -1,15 +1,24 @@
 package game2D.frogger; 
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.openal.AL11;
+
+import config.Config;
 import engine.IGameLogic;
 import engine.Timer;
 import engine.Window;
+import engine.Scene.Sounds;
 import engine.graph.Camera;
 import engine.graph.MouseInput;
+import engine.sound.SoundBuffer;
+import engine.sound.SoundListener;
+import engine.sound.SoundManager;
+import engine.sound.SoundSource;
 import game2D.collision.Collision;
 import game2D.entities.Entity;
 import game2D.entities.Player;
@@ -30,16 +39,48 @@ public class FroggerPlayer extends Player {
 	private final Timer timer;
 	private double lastMovementTime;
 	private double lastSubtractTime;
-	private final double KEYBOARD_SENSIVITY = 120;
+	private final long KEYBOARD_SENSIVITY = 220;
+	private SoundManager soundMgr;
+	private SoundSource ssHop;
+	private SoundSource ssSquash;
 
-	public FroggerPlayer(Transform transform, MouseInput input) {
+	public FroggerPlayer(Transform transform, MouseInput input, SoundManager sm) {
 		super(transform, input);
 		this.input = input;
-		this.setAnimation(ANIM_IDLE, new Animation(1, 10, "frogger/player/idle"));
-		this.setAnimation(ANIM_WALK, new Animation(1, 10, "frogger/player/walking"));
+		this.setAnimation(ANIM_IDLE, new Animation(4, 4, "frogger/player/idle"));
+		this.setAnimation(ANIM_WALK, new Animation(4, 4, "frogger/player/walking"));
 		timer = new Timer();
 		lastMovementTime = lastSubtractTime = timer.getTime();
 		lives = TOTAL_LIVES;
+		
+		this.soundMgr = sm;
+
+		try {
+			soundMgr.init();
+	        soundMgr.setAttenuationModel(AL11.AL_EXPONENT_DISTANCE);
+
+			SoundBuffer buffHop = new SoundBuffer(Config.RESOURCES_DIR + "/frogger/sound/sound-frogger-hop.ogg");
+	        soundMgr.addSoundBuffer(buffHop);
+
+			SoundBuffer buffSquash = new SoundBuffer(Config.RESOURCES_DIR + "/frogger/sound/sound-frogger-squash.ogg");
+	        soundMgr.addSoundBuffer(buffSquash);
+
+	        ssHop = new SoundSource(false, true);
+	        ssHop.setBuffer(buffHop.getBufferId());
+	        soundMgr.addSoundSource(Sounds.BACKGROUND.toString(), ssHop);
+	        ssHop.setGain(1.0f);
+	        
+	        ssSquash = new SoundSource(false, true);
+	        ssSquash.setBuffer(buffSquash.getBufferId());
+	        soundMgr.addSoundSource(Sounds.BACKGROUND.toString(), ssSquash);
+	        ssSquash.setGain(1.0f);
+
+	        soundMgr.setListener(new SoundListener(new Vector3f(0, 0, 0)));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 	public void input(float delta, Camera camera, IScene scene, IGameLogic game) {
@@ -52,18 +93,22 @@ public class FroggerPlayer extends Player {
 
 		if (input.isKeyDown(GLFW.GLFW_KEY_A) || input.isKeyDown(GLFW.GLFW_KEY_LEFT)) {
 			movement = new Vector2f().add(-moveStep, 0);
+			transform.rotation = new Vector3f(0, 0, 90);
 			this.useAnimation(ANIM_WALK);
 		}
 		if (input.isKeyDown(GLFW.GLFW_KEY_D) || input.isKeyDown(GLFW.GLFW_KEY_RIGHT)) {
 			movement = new Vector2f().add(moveStep, 0);
+			transform.rotation = new Vector3f(0, 0, -90);
 			this.useAnimation(ANIM_WALK);
 		}
 		if (input.isKeyDown(GLFW.GLFW_KEY_W) || input.isKeyDown(GLFW.GLFW_KEY_UP)) {
 			movement = new Vector2f().add(0, moveStep);
+			transform.rotation = new Vector3f(0, 0, 0);
 			this.useAnimation(ANIM_WALK);
 		}
 		if (input.isKeyDown(GLFW.GLFW_KEY_S) || input.isKeyDown(GLFW.GLFW_KEY_DOWN)) {
 			movement = new Vector2f().add(0, -moveStep);
+			transform.rotation = new Vector3f(0, 0, -180);
 			this.useAnimation(ANIM_WALK);
 		}
 		if (input.isKeyReleased(GLFW.GLFW_KEY_F) || input.isKeyReleased(GLFW.GLFW_KEY_ENTER)) {
@@ -82,8 +127,15 @@ public class FroggerPlayer extends Player {
 			collideWithTiles(scene, bounce_direction);
 			correctPosition(window, scene);
 			camera.getPosition().lerp(this.transform.position.mul(-scene.getScale(), new Vector3f()), 0.02f);
-			lastMovementTime = currentTime;
+			if (movement.x != 0 || movement.y != 0) {
+				playJumpSound();			
+				lastMovementTime = currentTime;	
+			}
 		} 
+	}
+
+	public void playJumpSound() {
+		ssHop.play();			
 	}
 	
 	public void update(float delta, Window window, Camera camera, IScene scene, IGameLogic game) {
@@ -164,6 +216,12 @@ public class FroggerPlayer extends Player {
 		if (currentTime - lastSubtractTime > 2) {
 			lives--;
 			lastSubtractTime = currentTime;
+			ssSquash.play();
+			try {
+				TimeUnit.SECONDS.sleep((long) 1.5);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 			return true;
 		}
 		return false;
@@ -209,5 +267,10 @@ public class FroggerPlayer extends Player {
 
 	public int getLives() {
 		return lives;
+	}
+
+	public void cleanup() {
+		ssHop.cleanup();
+		ssSquash.cleanup();
 	}
 }
