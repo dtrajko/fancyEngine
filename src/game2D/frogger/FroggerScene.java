@@ -43,8 +43,7 @@ public class FroggerScene implements IScene {
 	private final ITileType[] tileTypes;
 	private Random rand = new Random();
 	public int emptyBaskets;
-
-	private Entity[] obstacles;
+	private Obstacle obstacle;
 
 	public FroggerScene(String worldName, Camera camera, int scale, int bg_tile, IGameLogic game) {
 
@@ -108,13 +107,15 @@ public class FroggerScene implements IScene {
 	
 	public void setupPlayer(Window window, IGameLogic game, Camera camera) {
 		Transform transform = new Transform();
-		player = new FroggerPlayer(transform, game.getInput(), game.getSoundManager());
+		player = new FroggerPlayer(transform, game);
 		player.resetPosition(camera, this, game);
 		game.setPlayer(player);							
 		entities.add(player);
+		player.playCoinInSound();
 	}
 
-	public void copyFrogToBasket() {
+	public void copyFrogToBasket(FroggerPlayer player) {
+		player.playPlunkSound();
 		Transform transform = new Transform();
 		transform.position.x = player.getTransform().position.x;
 		transform.position.y = player.getTransform().position.y;
@@ -125,8 +126,6 @@ public class FroggerScene implements IScene {
 	}
 
 	public void setupObstacles() {
-
-		obstacles = new Entity[50];
 		
 		// remove existing obstables from the scene.entities array
 		List<Entity> entitiesNew = new ArrayList<Entity>();
@@ -136,10 +135,14 @@ public class FroggerScene implements IScene {
 		txtObstaclesRoad[1] = new Texture("frogger/textures/car_ii");
 		txtObstaclesRoad[2] = new Texture("frogger/textures/car_iii");
 		txtObstaclesRoad[3] = new Texture("frogger/textures/truck");
-		Texture[] txtObstaclesRiver = new Texture[2];
-		txtObstaclesRiver[0] = new Texture("frogger/textures/log_x3");
+		Texture[] txtObstaclesRiver = new Texture[5];
+		txtObstaclesRiver[0] = new Texture("frogger/textures/turtles_x2");
 		txtObstaclesRiver[1] = new Texture("frogger/textures/turtles_x3");
-		
+		txtObstaclesRiver[2] = new Texture("frogger/textures/log_x3");
+		txtObstaclesRiver[3] = new Texture("frogger/textures/log_x4");
+		txtObstaclesRiver[4] = new Texture("frogger/textures/log_x5");
+		// txtObstaclesRiver[3] = new Texture("frogger/textures/log_x6");
+
 		int lanes = 10;
 		int grid_width = window.getWidth() / scale;
 		int grid_height = -window.getHeight() / scale;
@@ -152,13 +155,10 @@ public class FroggerScene implements IScene {
 		// road
 		for (int i = 0; i < lanes; i++) {
 
-			Transform transform = new Transform();
 			int randomIndexRoad = rand.nextInt(txtObstaclesRoad.length);
 			int randomIndexRiver = rand.nextInt(txtObstaclesRiver.length);
 			Texture randomObstacle;
 			
-			direction = (direction == 0) ? getRandomDirectionX(rand) : -direction;
-
 			randSpeed = (float) (rand.nextInt(10) + 5);
 
 			if (i < 5) {
@@ -175,6 +175,8 @@ public class FroggerScene implements IScene {
 
 			randOffsetX = rand.nextInt(5);
 
+			Transform transform = new Transform();
+			direction = (direction == 0) ? getRandomDirectionX(rand) : -direction;
 			switch (direction) {
 			case 1:
 				transform.position.x = 0 - randOffsetX * 2;
@@ -188,8 +190,8 @@ public class FroggerScene implements IScene {
 			transform.position.y = grid_height + gridOffsetY + i * 2;
 			transform.scale.x = transform.scale.y * randomObstacle.getLengthX();
 
-			obstacles[i] = new Obstacle(transform, randomObstacle, randSpeed, collideFatal);
-			entitiesNew.add(obstacles[i]);
+			obstacle = new Obstacle(transform, randomObstacle, randSpeed, collideFatal);
+			entitiesNew.add(obstacle);
 
 			// second instance same lane
 			Transform transform2 = new Transform();
@@ -198,8 +200,8 @@ public class FroggerScene implements IScene {
 			transform2.scale = transform.scale;
 			transform2.rotation = transform.rotation;
 
-			obstacles[lanes + i] = new Obstacle(transform2, randomObstacle, randSpeed, collideFatal);
-			entitiesNew.add(obstacles[lanes + i]);
+			obstacle = new Obstacle(transform2, randomObstacle, randSpeed, collideFatal);
+			entitiesNew.add(obstacle);
 		}
 	
 		for (int i = 0; i < entities.size(); i++) {
@@ -283,6 +285,7 @@ public class FroggerScene implements IScene {
 	public void resetLevel(Window window, Camera camera, IGameLogic game) {
 		setupObstacles();
 		player.resetPosition(camera, this, game);
+		// player.playCoinInSound();
 	}
 
 	public void correctCamera(Camera camera) {

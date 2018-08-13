@@ -2,12 +2,10 @@ package game2D.frogger;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.openal.AL11;
-
 import config.Config;
 import engine.IGameLogic;
 import engine.Timer;
@@ -32,7 +30,7 @@ public class FroggerPlayer extends Player {
 	public static final int ANIM_IDLE = 0;
 	public static final int ANIM_WALK = 1;
 	public static final int ANIM_SIZE = 2;
-	private static final int TOTAL_LIVES = 5;
+	private static final int TOTAL_LIVES = 7;
 	private static int lives;
 	private MouseInput input;
 	private Window window;
@@ -41,46 +39,73 @@ public class FroggerPlayer extends Player {
 	private double lastSubtractTime;
 	private final long KEYBOARD_SENSIVITY = 220;
 	private SoundManager soundMgr;
-	private SoundSource ssHop;
-	private SoundSource ssSquash;
+	public SoundSource ssCoinIn_1;
+	public SoundSource ssCoinIn_2;
+	public SoundSource ssHop;
+	public SoundSource ssSquash;
+	public SoundSource ssPlunk;
 
-	public FroggerPlayer(Transform transform, MouseInput input, SoundManager sm) {
-		super(transform, input);
-		this.input = input;
+	public FroggerPlayer(Transform transform, IGameLogic game) {
+		super(transform, game.getInput());
+		this.input = game.getInput();
 		this.setAnimation(ANIM_IDLE, new Animation(4, 4, "frogger/player/idle"));
 		this.setAnimation(ANIM_WALK, new Animation(4, 4, "frogger/player/walking"));
 		timer = new Timer();
 		lastMovementTime = lastSubtractTime = timer.getTime();
 		lives = TOTAL_LIVES;
-		
-		this.soundMgr = sm;
+		setupSound(game);
+	}
 
+	private void setupSound(IGameLogic game) {
+		this.soundMgr = game.getSoundManager();
 		try {
 			soundMgr.init();
-	        soundMgr.setAttenuationModel(AL11.AL_EXPONENT_DISTANCE);
+			soundMgr.setAttenuationModel(AL11.AL_EXPONENT_DISTANCE);
+			
+			SoundBuffer buffCoinIn_1 = new SoundBuffer(Config.RESOURCES_DIR + "/frogger/sound/sound-frogger-coin-in-i.ogg");
+			soundMgr.addSoundBuffer(buffCoinIn_1);
+		
+			SoundBuffer buffCoinIn_2 = new SoundBuffer(Config.RESOURCES_DIR + "/frogger/sound/sound-frogger-coin-in-ii.ogg");
+			soundMgr.addSoundBuffer(buffCoinIn_2);
 
 			SoundBuffer buffHop = new SoundBuffer(Config.RESOURCES_DIR + "/frogger/sound/sound-frogger-hop.ogg");
-	        soundMgr.addSoundBuffer(buffHop);
-
+			soundMgr.addSoundBuffer(buffHop);
+			
 			SoundBuffer buffSquash = new SoundBuffer(Config.RESOURCES_DIR + "/frogger/sound/sound-frogger-squash.ogg");
-	        soundMgr.addSoundBuffer(buffSquash);
+			soundMgr.addSoundBuffer(buffSquash);
+			
+			SoundBuffer buffPlunk = new SoundBuffer(Config.RESOURCES_DIR + "/frogger/sound/sound-frogger-plunk.ogg");
+			soundMgr.addSoundBuffer(buffPlunk);
+			
+			ssHop = new SoundSource(false, true);
+			ssHop.setBuffer(buffHop.getBufferId());
+			soundMgr.addSoundSource(Sounds.BACKGROUND.toString(), ssHop);
+			ssHop.setGain(1.0f);
+			
+			ssSquash = new SoundSource(false, true);
+			ssSquash.setBuffer(buffSquash.getBufferId());
+			soundMgr.addSoundSource(Sounds.BACKGROUND.toString(), ssSquash);
+			ssSquash.setGain(1.0f);
+			
+			ssCoinIn_1 = new SoundSource(false, true);
+			ssCoinIn_1.setBuffer(buffCoinIn_1.getBufferId());
+			soundMgr.addSoundSource(Sounds.BACKGROUND.toString(), ssCoinIn_1);
+			ssCoinIn_1.setGain(1.0f);
+			
+			ssCoinIn_2 = new SoundSource(false, true);
+			ssCoinIn_2.setBuffer(buffCoinIn_2.getBufferId());
+			soundMgr.addSoundSource(Sounds.BACKGROUND.toString(), ssCoinIn_2);
+			ssCoinIn_2.setGain(1.0f);
 
-	        ssHop = new SoundSource(false, true);
-	        ssHop.setBuffer(buffHop.getBufferId());
-	        soundMgr.addSoundSource(Sounds.BACKGROUND.toString(), ssHop);
-	        ssHop.setGain(1.0f);
-	        
-	        ssSquash = new SoundSource(false, true);
-	        ssSquash.setBuffer(buffSquash.getBufferId());
-	        soundMgr.addSoundSource(Sounds.BACKGROUND.toString(), ssSquash);
-	        ssSquash.setGain(1.0f);
+			ssPlunk = new SoundSource(false, true);
+			ssPlunk.setBuffer(buffPlunk.getBufferId());
+			soundMgr.addSoundSource(Sounds.BACKGROUND.toString(), ssPlunk);
+			ssPlunk.setGain(1.0f);
 
-	        soundMgr.setListener(new SoundListener(new Vector3f(0, 0, 0)));
+			soundMgr.setListener(new SoundListener(new Vector3f(0, 0, 0)));
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
 
 	public void input(float delta, Camera camera, IScene scene, IGameLogic game) {
@@ -128,7 +153,7 @@ public class FroggerPlayer extends Player {
 			correctPosition(window, scene);
 			camera.getPosition().lerp(this.transform.position.mul(-scene.getScale(), new Vector3f()), 0.02f);
 			if (movement.x != 0 || movement.y != 0) {
-				playJumpSound();			
+				playJumpSound();
 				lastMovementTime = currentTime;	
 			}
 		} 
@@ -138,6 +163,15 @@ public class FroggerPlayer extends Player {
 		ssHop.play();			
 	}
 	
+	public void playCoinInSound() {
+		ssCoinIn_1.play();
+		ssCoinIn_2.play();
+	}
+
+	public void playPlunkSound() {
+		ssPlunk.play();
+	}
+
 	public void update(float delta, Window window, Camera camera, IScene scene, IGameLogic game) {
 		move(new Vector2f(speed, 0));
 	}
@@ -179,7 +213,7 @@ public class FroggerPlayer extends Player {
 		}
 		
 		if (inBasket()) {
-			((FroggerScene) scene).copyFrogToBasket();
+			((FroggerScene) scene).copyFrogToBasket(this);
 			scene.resetLevel(window, camera, game);
 		}
 	}
