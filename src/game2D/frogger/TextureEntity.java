@@ -11,7 +11,7 @@ import game2D.world.IScene;
 
 public class TextureEntity extends Entity {
 
-	private Texture texture;
+	protected Texture texture;
 
 	public TextureEntity(Transform transform, Texture tx) {
 		super(transform);

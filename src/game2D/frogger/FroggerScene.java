@@ -135,13 +135,11 @@ public class FroggerScene implements IScene {
 		txtObstaclesRoad[1] = new Texture("frogger/textures/car_ii");
 		txtObstaclesRoad[2] = new Texture("frogger/textures/car_iii");
 		txtObstaclesRoad[3] = new Texture("frogger/textures/truck");
-		Texture[] txtObstaclesRiver = new Texture[5];
+		Texture[] txtObstaclesRiver = new Texture[4];
 		txtObstaclesRiver[0] = new Texture("frogger/textures/turtles_x2");
 		txtObstaclesRiver[1] = new Texture("frogger/textures/turtles_x3");
 		txtObstaclesRiver[2] = new Texture("frogger/textures/log_x3");
 		txtObstaclesRiver[3] = new Texture("frogger/textures/log_x4");
-		txtObstaclesRiver[4] = new Texture("frogger/textures/log_x5");
-		// txtObstaclesRiver[3] = new Texture("frogger/textures/log_x6");
 
 		int lanes = 10;
 		int grid_width = window.getWidth() / scale;
@@ -158,50 +156,54 @@ public class FroggerScene implements IScene {
 			int randomIndexRoad = rand.nextInt(txtObstaclesRoad.length);
 			int randomIndexRiver = rand.nextInt(txtObstaclesRiver.length);
 			Texture randomObstacle;
-			
-			randSpeed = (float) (rand.nextInt(10) + 5);
+			int minObstaclesPerLane, maxObstaclesPerLane = 2;
 
-			if (i < 5) {
+			randOffsetX = rand.nextInt(5);
+			randSpeed = (float) (rand.nextInt(10) + 5);
+			minObstaclesPerLane = 2;
+
+			if (i < 5) { // road lanes
 				gridOffsetY = 8;
 				randomObstacle = txtObstaclesRoad[randomIndexRoad];
 				collideFatal = true;
-				randSpeed /= 50;
-			} else {
+				randSpeed /= 60;
+				maxObstaclesPerLane = rand.nextInt(3) + minObstaclesPerLane; // between 2 and 4
+			} else { // river lanes
 				gridOffsetY = 10;
 				randomObstacle = txtObstaclesRiver[randomIndexRiver];
 				collideFatal = false;
 				randSpeed /= 100;
+				maxObstaclesPerLane = rand.nextInt(2) + minObstaclesPerLane; // between 2 and 3
 			}
 
-			randOffsetX = rand.nextInt(5);
-
-			Transform transform = new Transform();
+			Transform transformLane = new Transform();
 			direction = (direction == 0) ? getRandomDirectionX(rand) : -direction;
 			switch (direction) {
 			case 1:
-				transform.position.x = 0 - randOffsetX * 2;
-				transform.rotation = new Vector3f(180, 180, 0);
+				transformLane.position.x = 0 - randOffsetX * 2;
+				transformLane.rotation = new Vector3f(180, 180, 0);
 				break;
 			case -1:
-				transform.position.x = grid_width + randOffsetX * 2;
+				transformLane.position.x = grid_width + randOffsetX * 2;
 				break;
 			}
 			randSpeed = (float) (randSpeed * direction);
-			transform.position.y = grid_height + gridOffsetY + i * 2;
-			transform.scale.x = transform.scale.y * randomObstacle.getLengthX();
+			transformLane.position.y = grid_height + gridOffsetY + i * 2;
+			transformLane.scale.x = transformLane.scale.y * randomObstacle.getLengthX();
+			
+			for (int obstacleIndex = 1; obstacleIndex <= maxObstaclesPerLane; obstacleIndex++) {
 
-			obstacle = new Obstacle(transform, randomObstacle, randSpeed, collideFatal);
-			entitiesNew.add(obstacle);
+				// generate instances in the same lane
+				Transform transformObstacle = new Transform();
+				transformObstacle.position.x = transformLane.position.x + grid_width / maxObstaclesPerLane * obstacleIndex * direction;
+				transformObstacle.position.y = transformLane.position.y;
+				transformObstacle.scale = transformLane.scale;
+				transformObstacle.rotation = transformLane.rotation;
 
-			// second instance same lane
-			Transform transform2 = new Transform();
-			transform2.position.x = transform.position.x + grid_width / 2 * direction;
-			transform2.position.y = transform.position.y;
-			transform2.scale = transform.scale;
-			transform2.rotation = transform.rotation;
+				obstacle = new Obstacle(transformObstacle, randomObstacle, randSpeed, collideFatal);
+				entitiesNew.add(obstacle);
 
-			obstacle = new Obstacle(transform2, randomObstacle, randSpeed, collideFatal);
-			entitiesNew.add(obstacle);
+			}
 		}
 	
 		for (int i = 0; i < entities.size(); i++) {
