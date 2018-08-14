@@ -68,7 +68,7 @@ public class Frogger implements IGameLogic {
 
 	@Override
 	public void initGui() {
-		font = FontFactory.getFont("candara", window);
+		font = FontFactory.getFont("kenney", window);
 	}
 
 	public void beginLevel() {
@@ -141,19 +141,19 @@ public class Frogger implements IGameLogic {
 		textMaster = new TextMaster();
 		textMaster.init();
 		
-		guiText1UpLabel = new GUIText("1-UP", 2.0f, font, new Vector2f(0.188f, 0.001f), 1f, false);
+		guiText1UpLabel = new GUIText("1-UP", 1.6f, font, new Vector2f(0.19f, 0.001f), 1f, false);
 		guiText1UpLabel.setColor(1.0f, 1.0f, 1.0f);
 		textMaster.setGuiText(0, guiText1UpLabel);
 		
-		guiTextHiScoreLabel = new GUIText("HI-SCORE", 2.0f, font, new Vector2f(0.378f, 0.001f), 1f, false);
+		guiTextHiScoreLabel = new GUIText("HI-SCORE", 1.6f, font, new Vector2f(0.39f, 0.001f), 1f, false);
 		guiTextHiScoreLabel.setColor(1.0f, 1.0f, 1.0f);
 		textMaster.setGuiText(0, guiTextHiScoreLabel);
 		
-		guiText1Up = new GUIText(Util.customFormat("00000", score), 2.2f, font, new Vector2f(0.12f, 0.035f), 1f, false);
+		guiText1Up = new GUIText(Util.customFormat("00000", score), 1.6f, font, new Vector2f(0.15f, 0.035f), 1f, false);
 		guiText1Up.setColor(1.0f, 0.0f, 0.0f);
 		textMaster.setGuiText(0, guiText1Up);
 		
-		guiTextHiScore = new GUIText(Util.customFormat("00000", hiScore), 2.2f, font, new Vector2f(0.41f, 0.035f), 1f, false);
+		guiTextHiScore = new GUIText(Util.customFormat("00000", hiScore), 1.6f, font, new Vector2f(0.43f, 0.035f), 1f, false);
 		guiTextHiScore.setColor(1.0f, 0.0f, 0.0f);
 		textMaster.setGuiText(0, guiTextHiScore);
 	}

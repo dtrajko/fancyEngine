@@ -7,6 +7,7 @@ public class FontFactory {
 
 	private static FontType candara = null;
 	private static FontType calibri = null;
+	private static FontType kenney = null;
 
 	public static FontType getFont(String fontName, Window window) {
 		FontType font = null;
@@ -22,6 +23,12 @@ public class FontFactory {
 					calibri = new FontType(LoaderFactory.getRawModelLoader().loadTexture(fontName, 0), fontName, window);
 				}
 				font = calibri;	
+				break;
+			case "kenney":
+				if (kenney == null) {
+					kenney = new FontType(LoaderFactory.getRawModelLoader().loadTexture(fontName, 0), fontName, window);
+				}
+				font = kenney;	
 				break;
 		}
 		return font;
