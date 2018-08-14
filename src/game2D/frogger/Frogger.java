@@ -65,7 +65,7 @@ public class Frogger implements IGameLogic {
 		soundMgr = new SoundManager();
 		initGui();
 	}
-	
+
 	@Override
 	public void initGui() {
 		font = FontFactory.getFont("candara", window);
@@ -83,7 +83,7 @@ public class Frogger implements IGameLogic {
 			break;
 		}
 	}
-	
+
 	public void updateScore(int delta) {
 		score += delta;
 		if (score > hiScore) {
