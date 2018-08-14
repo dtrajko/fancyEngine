@@ -261,12 +261,10 @@ public class Scene {
     }
 
     private void setupGui(HashMap<String, Mesh> meshTypesMap, GuiManager guiManager, Window window) throws Exception {
-
     	// bullseye
     	Texture textureBullseye = new Texture(Config.RESOURCES_DIR +  "/textures/bullseye.png");
     	GuiElement guiBullseye = new GuiElement(textureBullseye, new Vector3f(0f, 0f, 1), new Vector2f(0.026f, 0.04f));
     	guiManager.addGuiElement(guiBullseye);
-
     	guiManager.init(window, meshTypesMap);
 	}
 

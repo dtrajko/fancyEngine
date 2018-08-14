@@ -17,4 +17,5 @@ public interface IGameLogic {
 	MouseInput getInput();
 	void setPlayer(Player player);
 	SoundManager getSoundManager();
+	void initGui();
 }

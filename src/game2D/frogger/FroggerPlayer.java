@@ -154,7 +154,10 @@ public class FroggerPlayer extends Player {
 			camera.getPosition().lerp(this.transform.position.mul(-scene.getScale(), new Vector3f()), 0.02f);
 			if (movement.x != 0 || movement.y != 0) {
 				playJumpSound();
-				lastMovementTime = currentTime;	
+				if (movement.y > 0) {
+					((Frogger) game).updateScore(10);
+				}
+				lastMovementTime = currentTime;
 			}
 		} 
 	}
@@ -213,13 +216,13 @@ public class FroggerPlayer extends Player {
 		}
 		
 		if (inBasket()) {
-			((FroggerScene) scene).copyFrogToBasket(this);
+			((FroggerScene) scene).copyFrogToBasket(this, game);
 			scene.resetLevel(window, camera, game);
 		}
 	}
 
 	public boolean inBasket() {
-		if (transform.position.y == -2 &&
+		if (transform.position.y == -6 &&
 			(transform.position.x == 2 ||
 			transform.position.x == 8 ||
 			transform.position.x == 14 ||
@@ -230,7 +233,7 @@ public class FroggerPlayer extends Player {
 	
 	public boolean inRiverArea(IScene scene) {
 		int playerGridY = (int) transform.position.y;
-		if (playerGridY >= -12 && playerGridY <= -4) {
+		if (playerGridY >= -16 && playerGridY <= -8) {
 			return true;
 		} else {
 			return false;			

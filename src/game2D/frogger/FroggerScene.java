@@ -26,7 +26,7 @@ public class FroggerScene implements IScene {
 
 	private final int EMPTY_BASKETS = 5;
 	public int view_width = 15;
-	public int view_height = 16;
+	public int view_height = 18;
 	private byte[] tiles;
 	private AABB[] bounding_boxes;
 	private List<Entity> entities;
@@ -114,7 +114,7 @@ public class FroggerScene implements IScene {
 		player.playCoinInSound();
 	}
 
-	public void copyFrogToBasket(FroggerPlayer player) {
+	public void copyFrogToBasket(FroggerPlayer player, IGameLogic game) {
 		player.playPlunkSound();
 		Transform transform = new Transform();
 		transform.position.x = player.getTransform().position.x;
@@ -123,6 +123,7 @@ public class FroggerScene implements IScene {
 		TextureEntity frogCopy = new TextureEntity(transform, txFrog);
 		entities.add(frogCopy);
 		emptyBaskets--;
+		((Frogger) game).updateScore(50);
 	}
 
 	public void setupObstacles() {

@@ -65,6 +65,10 @@ public class Game3D implements IGameLogic {
         selectDetectorCamera = new CameraBoxSelectionDetector();
     }
 
+	@Override
+	public void initGui() {
+	}
+
     @Override
     public void render(Window window) {
         if (firstTime) {

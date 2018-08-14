@@ -37,7 +37,7 @@ public class Main {
 				gameLogic = new Frogger();
 				opts.mode3D = false;
 				width = 750;
-				height = 800;
+				height = 900;
 				break;
 			default:
 				gameLogic = new Game3D();
