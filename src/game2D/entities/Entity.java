@@ -20,6 +20,7 @@ public abstract class Entity {
 	protected AABB bounding_box;
 	protected Transform transform;
 	protected float speed;
+	private String label;
 
 	public Entity(Transform transform) {
 		this.transform = transform;
@@ -45,6 +46,14 @@ public abstract class Entity {
 	
 	public void setSpeed(float spd) {
 		this.speed = spd;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String lbl) {
+		this.label = lbl;
 	}
 
 	public void move(Vector2f direction) {

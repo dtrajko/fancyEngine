@@ -459,7 +459,7 @@ public class Scene {
 	}
 
 	public void save() {
-		
+
 		if (instancedMeshMap.isEmpty()) {
 			System.err.println("[Scene::save()] Failed to save the scene, instancedMeshMap is empty.");
 			return;

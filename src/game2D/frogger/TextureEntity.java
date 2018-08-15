@@ -17,6 +17,10 @@ public class TextureEntity extends Entity {
 		super(transform);
 		this.texture = tx;
 	}
+	
+	public Texture getTexture() {
+		return this.texture;
+	}
 
 	public TextureEntity(Transform transform) {
 		super(transform);

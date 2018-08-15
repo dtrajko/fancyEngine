@@ -24,7 +24,7 @@ import game2D.world.Tile;
 
 public class FroggerScene implements IScene {
 
-	private final int EMPTY_BASKETS = 5;
+	private final int FREE_BASKETS = 5;
 	public int view_width = 15;
 	public int view_height = 18;
 	private byte[] tiles;
@@ -42,7 +42,7 @@ public class FroggerScene implements IScene {
 	private Tile bgTile;
 	private final ITileType[] tileTypes;
 	private Random rand = new Random();
-	public int emptyBaskets;
+	public int freeBaskets;
 	private Obstacle obstacle;
 
 	public FroggerScene(String worldName, Camera camera, int scale, int bg_tile, IGameLogic game) {
@@ -52,7 +52,7 @@ public class FroggerScene implements IScene {
 		bgTileID = bg_tile;
 		this.bgTileType = tileTypes[bgTileID];
 		this.bgTile = new Tile(bgTileType);
-		emptyBaskets = EMPTY_BASKETS;
+		freeBaskets = FREE_BASKETS;
 
 		String tileSheetPath = Config.RESOURCES_DIR + "/frogger/levels/" + worldName + "/tiles.png";
 		BufferedImage tile_sheet = null;
@@ -121,9 +121,14 @@ public class FroggerScene implements IScene {
 		transform.position.y = player.getTransform().position.y;
 		Texture txFrog = new Texture("frogger/player/idle/1");
 		TextureEntity frogCopy = new TextureEntity(transform, txFrog);
+		frogCopy.setLabel("frog_copy");
 		entities.add(frogCopy);
-		emptyBaskets--;
+		freeBaskets--;
 		((Frogger) game).updateScore(50);
+		if (((Frogger) game).levelComplete()) {
+			
+			((Frogger) game).updateScore(1000);
+		}
 	}
 
 	public void setupObstacles() {
@@ -162,19 +167,18 @@ public class FroggerScene implements IScene {
 			randOffsetX = rand.nextInt(5);
 			randSpeed = (float) (rand.nextInt(10) + 5);
 			minObstaclesPerLane = 2;
+			maxObstaclesPerLane = rand.nextInt(2) + minObstaclesPerLane; // between 2 and 3
 
 			if (i < 5) { // road lanes
 				gridOffsetY = 8;
 				randomObstacle = txtObstaclesRoad[randomIndexRoad];
 				collideFatal = true;
 				randSpeed /= 60;
-				maxObstaclesPerLane = rand.nextInt(3) + minObstaclesPerLane; // between 2 and 4
 			} else { // river lanes
 				gridOffsetY = 10;
 				randomObstacle = txtObstaclesRiver[randomIndexRiver];
 				collideFatal = false;
 				randSpeed /= 100;
-				maxObstaclesPerLane = rand.nextInt(2) + minObstaclesPerLane; // between 2 and 3
 			}
 
 			Transform transformLane = new Transform();
@@ -284,11 +288,27 @@ public class FroggerScene implements IScene {
 			bb.update(new Vector2f(x * 2 + offsetX, -y * 2 + offsetY), new Vector2f(1, 1));			
 		}
 	}
-	
-	public void resetLevel(Window window, Camera camera, IGameLogic game) {
+
+	public void resetScene(Window window, Camera camera, IGameLogic game) {
+		if (((Frogger) game).levelComplete()) {
+			emptyBaskets();
+		}
 		setupObstacles();
 		player.resetPosition(camera, this, game);
 		// player.playCoinInSound();
+	}
+
+	private void emptyBaskets() {
+		
+		freeBaskets = FREE_BASKETS;
+		List<Entity> entitiesNew = new ArrayList<Entity>();
+
+		for (int i = 0; i < entities.size(); i++) {
+			if (!(entities.get(i).getLabel() == "frog_copy")) {
+				entitiesNew.add(entities.get(i));
+			}
+		}
+		entities = entitiesNew;
 	}
 
 	public void correctCamera(Camera camera) {

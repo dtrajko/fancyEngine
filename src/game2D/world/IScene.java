@@ -24,5 +24,5 @@ public interface IScene {
 	List<Entity> getEntities();
 	AABB getTileBoundingBox(int i, int j);
 	ITileType[] getTileTypes();
-	void resetLevel(Window window, Camera camera, IGameLogic game);
+	void resetScene(Window window, Camera camera, IGameLogic game);
 }

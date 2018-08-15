@@ -283,7 +283,7 @@ public class World implements IScene {
 	}
 
 	@Override
-	public void resetLevel(Window window, Camera camera, IGameLogic game) {
+	public void resetScene(Window window, Camera camera, IGameLogic game) {
 		// TODO Auto-generated method stub
 		
 	}

@@ -198,7 +198,7 @@ public class FroggerPlayer extends Player {
 		if (!inRiverArea(scene) && isIntersecting && intersectingObstacle instanceof Obstacle && intersectingObstacle.isCollideFatal()) {
 			if (substractLife()) {
 				resetPosition(camera, scene, game);
-				scene.resetLevel(window, camera, game);
+				scene.resetScene(window, camera, game);
 			}
 		}
 		
@@ -211,13 +211,13 @@ public class FroggerPlayer extends Player {
 
 		if (inRiverArea(scene) && !isIntersecting) {
 			if (substractLife()) {
-				scene.resetLevel(window, camera, game);
+				scene.resetScene(window, camera, game);
 			}
 		}
 		
 		if (inBasket()) {
 			((FroggerScene) scene).copyFrogToBasket(this, game);
-			scene.resetLevel(window, camera, game);
+			scene.resetScene(window, camera, game);
 		}
 	}
 

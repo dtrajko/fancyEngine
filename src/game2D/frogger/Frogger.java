@@ -1,21 +1,33 @@
 package game2D.frogger;
 
+import java.io.File;
+import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 
+import config.Config;
 import engine.GameEngine;
 import engine.IGameLogic;
+import engine.Utils;
 import engine.Window;
 import engine.graph.Camera;
+import engine.graph.InstancedMesh;
 import engine.graph.MouseInput;
 import engine.gui.fonts.FontFactory;
 import engine.gui.fonts.FontType;
 import engine.gui.fonts.GUIText;
 import engine.gui.fonts.TextMaster;
+import engine.items.GameItem;
 import engine.sound.SoundManager;
 import engine.utils.Util;
 import game2D.assets.Assets;
@@ -63,6 +75,7 @@ public class Frogger implements IGameLogic {
 		camera.setOrthoProjection(window);
 		sheet = new TileSheet("frogger/textures/sheets/lives", 3);
 		soundMgr = new SoundManager();
+		loadHiScore();
 		initGui();
 	}
 
@@ -89,6 +102,10 @@ public class Frogger implements IGameLogic {
 		if (score > hiScore) {
 			hiScore = score;			
 		}
+	}
+
+	public void resetScore() {
+		score = 0;
 	}
 
 	public SoundManager getSoundManager() {
@@ -157,10 +174,17 @@ public class Frogger implements IGameLogic {
 		guiTextHiScore.setColor(1.0f, 0.0f, 0.0f);
 		textMaster.setGuiText(0, guiTextHiScore);
 	}
+	
+	public boolean levelComplete() {
+		if (scene.freeBaskets <= 0) return true;
+		return false;
+	}
 
 	public boolean gameOver() {
-		if (player instanceof Player && player.getLives() <= 0) return true;
-		if (scene.emptyBaskets <= 0) return true;
+		if (player instanceof Player && player.getLives() <= 0) {
+			score = 0;
+			return true;
+		}
 		return false;
 	}
 
@@ -193,9 +217,40 @@ public class Frogger implements IGameLogic {
 
 	@Override
 	public void cleanup() {
+		saveHiScore();
 		Assets.deleteAsset();
 		renderer.clear();
 		if (scene != null) scene.cleanup();
 		soundMgr.cleanup();
+	}
+	
+	public void saveHiScore() {
+		PrintWriter out;
+		try {
+			out = new PrintWriter(Config.RESOURCES_DIR + "/frogger/scores/hi_score.txt");
+			out.println(this.hiScore);
+			out.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void loadHiScore() {
+		String importFilePath = Config.RESOURCES_DIR + "/frogger/scores/hi_score.txt";
+		List<String> lines;
+		
+		try {
+			lines = Utils.readAllLines(importFilePath);
+			
+			System.out.println("File content: " + lines.get(0));
+			
+			if (lines.isEmpty()) return;
+			if (lines.size() > 0 && lines.get(0) != null) {
+				this.hiScore = Integer.parseInt(lines.get(0));				
+			}
+		} catch (Exception e) {
+			System.err.println("Unable to load the file [" + importFilePath + "]");
+			e.printStackTrace();
+		}
 	}
 }
