@@ -116,6 +116,9 @@ public class Frogger implements IGameLogic {
 	public void input(Window window, MouseInput mouseInput) {
 		this.mouseInput = mouseInput;
 		if (switchLevel == true || gameOver()) {
+			if (gameOver()) {
+				score = 0;
+			}
 			beginLevel();
 			switchLevel = false;
 		}
@@ -125,7 +128,6 @@ public class Frogger implements IGameLogic {
 
 	@Override
 	public void update(float interval, MouseInput mouseInput) {
-		// if (gameOver()) return;
 		mouseInput.update(window);
 		updateGui();
 		scene.update((float) frame_cap, window, camera, this);
@@ -182,7 +184,6 @@ public class Frogger implements IGameLogic {
 
 	public boolean gameOver() {
 		if (player instanceof Player && player.getLives() <= 0) {
-			score = 0;
 			return true;
 		}
 		return false;
@@ -238,12 +239,8 @@ public class Frogger implements IGameLogic {
 	public void loadHiScore() {
 		String importFilePath = Config.RESOURCES_DIR + "/frogger/scores/hi_score.txt";
 		List<String> lines;
-		
 		try {
-			lines = Utils.readAllLines(importFilePath);
-			
-			System.out.println("File content: " + lines.get(0));
-			
+			lines = Utils.readAllLines(importFilePath);			
 			if (lines.isEmpty()) return;
 			if (lines.size() > 0 && lines.get(0) != null) {
 				this.hiScore = Integer.parseInt(lines.get(0));				
