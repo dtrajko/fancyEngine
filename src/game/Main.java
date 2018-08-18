@@ -9,7 +9,7 @@ public class Main {
 
 	private static int width = 0;
 	private static int height = 0;
-	private static String app = "Frogger"; // 3D, 2D, Frogger
+	private static String app = "3D"; // 3D, 2D, Frogger
 
     public static void main(String[] args) {
         try {

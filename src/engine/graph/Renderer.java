@@ -23,6 +23,7 @@ import engine.graph.anim.AnimatedFrame;
 import engine.graph.lights.DirectionalLight;
 import engine.graph.lights.PointLight;
 import engine.graph.lights.SpotLight;
+import engine.graph.particles.IParticleEmitter;
 import engine.graph.shadow.ShadowCascade;
 import engine.graph.shadow.ShadowRenderer;
 import engine.gui.GuiManager;
@@ -76,7 +77,7 @@ public class Renderer {
         }
         setupSkyBoxShader();
         setupSceneShader();
-        // setupParticlesShader();
+        setupParticlesShader();
         setupHudShader();
         setupFontShader();
         guiRenderer = new GuiRenderer();
@@ -92,8 +93,9 @@ public class Renderer {
         particlesShaderProgram.link();
 
         particlesShaderProgram.createUniform("projectionMatrix");
+        particlesShaderProgram.createUniform("modelViewMatrix");
         particlesShaderProgram.createUniform("texture_sampler");
-
+        
         particlesShaderProgram.createUniform("numCols");
         particlesShaderProgram.createUniform("numRows");
     }
@@ -333,10 +335,29 @@ public class Renderer {
 
         renderSkyBox(window, camera, scene);
         renderScene(window, camera, scene);
-        // renderParticles(window, camera, scene);
+        renderParticles(window, camera, scene);
     }
 
-    private void renderDepthMap(Window window, Camera camera, Scene scene) {
+    private void renderParticles(Window window, Camera camera, Scene scene) {
+    	particlesShaderProgram.bind();
+    	particlesShaderProgram.setUniform("texture_sampler", 0);
+    	Matrix4f projectionMatrix = transformation.getProjectionMatrix();
+    	particlesShaderProgram.setUniform("projectionMatrix", projectionMatrix);
+    	Matrix4f viewMatrix = transformation.getViewMatrix();
+    	IParticleEmitter[] emitters = scene.getParticleEmitters();
+    	int numEmitters = emitters != null ? emitters.length : 0;
+    	for (int i = 0; i < numEmitters; i++) {
+    		IParticleEmitter emitter = emitters[i];
+    		Mesh mesh = emitter.getBaseParticle().getMesh();
+    		mesh.renderList((emitter.getParticles()), (GameItem gameItem) -> {
+    			Matrix4f modelViewMatrix = transformation.buildModelViewMatrix(gameItem, viewMatrix);    			
+    			particlesShaderProgram.setUniform("modelViewMatrix", modelViewMatrix);
+    		});
+    	}
+    	particlesShaderProgram.unbind();
+    }
+
+	private void renderDepthMap(Window window, Camera camera, Scene scene) {
         if (scene.isRenderShadows()) {
             // Setup view port to match the texture size
         	GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, shadowMap.getDepthMapFBO());

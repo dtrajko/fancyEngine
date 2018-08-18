@@ -11,7 +11,6 @@ import engine.graph.Camera;
 import engine.graph.Mesh;
 import engine.graph.MouseInput;
 import engine.graph.Renderer;
-import engine.graph.particles.FlowParticleEmitter;
 import engine.gui.GuiElement;
 import engine.gui.GuiManager;
 import engine.sound.SoundManager;
@@ -27,7 +26,6 @@ public class Game3D implements IGameLogic {
     private static final float CAMERA_POS_STEP = 0.1f;
     private float angleInc;
     private float lightAngle;
-    private FlowParticleEmitter particleEmitter;
     private final SoundManager soundMgr;
     private static float GRAVITY = -2.0f;
     private static float actualGravity = 0;
@@ -61,7 +59,7 @@ public class Game3D implements IGameLogic {
     	window = win;
         scene = new Scene();
         renderer.init(window, scene);
-        scene.init(meshTypesMap, particleEmitter, soundMgr, camera, guiManager, window);
+        scene.init(meshTypesMap, soundMgr, camera, guiManager, window);
         selectDetectorCamera = new CameraBoxSelectionDetector();
     }
 
@@ -194,11 +192,11 @@ public class Game3D implements IGameLogic {
 	@Override
     public void update(float interval, MouseInput mouseInput) {
 		if (guiManager.getUpdateEnabled()) {
-			updateConditional(mouseInput);
+			updateConditional(interval, mouseInput);
 		}
     }
 
-	public void updateConditional(MouseInput mouseInput) {
+	public void updateConditional(float interval, MouseInput mouseInput) {
     	// Update camera based on mouse
         Vector2f rotVec = mouseInput.getDisplVec();
         camera.moveRotation(rotVec.x * MOUSE_SENSITIVITY, rotVec.y * MOUSE_SENSITIVITY, 0);
@@ -235,7 +233,7 @@ public class Game3D implements IGameLogic {
         // Update sound listener position;
         soundMgr.updateListenerPosition(camera);
 
-        // particleEmitter.update((long) (interval * 1000));
+        scene.update(interval);
 
         // disable editing while inventory GUI is open
         if (!guiManager.isInventoryOn()) {

@@ -70,8 +70,9 @@ public class CameraBoxSelectionDetector {
         	selectedGameItem.setSelected(true);
             if (mouseInput.isMouseButtonPressed(GLFW.GLFW_MOUSE_BUTTON_1)) {
             	scene.removeGameItem(selectedGameItem);
+            	scene.generateBlockParticles(selectedGameItem);
             }
-            
+
             nextMesh = nextMesh != null ? nextMesh : selectedGameItem.getMesh();
             
             // middle button - create a new cube above the selected cube

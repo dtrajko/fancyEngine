@@ -11,23 +11,14 @@ import engine.items.GameItem;
 public class FlowParticleEmitter implements IParticleEmitter {
 
     private int maxParticles;
-
     private boolean active;
-
     private final List<GameItem> particles;
-
     private final Particle baseParticle;
-
     private long creationPeriodMillis;
-
     private long lastCreationTime;
-
     private float speedRndRange;
-
     private float positionRndRange;
-
     private float scaleRndRange;
-
     private long animRange;
 
     public FlowParticleEmitter(Particle baseParticle, int maxParticles, long creationPeriodMillis) {
@@ -125,7 +116,7 @@ public class FlowParticleEmitter implements IParticleEmitter {
 
     private void createParticle() {
         Particle particle = new Particle(this.getBaseParticle());
-        // Add a little bit of randomness of the parrticle
+        // Add a little bit of randomness of the particle
         float sign = Math.random() > 0.5d ? -1.0f : 1.0f;
         float speedInc = sign * (float)Math.random() * this.speedRndRange;
         float posInc = sign * (float)Math.random() * this.positionRndRange;        

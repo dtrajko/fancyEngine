@@ -50,6 +50,7 @@ public class Scene {
     private Fog fog;
     private boolean renderShadows;
     private IParticleEmitter[] particleEmitters;
+    private FlowParticleEmitter particleEmitter;
 
     public enum Sounds {
         FIRE,
@@ -63,7 +64,7 @@ public class Scene {
         renderShadows = true;
     }
 
-    public void init(HashMap<String, Mesh> meshTypesMap, FlowParticleEmitter particleEmitter, SoundManager soundMgr, Camera camera, GuiManager guiManager, Window window) throws Exception {
+    public void init(HashMap<String, Mesh> meshTypesMap, SoundManager soundMgr, Camera camera, GuiManager guiManager, Window window) throws Exception {
 
         Mesh meshGrass = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
         meshTypesMap.put("GRASS", meshGrass.setLabel("GRASS"));
@@ -164,8 +165,6 @@ public class Scene {
         int skyBoxScale = 150;
         load(meshTypesMap, "snapshot.txt");
 
-        setupParticles(particleEmitter);
-
         // Shadows
         setRenderShadows(false);
 
@@ -193,8 +192,14 @@ public class Scene {
         camera.getPosition().z = skyBoxScale;
         camera.setRotation(0, 0, 0);
     }
+    
+    public void update(float interval) {
+    	if (particleEmitter != null) {
+    		particleEmitter.update((long)(interval * 500));    		
+    	}
+    }
 
-	private void setupParticles(FlowParticleEmitter particleEmitter) {
+	private void setupParticlesFire() {
         // Particles
         int maxParticles = 200;
         Vector3f particleSpeed = new Vector3f(0, 1, 0);
@@ -224,6 +229,35 @@ public class Scene {
         particleEmitter.setSpeedRndRange(range);
         particleEmitter.setAnimRange(10);
         setParticleEmitters(new FlowParticleEmitter[]{particleEmitter});
+	}
+
+	private void setupParticlesBlock(GameItem selectedGameItem) {
+		Vector3f particleSpeed = new Vector3f(0, 1, 0);
+		particleSpeed.mul(3.0f);
+		long ttl = 1000;
+		int maxParticles = 60;
+		long creationPeriodMillis = 30;
+		float range = 2.0f;
+		float scale = 0.4f;
+		Mesh partMesh;
+		Material partMaterial;
+		Vector3f position = selectedGameItem.getPosition();
+		try {
+			partMesh = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/particle.obj", maxParticles);
+			Texture texture = new Texture(Config.RESOURCES_DIR + "/textures/particle_block_single.png");
+			partMaterial = new Material(texture, 0);
+			partMesh.setMaterial(partMaterial);
+			Particle particle = new Particle(partMesh, particleSpeed, ttl, creationPeriodMillis);
+			particle.setScale(scale);
+			particle.setPosition(position.x, position.y, position.z);
+			particleEmitter = new FlowParticleEmitter(particle, maxParticles, creationPeriodMillis);
+			particleEmitter.setActive(true);
+			particleEmitter.setPositionRndRange(range);
+			particleEmitter.setSpeedRndRange(range);
+			this.setParticleEmitters(new FlowParticleEmitter[] {particleEmitter});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void setupLights() {
@@ -594,5 +628,9 @@ public class Scene {
 
         setGameItems(gameItems);
         gameItems.clear();
+	}
+
+	public void generateBlockParticles(GameItem selectedGameItem) {
+		setupParticlesBlock(selectedGameItem);
 	}
 }
