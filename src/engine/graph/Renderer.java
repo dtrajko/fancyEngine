@@ -1,5 +1,10 @@
 package engine.graph;
 
+import static org.lwjgl.opengl.GL11.GL_BACK;
+import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
+import static org.lwjgl.opengl.GL11.glCullFace;
+import static org.lwjgl.opengl.GL11.glEnable;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -90,12 +95,15 @@ public class Renderer {
         particlesShaderProgram = new ShaderProgram();
         particlesShaderProgram.createVertexShader(Utils.loadResource(Config.RESOURCES_DIR + "/shaders/particles_vertex.vs"));
         particlesShaderProgram.createFragmentShader(Utils.loadResource(Config.RESOURCES_DIR + "/shaders/particles_fragment.fs"));
+
         particlesShaderProgram.link();
 
         particlesShaderProgram.createUniform("projectionMatrix");
         particlesShaderProgram.createUniform("modelViewMatrix");
         particlesShaderProgram.createUniform("texture_sampler");
-        
+
+        particlesShaderProgram.createUniform("texXOffset");
+        particlesShaderProgram.createUniform("texYOffset");
         particlesShaderProgram.createUniform("numCols");
         particlesShaderProgram.createUniform("numRows");
     }
@@ -339,22 +347,50 @@ public class Renderer {
     }
 
     private void renderParticles(Window window, Camera camera, Scene scene) {
-    	particlesShaderProgram.bind();
-    	particlesShaderProgram.setUniform("texture_sampler", 0);
-    	Matrix4f projectionMatrix = transformation.getProjectionMatrix();
-    	particlesShaderProgram.setUniform("projectionMatrix", projectionMatrix);
-    	Matrix4f viewMatrix = transformation.getViewMatrix();
-    	IParticleEmitter[] emitters = scene.getParticleEmitters();
-    	int numEmitters = emitters != null ? emitters.length : 0;
-    	for (int i = 0; i < numEmitters; i++) {
-    		IParticleEmitter emitter = emitters[i];
-    		Mesh mesh = emitter.getBaseParticle().getMesh();
-    		mesh.renderList((emitter.getParticles()), (GameItem gameItem) -> {
-    			Matrix4f modelViewMatrix = transformation.buildModelViewMatrix(gameItem, viewMatrix);    			
-    			particlesShaderProgram.setUniform("modelViewMatrix", modelViewMatrix);
-    		});
-    	}
-    	particlesShaderProgram.unbind();
+        particlesShaderProgram.bind();
+
+        particlesShaderProgram.setUniform("texture_sampler", 0);
+        Matrix4f projectionMatrix = transformation.getProjectionMatrix();
+        particlesShaderProgram.setUniform("projectionMatrix", projectionMatrix);
+
+        Matrix4f viewMatrix = transformation.getViewMatrix();
+        IParticleEmitter[] emitters = scene.getParticleEmitters();
+        int numEmitters = emitters != null ? emitters.length : 0;
+
+        GL11.glDepthMask(false);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+
+        for (int i = 0; i < numEmitters; i++) {
+            IParticleEmitter emitter = emitters[i];
+            Mesh mesh = emitter.getBaseParticle().getMesh();
+
+            Texture text = mesh.getMaterial().getTexture();
+            particlesShaderProgram.setUniform("numCols", text.getNumCols());
+            particlesShaderProgram.setUniform("numRows", text.getNumRows());
+
+            mesh.renderList((emitter.getParticles()), (GameItem gameItem) -> {
+                int col = gameItem.getTextPos() % text.getNumCols();
+                int row = gameItem.getTextPos() / text.getNumCols();
+                float textXOffset = (float) col / text.getNumCols();
+                float textYOffset = (float) row / text.getNumRows();
+                particlesShaderProgram.setUniform("texXOffset", textXOffset);
+                particlesShaderProgram.setUniform("texYOffset", textYOffset);
+
+                Matrix4f modelMatrix = transformation.buildModelMatrix(gameItem);
+
+                viewMatrix.transpose3x3(modelMatrix);
+                viewMatrix.scale(gameItem.getScale());
+
+                Matrix4f modelViewMatrix = transformation.buildModelViewMatrix(modelMatrix, viewMatrix);
+                modelViewMatrix.scale(gameItem.getScale());
+                particlesShaderProgram.setUniform("modelViewMatrix", modelViewMatrix);
+            });
+        }
+
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glDepthMask(true);
+
+        particlesShaderProgram.unbind();
     }
 
 	private void renderDepthMap(Window window, Camera camera, Scene scene) {

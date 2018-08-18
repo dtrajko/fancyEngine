@@ -233,7 +233,7 @@ public class Game3D implements IGameLogic {
         // Update sound listener position;
         soundMgr.updateListenerPosition(camera);
 
-        scene.update(interval);
+        scene.update(interval, camera);
 
         // disable editing while inventory GUI is open
         if (!guiManager.isInventoryOn()) {
