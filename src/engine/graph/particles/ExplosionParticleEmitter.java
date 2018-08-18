@@ -8,7 +8,7 @@ import org.joml.Vector3f;
 
 import engine.items.GameItem;
 
-public class FlowParticleEmitter implements IParticleEmitter {
+public class ExplosionParticleEmitter implements IParticleEmitter {
 
     private int maxParticles;
     private boolean active;
@@ -20,8 +20,9 @@ public class FlowParticleEmitter implements IParticleEmitter {
     private float positionRndRange;
     private float scaleRndRange;
     private long animRange;
+    private int numParticlesCreated = 0;
 
-    public FlowParticleEmitter(Particle baseParticle, int maxParticles, long creationPeriodMillis) {
+    public ExplosionParticleEmitter(Particle baseParticle, int maxParticles, long creationPeriodMillis) {
         particles = new ArrayList<>();
         this.baseParticle = baseParticle;
         this.maxParticles = maxParticles;
@@ -108,10 +109,10 @@ public class FlowParticleEmitter implements IParticleEmitter {
             }
         }
 
-        int length = this.getParticles().size();
-        if (now - lastCreationTime >= this.creationPeriodMillis && length < maxParticles) {
+        if (now - lastCreationTime >= this.creationPeriodMillis && numParticlesCreated < maxParticles) {
             createParticle();
             this.lastCreationTime = now;
+            numParticlesCreated++;
         }
     }
 

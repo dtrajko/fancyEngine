@@ -26,7 +26,7 @@ import engine.graph.Material;
 import engine.graph.Mesh;
 import engine.graph.Texture;
 import engine.graph.lights.DirectionalLight;
-import engine.graph.particles.FlowParticleEmitter;
+import engine.graph.particles.ExplosionParticleEmitter;
 import engine.graph.particles.IParticleEmitter;
 import engine.graph.particles.Particle;
 import engine.graph.weather.Fog;
@@ -50,7 +50,8 @@ public class Scene {
     private Fog fog;
     private boolean renderShadows;
     private IParticleEmitter[] particleEmitters;
-    private FlowParticleEmitter particleEmitter;
+    private ExplosionParticleEmitter particleEmitter;
+    private String savesDirPath = "saves/3D";
 
     public enum Sounds {
         FIRE,
@@ -192,53 +193,15 @@ public class Scene {
         camera.getPosition().z = skyBoxScale;
         camera.setRotation(0, 0, 0);
     }
-    
-    public void update(float interval) {
-    	if (particleEmitter != null) {
-    		particleEmitter.update((long)(interval * 500));    		
-    	}
-    }
 
-	private void setupParticlesFire() {
-        // Particles
-        int maxParticles = 200;
-        Vector3f particleSpeed = new Vector3f(0, 1, 0);
-        particleSpeed.mul(2.5f);
-        long ttl = 4000;
-        long creationPeriodMillis = 300;
-        float range = 0.2f;
-        float scale = 1.0f;
-        Mesh partMesh = null;
-        Texture particleTexture;
-        Material partMaterial = null;
-		try {
-			partMesh = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/particle.obj", maxParticles);
-			particleTexture = new Texture(Config.RESOURCES_DIR + "/textures/particle_anim.png", 4, 4);
-			partMaterial = new Material(particleTexture);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        partMaterial.setReflectance(1.0f);
-        partMesh.setMaterial(partMaterial);
-        Particle particle = new Particle(partMesh, particleSpeed, ttl, 100);
-        particle.setScale(scale);
-        particleEmitter = new FlowParticleEmitter(particle, maxParticles, creationPeriodMillis);
-        particleEmitter.setActive(true);
-        particleEmitter.setPositionRndRange(range);
-        particleEmitter.setSpeedRndRange(range);
-        particleEmitter.setAnimRange(10);
-        setParticleEmitters(new FlowParticleEmitter[]{particleEmitter});
-	}
-
-	private void setupParticlesBlock(GameItem selectedGameItem) {
-		Vector3f particleSpeed = new Vector3f(0, 1, 0);
-		particleSpeed.mul(3.0f);
-		long ttl = 1000;
-		int maxParticles = 60;
-		long creationPeriodMillis = 30;
-		float range = 2.0f;
-		float scale = 0.4f;
+	private void setupBlockParticles(GameItem selectedGameItem, Camera camera) {
+		Vector3f particleSpeed = new Vector3f(0, 0, 0);
+		particleSpeed.mul(2.0f);
+		long ttl = 20;
+		int maxParticles = (int) Math.pow(3, 3);
+		long creationPeriodMillis = 0;
+		float range = 1.0f;
+		float scale = 0.25f;
 		Mesh partMesh;
 		Material partMaterial;
 		Vector3f position = selectedGameItem.getPosition();
@@ -248,17 +211,24 @@ public class Scene {
 			partMaterial = new Material(texture, 0);
 			partMesh.setMaterial(partMaterial);
 			Particle particle = new Particle(partMesh, particleSpeed, ttl, creationPeriodMillis);
-			particle.setScale(scale);
 			particle.setPosition(position.x, position.y, position.z);
-			particleEmitter = new FlowParticleEmitter(particle, maxParticles, creationPeriodMillis);
+			particle.setScale(scale);
+			particle.setRotationEulerDegrees(camera.getRotation().x, camera.getRotation().y, camera.getRotation().z);
+			particleEmitter = new ExplosionParticleEmitter(particle, maxParticles, creationPeriodMillis);
 			particleEmitter.setActive(true);
 			particleEmitter.setPositionRndRange(range);
 			particleEmitter.setSpeedRndRange(range);
-			this.setParticleEmitters(new FlowParticleEmitter[] {particleEmitter});
+			this.setParticleEmitters(new ExplosionParticleEmitter[] { particleEmitter });
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
+
+    public void update(float interval) {
+    	if (particleEmitter != null) {
+    		particleEmitter.update((long)(interval * 500));
+    	}
+    }
 
 	private void setupLights() {
 
@@ -503,7 +473,7 @@ public class Scene {
 		try {
 			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy_MM_dd"); // yyyy_MM_dd_HH_mm_ss
 			LocalDateTime now = LocalDateTime.now();
-			out = new PrintWriter(Config.RESOURCES_DIR + "/saves/snapshot.txt");
+			out = new PrintWriter(Config.RESOURCES_DIR + "/" + savesDirPath + "/snapshot.txt");
 			
 			for (InstancedMesh mesh : instancedMeshMap.keySet()) {
 				String meshLabel = mesh.getLabel();
@@ -521,8 +491,8 @@ public class Scene {
 			}
 			out.close();
 			Files.copy(
-				new File(Config.RESOURCES_DIR + "/saves/snapshot.txt").toPath(),
-				new File(Config.RESOURCES_DIR + "/saves/snapshot_" + dtf.format(now) + ".txt").toPath(),
+				new File(Config.RESOURCES_DIR + "/" + savesDirPath + "/snapshot.txt").toPath(),
+				new File(Config.RESOURCES_DIR + "/" + savesDirPath + "/snapshot_" + dtf.format(now) + ".txt").toPath(),
 				StandardCopyOption.REPLACE_EXISTING);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -531,7 +501,7 @@ public class Scene {
 
 	public void load(HashMap<String, Mesh> meshTypesMap, String saveFile) {
 
-		String importFilePath = Config.RESOURCES_DIR + "/saves/" + saveFile;
+		String importFilePath = Config.RESOURCES_DIR + "/" + savesDirPath + "/" + saveFile;
 		List<GameItem> gameItems = new ArrayList<GameItem>();
 		GameItem gameItem;
 		List<String> lines;
@@ -630,7 +600,7 @@ public class Scene {
         gameItems.clear();
 	}
 
-	public void generateBlockParticles(GameItem selectedGameItem) {
-		setupParticlesBlock(selectedGameItem);
+	public void generateBlockParticles(GameItem selectedGameItem, Camera camera) {
+		setupBlockParticles(selectedGameItem, camera);
 	}
 }

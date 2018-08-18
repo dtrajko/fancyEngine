@@ -70,7 +70,7 @@ public class CameraBoxSelectionDetector {
         	selectedGameItem.setSelected(true);
             if (mouseInput.isMouseButtonPressed(GLFW.GLFW_MOUSE_BUTTON_1)) {
             	scene.removeGameItem(selectedGameItem);
-            	scene.generateBlockParticles(selectedGameItem);
+            	scene.generateBlockParticles(selectedGameItem, camera);
             }
 
             nextMesh = nextMesh != null ? nextMesh : selectedGameItem.getMesh();
