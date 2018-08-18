@@ -195,12 +195,12 @@ public class Scene {
     }
 
 	private void setupBlockParticles(GameItem selectedGameItem, Camera camera) {
-		Vector3f particleSpeed = new Vector3f(0, 0, 0);
+		Vector3f particleSpeed = new Vector3f(1, 1, 1);
 		particleSpeed.mul(2.0f);
-		long ttl = 20;
+		long ttl = 5;
 		int maxParticles = (int) Math.pow(3, 3);
 		long creationPeriodMillis = 0;
-		float range = 1.0f;
+		float range = 1.5f;
 		float scale = 0.25f;
 		Mesh partMesh;
 		Material partMaterial;

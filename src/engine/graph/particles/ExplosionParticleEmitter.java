@@ -120,12 +120,16 @@ public class ExplosionParticleEmitter implements IParticleEmitter {
         Particle particle = new Particle(this.getBaseParticle());
         // Add a little bit of randomness of the particle
         float sign = Math.random() > 0.5d ? -1.0f : 1.0f;
-        float speedInc = sign * (float)Math.random() * this.speedRndRange;
-        float posInc = sign * (float)Math.random() * this.positionRndRange;        
-        float scaleInc = sign * (float)Math.random() * this.scaleRndRange;        
-        long updateAnimInc = (long)sign *(long)(Math.random() * (float)this.animRange);
-        particle.getPosition().add(posInc, posInc, posInc);
-        particle.getSpeed().add(speedInc, speedInc, speedInc);
+        float speedIncX = sign * (float) Math.random() * this.speedRndRange;
+        float speedIncY = sign * (float) Math.random() * this.speedRndRange;
+        float speedIncZ = sign * (float) Math.random() * this.speedRndRange;
+        float posIncX = sign * (float) Math.random() * this.positionRndRange;
+        float posIncY = sign * (float) Math.random() * this.positionRndRange;
+        float posIncZ = sign * (float) Math.random() * this.positionRndRange;
+        float scaleInc = sign * (float) Math.random() * this.scaleRndRange;        
+        long updateAnimInc = (long)sign * (long)(Math.random() * (float)this.animRange);
+        particle.getPosition().add(posIncX, posIncY, posIncZ);
+        particle.getSpeed().add(speedIncX, speedIncY, speedIncZ);
         particle.setScale(particle.getScale() + scaleInc);
         particle.setUpdateTextureMills(particle.getUpdateTextureMillis() + updateAnimInc);
         particles.add(particle);
