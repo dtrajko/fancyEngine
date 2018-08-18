@@ -26,6 +26,7 @@ public class Mesh {
     private boolean symetric = true;
     private boolean corner = false;
 	private String label;
+	private Texture particleTexture;
 
     public Mesh(float[] positions, float[] textCoords, float[] normals, int[] indices) {
         this(positions, textCoords, normals, indices, createEmptyIntArray(MAX_WEIGHTS * positions.length / 3, 0), createEmptyFloatArray(MAX_WEIGHTS * positions.length / 3, 0));
@@ -271,5 +272,13 @@ public class Mesh {
 	
 	public String getLabel() {
 		return this.label;
+	}
+
+	public void setParticleTexture(Texture texture) {
+		this.particleTexture = texture;
+	}
+	
+	public Texture getParticleTexture() {
+		return this.particleTexture;
 	}
 }

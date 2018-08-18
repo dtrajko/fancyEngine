@@ -15,20 +15,20 @@ public class ExplosionParticleEmitter implements IParticleEmitter {
     private final List<GameItem> particles;
     private final Particle baseParticle;
     private long creationPeriodMillis;
-    private long lastCreationTime;
     private float speedRndRange;
     private float positionRndRange;
     private float scaleRndRange;
     private long animRange;
-    private int numParticlesCreated = 0;
+    private int numParticlesCreated;
+    private final float GRAVITY = -0.5f;
 
     public ExplosionParticleEmitter(Particle baseParticle, int maxParticles, long creationPeriodMillis) {
         particles = new ArrayList<>();
         this.baseParticle = baseParticle;
         this.maxParticles = maxParticles;
         this.active = false;
-        this.lastCreationTime = 0;
         this.creationPeriodMillis = creationPeriodMillis;
+        this.numParticlesCreated = 0;
     }
 
     @Override
@@ -94,12 +94,8 @@ public class ExplosionParticleEmitter implements IParticleEmitter {
     }
 
     public void update(long elapsedTime) {
-        long now = System.currentTimeMillis();
-        if (lastCreationTime == 0) {
-            lastCreationTime = now;
-        }
+    	
         Iterator<? extends GameItem> it = particles.iterator();
-
         while (it.hasNext()) {
             Particle particle = (Particle) it.next();
             if (particle.updateTtl(elapsedTime) < 0) {
@@ -109,27 +105,32 @@ public class ExplosionParticleEmitter implements IParticleEmitter {
             }
         }
 
-        if (now - lastCreationTime >= this.creationPeriodMillis && numParticlesCreated < maxParticles) {
-            createParticle();
-            this.lastCreationTime = now;
-            numParticlesCreated++;
+        while (numParticlesCreated < maxParticles) {
+        	createParticle();
+        	numParticlesCreated++;
         }
     }
 
     private void createParticle() {
         Particle particle = new Particle(this.getBaseParticle());
         // Add a little bit of randomness of the particle
+        float signX = Math.random() > 0.5d ? -1.0f : 1.0f;
+        float signY = Math.random() > 0.5d ? -1.0f : 1.0f;
+        float signZ = Math.random() > 0.5d ? -1.0f : 1.0f;
         float sign = Math.random() > 0.5d ? -1.0f : 1.0f;
-        float speedIncX = sign * (float) Math.random() * this.speedRndRange;
-        float speedIncY = sign * (float) Math.random() * this.speedRndRange;
-        float speedIncZ = sign * (float) Math.random() * this.speedRndRange;
-        float posIncX = sign * (float) Math.random() * this.positionRndRange;
-        float posIncY = sign * (float) Math.random() * this.positionRndRange;
-        float posIncZ = sign * (float) Math.random() * this.positionRndRange;
+
+        float speedIncX = signX * (float) Math.random() * this.speedRndRange;
+        float speedIncY = signY * (float) Math.random() * this.speedRndRange;
+        float speedIncZ = signZ * (float) Math.random() * this.speedRndRange;
+
+        float posIncX = signX * (float) Math.random() * this.positionRndRange;
+        float posIncY = signY * (float) Math.random() * this.positionRndRange;
+        float posIncZ = signZ * (float) Math.random() * this.positionRndRange;
         float scaleInc = sign * (float) Math.random() * this.scaleRndRange;        
-        long updateAnimInc = (long)sign * (long)(Math.random() * (float)this.animRange);
-        particle.getPosition().add(posIncX, posIncY, posIncZ);
-        particle.getSpeed().add(speedIncX, speedIncY, speedIncZ);
+        long updateAnimInc = (long) sign * (long)(Math.random() * (float) this.animRange);
+        particle.getPosition().add(posIncX, posIncY, posIncZ);        
+        particle.setSpeed(new Vector3f(speedIncX, speedIncY, speedIncZ));
+
         particle.setScale(particle.getScale() + scaleInc);
         particle.setUpdateTextureMills(particle.getUpdateTextureMillis() + updateAnimInc);
         particles.add(particle);
@@ -142,9 +143,9 @@ public class ExplosionParticleEmitter implements IParticleEmitter {
      */
     public void updatePosition(Particle particle, long elapsedTime) {
         Vector3f speed = particle.getSpeed();
-        float delta = elapsedTime / 1000.0f;
+        float delta = elapsedTime / 1000.0f * 4; // added * 4 to speed particles up
         float dx = speed.x * delta;
-        float dy = speed.y * delta;
+        float dy = speed.y * delta * GRAVITY;
         float dz = speed.z * delta;
         Vector3f pos = particle.getPosition();
         particle.setPosition(pos.x + dx, pos.y + dy, pos.z + dz);

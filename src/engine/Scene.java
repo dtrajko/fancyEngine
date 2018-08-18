@@ -70,75 +70,93 @@ public class Scene {
         Mesh meshGrass = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
         meshTypesMap.put("GRASS", meshGrass.setLabel("GRASS"));
         Texture textureGrass = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_grass.png", 2, 1);
+        Texture txParticleGrass = new Texture(Config.RESOURCES_DIR +  "/textures/particle_grass.png");
         Material materialGrass = new Material(textureGrass);
         materialGrass.setReflectance(1.0f);
         materialGrass.setTransparency(1.0f);
         meshGrass.setMaterial(materialGrass);
+        meshGrass.setParticleTexture(txParticleGrass);
 
         Mesh meshGround = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
         meshTypesMap.put("GROUND", meshGround.setLabel("GROUND"));
         Texture textureGround = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_ground.png", 2, 1);
+        Texture txParticleGround = new Texture(Config.RESOURCES_DIR +  "/textures/particle_ground.png");
         Material materialGround = new Material(textureGround);
         materialGround.setReflectance(1.0f);
         materialGround.setTransparency(1.0f);
         meshGround.setMaterial(materialGround);
+        meshGround.setParticleTexture(txParticleGround);
 
         Mesh meshWater = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
         meshTypesMap.put("WATER", meshWater.setLabel("WATER"));
         Texture textureWater = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_water.png", 2, 1);
+        Texture txParticleWater = new Texture(Config.RESOURCES_DIR +  "/textures/particle_water.png");
         Material materialWater = new Material(textureWater);
         materialWater.setReflectance(1.0f);
         materialWater.setTransparency(0.7f); // 0.7f
         materialWater.setSolid(false);
         meshWater.setMaterial(materialWater);
+        meshWater.setParticleTexture(txParticleWater);
 
         Mesh meshLava = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
         meshTypesMap.put("LAVA", meshLava.setLabel("LAVA"));
         Texture textureLava = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_lava.png", 2, 1);
+        Texture txParticleLava = new Texture(Config.RESOURCES_DIR +  "/textures/particle_lava.png");
         Material materialLava = new Material(textureLava);
         materialLava.setReflectance(1.0f);
         materialLava.setTransparency(1.0f);
         meshLava.setMaterial(materialLava);
+        meshLava.setParticleTexture(txParticleLava);
 
         Mesh meshWood = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
         meshTypesMap.put("WOOD", meshWood.setLabel("WOOD"));
         Texture textureWood = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_wood.png", 2, 1);
+        Texture txParticleWood = new Texture(Config.RESOURCES_DIR +  "/textures/particle_wood.png");
         Material materialWood = new Material(textureWood);
         materialWood.setReflectance(1.0f);
         materialWood.setTransparency(1.0f);
         meshWood.setMaterial(materialWood);
+        meshWood.setParticleTexture(txParticleWood);
 
         Mesh meshTreetop = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
         meshTypesMap.put("TREETOP", meshTreetop.setLabel("TREETOP"));
         Texture textureTreetop = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_treetop.png", 2, 1);
+        Texture txParticleTreetop = new Texture(Config.RESOURCES_DIR +  "/textures/particle_treetop.png");
         Material materialTreetop = new Material(textureTreetop);
         materialTreetop.setReflectance(1.0f);
         materialTreetop.setTransparency(0.8f);
         meshTreetop.setMaterial(materialTreetop);
+        meshTreetop.setParticleTexture(txParticleTreetop);
 
         Mesh meshOakwood = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
         meshTypesMap.put("OAKWOOD", meshOakwood.setLabel("OAKWOOD"));
         Texture textureOakwood = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_oakwood.png", 2, 1);
+        Texture txParticleOakwood = new Texture(Config.RESOURCES_DIR +  "/textures/particle_oakwood.png");
         Material materialOakwood = new Material(textureOakwood);
         materialOakwood.setReflectance(1.0f);
         materialOakwood.setTransparency(1.0f);
         meshOakwood.setMaterial(materialOakwood);
+        meshOakwood.setParticleTexture(txParticleOakwood);
 
         Mesh meshGlass = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
         meshTypesMap.put("GLASS", meshGlass.setLabel("GLASS"));
         Texture textureGlass = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_glass.png", 2, 1);
+        Texture txParticleGlass = new Texture(Config.RESOURCES_DIR +  "/textures/particle_glass.png");
         Material materialGlass = new Material(textureGlass);
         materialGlass.setReflectance(1.0f);
         materialGlass.setTransparency(0.6f);
         meshGlass.setMaterial(materialGlass);
+        meshGlass.setParticleTexture(txParticleGlass);
 
         Mesh meshCobble = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
         meshTypesMap.put("COBBLE", meshCobble.setLabel("COBBLE"));
         Texture textureCobble = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_cobble.png", 2, 1);
+        Texture txParticleCobble = new Texture(Config.RESOURCES_DIR +  "/textures/particle_cobble.png");
         Material materialCobble = new Material(textureCobble);
         materialCobble.setReflectance(1.0f);
         materialCobble.setTransparency(1.0f);
         meshCobble.setMaterial(materialCobble);
+        meshCobble.setParticleTexture(txParticleCobble);
 
         Mesh meshStairs = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/stairs.obj", 5000);
         meshTypesMap.put("STAIRS", meshStairs.setLabel("STAIRS"));
@@ -148,18 +166,21 @@ public class Scene {
         materialStairs.setTransparency(1.0f);
         meshStairs.setMaterial(materialStairs);
         meshStairs.setSymetric(false);
+        meshStairs.setParticleTexture(txParticleOakwood);
 
         Mesh meshStairsCorner = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/stairs_corner.obj", 5000);
         meshTypesMap.put("STAIRS_CORNER", meshStairsCorner.setLabel("STAIRS_CORNER"));
         meshStairsCorner.setMaterial(materialStairs);
         meshStairsCorner.setSymetric(false);
         meshStairsCorner.setCorner(true);
+        meshStairsCorner.setParticleTexture(txParticleOakwood);
 
         Mesh meshStairsCornerInner = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/stairs_inner_corner.obj", 5000);
         meshTypesMap.put("STAIRS_CORNER_INNER", meshStairsCornerInner.setLabel("STAIRS_CORNER_INNER"));
         meshStairsCornerInner.setMaterial(materialStairs);
         meshStairsCornerInner.setSymetric(false);
         meshStairsCornerInner.setCorner(true);
+        meshStairsCornerInner.setParticleTexture(txParticleOakwood);
 
         // scene.initMeshMaps(meshTypesMap);
 
@@ -196,19 +217,19 @@ public class Scene {
 
 	private void setupBlockParticles(GameItem selectedGameItem, Camera camera) {
 		Vector3f particleSpeed = new Vector3f(1, 1, 1);
-		particleSpeed.mul(2.0f);
-		long ttl = 5;
+		particleSpeed.mul(1.0f);
+		long ttl = 500;
 		int maxParticles = (int) Math.pow(3, 3);
 		long creationPeriodMillis = 0;
-		float range = 1.5f;
+		float range = 1.0f;
 		float scale = 0.25f;
 		Mesh partMesh;
 		Material partMaterial;
 		Vector3f position = selectedGameItem.getPosition();
 		try {
-			partMesh = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/particle.obj", maxParticles);
-			Texture texture = new Texture(Config.RESOURCES_DIR + "/textures/particle_block_single.png");
-			partMaterial = new Material(texture, 0);
+			partMesh = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/particle.obj", maxParticles);			
+			partMaterial = new Material(selectedGameItem.getMesh().getParticleTexture(), 0);
+			partMaterial.setTransparency(selectedGameItem.getMesh().getMaterial().getTransparency());
 			partMesh.setMaterial(partMaterial);
 			Particle particle = new Particle(partMesh, particleSpeed, ttl, creationPeriodMillis);
 			particle.setPosition(position.x, position.y, position.z);

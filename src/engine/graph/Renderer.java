@@ -95,6 +95,7 @@ public class Renderer {
         particlesShaderProgram.createUniform("projectionMatrix");
         particlesShaderProgram.createUniform("modelViewMatrix");
         particlesShaderProgram.createUniform("texture_sampler");
+        particlesShaderProgram.createUniform("transparency");
 
         particlesShaderProgram.createUniform("texXOffset");
         particlesShaderProgram.createUniform("texYOffset");
@@ -351,22 +352,25 @@ public class Renderer {
         IParticleEmitter[] emitters = scene.getParticleEmitters();
         int numEmitters = emitters != null ? emitters.length : 0;
 
-        GL11.glDepthMask(false);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+        // GL11.glDepthMask(false);
+        // GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
 
         for (int i = 0; i < numEmitters; i++) {
             IParticleEmitter emitter = emitters[i];
             Mesh mesh = emitter.getBaseParticle().getMesh();
 
-            Texture text = mesh.getMaterial().getTexture();
-            particlesShaderProgram.setUniform("numCols", text.getNumCols());
-            particlesShaderProgram.setUniform("numRows", text.getNumRows());
+            Texture texture = mesh.getMaterial().getTexture();
+            float transparency = mesh.getMaterial().getTransparency();
+            particlesShaderProgram.setUniform("numCols", texture.getNumCols());
+            particlesShaderProgram.setUniform("numRows", texture.getNumRows());
+
+            particlesShaderProgram.setUniform("transparency", transparency);
 
             mesh.renderList((emitter.getParticles()), (GameItem gameItem) -> {
-                int col = gameItem.getTextPos() % text.getNumCols();
-                int row = gameItem.getTextPos() / text.getNumCols();
-                float textXOffset = (float) col / text.getNumCols();
-                float textYOffset = (float) row / text.getNumRows();
+                int col = gameItem.getTextPos() % texture.getNumCols();
+                int row = gameItem.getTextPos() / texture.getNumCols();
+                float textXOffset = (float) col / texture.getNumCols();
+                float textYOffset = (float) row / texture.getNumRows();
                 particlesShaderProgram.setUniform("texXOffset", textXOffset);
                 particlesShaderProgram.setUniform("texYOffset", textYOffset);
 
@@ -382,8 +386,8 @@ public class Renderer {
             );
         }
 
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glDepthMask(true);
+        // GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        // GL11.glDepthMask(true);
 
         particlesShaderProgram.unbind();
     }
