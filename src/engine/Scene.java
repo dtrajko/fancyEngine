@@ -213,6 +213,7 @@ public class Scene {
 			Particle particle = new Particle(partMesh, particleSpeed, ttl, creationPeriodMillis);
 			particle.setPosition(position.x, position.y, position.z);
 			particle.setScale(scale);
+			particle.setRotationEulerDegrees(camera.getRotation().x, camera.getRotation().y, camera.getRotation().z);
 			particleEmitter = new ExplosionParticleEmitter(particle, maxParticles, creationPeriodMillis);
 			particleEmitter.setActive(true);
 			particleEmitter.setPositionRndRange(range);
@@ -223,9 +224,9 @@ public class Scene {
 		}
 	}
 
-    public void update(float interval, Camera camera) {
+    public void update(float interval) {
     	if (particleEmitter != null) {
-    		particleEmitter.update((long)(interval * 500), camera);
+    		particleEmitter.update((long)(interval * 500));
     	}
     }
 

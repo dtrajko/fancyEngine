@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.joml.Vector3f;
 
-import engine.graph.Camera;
 import engine.items.GameItem;
 
 public class ExplosionParticleEmitter implements IParticleEmitter {
@@ -94,7 +93,7 @@ public class ExplosionParticleEmitter implements IParticleEmitter {
         this.speedRndRange = speedRndRange;
     }
 
-    public void update(long elapsedTime, Camera camera) {
+    public void update(long elapsedTime) {
         long now = System.currentTimeMillis();
         if (lastCreationTime == 0) {
             lastCreationTime = now;
@@ -111,13 +110,13 @@ public class ExplosionParticleEmitter implements IParticleEmitter {
         }
 
         if (now - lastCreationTime >= this.creationPeriodMillis && numParticlesCreated < maxParticles) {
-            createParticle(camera);
+            createParticle();
             this.lastCreationTime = now;
             numParticlesCreated++;
         }
     }
 
-    private void createParticle(Camera camera) {
+    private void createParticle() {
         Particle particle = new Particle(this.getBaseParticle());
         // Add a little bit of randomness of the particle
         float sign = Math.random() > 0.5d ? -1.0f : 1.0f;
@@ -128,7 +127,6 @@ public class ExplosionParticleEmitter implements IParticleEmitter {
         particle.getPosition().add(posInc, posInc, posInc);
         particle.getSpeed().add(speedInc, speedInc, speedInc);
         particle.setScale(particle.getScale() + scaleInc);
-        particle.setRotationEulerDegrees(camera.getRotation().x, camera.getRotation().y, camera.getRotation().z);
         particle.setUpdateTextureMills(particle.getUpdateTextureMillis() + updateAnimInc);
         particles.add(particle);
     }
