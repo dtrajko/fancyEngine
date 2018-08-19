@@ -18,6 +18,7 @@ import game2D.entities.Player;
 
 public class Game3D implements IGameLogic {
 
+	private static final boolean SHADOWS_ENABLED = false;
     private static final float MOUSE_SENSITIVITY = 0.2f;
     private final Vector3f cameraInc;
     private final Renderer renderer;
@@ -60,6 +61,7 @@ public class Game3D implements IGameLogic {
         scene = new Scene();
         renderer.init(window, scene);
         scene.init(meshTypesMap, soundMgr, camera, guiManager, window);
+        scene.setRenderShadows(SHADOWS_ENABLED);
         selectDetectorCamera = new CameraBoxSelectionDetector();
     }
 

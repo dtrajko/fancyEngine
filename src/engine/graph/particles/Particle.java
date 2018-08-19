@@ -19,14 +19,19 @@ public class Particle extends GameItem {
 
     private int animFrames;
     
-    public Particle(Mesh mesh, Vector3f speed, long ttl, long updateTextureMillis) {
+    public Particle(Mesh mesh, Vector3f speed, long ttl) {
         super(mesh);
         this.speed = new Vector3f(speed);
         this.ttl = ttl;
-        this.updateTextureMillis = updateTextureMillis;
+        this.updateTextureMillis = 0;
         this.currentAnimTimeMillis = 0;
         Texture texture = this.getMesh().getMaterial().getTexture();
         this.animFrames = texture.getNumCols() * texture.getNumRows();
+    }
+
+    public Particle(Mesh mesh, Vector3f speed, long ttl, long updateTextureMillis) {
+    	this(mesh, speed, ttl);
+        this.updateTextureMillis = updateTextureMillis;
     }
 
     public Particle(Particle baseParticle) {
@@ -42,7 +47,7 @@ public class Particle extends GameItem {
         this.animFrames = baseParticle.getAnimFrames();
     }
 
-    public int getAnimFrames() {
+	public int getAnimFrames() {
         return animFrames;
     }
 

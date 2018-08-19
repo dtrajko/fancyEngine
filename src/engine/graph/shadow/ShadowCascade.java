@@ -10,26 +10,19 @@ import engine.graph.lights.DirectionalLight;
 public class ShadowCascade {
 
     private static final int FRUSTUM_CORNERS = 8;
-
     private final Matrix4f projViewMatrix;
-
     private final Matrix4f orthoProjMatrix;
-
     private final Matrix4f lightViewMatrix;
 
     /**
      * Center of the view cuboid un world space coordinates.
      */
     private final Vector3f centroid;
-
     private final Vector3f[] frustumCorners;
-
     private final float zNear;
-
     private final float zFar;
-
     private final Vector4f tmpVec;
-    
+
     public ShadowCascade(float zNear, float zFar) {
         this.zNear = zNear;
         this.zFar = zFar;

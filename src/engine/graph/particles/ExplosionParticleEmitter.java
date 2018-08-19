@@ -7,6 +7,7 @@ import java.util.List;
 import org.joml.Vector3f;
 
 import engine.items.GameItem;
+import engine.utils.Log;
 
 public class ExplosionParticleEmitter implements IParticleEmitter {
 
@@ -20,15 +21,17 @@ public class ExplosionParticleEmitter implements IParticleEmitter {
     private float scaleRndRange;
     private long animRange;
     private int numParticlesCreated;
-    private final float GRAVITY = -0.5f;
+    private float gravity;
+    private float transparencyCoef;
 
-    public ExplosionParticleEmitter(Particle baseParticle, int maxParticles, long creationPeriodMillis) {
+    public ExplosionParticleEmitter(Particle baseParticle, int maxParticles) {
         particles = new ArrayList<>();
         this.baseParticle = baseParticle;
         this.maxParticles = maxParticles;
         this.active = false;
-        this.creationPeriodMillis = creationPeriodMillis;
         this.numParticlesCreated = 0;
+        this.gravity = -1.0f;
+        this.transparencyCoef = 0.001f;
     }
 
     @Override
@@ -63,6 +66,14 @@ public class ExplosionParticleEmitter implements IParticleEmitter {
 
     public void setAnimRange(long animRange) {
         this.animRange = animRange;
+    }
+
+    public void setTransparencyCoef(float tc) {
+        this.transparencyCoef = tc;
+    }
+    
+    public void setGravity(float g) {
+        this.gravity = g;
     }
 
     public void setCreationPeriodMillis(long creationPeriodMillis) {
@@ -127,7 +138,8 @@ public class ExplosionParticleEmitter implements IParticleEmitter {
         float posIncX = signX * (float) Math.random() * this.positionRndRange;
         float posIncY = signY * (float) Math.random() * this.positionRndRange;
         float posIncZ = signZ * (float) Math.random() * this.positionRndRange;
-        float scaleInc = sign * (float) Math.random() * this.scaleRndRange;        
+        float scaleInc = sign * (float) Math.random() * this.scaleRndRange;
+
         long updateAnimInc = (long) sign * (long)(Math.random() * (float) this.animRange);
         particle.getPosition().add(posIncX, posIncY, posIncZ);        
         particle.setSpeed(new Vector3f(speedIncX, speedIncY, speedIncZ));
@@ -143,17 +155,22 @@ public class ExplosionParticleEmitter implements IParticleEmitter {
      * @param elapsedTime Elapsed time in milliseconds
      */
     public void updatePosition(Particle particle, long elapsedTime) {
-        Vector3f speed = particle.getSpeed();
-        float delta = elapsedTime / 1000.0f * 4; // added * 4 to speed particles up
+        Vector3f speed = particle.getSpeed();        
+        float delta = (float) (Math.pow(elapsedTime, 2) / 1000.0f) * 0.1f;
+
+        // make sure that gravity always works downwards
+        if (speed.y * gravity > 0) {
+        	gravity = -gravity;
+        }
         float dx = speed.x * delta;
-        float dy = speed.y * delta * GRAVITY;
+        float dy = speed.y * delta * gravity;
         float dz = speed.z * delta;
         Vector3f pos = particle.getPosition();
         particle.setPosition(pos.x + dx, pos.y + dy, pos.z + dz);
     }
 
     private void updateTransparency(Particle particle, long elapsedTime) {
-    	float delta = (float) (Math.pow(elapsedTime, 2) / 1000.0f) * 0.001f;
+    	float delta = (float) (Math.pow(elapsedTime, 2) / 1000.0f) * transparencyCoef;
     	float transparency = particle.getMesh().getMaterial().getTransparency();
     	transparency -= delta;
     	if (transparency < 0) transparency = 0;

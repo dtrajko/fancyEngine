@@ -188,9 +188,6 @@ public class Scene {
         int skyBoxScale = 150;
         load(meshTypesMap, "snapshot.txt");
 
-        // Shadows
-        setRenderShadows(false);
-
         // Fog
         Vector3f fogColour = new Vector3f(0.5f, 0.5f, 0.5f);
         setFog(new Fog(true, fogColour, 0.01f));
@@ -218,12 +215,15 @@ public class Scene {
 
 	private void setupBlockParticles(GameItem selectedGameItem, Camera camera) {
 		Vector3f particleSpeed = new Vector3f(1, 1, 1);
-		particleSpeed.mul(10.0f);
-		long ttl = 600;
+		particleSpeed.mul(5.0f);
+		long ttl = 800;
+		float transparencyCoef = 0.001f;
 		int maxParticles = (int) Math.pow(5, 3);
 		long creationPeriodMillis = 0;
-		float range = 1.0f;
+		float range = 2.0f;
 		float scale = 0.20f;
+		float scaleRange = 0.10f;
+		float gravity = -2.0f;
 		Mesh partMesh;
 		Material partMaterial;
 		Vector3f position = selectedGameItem.getPosition();
@@ -237,10 +237,13 @@ public class Scene {
 			particle.setScale(scale);
 			particle.getMesh().getMaterial().setTransparency(selectedGameItem.getMesh().getMaterial().getTransparency());
 			particle.setRotationEulerDegrees(camera.getRotation().x, camera.getRotation().y, camera.getRotation().z);
-			particleEmitter = new ExplosionParticleEmitter(particle, maxParticles, creationPeriodMillis);
+			particleEmitter = new ExplosionParticleEmitter(particle, maxParticles);
 			particleEmitter.setActive(true);
 			particleEmitter.setPositionRndRange(range);
 			particleEmitter.setSpeedRndRange(range);
+			particleEmitter.setScaleRndRange(scaleRange);
+			particleEmitter.setGravity(gravity);
+			particleEmitter.setTransparencyCoef(transparencyCoef);
 			this.setParticleEmitters(new ExplosionParticleEmitter[] { particleEmitter });
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -314,10 +317,6 @@ public class Scene {
 
     public Map<InstancedMesh, List<GameItem>> getGameInstancedMeshes() {
         return instancedMeshMap;
-    }
-
-    public boolean isRenderShadows() {
-        return renderShadows;
     }
 
     /**
@@ -435,6 +434,10 @@ public class Scene {
 
     public void setRenderShadows(boolean renderShadows) {
         this.renderShadows = renderShadows;
+    }
+
+    public boolean isRenderShadows() {
+        return renderShadows;
     }
 
     public void setSkyBox(SkyBox skyBox) {
@@ -577,7 +580,6 @@ public class Scene {
         ByteBuffer buffer = ByteBuffer.allocateDirect(4 * width * height);
         decoder.decode(buffer, width * 4, PNGDecoder.Format.RGBA);
         buffer.flip();
-
         
         int skyBoxScale = 100;
         int extension = 2;

@@ -8,5 +8,5 @@ public class Util {
 		DecimalFormat myFormatter = new DecimalFormat(pattern);
 		String output = myFormatter.format(value);
 		return output;
-	}
+	}	
 }
