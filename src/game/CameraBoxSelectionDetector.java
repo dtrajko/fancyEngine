@@ -69,6 +69,7 @@ public class CameraBoxSelectionDetector {
         if (selectedGameItem != null) {
         	selectedGameItem.setSelected(true);
             if (mouseInput.isMouseButtonPressed(GLFW.GLFW_MOUSE_BUTTON_1)) {
+            	scene.playSoundBreakingBlock();
             	scene.removeGameItem(selectedGameItem);
             	scene.generateBlockParticles(selectedGameItem, camera);
             }

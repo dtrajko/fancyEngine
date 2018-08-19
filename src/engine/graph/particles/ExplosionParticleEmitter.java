@@ -102,6 +102,7 @@ public class ExplosionParticleEmitter implements IParticleEmitter {
                 it.remove();
             } else {
                 updatePosition(particle, elapsedTime);
+                updateTransparency(particle, elapsedTime);
             }
         }
 
@@ -111,7 +112,7 @@ public class ExplosionParticleEmitter implements IParticleEmitter {
         }
     }
 
-    private void createParticle() {
+	private void createParticle() {
         Particle particle = new Particle(this.getBaseParticle());
         // Add a little bit of randomness of the particle
         float signX = Math.random() > 0.5d ? -1.0f : 1.0f;
@@ -150,6 +151,14 @@ public class ExplosionParticleEmitter implements IParticleEmitter {
         Vector3f pos = particle.getPosition();
         particle.setPosition(pos.x + dx, pos.y + dy, pos.z + dz);
     }
+
+    private void updateTransparency(Particle particle, long elapsedTime) {
+    	float delta = (float) (Math.pow(elapsedTime, 2) / 1000.0f) * 0.001f;
+    	float transparency = particle.getMesh().getMaterial().getTransparency();
+    	transparency -= delta;
+    	if (transparency < 0) transparency = 0;
+		particle.getMesh().getMaterial().setTransparency(transparency);
+	}
 
     @Override
     public void cleanup() {

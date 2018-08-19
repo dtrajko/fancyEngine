@@ -52,6 +52,7 @@ public class Scene {
     private IParticleEmitter[] particleEmitters;
     private ExplosionParticleEmitter particleEmitter;
     private String savesDirPath = "saves/3D";
+    private SoundSource sourceBreak;
 
     public enum Sounds {
         FIRE,
@@ -217,12 +218,12 @@ public class Scene {
 
 	private void setupBlockParticles(GameItem selectedGameItem, Camera camera) {
 		Vector3f particleSpeed = new Vector3f(1, 1, 1);
-		particleSpeed.mul(1.0f);
-		long ttl = 500;
-		int maxParticles = (int) Math.pow(3, 3);
+		particleSpeed.mul(10.0f);
+		long ttl = 600;
+		int maxParticles = (int) Math.pow(5, 3);
 		long creationPeriodMillis = 0;
 		float range = 1.0f;
-		float scale = 0.25f;
+		float scale = 0.20f;
 		Mesh partMesh;
 		Material partMaterial;
 		Vector3f position = selectedGameItem.getPosition();
@@ -234,6 +235,7 @@ public class Scene {
 			Particle particle = new Particle(partMesh, particleSpeed, ttl, creationPeriodMillis);
 			particle.setPosition(position.x, position.y, position.z);
 			particle.setScale(scale);
+			particle.getMesh().getMaterial().setTransparency(selectedGameItem.getMesh().getMaterial().getTransparency());
 			particle.setRotationEulerDegrees(camera.getRotation().x, camera.getRotation().y, camera.getRotation().z);
 			particleEmitter = new ExplosionParticleEmitter(particle, maxParticles, creationPeriodMillis);
 			particleEmitter.setActive(true);
@@ -282,7 +284,20 @@ public class Scene {
         soundMgr.addSoundSource(Sounds.BACKGROUND.toString(), sourceBackground);
         sourceBackground.play();
         sourceBackground.setGain(0.3f);
+        
+        SoundBuffer buffBreak = new SoundBuffer(Config.RESOURCES_DIR + "/sounds/concrete_break.ogg");
+        soundMgr.addSoundBuffer(buffBreak);
+        sourceBreak = new SoundSource(false, true);
+        sourceBreak.setPosition(camera.getPosition());
+        sourceBreak.setBuffer(buffBreak.getBufferId());
+        sourceBreak.setGain(1.0f);
+        soundMgr.addSoundSource(Sounds.BACKGROUND.toString(), sourceBackground);
+
         soundMgr.setListener(new SoundListener(new Vector3f(0, 0, 0)));
+    }
+    
+    public void playSoundBreakingBlock() {
+    	sourceBreak.play();
     }
 
     private void setupGui(HashMap<String, Mesh> meshTypesMap, GuiManager guiManager, Window window) throws Exception {
