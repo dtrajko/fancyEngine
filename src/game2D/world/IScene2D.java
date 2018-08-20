@@ -1,9 +1,7 @@
 package game2D.world;
 
 import java.util.List;
-
 import org.joml.Matrix4f;
-
 import engine.IGameLogic;
 import engine.Window;
 import engine.graph.Camera;
@@ -11,7 +9,7 @@ import game2D.collision.AABB;
 import game2D.entities.Entity;
 import game2D.frogger.ITileType;
 
-public interface IScene {
+public interface IScene2D {
 
 	int getWidth();
 	int getHeight();

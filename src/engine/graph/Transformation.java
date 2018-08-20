@@ -68,7 +68,7 @@ public class Transformation {
         return lightViewMatrix;
     }
 
-    public Matrix4f updateViewMatrix(Camera camera) {
+    public Matrix4f updateViewMatrix(ICamera camera) {
         Vector3f cameraPos = camera.getPosition();
         Vector3f rotation = camera.getRotation();
         

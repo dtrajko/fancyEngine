@@ -56,4 +56,9 @@ public class Maths {
 		if (v.z > max) max = v.z;
 		return max;
 	}
+
+	public static float clamp(float value, float min, float max){
+		return Math.max(Math.min(value, max), min);
+	}
+
 }

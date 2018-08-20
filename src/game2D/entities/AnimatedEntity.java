@@ -4,7 +4,7 @@ import engine.graph.Camera;
 import game2D.frogger.TextureEntity;
 import game2D.render.Animation;
 import game2D.shaders.Shader;
-import game2D.world.IScene;
+import game2D.world.IScene2D;
 
 public abstract class AnimatedEntity extends TextureEntity {
 
@@ -32,7 +32,7 @@ public abstract class AnimatedEntity extends TextureEntity {
 		this.use_animation = index;
 	}
 
-	public void render(Shader shader, Camera camera, IScene scene) {
+	public void render(Shader shader, Camera camera, IScene2D scene) {
 		this.animations[this.use_animation].bind(0);
 		super.render(shader, camera, scene);
 	}

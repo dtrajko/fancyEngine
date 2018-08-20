@@ -15,7 +15,6 @@ public interface IGameLogic {
 	void setLevel(int currentLevel);
 	Window getWindow();
 	MouseInput getInput();
-	void setPlayer(Player player);
 	SoundManager getSoundManager();
 	void initGui();
 }

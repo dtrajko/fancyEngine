@@ -8,7 +8,7 @@ import engine.graph.Camera;
 import game2D.entities.Transform;
 import game2D.shaders.Shader;
 import game2D.textures.Texture;
-import game2D.world.IScene;
+import game2D.world.IScene2D;
 
 public class Obstacle extends TextureEntity {
 
@@ -27,7 +27,7 @@ public class Obstacle extends TextureEntity {
 	}
 
 	@Override
-	public void update(float delta, Window window, Camera camera, IScene scene, IGameLogic game) {
+	public void update(float delta, Window window, Camera camera, IScene2D scene, IGameLogic game) {
 		int grid_width = window.getWidth() / scene.getScale();
 		move(new Vector2f(speed, 0));
 		if (transform.position.x < 0 - this.texture.getLengthX() - 1) {
@@ -37,7 +37,7 @@ public class Obstacle extends TextureEntity {
 		}
 	}
 
-	public void render(Shader shader, Camera camera, IScene scene) {
+	public void render(Shader shader, Camera camera, IScene2D scene) {
 		super.render(shader, camera, scene);
 	}
 	

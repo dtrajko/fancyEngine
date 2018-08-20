@@ -21,6 +21,7 @@ import config.Config;
 import de.matthiasmann.twl.utils.PNGDecoder;
 import engine.graph.Camera;
 import engine.graph.HeightMapMesh;
+import engine.graph.ICamera;
 import engine.graph.InstancedMesh;
 import engine.graph.Material;
 import engine.graph.Mesh;
@@ -41,7 +42,7 @@ import engine.sound.SoundManager;
 import engine.sound.SoundSource;
 import game.Game3D;
 
-public class Scene {
+public class Scene implements IScene {
 
     private final Map<Mesh, List<GameItem>> meshMap;
     private final Map<InstancedMesh, List<GameItem>> instancedMeshMap;
@@ -66,7 +67,12 @@ public class Scene {
         renderShadows = true;
     }
 
-    public void init(HashMap<String, Mesh> meshTypesMap, SoundManager soundMgr, Camera camera, GuiManager guiManager, Window window) throws Exception {
+	@Override
+	public void init(Window window, ICamera camera) {
+		// TODO Auto-generated method stub
+	}
+
+    public void init(Window window, Camera camera, HashMap<String, Mesh> meshTypesMap, SoundManager soundMgr, GuiManager guiManager) throws Exception {
 
         Mesh meshGrass = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
         meshTypesMap.put("GRASS", meshGrass.setLabel("GRASS"));
@@ -640,5 +646,10 @@ public class Scene {
 
 	public void generateBlockParticles(GameItem selectedGameItem, Camera camera) {
 		setupBlockParticles(selectedGameItem, camera);
+	}
+
+	@Override
+	public void resetScene(Window window, ICamera camera, IGameLogic game) {
+		
 	}
 }

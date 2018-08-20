@@ -96,7 +96,7 @@ public class Tile {
 		this.speed = speed;
 	}
 
-	public void move(IScene scene) {
+	public void move(IScene2D scene) {
 
 		if (minOffsetX == 0 && maxOffsetX == 0) offsetDirX = 0;
 		if (minOffsetY == 0 && maxOffsetY == 0) offsetDirY = 0;

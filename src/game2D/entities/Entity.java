@@ -12,7 +12,7 @@ import game2D.collision.AABB;
 import game2D.collision.Collision;
 import game2D.render.Model;
 import game2D.shaders.Shader;
-import game2D.world.IScene;
+import game2D.world.IScene2D;
 
 public abstract class Entity {
 
@@ -30,7 +30,7 @@ public abstract class Entity {
 			new Vector2f(this.transform.scale.x, this.transform.scale.y));
 	}
 
-	public abstract void update(float delta, Window window, Camera camera, IScene scene, IGameLogic game);
+	public abstract void update(float delta, Window window, Camera camera, IScene2D scene, IGameLogic game);
 
 	public AABB getBoundingBox() {
 		return bounding_box;
@@ -61,7 +61,7 @@ public abstract class Entity {
 		bounding_box.getCenter().set(transform.position.x, transform.position.y);
 	}
 
-	public void collideWithTiles(IScene scene, int direction) {
+	public void collideWithTiles(IScene2D scene, int direction) {
 		AABB[] boxes = new AABB[25];
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 5; j++) {
@@ -108,7 +108,7 @@ public abstract class Entity {
 		}
 	}
 
-	public void correctPosition(Window window, IScene scene) {
+	public void correctPosition(Window window, IScene2D scene) {
 
 		Vector3f pos = this.transform.position;
 
@@ -126,7 +126,7 @@ public abstract class Entity {
 		}		
 	}
 
-	public void render(Shader shader, Camera camera, IScene scene) {
+	public void render(Shader shader, Camera camera, IScene2D scene) {
 		Matrix4f target = camera.getOrthoProjection();
 		target.mul(scene.getWorldMatrix());
 		shader.bind();

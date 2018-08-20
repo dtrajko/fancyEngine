@@ -6,6 +6,8 @@ import org.joml.Intersectionf;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
+
+import engine.IScene;
 import engine.Scene;
 import engine.graph.Camera;
 import engine.graph.InstancedMesh;
@@ -27,13 +29,13 @@ public class CameraBoxSelectionDetector {
         nearFar = new Vector2f();
     }
 
-    public void selectGameItem(Scene scene, Camera camera, MouseInput mouseInput, Mesh nextMesh) {
+    public void selectGameItem(IScene scene, Camera camera, MouseInput mouseInput, Mesh nextMesh) {
     	
     	GameItem selectedGameItem = null;
         float closestDistance = Float.POSITIVE_INFINITY;
         dir = camera.getViewMatrix().positiveZ(dir).negate();
 
-        Map<Mesh, List<GameItem>> meshMap = scene.getGameMeshes();
+        Map<Mesh, List<GameItem>> meshMap = ((Scene) scene).getGameMeshes();
         for (Mesh mesh : meshMap.keySet()) {
         	for (GameItem gameItem : meshMap.get(mesh)) {
     	        gameItem.setSelected(false);
@@ -49,7 +51,7 @@ public class CameraBoxSelectionDetector {
     	        }
         	}
         }
-        Map<InstancedMesh, List<GameItem>> instancedMeshMap = scene.getGameInstancedMeshes();
+        Map<InstancedMesh, List<GameItem>> instancedMeshMap = ((Scene) scene).getGameInstancedMeshes();
         for (Mesh mesh : instancedMeshMap.keySet()) {
         	for (GameItem gameItem : instancedMeshMap.get(mesh)) {
     	        gameItem.setSelected(false);
@@ -69,9 +71,9 @@ public class CameraBoxSelectionDetector {
         if (selectedGameItem != null) {
         	selectedGameItem.setSelected(true);
             if (mouseInput.isMouseButtonPressed(GLFW.GLFW_MOUSE_BUTTON_1)) {
-            	scene.playSoundBreakingBlock();
-            	scene.removeGameItem(selectedGameItem);
-            	scene.generateBlockParticles(selectedGameItem, camera);
+            	((Scene) scene).playSoundBreakingBlock();
+            	((Scene) scene).removeGameItem(selectedGameItem);
+            	((Scene) scene).generateBlockParticles(selectedGameItem, camera);
             }
 
             nextMesh = nextMesh != null ? nextMesh : selectedGameItem.getMesh();
@@ -92,8 +94,8 @@ public class CameraBoxSelectionDetector {
 
             	newGameItem.setBoundingBox();
             	Vector3f pos = new Vector3f(newGameItem.getPosition().x + 1, newGameItem.getPosition().y + 1, newGameItem.getPosition().z + 1);
-            	if (!scene.inCollision(pos, false, camera)) {
-            		scene.appendGameItem(newGameItem);
+            	if (!((Scene) scene).inCollision(pos, false, camera)) {
+            		((Scene) scene).appendGameItem(newGameItem);
             	}
             }
             // left button - create a new cube in camera direction
@@ -136,8 +138,8 @@ public class CameraBoxSelectionDetector {
 
             	newGameItem.setBoundingBox();
             	Vector3f pos = new Vector3f(newGameItem.getPosition().x + 1, newGameItem.getPosition().y + 1, newGameItem.getPosition().z + 1);
-            	if (!scene.inCollision(pos, false, camera)) {
-            		scene.appendGameItem(newGameItem);
+            	if (!((Scene) scene).inCollision(pos, false, camera)) {
+            		((Scene) scene).appendGameItem(newGameItem);
             	}
             }
         }

@@ -5,7 +5,7 @@ import org.joml.Vector3f;
 
 import engine.Window;
 
-public class Camera {
+public class Camera implements ICamera {
 
 	private final Vector3f position;
 	private final Vector3f rotation;
@@ -120,5 +120,11 @@ public class Camera {
 
 	public Matrix4f getOrthoProjection() {
 		return orthoProjectionMatrix.translate(position, new Matrix4f());
+	}
+
+	@Override
+	public Matrix4f getProjectionViewMatrix() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

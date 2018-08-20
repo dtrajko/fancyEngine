@@ -22,7 +22,7 @@ import game2D.entities.Entity;
 import game2D.entities.Player;
 import game2D.entities.Transform;
 import game2D.render.Animation;
-import game2D.world.IScene;
+import game2D.world.IScene2D;
 import game2D.world.Tile;
 
 public class FroggerPlayer extends Player {
@@ -108,7 +108,7 @@ public class FroggerPlayer extends Player {
 		}
 	}
 
-	public void input(float delta, Camera camera, IScene scene, IGameLogic game) {
+	public void input(float delta, Camera camera, IScene2D scene, IGameLogic game) {
 		
 		double currentTime = timer.getTime();
 		
@@ -175,11 +175,11 @@ public class FroggerPlayer extends Player {
 		ssPlunk.play();
 	}
 
-	public void update(float delta, Window window, Camera camera, IScene scene, IGameLogic game) {
+	public void update(float delta, Window window, Camera camera, IScene2D scene, IGameLogic game) {
 		move(new Vector2f(speed, 0));
 	}
 
-	public void checkObstacles(Camera camera, IScene scene, IGameLogic game) {
+	public void checkObstacles(Camera camera, IScene2D scene, IGameLogic game) {
 		List<Entity> entities = scene.getEntities();
 		
 		boolean isIntersecting = false;
@@ -231,7 +231,7 @@ public class FroggerPlayer extends Player {
 		return false;
 	}
 	
-	public boolean inRiverArea(IScene scene) {
+	public boolean inRiverArea(IScene2D scene) {
 		int playerGridY = (int) transform.position.y;
 		if (playerGridY >= -16 && playerGridY <= -8) {
 			return true;
@@ -240,7 +240,7 @@ public class FroggerPlayer extends Player {
 		}
 	}
 
-	public void manageLevels(IGameLogic game, IScene scene) {
+	public void manageLevels(IGameLogic game, IScene2D scene) {
 		if (isNextLevel(scene)) {
 			game.setLevel(game.getCurrentLevel() + 1);
 		} else if (isPreviousLevel(scene)) {
@@ -264,41 +264,41 @@ public class FroggerPlayer extends Player {
 		return false;
 	}
 	
-	public void resetPosition(Camera camera, IScene scene, IGameLogic game) {
+	public void resetPosition(Camera camera, IScene2D scene, IGameLogic game) {
 		transform.position.x = game.getWindow().getWidth() / scene.getScale() / 2 - 1;
 		transform.position.y = -game.getWindow().getHeight() / scene.getScale() + 6;
 		camera.getPosition().set(transform.position.mul(-scene.getScale(), new Vector3f()));
 	}
 
-	public Tile getCurrentTile(IScene scene) {
+	public Tile getCurrentTile(IScene2D scene) {
 		int x = (int)(transform.position.x / 2);
 		int y = (int)(-transform.position.y / 2);
 		Tile tile = scene.getTile(x, y);
 		return tile;
 	}
 
-	public Tile getTileBellow(IScene scene) {
+	public Tile getTileBellow(IScene2D scene) {
 		int x = (int)(transform.position.x / 2);
 		int y = (int)(-transform.position.y / 2 + 1);
 		Tile tile = scene.getTile(x, y);
 		return tile;
 	}
 
-	public boolean isNextLevel(IScene scene) {
+	public boolean isNextLevel(IScene2D scene) {
 		if (getCurrentTile(scene) != null) {
 			return getCurrentTile(scene).getType().isNextLevel();			
 		}
 		return false;
 	}
 
-	public boolean isPreviousLevel(IScene scene) {
+	public boolean isPreviousLevel(IScene2D scene) {
 		if (getCurrentTile(scene) != null) {
 			return getCurrentTile(scene).getType().isPreviousLevel();
 		}
 		return false;
 	}
 
-	public void manageLives(IGameLogic game, IScene scene) {
+	public void manageLives(IGameLogic game, IScene2D scene) {
 		lives--;
 	}
 

@@ -13,6 +13,7 @@ import config.Config;
 import engine.IGameLogic;
 import engine.Window;
 import engine.graph.Camera;
+import game.Game2D;
 import game2D.collision.AABB;
 import game2D.collision.Collision;
 import game2D.entities.Entity;
@@ -20,7 +21,7 @@ import game2D.entities.Player;
 import game2D.entities.Transform;
 import game2D.frogger.ITileType;
 
-public class World implements IScene {
+public class World implements IScene2D {
 
 	public int view_width = 26;
 	public int view_height = 18;
@@ -127,7 +128,7 @@ public class World implements IScene {
 					switch (entity_index) {
 						case 1:
 							player = new Player(transform, game.getInput());
-							game.setPlayer(player);							
+							((Game2D) game).setPlayer(player);
 							entities.add(player);
 							camera.getPosition().set(transform.position.mul(-scale, new Vector3f()));
 							break;

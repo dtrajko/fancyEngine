@@ -7,7 +7,7 @@ import game2D.entities.Entity;
 import game2D.entities.Transform;
 import game2D.shaders.Shader;
 import game2D.textures.Texture;
-import game2D.world.IScene;
+import game2D.world.IScene2D;
 
 public class TextureEntity extends Entity {
 
@@ -28,10 +28,10 @@ public class TextureEntity extends Entity {
 	}
 
 	@Override
-	public void update(float delta, Window window, Camera camera, IScene scene, IGameLogic game) {
+	public void update(float delta, Window window, Camera camera, IScene2D scene, IGameLogic game) {
 	}
 	
-	public void render(Shader shader, Camera camera, IScene scene) {
+	public void render(Shader shader, Camera camera, IScene2D scene) {
 		if (this.texture instanceof Texture) {
 			this.texture.bind(0);						
 		}

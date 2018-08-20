@@ -10,7 +10,7 @@ import game2D.entities.Entity;
 import game2D.frogger.ITileType;
 import game2D.shaders.Shader;
 import game2D.textures.Texture;
-import game2D.world.IScene;
+import game2D.world.IScene2D;
 import game2D.world.Tile;
 
 public class TileRenderer {
@@ -30,7 +30,7 @@ public class TileRenderer {
 		tile_textures = new HashMap<String, Texture>();
 	}
 
-	public void loadTextures(IScene scene) {
+	public void loadTextures(IScene2D scene) {
 		for (int i = 0; i < scene.getTileTypes().length; i++) {
 			if (scene.getTileTypes()[i] != null) {
 				if (!tile_textures.containsKey(scene.getTileTypes()[i].getTexture())) {
@@ -41,7 +41,7 @@ public class TileRenderer {
 		}
 	}
 
-	public void render(IScene scene, Camera camera) {
+	public void render(IScene2D scene, Camera camera) {
 
 		if (tile_textures.isEmpty()) {
 			loadTextures(scene);
@@ -87,7 +87,7 @@ public class TileRenderer {
 		}
 	}
 
-	public void renderBackgroundTile(Tile tile, int x, int y, IScene scene, Camera camera) {
+	public void renderBackgroundTile(Tile tile, int x, int y, IScene2D scene, Camera camera) {
 
 		shader.bind();
 
@@ -104,7 +104,7 @@ public class TileRenderer {
 		model.render();
 	}
 
-	public void renderTile(Tile tile, int x, int y, IScene scene, Camera camera) {
+	public void renderTile(Tile tile, int x, int y, IScene2D scene, Camera camera) {
 
 		shader.bind();
 

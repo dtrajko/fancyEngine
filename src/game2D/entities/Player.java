@@ -10,7 +10,7 @@ import engine.graph.Camera;
 import engine.graph.MouseInput;
 import game2D.collision.Collision;
 import game2D.render.Animation;
-import game2D.world.IScene;
+import game2D.world.IScene2D;
 import game2D.world.Tile;
 
 public class Player extends AnimatedEntity {
@@ -40,7 +40,7 @@ public class Player extends AnimatedEntity {
 		previous_height = this.transform.position.y;
 	}
 
-	public void input(float delta, Camera camera, IScene scene, IGameLogic game) {
+	public void input(float delta, Camera camera, IScene2D scene, IGameLogic game) {
 
 		this.useAnimation(ANIM_IDLE);
 		Vector2f movement = new Vector2f();
@@ -101,10 +101,10 @@ public class Player extends AnimatedEntity {
 		manageLevels(game, scene);
 	}
 
-	public void update(float delta, Window window, Camera camera, IScene scene, IGameLogic game) {
+	public void update(float delta, Window window, Camera camera, IScene2D scene, IGameLogic game) {
 	}
 
-	public void manageLevels(IGameLogic game, IScene scene) {
+	public void manageLevels(IGameLogic game, IScene2D scene) {
 		if (isNextLevel(scene)) {
 			game.setLevel(game.getCurrentLevel() + 1);
 		} else if (isPreviousLevel(scene)) {
@@ -112,35 +112,35 @@ public class Player extends AnimatedEntity {
 		}
 	}
 
-	public Tile getCurrentTile(IScene scene) {
+	public Tile getCurrentTile(IScene2D scene) {
 		int x = (int)(transform.position.x / 2);
 		int y = (int)(-transform.position.y / 2);
 		Tile tile = scene.getTile(x, y);
 		return tile;
 	}
 
-	public Tile getTileBellow(IScene scene) {
+	public Tile getTileBellow(IScene2D scene) {
 		int x = (int)(transform.position.x / 2);
 		int y = (int)(-transform.position.y / 2 + 1);
 		Tile tile = scene.getTile(x, y);
 		return tile;
 	}
 
-	public boolean isNextLevel(IScene scene) {
+	public boolean isNextLevel(IScene2D scene) {
 		if (getCurrentTile(scene) != null) {
 			return getCurrentTile(scene).getType().isNextLevel();			
 		}
 		return false;
 	}
 
-	public boolean isPreviousLevel(IScene scene) {
+	public boolean isPreviousLevel(IScene2D scene) {
 		if (getCurrentTile(scene) != null) {
 			return getCurrentTile(scene).getType().isPreviousLevel();
 		}
 		return false;
 	}
 
-	public void manageLives(IGameLogic game, IScene scene) {
+	public void manageLives(IGameLogic game, IScene2D scene) {
 		if (previous_height == this.transform.position.y) {
 			return;
 		}

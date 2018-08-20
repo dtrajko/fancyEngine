@@ -5,6 +5,7 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import engine.IGameLogic;
+import engine.IScene;
 import engine.Scene;
 import engine.Window;
 import engine.graph.Camera;
@@ -23,7 +24,7 @@ public class Game3D implements IGameLogic {
     private final Vector3f cameraInc;
     private final Renderer renderer;
     private final Camera camera;
-    private static Scene scene;
+    private static IScene scene;
     private static final float CAMERA_POS_STEP = 0.1f;
     private float angleInc;
     private float lightAngle;
@@ -60,7 +61,7 @@ public class Game3D implements IGameLogic {
     	window = win;
         scene = new Scene();
         renderer.init(window, scene);
-        scene.init(meshTypesMap, soundMgr, camera, guiManager, window);
+        ((Scene) scene).init(window, camera, meshTypesMap, soundMgr, guiManager);
         scene.setRenderShadows(SHADOWS_ENABLED);
         selectDetectorCamera = new CameraBoxSelectionDetector();
     }
@@ -81,9 +82,9 @@ public class Game3D implements IGameLogic {
     }
 
     @Override
-    public void input(Window window, MouseInput mi) {
+    public void input(Window window, MouseInput mouseInput) {
  
-    	mouseInput = mi;
+    	this.mouseInput = mouseInput;
     	sceneChanged = false;
         cameraInc.set(0, 0, 0);
 
@@ -115,7 +116,7 @@ public class Game3D implements IGameLogic {
 
         if (mouseInput.isKeyReleased(GLFW.GLFW_KEY_C)) {
         	try {
-				scene.generateTerrain(meshTypesMap);
+				((Scene) scene).generateTerrain(meshTypesMap);
 			} catch (Exception e) {
 				System.err.println("Failed to generate terrain.");
 				e.printStackTrace();
@@ -211,7 +212,7 @@ public class Game3D implements IGameLogic {
 		// Check if there has been a collision
         // newPosCameraBase - the camera imaginary "tripod base" we use to check the collision. It's bellow the camera "lens"
         // if (!newCamPos.equals(camPos)) { // disabled, because of problems with disabled gravity when camera is close to block
-    	if (scene.inCollision(newCamPos, true, camera)) {
+    	if (((Scene) scene).inCollision(newCamPos, true, camera)) {
     		gravityOn = false;
     	} else {
     		camera.movePosition(newCamPos);
@@ -250,8 +251,8 @@ public class Game3D implements IGameLogic {
     @Override
     public void cleanup() {
     	scene.save();
+    	scene.cleanup();
         renderer.cleanup();
-        scene.cleanup();
         soundMgr.cleanup();
     }
     
@@ -259,7 +260,7 @@ public class Game3D implements IGameLogic {
     	return meshTypesMap;
     }
 
-    public static Scene getScene() {
+    public static IScene getScene() {
     	return scene;
     }
 
@@ -284,12 +285,6 @@ public class Game3D implements IGameLogic {
 	@Override
 	public MouseInput getInput() {
 		return mouseInput;
-	}
-
-	@Override
-	public void setPlayer(Player player) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override

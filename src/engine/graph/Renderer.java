@@ -14,6 +14,7 @@ import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL30;
 import config.Config;
 import engine.IHud;
+import engine.IScene;
 import engine.Scene;
 import engine.SceneLight;
 import engine.Utils;
@@ -71,7 +72,7 @@ public class Renderer {
         
     }
 
-    public void init(Window window, Scene scene) throws Exception {
+    public void init(Window window, IScene scene) throws Exception {
         if (scene.isRenderShadows()) {
         	shadowRenderer.init(window);
         }
@@ -313,13 +314,13 @@ public class Renderer {
         shaderProgram.unbind();
     }
 
-    public void render(Window window, Camera camera, Scene scene, boolean sceneChanged) {
+    public void render(Window window, ICamera camera, IScene scene, boolean sceneChanged) {
         clear();
 
         if (window.getOptions().frustumCulling) {
             frustumFilter.updateFrustum(window.getProjectionMatrix(), camera.getViewMatrix());
-            frustumFilter.filter(scene.getGameMeshes());
-            frustumFilter.filter(scene.getGameInstancedMeshes());
+            frustumFilter.filter(((Scene) scene).getGameMeshes());
+            frustumFilter.filter(((Scene) scene).getGameInstancedMeshes());
         }
 
         // Render depth map before view ports has been set up
@@ -341,7 +342,7 @@ public class Renderer {
         renderParticles(window, camera, scene);
     }
 
-    private void renderParticles(Window window, Camera camera, Scene scene) {
+    private void renderParticles(Window window, ICamera camera, IScene scene) {
         particlesShaderProgram.bind();
 
         particlesShaderProgram.setUniform("texture_sampler", 0);
@@ -421,7 +422,7 @@ public class Renderer {
         }
     }
 
-    private void renderSkyBox(Window window, Camera camera, Scene scene) {
+    private void renderSkyBox(Window window, ICamera camera, IScene scene) {
     	
         SkyBox skyBox = scene.getSkyBox();
         if (skyBox != null) {
@@ -536,7 +537,7 @@ public class Renderer {
 		}
 	}
 
-    public void renderScene(Window window, Camera camera, Scene scene) {
+    public void renderScene(Window window, ICamera camera, IScene scene) {
         sceneShaderProgram.bind();
 
         Matrix4f viewMatrix = camera.getViewMatrix();
@@ -557,7 +558,7 @@ public class Renderer {
         SceneLight sceneLight = scene.getSceneLight();
         renderLights(viewMatrix, sceneLight);
 
-        sceneShaderProgram.setUniform("fog", scene.getFog());
+        sceneShaderProgram.setUniform("fog", ((Scene) scene).getFog());
         sceneShaderProgram.setUniform("texture_sampler", 0);
         sceneShaderProgram.setUniform("normalMap", 1);
 
@@ -575,11 +576,11 @@ public class Renderer {
         sceneShaderProgram.unbind();
     }
 
-    private void renderNonInstancedMeshes(Scene scene) {
+    private void renderNonInstancedMeshes(IScene scene) {
         sceneShaderProgram.setUniform("isInstanced", 0);
 
         // Render each mesh with the associated game Items
-        Map<Mesh, List<GameItem>> mapMeshes = scene.getGameMeshes();
+        Map<Mesh, List<GameItem>> mapMeshes = ((Scene) scene).getGameMeshes();
 
         for (Mesh mesh : mapMeshes.keySet()) {
         	sceneShaderProgram.setUniform("material", mesh.getMaterial());
@@ -608,11 +609,11 @@ public class Renderer {
         }
     }
 
-    private void renderInstancedMeshes(Scene scene, Matrix4f viewMatrix) {
+    private void renderInstancedMeshes(IScene scene, Matrix4f viewMatrix) {
     	sceneShaderProgram.setUniform("isInstanced", 1);
 
         // Render each mesh with the associated game Items
-        Map<InstancedMesh, List<GameItem>> mapMeshes = scene.getGameInstancedMeshes();
+        Map<InstancedMesh, List<GameItem>> mapMeshes = ((Scene) scene).getGameInstancedMeshes();
 
         Set<InstancedMesh> setMeshes = mapMeshes.keySet();
         List<InstancedMesh> meshesSortedList = new ArrayList<InstancedMesh>(setMeshes);

@@ -8,6 +8,7 @@ import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
 import config.Config;
+import engine.IScene;
 import engine.Scene;
 import engine.Window;
 import engine.graph.Mesh;
@@ -64,7 +65,7 @@ public class GuiManager {
     	return guiElements;
     }
 
-	public boolean input(MouseInput mouseInput, Window window, Scene scene) {
+	public boolean input(MouseInput mouseInput, Window window, IScene scene) {
         
         if (inventory_popup.isEnabled()) {
         	inventory_popup.input(this, mouseInput, window, scene);

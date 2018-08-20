@@ -3,11 +3,8 @@ package engine.graph.particles;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import org.joml.Vector3f;
-
 import engine.items.GameItem;
-import engine.utils.Log;
 
 public class ExplosionParticleEmitter implements IParticleEmitter {
 

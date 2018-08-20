@@ -4,17 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.joml.Matrix4f;
-
 import config.Config;
-
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE2;
 import static org.lwjgl.opengl.GL30.*;
+
+import engine.IScene;
 import engine.Scene;
 import engine.SceneLight;
 import engine.Utils;
 import engine.Window;
 import engine.graph.Camera;
+import engine.graph.ICamera;
 import engine.graph.InstancedMesh;
 import engine.graph.Mesh;
 import engine.graph.Renderer;
@@ -73,7 +74,7 @@ public class ShadowRenderer {
         depthShaderProgram.createUniform("orthoProjectionMatrix");
     }
 
-    private void update(Window window, Matrix4f viewMatrix, Scene scene) {
+    private void update(Window window, Matrix4f viewMatrix, IScene scene) {
         SceneLight sceneLight = scene.getSceneLight();
         DirectionalLight directionalLight = sceneLight != null ? sceneLight.getDirectionalLight() : null;
         for (int i = 0; i < NUM_CASCADES; i++) {
@@ -82,7 +83,7 @@ public class ShadowRenderer {
         }
     }
 
-    public void render(Window window, Scene scene, Camera camera, Transformation transformation, Renderer renderer) {
+    public void render(Window window, IScene scene, ICamera camera, Transformation transformation, Renderer renderer) {
         update(window, camera.getViewMatrix(), scene);
 
         // Setup view port to match the texture size
@@ -112,11 +113,11 @@ public class ShadowRenderer {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
-    private void renderNonInstancedMeshes(Scene scene, Transformation transformation) {
+    private void renderNonInstancedMeshes(IScene scene, Transformation transformation) {
         depthShaderProgram.setUniform("isInstanced", 0);
 
         // Render each mesh with the associated game Items
-        Map<Mesh, List<GameItem>> mapMeshes = scene.getGameMeshes();
+        Map<Mesh, List<GameItem>> mapMeshes = ((Scene) scene).getGameMeshes();
         for (Mesh mesh : mapMeshes.keySet()) {
             mesh.renderList(mapMeshes.get(mesh), (GameItem gameItem) -> {
                 Matrix4f modelMatrix = transformation.buildModelMatrix(gameItem);
@@ -131,11 +132,11 @@ public class ShadowRenderer {
         }
     }
 
-    private void renderInstancedMeshes(Scene scene, Transformation transformation) {
+    private void renderInstancedMeshes(IScene scene, Transformation transformation) {
         depthShaderProgram.setUniform("isInstanced", 1);
 
         // Render each mesh with the associated game Items
-        Map<InstancedMesh, List<GameItem>> mapMeshes = scene.getGameInstancedMeshes();
+        Map<InstancedMesh, List<GameItem>> mapMeshes = ((Scene) scene).getGameInstancedMeshes();
         for (InstancedMesh mesh : mapMeshes.keySet()) {
             filteredItems.clear();
             for (GameItem gameItem : mapMeshes.get(mesh)) {

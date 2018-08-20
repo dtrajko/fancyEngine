@@ -8,6 +8,7 @@ import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
 import config.Config;
+import engine.IScene;
 import engine.Scene;
 import engine.Window;
 import engine.graph.MouseInput;
@@ -72,7 +73,7 @@ public class ImportPopup {
 		}	
 	}
 
-	public void input(GuiManager guiManager, MouseInput mouseInput, Window window, Scene scene) {
+	public void input(GuiManager guiManager, MouseInput mouseInput, Window window, IScene scene) {
     	Vector2f mouseNDC = guiManager.getNormalisedDeviceCoordinates(
         		(float) mouseInput.getMousePosition().x,
         		(float) mouseInput.getMousePosition().y, window);
@@ -89,7 +90,7 @@ public class ImportPopup {
 
         	if (nextBlock instanceof GuiElement && nextBlock.isClickable() && nextBlock.getTitle() != null) {
         		// System.out.println("ImportPopup importing the selected save file: [" + nextBlock.getTitle() + "]");
-        		scene.load(Game3D.getMeshTypesMap(), nextBlock.getTitle());
+        		((Scene) scene).load(Game3D.getMeshTypesMap(), nextBlock.getTitle());
         	}
 
         	guiManager.toggleImportDialog(window);

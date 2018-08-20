@@ -19,10 +19,10 @@ import game2D.entities.Entity;
 import game2D.entities.Player;
 import game2D.entities.Transform;
 import game2D.textures.Texture;
-import game2D.world.IScene;
+import game2D.world.IScene2D;
 import game2D.world.Tile;
 
-public class FroggerScene implements IScene {
+public class FroggerScene implements IScene2D {
 
 	private final int FREE_BASKETS = 5;
 	public int view_width = 15;
@@ -109,7 +109,7 @@ public class FroggerScene implements IScene {
 		Transform transform = new Transform();
 		player = new FroggerPlayer(transform, game);
 		player.resetPosition(camera, this, game);
-		game.setPlayer(player);							
+		((Frogger) game).setPlayer(player);
 		entities.add(player);
 		player.playCoinInSound();
 	}

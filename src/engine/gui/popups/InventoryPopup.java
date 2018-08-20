@@ -5,6 +5,7 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import config.Config;
+import engine.IScene;
 import engine.Scene;
 import engine.Window;
 import engine.graph.Mesh;
@@ -113,7 +114,7 @@ public class InventoryPopup {
 		}	
 	}
 
-	public void input(GuiManager guiManager, MouseInput mouseInput, Window window, Scene scene) {
+	public void input(GuiManager guiManager, MouseInput mouseInput, Window window, IScene scene) {
     	Vector2f mouseNDC = guiManager.getNormalisedDeviceCoordinates(
         		(float) mouseInput.getMousePosition().x,
         		(float) mouseInput.getMousePosition().y, window);
