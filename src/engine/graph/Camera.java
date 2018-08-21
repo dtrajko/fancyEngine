@@ -127,4 +127,10 @@ public class Camera implements ICamera {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public Matrix4f getProjectionMatrix() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

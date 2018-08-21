@@ -2,7 +2,6 @@ package engine;
 
 import engine.graph.MouseInput;
 import engine.sound.SoundManager;
-import game2D.entities.Player;
 
 public interface IGameLogic {
 

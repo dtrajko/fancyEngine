@@ -1,33 +1,23 @@
 package game2D.frogger;
 
-import java.io.File;
 import java.io.PrintWriter;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
-
 import config.Config;
 import engine.GameEngine;
 import engine.IGameLogic;
 import engine.Utils;
 import engine.Window;
 import engine.graph.Camera;
-import engine.graph.InstancedMesh;
 import engine.graph.MouseInput;
 import engine.gui.fonts.FontFactory;
 import engine.gui.fonts.FontType;
 import engine.gui.fonts.GUIText;
 import engine.gui.fonts.TextMaster;
-import engine.items.GameItem;
 import engine.sound.SoundManager;
 import engine.utils.Util;
 import game2D.assets.Assets;

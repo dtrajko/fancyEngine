@@ -15,7 +15,6 @@ import engine.graph.Renderer;
 import engine.gui.GuiElement;
 import engine.gui.GuiManager;
 import engine.sound.SoundManager;
-import game2D.entities.Player;
 
 public class Game3D implements IGameLogic {
 

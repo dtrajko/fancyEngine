@@ -6,9 +6,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-
 import org.lwjgl.opengl.GL12;
-
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 
@@ -94,7 +92,7 @@ public class Texture {
 	public int getId() {
 		return id;
 	}
-	
+
 	private static int loadTexture(String fileName) throws Exception {
 
 		PNGDecoder decoder = null;

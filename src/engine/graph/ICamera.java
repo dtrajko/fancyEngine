@@ -9,5 +9,7 @@ public interface ICamera {
 	Vector3f getPosition();
 	Vector3f getRotation();
 	Matrix4f getProjectionViewMatrix();
+	Matrix4f updateViewMatrix();
+	Matrix4f getProjectionMatrix();
 
 }

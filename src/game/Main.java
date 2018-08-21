@@ -3,7 +3,7 @@ package game;
 import engine.GameEngine;
 import engine.IGameLogic;
 import engine.Window;
-import engine.thinmatrix.ThinMatrix;
+import engine.tm.ThinMatrix;
 import game2D.frogger.Frogger;
 
 public class Main {
