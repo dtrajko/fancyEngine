@@ -45,7 +45,8 @@ public class SkyboxRenderer {
 	 */
 	private void prepare(ICamera camera) {
 		shader.start();
-		shader.projectionViewMatrix.loadMatrix(((ThinMatrixCamera) camera).getProjectionViewMatrix());
+		// shader.projectionViewMatrix.loadMatrix(((ThinMatrixCamera) camera).getProjectionViewMatrix());
+		shader.projectionViewMatrix.loadMatrix(((ThinMatrixCamera) camera).getProjectionMatrix());
 		OpenGlUtils.disableBlending();
 		OpenGlUtils.enableDepthTesting(true);
 		OpenGlUtils.cullBackFaces(true);
@@ -56,6 +57,7 @@ public class SkyboxRenderer {
 		shader.start();
 		GL11.glDepthMask(false);
 		shader.projectionViewMatrix.loadMatrix(((ThinMatrixCamera) camera).getProjectionViewMatrix().translate(new Vector3f(0f, -50f, 0f)));
+		shader.projectionViewMatrix.loadMatrix(((ThinMatrixCamera) camera).getProjectionMatrix().translate(new Vector3f(0f, -50f, 0f)));
 		((ThinMatrixSkyBox) skybox).getTexture().bindToUnit(0);
 		OpenGlUtils.disableBlending();
 		OpenGlUtils.enableDepthTesting(true);

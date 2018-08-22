@@ -23,7 +23,8 @@ public class FlareManager {
 	}
 
 	public void render(Window window, ThinMatrixCamera camera, Vector3f sunWorldPos) {
-		Vector2f sunCoords = convertToScreenSpace(sunWorldPos, camera.getViewMatrix(), camera.getProjectionMatrix());
+		// Vector2f sunCoords = convertToScreenSpace(sunWorldPos, camera.getViewMatrix(), camera.getProjectionMatrix());
+		/*
 		if(sunCoords == null){
 			return;
 		}
@@ -33,6 +34,7 @@ public class FlareManager {
 			calcFlarePositions(sunToCenter, sunCoords);
 			renderer.render(window, sunCoords, flareTextures, brightness);
 		}
+		*/
 	}
 
 	private void calcFlarePositions(Vector2f sunToCenter, Vector2f sunCoords){

@@ -46,8 +46,8 @@ public class ThinMatrix implements IGameLogic {
 	public void update(float interval, MouseInput mouseInput) {
 		scene.update(interval);
 
-    	// Update view matrix
-    	camera.updateViewMatrix();
+    	// Update view matrix		
+    	// camera.updateViewMatrix();
 	}
 
 	@Override

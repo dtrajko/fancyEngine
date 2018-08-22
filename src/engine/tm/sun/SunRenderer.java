@@ -48,12 +48,17 @@ public class SunRenderer {
 	}
 
 	private Matrix4f calculateMvpMatrix(Sun sun, ThinMatrixCamera camera) {
+		/*
 		Matrix4f modelMatrix = new Matrix4f();
 		Vector3f sunPos = sun.getWorldPosition(camera.getPosition());		
 		modelMatrix = modelMatrix.translate(sunPos);
 		Matrix4f modelViewMat = applyViewMatrix(modelMatrix, camera.getViewMatrix());		
 		modelViewMat.scale(new Vector3f(sun.getScale(), sun.getScale(), sun.getScale()));
-		return camera.getProjectionMatrix().mul(modelViewMat);
+		Matrix4f projMat = camera.getProjectionMatrix();
+		Matrix4f mvpMat = projMat.mul(modelViewMat, projMat);
+		return mvpMat;
+		*/
+		return new Matrix4f().identity();
 	}
 
 	/**

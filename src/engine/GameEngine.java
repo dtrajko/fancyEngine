@@ -14,7 +14,7 @@ public class GameEngine implements Runnable {
     private double lastFps;
     private int fps;
     private String windowTitle;
-    
+
     public GameEngine(String windowTitle, boolean vSync, Window.WindowOptions opts, IGameLogic gameLogic) throws Exception {
         this(windowTitle, 0, 0, vSync, opts, gameLogic);
     }

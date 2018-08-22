@@ -1,5 +1,6 @@
 package engine.tm;
 
+import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
@@ -121,16 +122,17 @@ public class ThinMatrixRenderer implements IRenderer {
 		skyRenderer.render(scene.getSkyBox(), scene.getCamera());
 		sunRenderer.render(scene.getSun(), scene.getCamera());
 		if (scene.getLensFlare() != null) {
-			scene.getLensFlare().render(window, scene.getCamera(), scene.getSun().getWorldPosition(scene.getCamera().getPosition()));
+			Vector3f sunWorldPos = new Vector3f(); // scene.getSun().getWorldPosition(scene.getCamera().getPosition());
+			scene.getLensFlare().render(window, scene.getCamera(), sunWorldPos);
 		}
-		// entityRenderer.render(scene.getAllEntities(), scene.getAdditionalEntities(), scene.getCamera(), scene.getSun(), NO_CLIP);
+		//// entityRenderer.render(scene.getAllEntities(), scene.getAdditionalEntities(), scene.getCamera(), scene.getSun(), NO_CLIP);
 		terrainRenderer.render(scene.getTerrain(), scene.getCamera(), scene.getLight(), new Vector4f(0.0f, 0.0f, 0.0f, 0.0f));
-		// waterRenderer.render(scene.getWater(), scene.getCamera(), scene.getLightDirection());
+		//// waterRenderer.render(scene.getWater(), scene.getCamera(), scene.getLightDirection());
 		waterMeshRenderer.render(scene.getWaterMesh(), scene.getCamera(), scene.getLight(), reflectionFbo.getColourBuffer(0), refractionFbo.getColourBuffer(0), refractionFbo.getDepthBuffer());
-		// animModelRenderer.render(scene.getAnimatedPlayer(), scene.getCamera(), scene.getLightDirection());
+		//// animModelRenderer.render(scene.getAnimatedPlayer(), scene.getCamera(), scene.getLightDirection());
 
-		// ParticleMaster.update(scene.getCamera());
-		// ParticleMaster.renderParticles(scene.getCamera());
+		//// ParticleMaster.update(scene.getCamera());
+		//// ParticleMaster.renderParticles(scene.getCamera());
 	}
 
 	/**

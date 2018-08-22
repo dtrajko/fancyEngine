@@ -173,7 +173,8 @@ public class WaterMeshRenderer {
 	 *            - The scene's camera.
 	 */
 	private void loadCameraVariables(ThinMatrixCamera camera) {
-		shader.projectionViewMatrix.loadMatrix(camera.getProjectionViewMatrix());
+		// shader.projectionViewMatrix.loadMatrix(camera.getProjectionViewMatrix());
+		shader.projectionViewMatrix.loadMatrix(camera.getProjectionMatrix());
 		shader.cameraPos.loadVec3(camera.getPosition());
 		shader.nearFarPlanes.loadVec2(camera.NEAR_PLANE, camera.FAR_PLANE);
 	}

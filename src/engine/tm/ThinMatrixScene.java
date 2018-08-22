@@ -72,7 +72,7 @@ public class ThinMatrixScene implements IScene {
 
 	@Override
 	public void update(float interval) {
-		camera.move();
+		this.camera.move();
 	}
 
 	public ITerrain getTerrain() {

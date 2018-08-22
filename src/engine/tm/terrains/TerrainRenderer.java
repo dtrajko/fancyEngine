@@ -88,7 +88,8 @@ public class TerrainRenderer implements ITerrainRenderer {
 		shader.lightBias.loadVec2(light.getLightBias());
 		shader.lightDirection.loadVec3(light.getDirection());
 		shader.lightColour.loadVec3(light.getColor().getVector());
-		shader.projectionViewMatrix.loadMatrix(((ThinMatrixCamera) camera).getProjectionViewMatrix());
+		// shader.projectionViewMatrix.loadMatrix(((ThinMatrixCamera) camera).getProjectionViewMatrix());
+		shader.projectionViewMatrix.loadMatrix(((ThinMatrixCamera) camera).getProjectionMatrix());
 	}
 
 	/**
