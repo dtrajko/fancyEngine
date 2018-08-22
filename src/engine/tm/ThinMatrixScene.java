@@ -36,7 +36,6 @@ public class ThinMatrixScene implements IScene {
 	private Sun sun;
 	private FlareManager lensFlare;
 	private WaterMesh water;
-	private Texture environmentMap;
 	// private List<ParticleSystemComplex> particleSystems = new ArrayList<ParticleSystemComplex>();
 
 	@Override
@@ -54,6 +53,8 @@ public class ThinMatrixScene implements IScene {
 		Texture sunTexture = Texture.newTexture(Config.RESOURCES_DIR + "/ThinMatrix/lensFlare/sun.png").normalMipMap().create();
 		sun = new Sun(sunTexture, 40, light, lensFlare);
 		sun.setDirection(WorldSettings.LIGHT_DIR);
+		setLightDirection(sun.getLight().getDirection());
+		light = sun.getLight();
 
 		// initialize terrain
 		PerlinNoise noise = new PerlinNoise(WorldSettings.OCTAVES, WorldSettings.AMPLITUDE, WorldSettings.ROUGHNESS);
@@ -61,10 +62,16 @@ public class ThinMatrixScene implements IScene {
 		TerrainGenerator terrainGenerator = new HybridTerrainGenerator(noise, colorGen);
 		terrain = terrainGenerator.generateTerrain(WorldSettings.WORLD_SIZE);
 		water = WaterGenerator.generate(WorldSettings.WORLD_SIZE, WorldSettings.WATER_HEIGHT);
+		
+	}
+
+	public void setLightDirection(Vector3f lightDir) {
+		this.lightDirection.set(lightDir);
 	}
 
 	@Override
 	public void update(float interval) {
+		camera.move();
 	}
 
 	public ITerrain getTerrain() {
@@ -131,13 +138,12 @@ public class ThinMatrixScene implements IScene {
 
 	@Override
 	public void cleanup() {
-		// TODO Auto-generated method stub
-		
+		skyBox.delete();
+		sun.delete();
 	}
 
 	@Override
 	public void resetScene(Window window, ICamera camera, IGameLogic game) {
 		// TODO Auto-generated method stub
-		
 	}
 }
