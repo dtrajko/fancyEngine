@@ -14,20 +14,20 @@ import engine.sound.SoundManager;
 public class ThinMatrix implements IGameLogic {
 
 	private Window window;
-    private final IRenderer renderer;
-    private final ICamera camera;
+    private IRenderer renderer;
+    private ICamera camera;
     private IScene scene;
     boolean sceneChanged;
 	private MouseInput mouseInput;
 
 	public ThinMatrix() {
-        renderer = new ThinMatrixRenderer();
-        camera = new Camera();
 	}
 
 	@Override
 	public void init(Window window) throws Exception {
     	this.window = window;
+    	renderer = new ThinMatrixRenderer();
+    	camera = new ThinMatrixCamera(window);
         scene = new ThinMatrixScene();
         scene.init(window, camera);
         renderer.init(window, scene);

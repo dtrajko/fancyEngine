@@ -9,7 +9,7 @@ public class Camera implements ICamera {
 
 	private final Vector3f position;
 	private final Vector3f rotation;
-	private Matrix4f viewMatrix;
+	protected Matrix4f viewMatrix;
 	private Matrix4f orthoProjectionMatrix;
 	public static final float HEIGHT = 2.8f;
 	public float actualHeight = HEIGHT;

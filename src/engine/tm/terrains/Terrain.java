@@ -5,7 +5,6 @@ import org.joml.Vector4f;
 import engine.graph.ICamera;
 import engine.models.RawModel;
 import engine.tm.opengl.Vao;
-import engine.tm.rendering.TerrainRenderer;
 import engine.tm.utils.Light;
 
 public class Terrain implements ITerrain {

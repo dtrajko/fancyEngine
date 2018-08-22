@@ -13,7 +13,6 @@ public interface IScene {
 	void resetScene(Window window, ICamera camera, IGameLogic game);
 	void setRenderShadows(boolean shadowsEnabled);
 	boolean isRenderShadows();
-	SkyBox getSkyBox();
 	SceneLight getSceneLight();
 	IParticleEmitter[] getParticleEmitters();
 	void save();

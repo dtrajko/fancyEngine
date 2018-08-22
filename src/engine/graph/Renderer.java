@@ -424,7 +424,7 @@ public class Renderer {
 
     private void renderSkyBox(Window window, ICamera camera, IScene scene) {
     	
-        SkyBox skyBox = scene.getSkyBox();
+        SkyBox skyBox = ((Scene) scene).getSkyBox();
         if (skyBox != null) {
             skyBoxShaderProgram.bind();
 

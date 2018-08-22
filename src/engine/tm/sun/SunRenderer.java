@@ -7,6 +7,7 @@ import org.lwjgl.opengl.GL11;
 import engine.graph.ICamera;
 import engine.tm.opengl.Vao;
 import engine.tm.utils.OpenGlUtils;
+import engine.utils.Log;
 
 public class SunRenderer {
 
@@ -24,7 +25,7 @@ public class SunRenderer {
 		quad.unbind();
 	}
 
-	public void render(Sun sun, ICamera camera) {
+	public void render(Sun sun, ICamera camera) {		
 		prepare(sun, camera);
 		GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, 4);
 		endRendering();
@@ -38,7 +39,7 @@ public class SunRenderer {
 		OpenGlUtils.antialias(false);
 		GL11.glDepthMask(false);
 		OpenGlUtils.enableAlphaBlending();
-		shader.start();
+		shader.start();		
 		Matrix4f mvpMat = calculateMvpMatrix(sun, camera);
 		shader.mvpMatrix.loadMatrix(mvpMat);
 		quad.bind(0);
