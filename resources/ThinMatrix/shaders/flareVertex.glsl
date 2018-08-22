@@ -7,7 +7,6 @@ out vec2 pass_textureCoords;
 uniform vec4 transform;
 
 void main(void){
-	
 
 	pass_textureCoords = in_position + vec2(0.5, 0.5);
 	pass_textureCoords.y = 1.0 - pass_textureCoords.y;

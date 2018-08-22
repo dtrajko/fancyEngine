@@ -34,7 +34,7 @@ public abstract class TerrainGenerator {
 	 */
 	public Terrain generateTerrain(int gridSize) {
 		float[][] heights = generateHeights(gridSize, perlinNoise);
-		Color[][] colors = colorGen.generateColors(heights, perlinNoise.getAmplitude());
+		Color[][] colors = colorGen.generateColors(heights, perlinNoise.getAmplitude());		
 		return createTerrain(heights, colors);
 	}
 

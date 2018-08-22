@@ -25,34 +25,25 @@ public class ThinMatrixCamera extends Camera {
 		this.projectionMatrix = createProjectionMatrix();
 	}
 
-	public Matrix4f updateViewMatrix() {
+	public Matrix4f updateViewMatrix() {		
 		viewMatrix.identity();
-		viewMatrix.rotate((float) Math.toRadians(pitch), new Vector3f(1, 0, 0));
-		viewMatrix.rotate((float) Math.toRadians(yaw),   new Vector3f(0, 1, 0));
-		viewMatrix.rotate((float) Math.toRadians(roll),  new Vector3f(0, 0, 1));		
-		Vector3f negativeCameraPos = new Vector3f(-getPosition().x,-getPosition().y,-getPosition().z);
-		viewMatrix.translate(negativeCameraPos);
+		// First do the rotation so camera rotates over its position
+		viewMatrix.rotate((float) Math.toRadians(rotation.x), new Vector3f(1, 0, 0));
+		viewMatrix.rotate((float) Math.toRadians(rotation.y), new Vector3f(0, 1, 0));
+		// Then do the translation
+		viewMatrix.translate(-position.x,-position.y,-position.z);
 		return viewMatrix;
 	}
 
 	private Matrix4f createProjectionMatrix() {
-		Matrix4f projectionMatrix = new Matrix4f();
-		projectionMatrix.identity();
-		float aspectRatio = (float) window.getWidth() / (float) window.getHeight();
-		float y_scale = (float) ((1f / Math.tan(Math.toRadians(FOV / 2f))));
-		float x_scale = y_scale / aspectRatio;
-		float frustum_length = FAR_PLANE - NEAR_PLANE;
-		projectionMatrix.m00(x_scale);
-		projectionMatrix.m11(y_scale);
-		projectionMatrix.m22(-((FAR_PLANE + NEAR_PLANE) / frustum_length));
-		projectionMatrix.m23(-1);
-		projectionMatrix.m32(-((2 * NEAR_PLANE * FAR_PLANE) / frustum_length));
-		projectionMatrix.m33(0);
+		float aspectRatio = (float) window.getWidth() / window.getHeight();
+		projectionMatrix = new Matrix4f().perspective(FOV, aspectRatio, NEAR_PLANE, FAR_PLANE);
 		return projectionMatrix;
 	}
 
 	public Matrix4f getProjectionViewMatrix() {
-		return projectionMatrix.mul(viewMatrix);
+		Matrix4f pvm = projectionMatrix.mul(viewMatrix);
+		return pvm;
 	}
 
 	public Matrix4f getProjectionMatrix() {

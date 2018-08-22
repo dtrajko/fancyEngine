@@ -1,4 +1,4 @@
-#version 150
+#version 330
 
 const vec4 colour1 = vec4(0.88, 0.67, 0.219, 1.0);
 const vec4 colour2 = vec4(0.2, 0.6, 0.7, 1.0);

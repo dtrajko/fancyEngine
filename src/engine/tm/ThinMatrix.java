@@ -26,10 +26,10 @@ public class ThinMatrix implements IGameLogic {
 	@Override
 	public void init(Window window) throws Exception {
     	this.window = window;
-    	renderer = new ThinMatrixRenderer();
     	camera = new ThinMatrixCamera(window);
         scene = new ThinMatrixScene();
         scene.init(window, camera);
+        renderer = new ThinMatrixRenderer();
         renderer.init(window, scene);
 	}
 
@@ -65,31 +65,25 @@ public class ThinMatrix implements IGameLogic {
 	@Override
 	public void setLevel(int currentLevel) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public Window getWindow() {
-		// TODO Auto-generated method stub
-		return null;
+		return window;
 	}
 
 	@Override
 	public MouseInput getInput() {
-		// TODO Auto-generated method stub
-		return null;
+		return mouseInput;
 	}
 
 	@Override
 	public SoundManager getSoundManager() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void initGui() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override

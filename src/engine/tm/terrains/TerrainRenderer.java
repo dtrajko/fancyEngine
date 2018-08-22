@@ -1,7 +1,5 @@
 package engine.tm.terrains;
 
-import java.util.List;
-import org.joml.Matrix4f;
 import org.joml.Vector4f;
 import org.lwjgl.opengl.GL11;
 import config.Config;
@@ -83,7 +81,7 @@ public class TerrainRenderer implements ITerrainRenderer {
 	 *            the terrain. The clipping planes cut off anything in the scene
 	 *            that is rendered outside of the plane.
 	 */
-	private void prepare(ITerrain terrain, ICamera camera, Light light, Vector4f clipPlane) {
+	private void prepare(ITerrain terrain, ICamera camera, Light light, Vector4f clipPlane) {		
 		terrain.getVao().bind();
 		shader.start();
 		shader.plane.loadVec4(clipPlane);
