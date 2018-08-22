@@ -7,12 +7,12 @@ import engine.Window;
 
 public class Camera implements ICamera {
 
-	private final Vector3f position;
-	private final Vector3f rotation;
-	protected Matrix4f viewMatrix;
-	private Matrix4f orthoProjectionMatrix;
 	public static final float HEIGHT = 2.8f;
 	public float actualHeight = HEIGHT;
+	protected final Vector3f position;
+	protected final Vector3f rotation;
+	protected Matrix4f viewMatrix;
+	private Matrix4f orthoProjectionMatrix;
 
 	public Camera() {
 		position = new Vector3f(0, 0, 0);
@@ -120,17 +120,5 @@ public class Camera implements ICamera {
 
 	public Matrix4f getOrthoProjection() {
 		return orthoProjectionMatrix.translate(position, new Matrix4f());
-	}
-
-	@Override
-	public Matrix4f getProjectionViewMatrix() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Matrix4f getProjectionMatrix() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

@@ -10,7 +10,7 @@ public class Main {
 
 	private static int width = 0;
 	private static int height = 0;
-	private static String app = "3D"; // 3D, 2D, Frogger, ThinMatrix
+	private static String app = "Game3D"; // Game3D, Game2D, Frogger, ThinMatrix
 
     public static void main(String[] args) {
         try {
@@ -29,12 +29,12 @@ public class Main {
 				opts.mode3D = false;
 				width = height = 0;
 				break;
-			case "3D":
+			case "Game3D":
 				gameLogic = new Game3D();
 				opts.mode3D = true;
 				width = height = 0;
 				break;
-			case "2D":
+			case "Game2D":
 				gameLogic = new Game2D();
 				opts.mode3D = false;
 				width = height = 0;

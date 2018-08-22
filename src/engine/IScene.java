@@ -4,7 +4,6 @@ import engine.IGameLogic;
 import engine.Window;
 import engine.graph.ICamera;
 import engine.graph.particles.IParticleEmitter;
-import engine.items.SkyBox;
 
 public interface IScene {
 

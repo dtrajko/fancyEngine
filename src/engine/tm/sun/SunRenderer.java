@@ -5,6 +5,7 @@ import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 
 import engine.graph.ICamera;
+import engine.tm.ThinMatrixCamera;
 import engine.tm.opengl.Vao;
 import engine.tm.utils.OpenGlUtils;
 import engine.utils.Log;
@@ -25,7 +26,7 @@ public class SunRenderer {
 		quad.unbind();
 	}
 
-	public void render(Sun sun, ICamera camera) {		
+	public void render(Sun sun, ThinMatrixCamera camera) {		
 		prepare(sun, camera);
 		GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, 4);
 		endRendering();
@@ -35,7 +36,7 @@ public class SunRenderer {
 		shader.cleanUp();
 	}
 
-	private void prepare(Sun sun, ICamera camera) {
+	private void prepare(Sun sun, ThinMatrixCamera camera) {
 		OpenGlUtils.antialias(false);
 		GL11.glDepthMask(false);
 		OpenGlUtils.enableAlphaBlending();
@@ -46,7 +47,7 @@ public class SunRenderer {
 		sun.getTexture().bindToUnit(0);
 	}
 
-	private Matrix4f calculateMvpMatrix(Sun sun, ICamera camera) {
+	private Matrix4f calculateMvpMatrix(Sun sun, ThinMatrixCamera camera) {
 		Matrix4f modelMatrix = new Matrix4f();
 		Vector3f sunPos = sun.getWorldPosition(camera.getPosition());		
 		modelMatrix = modelMatrix.translate(sunPos);

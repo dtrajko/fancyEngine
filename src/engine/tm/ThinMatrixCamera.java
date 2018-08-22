@@ -9,8 +9,8 @@ import engine.graph.Camera;
 public class ThinMatrixCamera extends Camera {
 
 	private static final float FOV = 60;
-	private static final float NEAR_PLANE = 0.5f;
-	private static final float FAR_PLANE = 1000;
+	public static final float NEAR_PLANE = 0.5f;
+	public static final float FAR_PLANE = 1000;
 
 	private float pitch = 0;
 	private float yaw = 0;
@@ -38,9 +38,6 @@ public class ThinMatrixCamera extends Camera {
 	private Matrix4f createProjectionMatrix() {
 		Matrix4f projectionMatrix = new Matrix4f();
 		projectionMatrix.identity();
-		
-		System.out.println("TMCamera createPM: " + projectionMatrix);
-		/*
 		float aspectRatio = (float) window.getWidth() / (float) window.getHeight();
 		float y_scale = (float) ((1f / Math.tan(Math.toRadians(FOV / 2f))));
 		float x_scale = y_scale / aspectRatio;
@@ -51,16 +48,29 @@ public class ThinMatrixCamera extends Camera {
 		projectionMatrix.m23(-1);
 		projectionMatrix.m32(-((2 * NEAR_PLANE * FAR_PLANE) / frustum_length));
 		projectionMatrix.m33(0);
-		*/
 		return projectionMatrix;
 	}
 
-	public Matrix4f getProjectionViewMatrix() {		
+	public Matrix4f getProjectionViewMatrix() {
 		return projectionMatrix.mul(viewMatrix);
+	}
+
+	public Matrix4f getProjectionMatrix() {
+		return projectionMatrix;
 	}
 
 	public void move() {
 		updateViewMatrix();
+	}
+
+	public void reflect(float height){
+		invertPitch();
+		this.position.y = position.y - 2 * (position.y - height);
+		updateViewMatrix();
+	}
+
+	public void invertPitch(){
+		this.pitch = -pitch;
 	}
 
 }

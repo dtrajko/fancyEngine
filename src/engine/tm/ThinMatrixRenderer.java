@@ -2,23 +2,27 @@ package engine.tm;
 
 import org.joml.Vector4f;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
 import org.lwjgl.opengl.GL30;
 // import animatedModelRenderer.AnimatedModelRenderer;
 import engine.IScene;
 import engine.Window;
 import engine.graph.ICamera;
 import engine.graph.IRenderer;
-import engine.graph.ShaderProgram;
 import engine.graph.Transformation;
+import engine.tm.fbos.Attachment;
+import engine.tm.fbos.Fbo;
+import engine.tm.fbos.RenderBufferAttachment;
+import engine.tm.fbos.TextureAttachment;
 import engine.tm.skybox.SkyboxRenderer;
 import engine.tm.sun.SunRenderer;
 import engine.tm.terrains.TerrainRenderer;
+import engine.tm.water.WaterMeshRenderer;
 // import entityRenderers.EntityRenderer;
 // import fbos.Fbo;
 // import water.WaterFrameBuffers;
 // import water.WaterRenderer;
 // import water.WaterRendererAux;
-import engine.utils.Log;
 
 public class ThinMatrixRenderer implements IRenderer {
 
@@ -28,10 +32,7 @@ public class ThinMatrixRenderer implements IRenderer {
     private static final float FOV = (float) Math.toRadians(60.0f);
     private static final float Z_NEAR = 0.01f;
     private static final float Z_FAR = 1000.f;
-    private static final int MAX_POINT_LIGHTS = 5;
-    private static final int MAX_SPOT_LIGHTS = 5;
     private final Transformation transformation;
-	private static final Vector4f NO_CLIP = new Vector4f(0, 0, 0, 1);
 	private static final float REFLECT_OFFSET = 0.1f;
 	private static final float REFRACT_OFFSET = 1f;
 
@@ -42,26 +43,53 @@ public class ThinMatrixRenderer implements IRenderer {
 	// private EntityRenderer entityRenderer;
 	// private WaterRenderer waterRenderer;
 	// private WaterFrameBuffers waterFbos;
-	// private WaterRendererAux waterRendererAux;
-	// private final Fbo reflectionFbo;
-	// private final Fbo refractionFbo;
+	private WaterMeshRenderer waterMeshRenderer;
+	private Fbo reflectionFbo;
+	private Fbo refractionFbo;
+	private ThinMatrixScene scene;
 
 	public ThinMatrixRenderer() {
 		transformation = new Transformation();
 		// this.waterFbos = new WaterFrameBuffers();
-		// this.refractionFbo = createWaterFbo(Display.getWidth() / 2, Display.getHeight() / 2, true);
-		// this.reflectionFbo = createWaterFbo(Display.getWidth(), Display.getHeight(), false);
 		// this.waterRenderer = new WaterRenderer(waterFbos);
-		// this.waterRendererAux = new WaterRendererAux();
 		// this.entityRenderer = new EntityRenderer();
 		// this.animModelRenderer = new AnimatedModelRenderer();
 	}
 
 	@Override
 	public void init(Window window, IScene scene) {
+		this.scene = (ThinMatrixScene) scene;
 		this.skyRenderer = new SkyboxRenderer();
 		this.sunRenderer = new SunRenderer();
 		this.terrainRenderer = new TerrainRenderer(true);
+		this.waterMeshRenderer = new WaterMeshRenderer();
+		this.refractionFbo = createWaterFbo(window.getWidth() / 2, window.getHeight() / 2, true);
+		this.reflectionFbo = createWaterFbo(window.getWidth(), window.getHeight(), false);
+	}
+
+	/**
+	 * Sets up an FBO for one of the extra render passes. The FBO is initialized
+	 * with a texture colour attachment, and can be initialized with either a
+	 * render buffer or texture attachment for the depth buffer.
+	 * 
+	 * @param width
+	 *            - The width of the FBO in pixels.
+	 * @param height
+	 *            - The height of the FBO in pixels.
+	 * @param useTextureForDepth
+	 *            - Whether the depth buffer attachment should be a texture or a
+	 *            render buffer.
+	 * @return The completed FBO.
+	 */
+	private static Fbo createWaterFbo(int width, int height, boolean useTextureForDepth) {
+		Attachment colorAttach = new TextureAttachment(GL11.GL_RGBA8);
+		Attachment depthAttach;
+		if (useTextureForDepth) {
+			depthAttach = new TextureAttachment(GL14.GL_DEPTH_COMPONENT24);
+		} else {
+			depthAttach = new RenderBufferAttachment(GL14.GL_DEPTH_COMPONENT24);
+		}
+		return Fbo.newFbo(width, height).addColorAttachment(0, colorAttach).addDepthAttachment(depthAttach).init();
 	}
 
 	@Override
@@ -69,39 +97,36 @@ public class ThinMatrixRenderer implements IRenderer {
 		clear();
 		GL11.glViewport(0, 0, window.getWidth(), window.getHeight());
 
-		renderScene(scene);
+		renderScene(window, (ThinMatrixScene) scene);
 
         // Update projection matrix once per render cycle
         window.updateProjectionMatrix();
-        
 
         // Update projection and view matrices once per render cycle
         transformation.updateProjectionMatrix(FOV, window.getWidth(), window.getHeight(), Z_NEAR, Z_FAR);
         transformation.updateViewMatrix(camera);
 	}
 
-	protected void renderScene(IScene scene) {
-		renderMainPass(scene);
+	protected void renderScene(Window window, ThinMatrixScene scene) {
+		renderMainPass(window, scene);
 		GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
-		renderWaterRefractionPass(scene);
-		renderWaterReflectionPass(scene);
+		renderWaterRefractionPass(window, scene);
+		renderWaterReflectionPass(window, scene);
 		GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
-		renderMainPass(scene);
+		renderMainPass(window, scene);
 	}
 
-	private void renderMainPass(IScene scene) {
-		/*
+	private void renderMainPass(Window window, ThinMatrixScene scene) {
 		prepare();
 		skyRenderer.render(scene.getSkyBox(), scene.getCamera());
 		sunRenderer.render(scene.getSun(), scene.getCamera());
 		if (scene.getLensFlare() != null) {
-			scene.getLensFlare().render(scene.getCamera(), scene.getSun().getWorldPosition(scene.getCamera().getPosition()));			
+			scene.getLensFlare().render(window, scene.getCamera(), scene.getSun().getWorldPosition(scene.getCamera().getPosition()));
 		}
-		*/
 		// entityRenderer.render(scene.getAllEntities(), scene.getAdditionalEntities(), scene.getCamera(), scene.getSun(), NO_CLIP);
-		// terrainRenderer.render(scene.getTerrain(), scene.getCamera(), scene.getLight(), new Vector4f(0.0f, 0.0f, 0.0f, 0.0f));
+		terrainRenderer.render(scene.getTerrain(), scene.getCamera(), scene.getLight(), new Vector4f(0.0f, 0.0f, 0.0f, 0.0f));
 		// waterRenderer.render(scene.getWater(), scene.getCamera(), scene.getLightDirection());
-		// waterRendererAux.render(scene.getWaterAux(), scene.getCamera(), scene.getLight(), reflectionFbo.getColourBuffer(0), refractionFbo.getColourBuffer(0), refractionFbo.getDepthBuffer());
+		waterMeshRenderer.render(scene.getWaterMesh(), scene.getCamera(), scene.getLight(), reflectionFbo.getColourBuffer(0), refractionFbo.getColourBuffer(0), refractionFbo.getDepthBuffer());
 		// animModelRenderer.render(scene.getAnimatedPlayer(), scene.getCamera(), scene.getLightDirection());
 
 		// ParticleMaster.update(scene.getCamera());
@@ -116,27 +141,27 @@ public class ThinMatrixRenderer implements IRenderer {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 	}
 
-	private void renderWaterRefractionPass(IScene scene) {
+	private void renderWaterRefractionPass(Window window, ThinMatrixScene scene) {
 		// waterFbos.bindRefractionFrameBuffer();
-		// refractionFbo.bindForRender(1);
+		refractionFbo.bindForRender(1);
 		prepare();
-		// scene.getTerrain().render(scene.getCamera(), scene.getLight(), new Vector4f(0, 1, 0, -scene.getWaterHeight() + REFRACT_OFFSET));
+		scene.getTerrain().render(scene.getCamera(), scene.getLight(), new Vector4f(0, 1, 0, -scene.getWaterHeight() + REFRACT_OFFSET));
 		// entityRenderer.render(scene.getAllEntities(), scene.getAdditionalEntities(), scene.getCamera(), scene.getSun(), new Vector4f(0,-1,0, 0));
 		// waterFbos.unbindCurrentFrameBuffer();
-		// refractionFbo.unbindAfterRender();
+		refractionFbo.unbindAfterRender(window);
 	}
 
-	private void renderWaterReflectionPass(IScene scene) {
+	private void renderWaterReflectionPass(Window window, ThinMatrixScene scene) {
 		// waterFbos.bindReflectionFrameBuffer();
-		// reflectionFbo.bindForRender(1);
+		reflectionFbo.bindForRender(1);
 		prepare();
-		// scene.getCamera().reflect(scene.getWaterHeight());
-		// scene.getTerrain().render(scene.getCamera(), scene.getLight(), new Vector4f(0, 1, 0, -scene.getWaterHeight() + REFLECT_OFFSET));
+		scene.getCamera().reflect(scene.getWaterHeight());
+		scene.getTerrain().render(scene.getCamera(), scene.getLight(), new Vector4f(0, 1, 0, -scene.getWaterHeight() + REFLECT_OFFSET));
 		// entityRenderer.render(scene.getAllEntities(), scene.getAdditionalEntities(), scene.getCamera(), scene.getSun(), new Vector4f(0,1,0,0.1f));
-		// skyRenderer.render(scene.getSkyBox(), scene.getCamera());
+		skyRenderer.render(scene.getSkyBox(), scene.getCamera());
 		// waterFbos.unbindCurrentFrameBuffer();
-		// reflectionFbo.unbindAfterRender();
-		// scene.getCamera().reflect(scene.getWaterHeight());
+		reflectionFbo.unbindAfterRender(window);
+		scene.getCamera().reflect(scene.getWaterHeight());
 	}
 
 	@Override
@@ -151,12 +176,20 @@ public class ThinMatrixRenderer implements IRenderer {
 		// this.entityRenderer.cleanUp();
 		this.sunRenderer.cleanUp();
 		this.skyRenderer.cleanUp();
-		// this.waterRendererAux.cleanUp();
+		this.waterMeshRenderer.cleanUp();
 		// this.waterRenderer.cleanUp();
 		this.terrainRenderer.cleanUp();
 		// this.waterFbos.cleanUp();
-		// this.refractionFbo.delete();
-		// this.reflectionFbo.delete();
+		this.refractionFbo.delete();
+		this.reflectionFbo.delete();
 	}
 
+	public static void enableCulling() {
+		GL11.glEnable(GL11.GL_CULL_FACE);
+		GL11.glCullFace(GL11.GL_BACK);
+	}
+
+	public static void disableCulling() {
+		GL11.glDisable(GL11.GL_CULL_FACE);
+	}
 }

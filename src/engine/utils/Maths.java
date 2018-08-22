@@ -61,4 +61,20 @@ public class Maths {
 		return Math.max(Math.min(value, max), min);
 	}
 
+	/**
+	 * Calculates the normal of the triangle made from the 3 vertices. The vertices must be specified in counter-clockwise order.
+	 * @param vertex0
+	 * @param vertex1
+	 * @param vertex2
+	 * @return
+	 */
+	public static Vector3f calcNormal(Vector3f vertex0, Vector3f vertex1, Vector3f vertex2) {
+		Vector3f tangentA = vertex1.sub(vertex0);
+		Vector3f tangentB = vertex2.sub(vertex0);
+		Vector3f normal = tangentA.cross(tangentB);
+		normal.normalize();
+		return normal;
+	}
+
+
 }

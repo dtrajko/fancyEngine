@@ -4,9 +4,8 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
-
 import engine.Window;
-import engine.graph.ICamera;
+import engine.tm.ThinMatrixCamera;
 
 public class FlareManager {
 
@@ -23,7 +22,7 @@ public class FlareManager {
 		this.renderer = new FlareRenderer(window);
 	}
 
-	public void render(Window window, ICamera camera, Vector3f sunWorldPos) {
+	public void render(Window window, ThinMatrixCamera camera, Vector3f sunWorldPos) {
 		Vector2f sunCoords = convertToScreenSpace(sunWorldPos, camera.getViewMatrix(), camera.getProjectionMatrix());
 		if(sunCoords == null){
 			return;

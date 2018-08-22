@@ -39,7 +39,7 @@ public class Light {
 		return direction;
 	}
 
-	public Color getColour() {
+	public Color getColor() {
 		return color;
 	}
 
