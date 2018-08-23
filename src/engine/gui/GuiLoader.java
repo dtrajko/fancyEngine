@@ -9,7 +9,7 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
-import engine.models.RawModel;
+import engine.tm.models.RawModel;
 
 public class GuiLoader {
 	

@@ -15,9 +15,10 @@ public class Window {
     public static final float Z_NEAR = 0.01f;
     public static final float Z_FAR = 1000.0f;
 
+    public static int width;
+    public static int height;
+
     private final String title;
-    private int width;
-    private int height;
     private long windowHandle;
     private boolean resized;
     private boolean vSync;

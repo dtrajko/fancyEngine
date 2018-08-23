@@ -3,6 +3,7 @@ package game;
 import java.util.HashMap;
 import java.util.Map;
 import org.joml.Vector3f;
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
 import engine.GameEngine;
@@ -84,6 +85,10 @@ public class Game2D implements IGameLogic {
 		}
 		player.input(SPEED, camera, level, this);
 		level.correctCamera(camera);
+
+        if (mouseInput.isKeyReleased(GLFW.GLFW_KEY_ESCAPE)) {
+        	window.close();
+        }
 	}
 
 	@Override

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 import config.Config;
 import engine.GameEngine;
@@ -114,6 +115,10 @@ public class Frogger implements IGameLogic {
 		}
 		player.input(SPEED, camera, scene, this);			
 		scene.correctCamera(camera);
+
+        if (mouseInput.isKeyReleased(GLFW.GLFW_KEY_ESCAPE)) {
+        	window.close();
+        }
 	}
 
 	@Override

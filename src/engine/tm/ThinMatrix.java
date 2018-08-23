@@ -1,96 +1,69 @@
 package engine.tm;
 
-import org.lwjgl.glfw.GLFW;
-
 import engine.IGameLogic;
 import engine.IScene;
 import engine.Window;
-import engine.graph.Camera;
-import engine.graph.ICamera;
-import engine.graph.IRenderer;
 import engine.graph.MouseInput;
 import engine.sound.SoundManager;
+import engine.tm.render.Renderer;
+import engine.tm.scene.Scene;
 
 public class ThinMatrix implements IGameLogic {
-
+	
+	private Renderer renderer;
 	private Window window;
-    private IRenderer renderer;
-    private ICamera camera;
-    private IScene scene;
-    boolean sceneChanged;
-	private MouseInput mouseInput;
-
-	public ThinMatrix() {
-	}
+	private IScene scene;
 
 	@Override
 	public void init(Window window) throws Exception {
-    	this.window = window;
-    	camera = new ThinMatrixCamera(window);
-        scene = new ThinMatrixScene();
-        scene.init(window, camera);
-        renderer = new ThinMatrixRenderer();
-        renderer.init(window, scene);
+		renderer = new Renderer();
+		renderer.init(window, null);
+		scene = new Scene();
+		scene.init(window, null);
 	}
 
 	@Override
 	public void input(Window window, MouseInput mouseInput) {
-		this.mouseInput = mouseInput;
-
-        if (mouseInput.isKeyReleased(GLFW.GLFW_KEY_ESCAPE)) {
-        	window.close();
-        }
+		// TODO Auto-generated method stub
 	}
 
 	@Override
 	public void update(float interval, MouseInput mouseInput) {
-		scene.update(interval);
-
-    	// Update view matrix		
-    	// camera.updateViewMatrix();
 	}
 
 	@Override
 	public void render(Window window) {
-		sceneChanged = true;
-		renderer.render(window, camera, scene, sceneChanged);
+		renderer.render(window, null, scene, true);
 	}
 
 	@Override
-	public int getCurrentLevel() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+	public void cleanup() {
+		renderer.cleanup();
 
-	@Override
-	public void setLevel(int currentLevel) {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
 	public Window getWindow() {
-		return window;
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
 	public MouseInput getInput() {
-		return mouseInput;
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
 	public SoundManager getSoundManager() {
+		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void initGui() {
-	}
+		// TODO Auto-generated method stub
 
-	@Override
-	public void cleanup() {
-    	scene.save();
-    	scene.cleanup();
-        renderer.cleanup();
 	}
 
 }

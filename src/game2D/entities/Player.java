@@ -8,6 +8,7 @@ import engine.IGameLogic;
 import engine.Window;
 import engine.graph.Camera;
 import engine.graph.MouseInput;
+import game.Game2D;
 import game2D.collision.Collision;
 import game2D.render.Animation;
 import game2D.world.IScene2D;
@@ -86,10 +87,10 @@ public class Player extends AnimatedEntity {
 			window.toggleFullscreen();
 		}
 		if (input.isKeyReleased(GLFW.GLFW_KEY_1)) {
-			game.setLevel(1);
+			((Game2D) game).setLevel(1);
 		}
 		if (input.isKeyReleased(GLFW.GLFW_KEY_2)) {
-			game.setLevel(2);
+			((Game2D) game).setLevel(2);
 		}
 
 		move(movement);
@@ -106,7 +107,7 @@ public class Player extends AnimatedEntity {
 
 	public void manageLevels(IGameLogic game, IScene2D scene) {
 		if (isNextLevel(scene)) {
-			game.setLevel(game.getCurrentLevel() + 1);
+			((Game2D) game).setLevel(((Game2D) game).getCurrentLevel() + 1);
 		} else if (isPreviousLevel(scene)) {
 			// game.setLevel(game.getCurrentLevel() - 1);
 		}
@@ -148,7 +149,7 @@ public class Player extends AnimatedEntity {
 		if (y >= scene.getHeight() - 1) {
 			lives--;
 			if (lives < 0) lives = 0;
-			game.setLevel(game.getCurrentLevel());
+			((Game2D) game).setLevel(((Game2D) game).getCurrentLevel());
 		}
 	}
 

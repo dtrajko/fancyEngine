@@ -3,6 +3,8 @@ package engine.tm.textures;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 
+import engine.utils.MyFile;
+
 public class Texture {
 
 	public final int textureId;
@@ -30,18 +32,19 @@ public class Texture {
 		GL11.glDeleteTextures(textureId);
 	}
 
-	public static TextureBuilder newTexture(String textureFile) {
+	public static TextureBuilder newTexture(MyFile textureFile) {
 		return new TextureBuilder(textureFile);
 	}
 
+	public static Texture newCubeMap(MyFile[] textureFiles) {
+		int cubeMapId = TextureUtils.loadCubeMap(textureFiles);
+		//TODO needs to know size!
+		return new Texture(cubeMapId, GL13.GL_TEXTURE_CUBE_MAP, 0);
+	}
+	
 	public static Texture newEmptyCubeMap(int size) {
 		int cubeMapId = TextureUtils.createEmptyCubeMap(size);
 		return new Texture(cubeMapId, GL13.GL_TEXTURE_CUBE_MAP, size);
 	}
 
-	public static Texture newCubeMap(String[] textureFiles) {
-		int cubeMapId = TextureUtils.loadCubeMap(textureFiles);
-		//TODO needs to know size!
-		return new Texture(cubeMapId, GL13.GL_TEXTURE_CUBE_MAP, 0);
-	}
 }

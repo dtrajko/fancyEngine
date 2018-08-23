@@ -140,10 +140,10 @@ public class FroggerPlayer extends Player {
 			window.toggleFullscreen();
 		}
 		if (input.isKeyReleased(GLFW.GLFW_KEY_1)) {
-			game.setLevel(1);
+			((Frogger) game).setLevel(1);
 		}
 		if (input.isKeyReleased(GLFW.GLFW_KEY_2)) {
-			game.setLevel(2);
+			((Frogger) game).setLevel(2);
 		}
 
 		if (currentTime - lastMovementTime > delta * KEYBOARD_SENSIVITY) {
@@ -242,7 +242,7 @@ public class FroggerPlayer extends Player {
 
 	public void manageLevels(IGameLogic game, IScene2D scene) {
 		if (isNextLevel(scene)) {
-			game.setLevel(game.getCurrentLevel() + 1);
+			((Frogger) game).setLevel(((Frogger) game).getCurrentLevel() + 1);
 		} else if (isPreviousLevel(scene)) {
 			// game.setLevel(game.getCurrentLevel() - 1);
 		}

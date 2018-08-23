@@ -1,5 +1,7 @@
 package engine.tm.textures;
 
+import engine.utils.MyFile;
+
 public class TextureBuilder {
 	
 	private boolean clampEdges = false;
@@ -7,9 +9,9 @@ public class TextureBuilder {
 	private boolean anisotropic = true;
 	private boolean nearest = false;
 	
-	private String file;
+	private MyFile file;
 
-	protected TextureBuilder(String textureFile){
+	protected TextureBuilder(MyFile textureFile){
 		this.file = textureFile;
 	}
 	

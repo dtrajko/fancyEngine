@@ -15,7 +15,7 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL33;
 import config.Config;
 import engine.graph.Texture;
-import engine.models.RawModel;
+import engine.tm.models.RawModel;
 
 public class RawModelLoader {
 

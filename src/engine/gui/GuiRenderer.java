@@ -10,7 +10,7 @@ import config.Config;
 import engine.Utils;
 import engine.Window;
 import engine.graph.ShaderProgram;
-import engine.models.RawModel;
+import engine.tm.models.RawModel;
 import engine.utils.Maths;
 
 public class GuiRenderer {
