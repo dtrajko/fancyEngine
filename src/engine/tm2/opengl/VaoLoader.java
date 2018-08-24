@@ -21,14 +21,14 @@ import org.lwjgl.opengl.GL15;
  */
 public class VaoLoader {
 
-	public static Vao createVao(byte[] meshData, int[] indices) {
+	public static Vao createVao(byte[] meshData, int[] indices) {		
 		Vao vao = Vao.create();
 		vao.bind();
 		storeVertexDataInVao(vao, meshData);
 		if (indices != null) {
 			storeIndicesInVao(vao, indices);
 		}
-		vao.unbind();
+		vao.unbind();		
 		return vao;
 	}
 

@@ -62,6 +62,7 @@ public class Vao {
 		this.indexVbo = Vbo.create(GL15.GL_ELEMENT_ARRAY_BUFFER, GL15.GL_STATIC_DRAW);
 		indexVbo.allocateData(indices.limit() * DataUtils.BYTES_IN_INT);
 		indexVbo.storeData(0, indices);
+		this.indexCount = indices.remaining();		
 		return indexVbo;
 	}
 

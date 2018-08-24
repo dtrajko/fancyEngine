@@ -32,6 +32,14 @@ public class Loader {
 		return new RawModel(vaoID, positions.length / 3);
 	}
 
+	public RawModel loadToVAO(float[] positions, int[] indices) {
+		int vaoID = createVAO();
+		bindIndicesBuffer(indices);
+		storeDataInAttributeList(0, positions);
+		unbindVAO();
+		return new RawModel(vaoID, indices.length);
+	}
+
 	private void storeDataInAttributeList(int attributeNumber, float[] data) {
 		int vboID = GL15.glGenBuffers();
 		vbos.add(vboID);
@@ -93,15 +101,23 @@ public class Loader {
 		GL30.glBindVertexArray(0);
 	}
 
-	private FloatBuffer storeDataInFloatBuffer(float[] data) {
-		FloatBuffer buffer = BufferUtils.createFloatBuffer(data.length);
+	private void bindIndicesBuffer(int[] indices) {
+		int vboID = GL15.glGenBuffers();
+		vbos.add(vboID);
+		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, vboID);
+		IntBuffer buffer = storeDataInIntBuffer(indices);
+		GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW);
+	}
+
+	private IntBuffer storeDataInIntBuffer(int[] data) {
+		IntBuffer buffer = BufferUtils.createIntBuffer(data.length);
 		buffer.put(data);
 		buffer.flip();
 		return buffer;
 	}
 
-	private IntBuffer storeDataInIntBuffer(int[] data) {
-		IntBuffer buffer = BufferUtils.createIntBuffer(data.length);
+	private FloatBuffer storeDataInFloatBuffer(float[] data) {
+		FloatBuffer buffer = BufferUtils.createFloatBuffer(data.length);
 		buffer.put(data);
 		buffer.flip();
 		return buffer;
@@ -211,13 +227,5 @@ public class Loader {
 			System.exit(-1);
 		}
 		return new TextureData(buffer, width, height);
-	}
-	
-	private void bindIndicesBuffer(int[] indices) {
-		int vboID = GL15.glGenBuffers();
-		vbos.add(vboID);
-		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, vboID);
-		IntBuffer buffer = storeDataInIntBuffer(indices);
-		GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW);
-	}
+	}	
 }

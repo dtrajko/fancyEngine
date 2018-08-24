@@ -60,8 +60,7 @@ public class ThinMatrixScene implements IScene {
 		PerlinNoise noise = new PerlinNoise(WorldSettings.OCTAVES, WorldSettings.AMPLITUDE, WorldSettings.ROUGHNESS);
 		ColorGenerator colorGen = new ColorGenerator(WorldSettings.TERRAIN_COLS, WorldSettings.COLOUR_SPREAD);		
 		TerrainGenerator terrainGenerator = new HybridTerrainGenerator(noise, colorGen);
-		terrain = terrainGenerator.generateTerrain(WorldSettings.WORLD_SIZE);
-		
+		terrain = terrainGenerator.generateTerrain(WorldSettings.WORLD_SIZE);		
 		water = WaterGenerator.generate(WorldSettings.WORLD_SIZE, WorldSettings.WATER_HEIGHT);
 	}
 

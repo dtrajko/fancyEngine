@@ -62,7 +62,7 @@ public class ThinMatrixRenderer implements IRenderer {
 		this.scene = (ThinMatrixScene) scene;
 		this.skyRenderer = new SkyboxRenderer();
 		this.sunRenderer = new SunRenderer();
-		this.terrainRenderer = new TerrainRenderer(true);
+		this.terrainRenderer = new TerrainRenderer(false);
 		this.waterMeshRenderer = new WaterMeshRenderer();
 		this.refractionFbo = createWaterFbo(window.getWidth() / 2, window.getHeight() / 2, true);
 		this.reflectionFbo = createWaterFbo(window.getWidth(), window.getHeight(), false);

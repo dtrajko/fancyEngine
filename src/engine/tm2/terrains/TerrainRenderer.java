@@ -1,13 +1,14 @@
 package engine.tm2.terrains;
 
+import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.opengl.GL11;
-import config.Config;
 import engine.graph.ICamera;
 import engine.tm2.ThinMatrixCamera;
 import engine.tm2.settings.WorldSettings;
 import engine.tm2.terrains.ITerrain;
 import engine.tm2.utils.Light;
+import engine.utils.Maths;
 
 /**
  * A simple renderer that renders terrains.
@@ -82,7 +83,7 @@ public class TerrainRenderer implements ITerrainRenderer {
 	 *            the terrain. The clipping planes cut off anything in the scene
 	 *            that is rendered outside of the plane.
 	 */
-	private void prepare(ITerrain terrain, ICamera camera, Light light, Vector4f clipPlane) {		
+	private void prepare(ITerrain terrain, ICamera camera, Light light, Vector4f clipPlane) {
 		terrain.getVao().bind();
 		shader.start();
 		shader.plane.loadVec4(clipPlane);
@@ -90,7 +91,8 @@ public class TerrainRenderer implements ITerrainRenderer {
 		shader.lightDirection.loadVec3(light.getDirection());
 		shader.lightColour.loadVec3(light.getColor().getVector());
 		// shader.projectionViewMatrix.loadMatrix(((ThinMatrixCamera) camera).getProjectionViewMatrix());
-		shader.projectionViewMatrix.loadMatrix(((ThinMatrixCamera) camera).getProjectionMatrix());
+		// shader.projectionViewMatrix.loadMatrix(((ThinMatrixCamera) camera).getProjectionMatrix());
+		shader.projectionViewMatrix.loadMatrix(Maths.createTransformationMatrix(new Vector3f(), 0, 0, 0, 1));
 	}
 
 	/**

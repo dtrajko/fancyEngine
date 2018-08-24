@@ -5,7 +5,7 @@ import engine.IScene;
 import engine.SceneLight;
 import engine.Window;
 import engine.graph.ICamera;
-import engine.graph.QuadMesh;
+import engine.graph.TriangleMesh;
 import engine.graph.particles.IParticleEmitter;
 import engine.tm.models.RawModel;
 import engine.tm.render.Loader;
@@ -18,20 +18,7 @@ public class Scene implements IScene {
 	@Override
 	public void init(Window window, ICamera camera) {
 		loader = new Loader();
-
-		// OpenGL expects vertices to be defined counter clockwise by default
-		float[] vertices = {
-			// Left bottom triangle
-			-0.5f,  0.5f, 0f, // V0
-			-0.5f, -0.5f, 0f, // V1
-			 0.5f, -0.5f, 0f, // V2
-			 // Right top triangle
-			 0.5f, -0.5f, 0f, // V2
-			 0.5f,  0.5f, 0f, // V3
-			-0.5f,  0.5f, 0f, // V0 
-		};
-
-		model = loader.loadToVAO(vertices);
+		model = loader.loadToVAO(TriangleMesh.positions, TriangleMesh.indices);
 	}
 
 	public RawModel getModel() {

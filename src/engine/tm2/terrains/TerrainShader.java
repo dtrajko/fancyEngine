@@ -38,6 +38,7 @@ public class TerrainShader extends ShaderProgram {
 	}
 
 	public void loadTransformationMatrix(Matrix4f matrix) {
+		System.out.println("TerrainShader loadTransformationMatrix: " + matrix);
 		super.loadMatrix(location_transformationMatrix, matrix);
 	}
 
