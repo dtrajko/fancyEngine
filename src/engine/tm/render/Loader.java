@@ -16,7 +16,9 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL33;
 import de.matthiasmann.twl.utils.PNGDecoder;
 import de.matthiasmann.twl.utils.PNGDecoder.Format;
+import engine.graph.Texture;
 import engine.tm.models.RawModel;
+import engine.tm.settings.WorldSettings;
 import engine.tm.textures.TextureData;
 
 public class Loader {
@@ -27,7 +29,7 @@ public class Loader {
 
 	public RawModel loadToVAO(float[] positions) {
 		int vaoID = createVAO();
-		storeDataInAttributeList(0, positions);
+		storeDataInAttributeList(0, 3, positions);
 		unbindVAO();
 		return new RawModel(vaoID, positions.length / 3);
 	}
@@ -35,19 +37,18 @@ public class Loader {
 	public RawModel loadToVAO(float[] positions, int[] indices) {
 		int vaoID = createVAO();
 		bindIndicesBuffer(indices);
-		storeDataInAttributeList(0, positions);
+		storeDataInAttributeList(0, 3, positions);
 		unbindVAO();
 		return new RawModel(vaoID, indices.length);
 	}
 
-	private void storeDataInAttributeList(int attributeNumber, float[] data) {
-		int vboID = GL15.glGenBuffers();
-		vbos.add(vboID);
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboID);
-		FloatBuffer buffer = storeDataInFloatBuffer(data);
-		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW);
-		GL20.glVertexAttribPointer(attributeNumber, 3, GL11.GL_FLOAT, false, 0, 0);
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+	public RawModel loadToVAO(float[] positions, float[] textureCoords, int[] indices) {
+		int vaoID = createVAO();
+		bindIndicesBuffer(indices);
+		storeDataInAttributeList(0, 3, positions);
+		storeDataInAttributeList(1, 2, textureCoords);
+		unbindVAO();
+		return new RawModel(vaoID, indices.length);
 	}
 
 	private void storeDataInAttributeList(int attributeNumber, int coordinateSize, float[] data) {
@@ -123,6 +124,18 @@ public class Loader {
 		return buffer;
 	}
 
+	public int loadTexture(String fileName) {
+		int textureID = -1;
+		try {
+			textureID = Texture.loadTexture(WorldSettings.TEXTURES_DIR + "/" + fileName + ".png");
+			textures.add(textureID);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return textureID;
+	}
+
 	public List<Integer> getVAOs() {
 		return vaos;
 	}
@@ -166,18 +179,6 @@ public class Loader {
 		this.storeDataInAttributeList(0, dimensions, positions);
 		unbindVAO();
 		return new RawModel(vaoID, positions.length / dimensions);
-	}
-
-	public void cleanUp() {
-		for (int vaoID:vaos) {
-			GL30.glDeleteVertexArrays(vaoID);
-		}
-		for (int vboID:vbos) {
-			GL15.glDeleteBuffers(vboID);
-		}
-		for (int texture:textures) {
-			GL11.glDeleteTextures(texture);
-		}
 	}
 
 	/**
@@ -227,5 +228,17 @@ public class Loader {
 			System.exit(-1);
 		}
 		return new TextureData(buffer, width, height);
-	}	
+	}
+
+	public void cleanUp() {
+		for (int vaoID:vaos) {
+			GL30.glDeleteVertexArrays(vaoID);
+		}
+		for (int vboID:vbos) {
+			GL15.glDeleteBuffers(vboID);
+		}
+		for (int texture:textures) {
+			GL11.glDeleteTextures(texture);
+		}
+	}
 }

@@ -93,7 +93,7 @@ public class Texture {
 		return id;
 	}
 
-	private static int loadTexture(String fileName) throws Exception {
+	public static int loadTexture(String fileName) throws Exception {
 
 		PNGDecoder decoder = null;
 		// Load Texture file

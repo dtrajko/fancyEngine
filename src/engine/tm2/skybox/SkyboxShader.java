@@ -1,6 +1,5 @@
 package engine.tm2.skybox;
 
-import config.Config;
 import engine.tm2.settings.WorldSettings;
 import engine.tm2.shaders.ShaderProgram;
 import engine.tm2.shaders.UniformMatrix;

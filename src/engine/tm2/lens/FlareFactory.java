@@ -1,6 +1,5 @@
 package engine.tm2.lens;
 
-import config.Config;
 import engine.Window;
 import engine.tm2.settings.WorldSettings;
 import engine.tm2.textures.Texture;

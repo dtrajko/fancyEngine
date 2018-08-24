@@ -25,10 +25,10 @@ public class Window {
     private WindowOptions opts;
     private Matrix4f projectionMatrix;
 
-    public Window(String title, int width, int height, boolean vSync, WindowOptions opts) {
+    public Window(String title, int iWidth, int iHeight, boolean vSync, WindowOptions opts) {
         this.title = title;
-        this.width = width;
-        this.height = height;
+        width = iWidth;
+        height = iHeight;
         this.vSync = vSync;
         this.resized = false;
         this.opts = opts;
@@ -75,9 +75,9 @@ public class Window {
         }
 
         // Setup resize callback
-        glfwSetFramebufferSizeCallback(windowHandle, (window, width, height) -> {
-            this.width = width;
-            this.height = height;
+        glfwSetFramebufferSizeCallback(windowHandle, (window, iWidth, iHeight) -> {
+            width = iWidth;
+            height = iHeight;
             this.setResized(true);
         });
 

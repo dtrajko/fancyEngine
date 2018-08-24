@@ -1,14 +1,10 @@
 package engine.tm2.sun;
 
 import org.joml.Matrix4f;
-import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
-
-import engine.graph.ICamera;
 import engine.tm2.ThinMatrixCamera;
 import engine.tm2.opengl.Vao;
 import engine.tm2.utils.OpenGlUtils;
-import engine.utils.Log;
 
 public class SunRenderer {
 

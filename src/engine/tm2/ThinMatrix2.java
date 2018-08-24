@@ -5,7 +5,6 @@ import org.lwjgl.glfw.GLFW;
 import engine.IGameLogic;
 import engine.IScene;
 import engine.Window;
-import engine.graph.Camera;
 import engine.graph.ICamera;
 import engine.graph.IRenderer;
 import engine.graph.MouseInput;

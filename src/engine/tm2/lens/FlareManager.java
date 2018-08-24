@@ -9,7 +9,7 @@ import engine.tm2.ThinMatrixCamera;
 
 public class FlareManager {
 
-	private static final Vector2f CENTER_SCREEN = new Vector2f(0f, 0f);//center changed
+	private static final Vector2f CENTER_SCREEN = new Vector2f(0f, 0f); //center changed
 
 	private final FlareTexture[] flareTextures;
 	private final float spacing;

@@ -4,7 +4,6 @@ import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.opengl.GL11;
 import engine.graph.ICamera;
-import engine.tm2.ThinMatrixCamera;
 import engine.tm2.settings.WorldSettings;
 import engine.tm2.terrains.ITerrain;
 import engine.tm2.utils.Light;

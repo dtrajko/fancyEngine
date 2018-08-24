@@ -28,7 +28,12 @@ public class TriangleMesh extends Mesh {
 		1.0f,  1.0f, 0.5f, // V3
     };
 
-	public static float[] textCoords = new float[] {};
+	public static float[] textCoords = new float[] {
+		0, 0, // V0
+		1, 0, // V1
+		1, 1, // V2
+		0, 1, // V3
+	};
 
 	public static int[] indices = new int[] {
         0, 1, 3, // Top left triangle     (V0, V1, V2)

@@ -4,9 +4,7 @@ import org.joml.Vector2d;
 import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
-
 import engine.Window;
-
 import static org.lwjgl.glfw.GLFW.*;
 
 public class MouseInput {

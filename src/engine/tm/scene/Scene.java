@@ -8,21 +8,27 @@ import engine.graph.ICamera;
 import engine.graph.TriangleMesh;
 import engine.graph.particles.IParticleEmitter;
 import engine.tm.models.RawModel;
+import engine.tm.models.TexturedModel;
 import engine.tm.render.Loader;
+import engine.tm.textures.ModelTexture;
 
 public class Scene implements IScene {
 
 	private Loader loader;
 	private RawModel model;
+	private ModelTexture texture;
+	private TexturedModel texturedModel;
 
 	@Override
 	public void init(Window window, ICamera camera) {
 		loader = new Loader();
-		model = loader.loadToVAO(TriangleMesh.positions, TriangleMesh.indices);
+		model = loader.loadToVAO(TriangleMesh.positions, TriangleMesh.textCoords, TriangleMesh.indices);
+		texture = new ModelTexture(loader.loadTexture("frame"));
+		texturedModel = new TexturedModel(model, texture);
 	}
 
-	public RawModel getModel() {
-		return model;
+	public TexturedModel getTexturedModel() {
+		return texturedModel;
 	}
 
 	@Override

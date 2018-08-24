@@ -1,15 +1,12 @@
 package engine.tm.shaders;
 
 import org.joml.Matrix4f;
-
 import engine.tm.settings.WorldSettings;
 
 public class StaticShader extends ShaderProgram {
 
 	private static final String VERTEX_FILE = WorldSettings.RESOURCES_SUBDIR + "/shaders/vertexShader.glsl";
 	private static final String FRAGMENT_FILE = WorldSettings.RESOURCES_SUBDIR + "/shaders/fragmentShader.glsl";
-	
-	
 
 	private int location_transformationMatrix;
 
@@ -21,7 +18,7 @@ public class StaticShader extends ShaderProgram {
 	@Override
 	protected void bindAttributes() {
 		super.bindAttribute(0, "position");
-		// super.bindAttribute(1, "textureCoordinates");
+		super.bindAttribute(1, "textureCoords");
 	}
 
 	@Override

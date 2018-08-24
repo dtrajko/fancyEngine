@@ -2,8 +2,6 @@ package engine.tm2.water;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
-
-import engine.graph.ICamera;
 import engine.tm2.ThinMatrixCamera;
 import engine.tm2.utils.Light;
 import engine.tm2.utils.OpenGlUtils;

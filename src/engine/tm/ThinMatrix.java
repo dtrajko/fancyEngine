@@ -7,12 +7,11 @@ import engine.graph.MouseInput;
 import engine.sound.SoundManager;
 import engine.tm.render.Renderer;
 import engine.tm.scene.Scene;
-import engine.tm.shaders.StaticShader;
 
 public class ThinMatrix implements IGameLogic {
 	
 	private Renderer renderer;
-	private Window window;
+	// private Window window;
 	private IScene scene;
 
 	@Override

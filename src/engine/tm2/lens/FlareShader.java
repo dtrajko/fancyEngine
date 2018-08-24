@@ -1,12 +1,10 @@
 package engine.tm2.lens;
 
-import config.Config;
 import engine.tm2.settings.WorldSettings;
 import engine.tm2.shaders.ShaderProgram;
 import engine.tm2.shaders.UniformFloat;
 import engine.tm2.shaders.UniformSampler;
 import engine.tm2.shaders.UniformVec4;
-import engine.utils.MyFile;
 
 /**
  * Sets up the shader program for the rendering the lens flare. It gets the
