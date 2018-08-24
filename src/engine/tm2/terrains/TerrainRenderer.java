@@ -5,6 +5,7 @@ import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.opengl.GL11;
 import engine.graph.ICamera;
+import engine.tm.Camera;
 import engine.tm2.ThinMatrixCamera;
 import engine.tm2.settings.WorldSettings;
 import engine.tm2.terrains.ITerrain;
@@ -46,7 +47,7 @@ public class TerrainRenderer implements ITerrainRenderer {
 	 * @param camera
 	 *            - The camera being used for rendering the terrain.
 	 * @param light
-	 *            - The light being used to iluminate the terrain.
+	 *            - The light being used to illuminate the terrain.
 	 * 
 	 * @param clipPlane
 	 *            - The equation of the clipping plane to be used when rendering
@@ -86,13 +87,19 @@ public class TerrainRenderer implements ITerrainRenderer {
 	 */
 	private void prepare(ITerrain terrain, ICamera camera, Light light, Vector4f clipPlane) {
 		terrain.getVao().bind();
+		
 		shader.start();
 		shader.plane.loadVec4(clipPlane);
 		shader.lightBias.loadVec2(light.getLightBias());
 		shader.lightDirection.loadVec3(light.getDirection());
-		shader.lightColour.loadVec3(light.getColor().getVector());
+		shader.lightColor.loadVec3(light.getColor().getVector());
+
+		Matrix4f transformationMatrix = Maths.createTransformationMatrix(new Vector3f(0, 0, -10f), 0, 0, 0, 1);
 		Matrix4f projectionMatrix = ((ThinMatrixCamera) camera).getProjectionMatrix();
-		shader.projectionViewMatrix.loadMatrix(projectionMatrix);
+		Matrix4f viewMatrix = Maths.createViewMatrix((ThinMatrixCamera) camera);
+		shader.loadTransformationMatrix(transformationMatrix);
+		shader.loadProjectionMatrix(projectionMatrix);
+		shader.loadViewMatrix(viewMatrix);
 	}
 
 	/**

@@ -2,8 +2,12 @@ package engine.tm2;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.lwjgl.glfw.GLFW;
+
 import engine.Window;
 import engine.graph.ICamera;
+import engine.graph.Input;
+import engine.tm.Camera;
 
 public class ThinMatrixCamera implements ICamera {
 
@@ -11,8 +15,8 @@ public class ThinMatrixCamera implements ICamera {
 	public static final float NEAR_PLANE = 0.1f;
 	public static final float FAR_PLANE = 1000;
 
-	private final Vector3f position;
-	private final Vector3f rotation;
+	private Vector3f position;
+	private Vector3f rotation;
 
 	private float pitch = 0;
 	private float yaw = 0;
@@ -30,14 +34,17 @@ public class ThinMatrixCamera implements ICamera {
 		this.viewMatrix = new Matrix4f();
 		this.projectionMatrix = createProjectionMatrix();
 	}
-
-	public Matrix4f updateViewMatrix() {		
+	
+	@Override
+	public Matrix4f updateViewMatrix() {
+		Matrix4f viewMatrix = new Matrix4f();
 		viewMatrix.identity();
-		// First do the rotation so camera rotates over its position
-		viewMatrix.rotate((float) Math.toRadians(rotation.x), new Vector3f(1, 0, 0));
-		viewMatrix.rotate((float) Math.toRadians(rotation.y), new Vector3f(0, 1, 0));
-		// Then do the translation
-		viewMatrix.translate(-position.x,-position.y,-position.z);		
+		viewMatrix.rotate((float) Math.toRadians(this.rotation.x), new Vector3f(1, 0, 0));
+		viewMatrix.rotate((float) Math.toRadians(this.rotation.y), new Vector3f(0, 1, 0));
+		viewMatrix.rotate((float) Math.toRadians(this.rotation.z), new Vector3f(0, 0, 1));		
+		Vector3f camPos = this.position;
+		Vector3f negativeCameraPos = new Vector3f(-camPos.x, -camPos.y, -camPos.z);		
+		viewMatrix.translate(negativeCameraPos);
 		return viewMatrix;
 	}
 
@@ -56,16 +63,35 @@ public class ThinMatrixCamera implements ICamera {
 		return projectionMatrix;
 	}
 
+	public Matrix4f createViewMatrix() {
+		Matrix4f viewMatrix = new Matrix4f();
+		viewMatrix.identity();
+		viewMatrix.rotate((float) Math.toRadians(this.rotation.x), new Vector3f(1, 0, 0));
+		viewMatrix.rotate((float) Math.toRadians(this.rotation.y), new Vector3f(0, 1, 0));
+		viewMatrix.rotate((float) Math.toRadians(this.rotation.z), new Vector3f(0, 0, 1));		
+		Vector3f camPos = this.position;
+		Vector3f negativeCameraPos = new Vector3f(-camPos.x, -camPos.y, -camPos.z);		
+		viewMatrix.translate(negativeCameraPos);
+		return viewMatrix;
+	}
+
 	public Matrix4f getProjectionMatrix() {
 		return projectionMatrix;
 	}
 
-	public void move() {
-		// System.out.println("TM Camera move position X " + position.x + " Y: " + position.y + " Z: " + position.z);
-		if (position.x != 0.0f) {
-			int x = 20 / 0;
-		}		
-		updateViewMatrix();
+	public void move(Input input) {
+		if (input.isKeyDown(GLFW.GLFW_KEY_W)) {
+			position.z += +0.02f;
+		}
+		if (input.isKeyDown(GLFW.GLFW_KEY_S)) {
+			position.z += -0.02f;
+		}
+		if (input.isKeyDown(GLFW.GLFW_KEY_A)) {
+			position.x += +0.02f;
+		}
+		if (input.isKeyDown(GLFW.GLFW_KEY_D)) {
+			position.x += -0.02f;
+		}
 	}
 
 	public void reflect(float height){
@@ -83,13 +109,13 @@ public class ThinMatrixCamera implements ICamera {
 	}
 
 	public void setPosition(Vector3f pos) {
-		// this.position = pos;
+		this.position = pos;
 	}
 
 	public void setPosition(float x, float y, float z) {
-		// position.x = x;
-		// position.y = y;
-		// position.z = z;
+		position.x = x;
+		position.y = y;
+		position.z = z;
 	}
 
 	public void setRotation(Vector3f rot) {

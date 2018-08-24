@@ -11,6 +11,7 @@ import engine.Window;
 import engine.graph.ICamera;
 import engine.graph.IRenderer;
 import engine.graph.Transformation;
+import engine.tm.Camera;
 // import entityRenderers.EntityRenderer;
 // import fbos.Fbo;
 // import water.WaterFrameBuffers;
@@ -99,15 +100,7 @@ public class ThinMatrixRenderer implements IRenderer {
 	public void render(Window window, ICamera camera, IScene scene, boolean sceneChanged) {
 		clear();
 		GL11.glViewport(0, 0, window.getWidth(), window.getHeight());
-
 		renderScene(window, (ThinMatrixScene) scene);
-
-        // Update projection matrix once per render cycle
-        window.updateProjectionMatrix();
-
-        // Update projection and view matrices once per render cycle
-        transformation.updateProjectionMatrix(FOV, window.getWidth(), window.getHeight(), Z_NEAR, Z_FAR);
-        transformation.updateViewMatrix(camera);
 	}
 
 	protected void renderScene(Window window, ThinMatrixScene scene) {

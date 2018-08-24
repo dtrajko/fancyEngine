@@ -91,7 +91,7 @@ public class Renderer implements IRenderer {
 	}
 
 	private Matrix4f createProjectionMatrix() {
-		float aspectRatio = Window.width / Window.height;
+		float aspectRatio = (float) Window.width / (float) Window.height;		
 		float y_scale = (float) ((1f / Math.tan(Math.toRadians(FOV / 2f))) * aspectRatio);
 		float x_scale = y_scale / aspectRatio;
 		float frustum_length = FAR_PLANE - NEAR_PLANE;

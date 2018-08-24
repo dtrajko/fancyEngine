@@ -9,6 +9,7 @@ import engine.graph.ICamera;
 import engine.graph.IRenderer;
 import engine.graph.Input;
 import engine.sound.SoundManager;
+import engine.tm.Camera;
 
 public class ThinMatrix2 implements IGameLogic {
 
@@ -43,10 +44,8 @@ public class ThinMatrix2 implements IGameLogic {
 
 	@Override
 	public void update(float interval, Input input) {
-		scene.update(interval);
-
-    	// Update view matrix		
-    	// camera.updateViewMatrix();
+		scene.update(interval, input);
+		((ThinMatrixCamera) scene.getCamera()).move(input);
 	}
 
 	@Override

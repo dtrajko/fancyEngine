@@ -22,6 +22,7 @@ import de.matthiasmann.twl.utils.PNGDecoder;
 import engine.graph.Camera;
 import engine.graph.HeightMapMesh;
 import engine.graph.ICamera;
+import engine.graph.Input;
 import engine.graph.InstancedMesh;
 import engine.graph.Material;
 import engine.graph.Mesh;
@@ -261,7 +262,7 @@ public class Scene implements IScene {
 		}
 	}
 
-    public void update(float interval) {
+    public void update(float interval, Input input) {
     	if (particleEmitter != null) {
     		particleEmitter.update((long)(interval * 500));
     	}

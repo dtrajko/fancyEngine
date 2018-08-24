@@ -33,15 +33,19 @@ public class StaticShader extends ShaderProgram {
 	}
 	
 	public void loadTransformationMatrix(Matrix4f matrix) {
+		// System.out.println("StaticShader transformationMatrix: " + matrix);
 		super.loadMatrix(location_transformationMatrix, matrix);
+	}
+
+	public void loadProjectionMatrix(Matrix4f projection) {
+		// System.out.println("StaticShader projectionMatrix: " + projection);
+		super.loadMatrix(location_projectionMatrix, projection);
 	}
 
 	public void loadViewMatrix(Camera camera) {
 		Matrix4f viewMatrix = Maths.createViewMatrix(camera);
+		// System.out.println("StaticShader viewMatrix: " + viewMatrix);
 		super.loadMatrix(location_viewMatrix, viewMatrix);
 	}
 
-	public void loadProjectionMatrix(Matrix4f projection) {
-		super.loadMatrix(location_projectionMatrix, projection);
-	}
 }

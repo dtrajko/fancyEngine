@@ -4,6 +4,7 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import engine.tm.Camera;
+import engine.tm2.ThinMatrixCamera;
 
 public class Maths {
 

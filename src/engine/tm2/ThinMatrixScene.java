@@ -6,6 +6,7 @@ import engine.IScene;
 import engine.SceneLight;
 import engine.Window;
 import engine.graph.ICamera;
+import engine.graph.Input;
 import engine.graph.particles.IParticleEmitter;
 import engine.tm2.generators.ColorGenerator;
 import engine.tm2.generators.PerlinNoise;
@@ -67,8 +68,25 @@ public class ThinMatrixScene implements IScene {
 	}
 
 	@Override
-	public void update(float interval) {
-		this.camera.move();
+	public void update(float interval, Input input) {
+		this.camera.move(input);
+	}
+
+	@Override
+	public void save() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void cleanup() {
+		skyBox.delete();
+		sun.delete();
+	}
+
+	@Override
+	public void resetScene(Window window, ICamera camera, IGameLogic game) {
+		// TODO Auto-generated method stub
 	}
 
 	public ITerrain getTerrain() {
@@ -101,22 +119,5 @@ public class ThinMatrixScene implements IScene {
 
 	public float getWaterHeight() {
 		return waterHeight;
-	}
-
-	@Override
-	public void save() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void cleanup() {
-		skyBox.delete();
-		sun.delete();
-	}
-
-	@Override
-	public void resetScene(Window window, ICamera camera, IGameLogic game) {
-		// TODO Auto-generated method stub
 	}
 }

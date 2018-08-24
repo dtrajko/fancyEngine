@@ -5,6 +5,7 @@ import engine.IGameLogic;
 import engine.IScene;
 import engine.Window;
 import engine.graph.ICamera;
+import engine.graph.Input;
 import engine.tm.Camera;
 import engine.tm.entities.Entity;
 import engine.tm.models.CubeMeshSimple;
@@ -27,7 +28,7 @@ public class Scene implements IScene {
 		model = loader.loadToVAO(CubeMeshSimple.vertices, CubeMeshSimple.textureCoords, CubeMeshSimple.indices);
 		texture = new ModelTexture(loader.loadTexture("frame"));
 		texturedModel = new TexturedModel(model, texture);
-		entity = new Entity(texturedModel, new Vector3f(0, 0, -2), 0, 0, 0, 1);
+		entity = new Entity(texturedModel, new Vector3f(0, 0, -4), 0, 0, 0, 1);
 		camera = new Camera();
 	}
 
@@ -40,7 +41,7 @@ public class Scene implements IScene {
 	}
 
 	@Override
-	public void update(float interval) {
+	public void update(float interval, Input input) {
 		entity.increasePosition(0, 0, 0);
 		entity.increaseRotation(1, 1, 0);
 	}
