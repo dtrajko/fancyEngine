@@ -11,7 +11,7 @@ import config.Config;
 import engine.IScene;
 import engine.Scene;
 import engine.Window;
-import engine.graph.MouseInput;
+import engine.graph.Input;
 import engine.graph.Texture;
 import engine.gui.GuiElement;
 import engine.gui.GuiManager;
@@ -73,10 +73,10 @@ public class ImportPopup {
 		}	
 	}
 
-	public void input(GuiManager guiManager, MouseInput mouseInput, Window window, IScene scene) {
+	public void input(GuiManager guiManager, Input input, Window window, IScene scene) {
     	Vector2f mouseNDC = guiManager.getNormalisedDeviceCoordinates(
-        		(float) mouseInput.getMousePosition().x,
-        		(float) mouseInput.getMousePosition().y, window);
+        		(float) input.getMousePosition().x,
+        		(float) input.getMousePosition().y, window);
     		for (GuiElement gb : guiManager.getGuiElements()) {
     			gb.setMouseOver(false);
     		}
@@ -84,9 +84,9 @@ public class ImportPopup {
         	if (nextBlock instanceof GuiElement && nextBlock.isImportDialog()) {
         		nextBlock.setMouseOver(true);
         	}
-        if (mouseInput.isMouseButtonReleased(GLFW.GLFW_MOUSE_BUTTON_1) || 
-        	mouseInput.isMouseButtonReleased(GLFW.GLFW_MOUSE_BUTTON_2) ||
-        	mouseInput.isMouseButtonReleased(GLFW.GLFW_MOUSE_BUTTON_3)) {
+        if (input.isMouseButtonReleased(GLFW.GLFW_MOUSE_BUTTON_1) || 
+        	input.isMouseButtonReleased(GLFW.GLFW_MOUSE_BUTTON_2) ||
+        	input.isMouseButtonReleased(GLFW.GLFW_MOUSE_BUTTON_3)) {
 
         	if (nextBlock instanceof GuiElement && nextBlock.isClickable() && nextBlock.getTitle() != null) {
         		// System.out.println("ImportPopup importing the selected save file: [" + nextBlock.getTitle() + "]");

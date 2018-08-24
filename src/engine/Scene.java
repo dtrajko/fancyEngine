@@ -68,8 +68,13 @@ public class Scene implements IScene {
     }
 
 	@Override
-	public void init(Window window, ICamera camera) {
-		// TODO Auto-generated method stub
+	public void resetScene(Window window, ICamera camera, IGameLogic game) {
+		
+	}
+
+	@Override
+	public ICamera getCamera() {
+		return null;
 	}
 
     public void init(Window window, Camera camera, HashMap<String, Mesh> meshTypesMap, SoundManager soundMgr, GuiManager guiManager) throws Exception {
@@ -646,10 +651,5 @@ public class Scene implements IScene {
 
 	public void generateBlockParticles(GameItem selectedGameItem, Camera camera) {
 		setupBlockParticles(selectedGameItem, camera);
-	}
-
-	@Override
-	public void resetScene(Window window, ICamera camera, IGameLogic game) {
-		
 	}
 }

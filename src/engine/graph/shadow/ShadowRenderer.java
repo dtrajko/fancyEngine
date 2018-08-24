@@ -75,7 +75,7 @@ public class ShadowRenderer {
     }
 
     private void update(Window window, Matrix4f viewMatrix, IScene scene) {
-        SceneLight sceneLight = scene.getSceneLight();
+        SceneLight sceneLight = ((Scene) scene).getSceneLight();
         DirectionalLight directionalLight = sceneLight != null ? sceneLight.getDirectionalLight() : null;
         for (int i = 0; i < NUM_CASCADES; i++) {
             ShadowCascade shadowCascade = shadowCascades.get(i);

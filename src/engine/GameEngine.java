@@ -1,6 +1,6 @@
 package engine;
 
-import engine.graph.MouseInput;
+import engine.graph.Input;
 
 public class GameEngine implements Runnable {
 
@@ -10,7 +10,7 @@ public class GameEngine implements Runnable {
     private final Thread gameLoopThread;
     private final Timer timer;
     private final IGameLogic gameLogic;
-    private final MouseInput mouseInput;
+    private final Input input;
     private double lastFps;
     private int fps;
     private String windowTitle;
@@ -23,7 +23,7 @@ public class GameEngine implements Runnable {
         this.windowTitle = windowTitle;
         gameLoopThread = new Thread(this, "GAME_LOOP_THREAD");
         window = new Window(windowTitle, width, height, vSync, opts);
-        mouseInput = new MouseInput(window);
+        input = new Input(window);
         this.gameLogic = gameLogic;
         timer = new Timer();
     }
@@ -33,7 +33,7 @@ public class GameEngine implements Runnable {
         this.gameLoopThread = null;
         this.timer = null;
         this.gameLogic = null;
-        this.mouseInput = null;
+        this.input = null;
     }
 
     public void start() {
@@ -60,7 +60,7 @@ public class GameEngine implements Runnable {
     protected void init() throws Exception {
         window.init();
         timer.init();
-        mouseInput.init(window);
+        input.init(window);
         gameLogic.init(window);
         lastFps = timer.getTime();
         fps = 0;
@@ -107,13 +107,13 @@ public class GameEngine implements Runnable {
     }
 
     protected void input() {
-        mouseInput.input(window);
-        gameLogic.input(window, mouseInput);
+        input.input(window);
+        gameLogic.input(window, input);
     }
 
     protected void update(float interval) {
-        gameLogic.update(interval, mouseInput);
-        mouseInput.update(window);
+        gameLogic.update(interval, input);
+        input.update(window);
     }
 
     protected void render() {

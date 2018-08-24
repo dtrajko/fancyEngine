@@ -60,12 +60,14 @@ public class ThinMatrixRenderer implements IRenderer {
 	@Override
 	public void init(Window window, IScene scene) {
 		this.scene = (ThinMatrixScene) scene;
+		this.terrainRenderer = new TerrainRenderer(false);
+		/*
 		this.skyRenderer = new SkyboxRenderer();
 		this.sunRenderer = new SunRenderer();
-		this.terrainRenderer = new TerrainRenderer(false);
 		this.waterMeshRenderer = new WaterMeshRenderer();
 		this.refractionFbo = createWaterFbo(window.getWidth() / 2, window.getHeight() / 2, true);
 		this.reflectionFbo = createWaterFbo(window.getWidth(), window.getHeight(), false);
+		*/
 	}
 
 	/**
@@ -110,29 +112,30 @@ public class ThinMatrixRenderer implements IRenderer {
 
 	protected void renderScene(Window window, ThinMatrixScene scene) {
 		renderMainPass(window, scene);
-		GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
-		renderWaterRefractionPass(window, scene);
-		renderWaterReflectionPass(window, scene);
-		GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
-		renderMainPass(window, scene);
+		// GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
+		// renderWaterRefractionPass(window, scene);
+		// renderWaterReflectionPass(window, scene);
+		// GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
+		// renderMainPass(window, scene);
 	}
 
 	private void renderMainPass(Window window, ThinMatrixScene scene) {
 		prepare();
+		terrainRenderer.render(scene.getTerrain(), scene.getCamera(), scene.getLight(), new Vector4f(0.0f, 0.0f, 0.0f, 0.0f));
+		/*
 		skyRenderer.render(scene.getSkyBox(), scene.getCamera());
 		sunRenderer.render(scene.getSun(), scene.getCamera());
 		if (scene.getLensFlare() != null) {
 			Vector3f sunWorldPos = new Vector3f(); // scene.getSun().getWorldPosition(scene.getCamera().getPosition());
 			scene.getLensFlare().render(window, scene.getCamera(), sunWorldPos);
 		}
-		//// entityRenderer.render(scene.getAllEntities(), scene.getAdditionalEntities(), scene.getCamera(), scene.getSun(), NO_CLIP);
-		terrainRenderer.render(scene.getTerrain(), scene.getCamera(), scene.getLight(), new Vector4f(0.0f, 0.0f, 0.0f, 0.0f));
-		//// waterRenderer.render(scene.getWater(), scene.getCamera(), scene.getLightDirection());
+		entityRenderer.render(scene.getAllEntities(), scene.getAdditionalEntities(), scene.getCamera(), scene.getSun(), NO_CLIP);
+		waterRenderer.render(scene.getWater(), scene.getCamera(), scene.getLightDirection());
 		waterMeshRenderer.render(scene.getWaterMesh(), scene.getCamera(), scene.getLight(), reflectionFbo.getColourBuffer(0), refractionFbo.getColourBuffer(0), refractionFbo.getDepthBuffer());
-		//// animModelRenderer.render(scene.getAnimatedPlayer(), scene.getCamera(), scene.getLightDirection());
-
-		//// ParticleMaster.update(scene.getCamera());
-		//// ParticleMaster.renderParticles(scene.getCamera());
+		animModelRenderer.render(scene.getAnimatedPlayer(), scene.getCamera(), scene.getLightDirection());
+		ParticleMaster.update(scene.getCamera());
+		ParticleMaster.renderParticles(scene.getCamera());
+		*/
 	}
 
 	/**
@@ -175,16 +178,18 @@ public class ThinMatrixRenderer implements IRenderer {
 
 	@Override
 	public void cleanup() {
-		// this.animModelRenderer.cleanUp();
-		// this.entityRenderer.cleanUp();
+		this.terrainRenderer.cleanUp();
+		/*
+		this.animModelRenderer.cleanUp();
+		this.entityRenderer.cleanUp();
 		this.sunRenderer.cleanUp();
 		this.skyRenderer.cleanUp();
 		this.waterMeshRenderer.cleanUp();
-		// this.waterRenderer.cleanUp();
-		this.terrainRenderer.cleanUp();
-		// this.waterFbos.cleanUp();
+		this.waterRenderer.cleanUp();
+		this.waterFbos.cleanUp();
 		this.refractionFbo.delete();
 		this.reflectionFbo.delete();
+		*/
 	}
 
 	public static void enableCulling() {

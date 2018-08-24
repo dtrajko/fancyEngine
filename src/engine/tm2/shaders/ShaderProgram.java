@@ -16,6 +16,7 @@ import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL32;
 
@@ -188,11 +189,9 @@ public abstract class ShaderProgram {
 		}
 		glUniform1f(location, toLoad);
 	}
-	
+
 	protected void loadMatrix(int location, Matrix4f matrix) {
-		matrix.get(matrixBuffer);
-		matrixBuffer.flip();
-		glUniformMatrix4fv(location, false, matrixBuffer);
+		GL20.glUniformMatrix4fv(location, false, matrix.get(matrixBuffer)); // For LWJGL 3 / JOML
 	}
 
 	protected void getAllUniformLocations() {

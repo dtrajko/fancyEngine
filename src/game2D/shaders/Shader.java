@@ -78,7 +78,6 @@ public class Shader {
 			FloatBuffer buffer = BufferUtils.createFloatBuffer(16);
 			value.get(buffer);
 			GL20.glUniformMatrix4fv(location, false, buffer);
-			// System.out.println("Set value " + value + " to uniform " + name);
 		}
 	}
 

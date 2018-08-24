@@ -3,7 +3,7 @@ package engine.tm;
 import engine.IGameLogic;
 import engine.IScene;
 import engine.Window;
-import engine.graph.MouseInput;
+import engine.graph.Input;
 import engine.sound.SoundManager;
 import engine.tm.render.Renderer;
 import engine.tm.scene.Scene;
@@ -11,29 +11,32 @@ import engine.tm.scene.Scene;
 public class ThinMatrix implements IGameLogic {
 	
 	private Renderer renderer;
-	// private Window window;
+	private Window window;
 	private IScene scene;
+	private Input input;
 
 	@Override
 	public void init(Window window) throws Exception {
 		renderer = new Renderer();
 		renderer.init(window, null);
 		scene = new Scene();
-		scene.init(window, null);
+		((Scene) scene).init(window);
 	}
 
 	@Override
-	public void input(Window window, MouseInput mouseInput) {
-		// TODO Auto-generated method stub
+	public void input(Window window, Input input) {
+		this.input = input;
 	}
 
 	@Override
-	public void update(float interval, MouseInput mouseInput) {
+	public void update(float interval, Input input) {
+		scene.update(interval);
+		((Camera) scene.getCamera()).move(input);
 	}
 
 	@Override
 	public void render(Window window) {
-		renderer.render(window, null, scene, true);
+		renderer.render(window, scene.getCamera(), scene, true);
 	}
 
 	@Override
@@ -43,25 +46,21 @@ public class ThinMatrix implements IGameLogic {
 
 	@Override
 	public Window getWindow() {
-		// TODO Auto-generated method stub
-		return null;
+		return window;
 	}
 
 	@Override
-	public MouseInput getInput() {
-		// TODO Auto-generated method stub
-		return null;
+	public Input getInput() {
+		return input;
 	}
 
 	@Override
 	public SoundManager getSoundManager() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void initGui() {
-		// TODO Auto-generated method stub
 
 	}
 }

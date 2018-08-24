@@ -12,7 +12,7 @@ import engine.Scene;
 import engine.graph.Camera;
 import engine.graph.InstancedMesh;
 import engine.graph.Mesh;
-import engine.graph.MouseInput;
+import engine.graph.Input;
 import engine.items.GameItem;
 
 public class CameraBoxSelectionDetector {
@@ -29,7 +29,7 @@ public class CameraBoxSelectionDetector {
         nearFar = new Vector2f();
     }
 
-    public void selectGameItem(IScene scene, Camera camera, MouseInput mouseInput, Mesh nextMesh) {
+    public void selectGameItem(IScene scene, Camera camera, Input input, Mesh nextMesh) {
     	
     	GameItem selectedGameItem = null;
         float closestDistance = Float.POSITIVE_INFINITY;
@@ -70,7 +70,7 @@ public class CameraBoxSelectionDetector {
 
         if (selectedGameItem != null) {
         	selectedGameItem.setSelected(true);
-            if (mouseInput.isMouseButtonPressed(GLFW.GLFW_MOUSE_BUTTON_1)) {
+            if (input.isMouseButtonPressed(GLFW.GLFW_MOUSE_BUTTON_1)) {
             	((Scene) scene).playSoundBreakingBlock();
             	((Scene) scene).removeGameItem(selectedGameItem);
             	((Scene) scene).generateBlockParticles(selectedGameItem, camera);
@@ -79,7 +79,7 @@ public class CameraBoxSelectionDetector {
             nextMesh = nextMesh != null ? nextMesh : selectedGameItem.getMesh();
             
             // middle button - create a new cube above the selected cube
-            if (mouseInput.isMouseButtonPressed(GLFW.GLFW_MOUSE_BUTTON_3)) {
+            if (input.isMouseButtonPressed(GLFW.GLFW_MOUSE_BUTTON_3)) {
             	
             	GameItem newGameItem = new GameItem(nextMesh);
             	newGameItem.setPosition(
@@ -99,7 +99,7 @@ public class CameraBoxSelectionDetector {
             	}
             }
             // left button - create a new cube in camera direction
-            if (mouseInput.isMouseButtonPressed(GLFW.GLFW_MOUSE_BUTTON_2)) {
+            if (input.isMouseButtonPressed(GLFW.GLFW_MOUSE_BUTTON_2)) {
 
             	GameItem newGameItem = new GameItem(nextMesh);
             	Vector3f camPos = camera.getPosition();

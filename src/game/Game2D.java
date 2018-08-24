@@ -10,7 +10,7 @@ import engine.GameEngine;
 import engine.IGameLogic;
 import engine.Window;
 import engine.graph.Camera;
-import engine.graph.MouseInput;
+import engine.graph.Input;
 import engine.sound.SoundManager;
 import game2D.assets.Assets;
 import game2D.entities.Player;
@@ -33,7 +33,7 @@ public class Game2D implements IGameLogic {
 	private static TileRenderer renderer;
 	private static TileSheet sheet;
 	private static Window window;
-	private MouseInput mouseInput;
+	private Input input;
 	private static float SPEED = 0.1f;
 	double frame_cap = 1.0 / GameEngine.TARGET_FPS;
 	private final SoundManager soundMgr;
@@ -77,8 +77,8 @@ public class Game2D implements IGameLogic {
 	}
 
 	@Override
-	public void input(Window window, MouseInput mouseInput) {
-		this.mouseInput = mouseInput;
+	public void input(Window window, Input input) {
+		this.input = input;
 		if (switchLevel == true) {
 			beginLevel();
 			switchLevel = false;
@@ -86,14 +86,14 @@ public class Game2D implements IGameLogic {
 		player.input(SPEED, camera, level, this);
 		level.correctCamera(camera);
 
-        if (mouseInput.isKeyReleased(GLFW.GLFW_KEY_ESCAPE)) {
+        if (input.isKeyReleased(GLFW.GLFW_KEY_ESCAPE)) {
         	window.close();
         }
 	}
 
 	@Override
-	public void update(float interval, MouseInput mouseInput) {
-		mouseInput.update(window);
+	public void update(float interval, Input input) {
+		input.update(window);
 		updateGui();
 		level.update((float) frame_cap, window, camera, this);
 	}
@@ -148,8 +148,8 @@ public class Game2D implements IGameLogic {
 		return current_level;
 	}
 
-	public MouseInput getInput() {
-		return mouseInput;
+	public Input getInput() {
+		return input;
 	}
 
 	public Window getWindow() {

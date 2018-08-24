@@ -7,7 +7,7 @@ import org.lwjgl.opengl.GL11;
 import engine.Window;
 import static org.lwjgl.glfw.GLFW.*;
 
-public class MouseInput {
+public class Input {
 
     private final Vector2d previousPos;
     private final Vector2d currentPos;
@@ -21,7 +21,7 @@ public class MouseInput {
     private float mouseWheelDirection;
     // private float mouseWheelDirectionPrev;
 
-    public MouseInput(Window window) {
+    public Input(Window window) {
         previousPos = new Vector2d(0, 0);
         currentPos = new Vector2d(0, 0);
         displVec = new Vector2f();

@@ -12,7 +12,7 @@ import engine.Timer;
 import engine.Window;
 import engine.Scene.Sounds;
 import engine.graph.Camera;
-import engine.graph.MouseInput;
+import engine.graph.Input;
 import engine.sound.SoundBuffer;
 import engine.sound.SoundListener;
 import engine.sound.SoundManager;
@@ -32,7 +32,7 @@ public class FroggerPlayer extends Player {
 	public static final int ANIM_SIZE = 2;
 	private static final int TOTAL_LIVES = 7;
 	private static int lives;
-	private MouseInput input;
+	private Input input;
 	private Window window;
 	private final Timer timer;
 	private double lastMovementTime;

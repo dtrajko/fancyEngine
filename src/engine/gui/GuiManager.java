@@ -12,7 +12,7 @@ import engine.IScene;
 import engine.Scene;
 import engine.Window;
 import engine.graph.Mesh;
-import engine.graph.MouseInput;
+import engine.graph.Input;
 import engine.graph.Texture;
 import engine.gui.popups.ImportPopup;
 import engine.gui.popups.InventoryPopup;
@@ -65,19 +65,19 @@ public class GuiManager {
     	return guiElements;
     }
 
-	public boolean input(MouseInput mouseInput, Window window, IScene scene) {
+	public boolean input(Input input, Window window, IScene scene) {
         
         if (inventory_popup.isEnabled()) {
-        	inventory_popup.input(this, mouseInput, window, scene);
+        	inventory_popup.input(this, input, window, scene);
             nextBlock = inventory_popup.getNextBlock();
         }
 
         if (import_popup.isEnabled()) {
-        	import_popup.input(this, mouseInput, window, scene);
+        	import_popup.input(this, input, window, scene);
         }
         
         if (quit_popup.isEnabled()) {
-        	quit_popup.input(this, mouseInput, window);
+        	quit_popup.input(this, input, window);
         }
 
         return updateEnabled;

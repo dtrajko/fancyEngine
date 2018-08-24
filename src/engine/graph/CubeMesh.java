@@ -90,7 +90,7 @@ public class CubeMesh extends Mesh {
 		0.0f, 0.5f, 0.5f,
     };
 
-	public static float[] textCoords = new float[] {
+	public static float[] textureCoords = new float[] {
 		0.0f, 0.0f,
 		0.0f, 0.5f,
 		0.5f, 0.5f,

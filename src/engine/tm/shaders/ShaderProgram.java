@@ -147,11 +147,9 @@ public abstract class ShaderProgram {
 		}
 		GL20.glUniform1f(location, toLoad);
 	}
-	
+
 	protected void loadMatrix(int location, Matrix4f matrix) {
-		matrix.get(matrixBuffer);
-		matrixBuffer.flip();
-		GL20.glUniformMatrix4fv(location, false, matrixBuffer);
+		GL20.glUniformMatrix4fv(location, false, matrix.get(matrixBuffer)); // For LWJGL 3 / JOML
 	}
 
 	private int loadShader(MyFile file, int type) {

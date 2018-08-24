@@ -1,7 +1,6 @@
 package engine.tm2;
 
 import org.joml.Vector3f;
-import config.Config;
 import engine.IGameLogic;
 import engine.IScene;
 import engine.SceneLight;
@@ -38,7 +37,6 @@ public class ThinMatrixScene implements IScene {
 	private WaterMesh water;
 	// private List<ParticleSystemComplex> particleSystems = new ArrayList<ParticleSystemComplex>();
 
-	@Override
 	public void init(Window window, ICamera camera) {
 		this.camera = (ThinMatrixCamera) camera;
 
@@ -103,30 +101,6 @@ public class ThinMatrixScene implements IScene {
 
 	public float getWaterHeight() {
 		return waterHeight;
-	}
-
-	@Override
-	public boolean isRenderShadows() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public void setRenderShadows(boolean shadowsEnabled) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public SceneLight getSceneLight() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public IParticleEmitter[] getParticleEmitters() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override

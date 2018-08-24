@@ -10,7 +10,7 @@ import engine.Scene;
 import engine.Window;
 import engine.graph.Camera;
 import engine.graph.Mesh;
-import engine.graph.MouseInput;
+import engine.graph.Input;
 import engine.graph.Renderer;
 import engine.gui.GuiElement;
 import engine.gui.GuiManager;
@@ -39,7 +39,7 @@ public class Game3D implements IGameLogic {
     private boolean sceneChanged;
     private GuiManager guiManager;
     // private boolean crouchEnabled = false;
-    private MouseInput mouseInput;
+    private Input input;
 
     public static final int blockScale = 1;
 
@@ -61,7 +61,7 @@ public class Game3D implements IGameLogic {
         scene = new Scene();
         renderer.init(window, scene);
         ((Scene) scene).init(window, camera, meshTypesMap, soundMgr, guiManager);
-        scene.setRenderShadows(SHADOWS_ENABLED);
+        ((Scene) scene).setRenderShadows(SHADOWS_ENABLED);
         selectDetectorCamera = new CameraBoxSelectionDetector();
     }
 
@@ -81,15 +81,15 @@ public class Game3D implements IGameLogic {
     }
 
     @Override
-    public void input(Window window, MouseInput mouseInput) {
+    public void input(Window window, Input input) {
  
-    	this.mouseInput = mouseInput;
+    	this.input = input;
     	sceneChanged = false;
         cameraInc.set(0, 0, 0);
 
-        guiManager.input(mouseInput, window, scene);
+        guiManager.input(input, window, scene);
 
-        if (mouseInput.isKeyReleased(GLFW.GLFW_KEY_ESCAPE)) {
+        if (input.isKeyReleased(GLFW.GLFW_KEY_ESCAPE)) {
         	if (!guiManager.areAllGuisClosed()) {
         		guiManager.closeAllGuis(window);
         	} else {
@@ -98,22 +98,22 @@ public class Game3D implements IGameLogic {
         	sceneChanged = true;
         }
 
-        if (mouseInput.isKeyReleased(GLFW.GLFW_KEY_E)) {
+        if (input.isKeyReleased(GLFW.GLFW_KEY_E)) {
         	sceneChanged = true;
         	guiManager.toggleInventoryDialog(window);
         }
 
-        if (mouseInput.isKeyReleased(GLFW.GLFW_KEY_K)) {
+        if (input.isKeyReleased(GLFW.GLFW_KEY_K)) {
         	scene.save();
         }
 
-        if (mouseInput.isKeyReleased(GLFW.GLFW_KEY_L)) {
+        if (input.isKeyReleased(GLFW.GLFW_KEY_L)) {
         	sceneChanged = true;
         	guiManager.toggleImportDialog(window);
         	// scene.load(meshTypesMap);
         }
 
-        if (mouseInput.isKeyReleased(GLFW.GLFW_KEY_C)) {
+        if (input.isKeyReleased(GLFW.GLFW_KEY_C)) {
         	try {
 				((Scene) scene).generateTerrain(meshTypesMap);
 			} catch (Exception e) {
@@ -122,7 +122,7 @@ public class Game3D implements IGameLogic {
 			}
         }
 
-        if (mouseInput.isKeyReleased(GLFW.GLFW_KEY_G)) {
+        if (input.isKeyReleased(GLFW.GLFW_KEY_G)) {
         	actualGravity = (actualGravity == 0.0f) ? GRAVITY : 0.0f;
         }
 
@@ -137,7 +137,7 @@ public class Game3D implements IGameLogic {
         	SPEED = 5;
         }
 
-        float mouseWheelDelta = mouseInput.getMouseWheelDelta();
+        float mouseWheelDelta = input.getMouseWheelDelta();
         if (mouseWheelDelta != 0) {
         	cameraInc.z = SPEED * 4 * mouseWheelDelta;
         }
@@ -167,7 +167,7 @@ public class Game3D implements IGameLogic {
         }
 
         /* crouch mode not working yet
-        if (actualGravity < 0 && mouseInput.isKeyReleased(GLFW.GLFW_KEY_LEFT_SHIFT)) {
+        if (actualGravity < 0 && input.isKeyReleased(GLFW.GLFW_KEY_LEFT_SHIFT)) {
         	if (!crouchEnabled) {
         		camera.setActualHeight(Camera.HEIGHT - blockScale * 2);
         		crouchEnabled = true;
@@ -192,15 +192,15 @@ public class Game3D implements IGameLogic {
     }
 
 	@Override
-    public void update(float interval, MouseInput mouseInput) {
+    public void update(float interval, Input input) {
 		if (guiManager.getUpdateEnabled()) {
-			updateConditional(interval, mouseInput);
+			updateConditional(interval, input);
 		}
     }
 
-	public void updateConditional(float interval, MouseInput mouseInput) {
+	public void updateConditional(float interval, Input input) {
     	// Update camera based on mouse
-        Vector2f rotVec = mouseInput.getDisplVec();
+        Vector2f rotVec = input.getDisplVec();
         camera.moveRotation(rotVec.x * MOUSE_SENSITIVITY, rotVec.y * MOUSE_SENSITIVITY, 0);
 
         // Vector3f camPos = camera.getPosition();
@@ -226,7 +226,7 @@ public class Game3D implements IGameLogic {
         }
         float zValue = (float) Math.cos(Math.toRadians(lightAngle));
         float yValue = (float) Math.sin(Math.toRadians(lightAngle));
-        Vector3f lightDirection = scene.getSceneLight().getDirectionalLight().getDirection();
+        Vector3f lightDirection = ((Scene) scene).getSceneLight().getDirectionalLight().getDirection();
         lightDirection.x = 0;
         lightDirection.y = yValue;
         lightDirection.z = zValue;
@@ -240,7 +240,7 @@ public class Game3D implements IGameLogic {
         // disable editing while inventory GUI is open
         if (!guiManager.isInventoryOn()) {
         	Mesh nextMesh = guiManager.getNextBlock() instanceof GuiElement ? guiManager.getNextBlock().getMesh() : null;
-        	selectDetectorCamera.selectGameItem(scene, camera, mouseInput, nextMesh);
+        	selectDetectorCamera.selectGameItem(scene, camera, input, nextMesh);
         }
 
     	// Update view matrix
@@ -270,8 +270,8 @@ public class Game3D implements IGameLogic {
 	}
 
 	@Override
-	public MouseInput getInput() {
-		return mouseInput;
+	public Input getInput() {
+		return input;
 	}
 
 	@Override

@@ -6,7 +6,7 @@ import org.lwjgl.glfw.GLFW;
 
 import config.Config;
 import engine.Window;
-import engine.graph.MouseInput;
+import engine.graph.Input;
 import engine.graph.Texture;
 import engine.gui.GuiElement;
 import engine.gui.GuiManager;
@@ -69,10 +69,10 @@ public class QuitPopup {
 		textMaster.setGuiText(0, guiConfirm);
 	}
 
-	public void input(GuiManager guiManager, MouseInput mouseInput, Window window) {
+	public void input(GuiManager guiManager, Input input, Window window) {
     	Vector2f mouseNDC = guiManager.getNormalisedDeviceCoordinates(
-        		(float) mouseInput.getMousePosition().x,
-        		(float) mouseInput.getMousePosition().y, window);
+        		(float) input.getMousePosition().x,
+        		(float) input.getMousePosition().y, window);
     		for (GuiElement gb : guiManager.getGuiElements()) {
     			gb.setMouseOver(false);
     		}
@@ -80,9 +80,9 @@ public class QuitPopup {
         	if (nextBlock instanceof GuiElement && nextBlock.isQuitPopup()) {
         		nextBlock.setMouseOver(true);
         	}
-        if (mouseInput.isMouseButtonReleased(GLFW.GLFW_MOUSE_BUTTON_1) || 
-        	mouseInput.isMouseButtonReleased(GLFW.GLFW_MOUSE_BUTTON_2) ||
-        	mouseInput.isMouseButtonReleased(GLFW.GLFW_MOUSE_BUTTON_3)) {
+        if (input.isMouseButtonReleased(GLFW.GLFW_MOUSE_BUTTON_1) || 
+        	input.isMouseButtonReleased(GLFW.GLFW_MOUSE_BUTTON_2) ||
+        	input.isMouseButtonReleased(GLFW.GLFW_MOUSE_BUTTON_3)) {
         	guiManager.toggleQuitPopup(window);
         	if (nextBlock instanceof GuiElement && nextBlock.isCancelButton()) {
         		// do nothing, close the popup

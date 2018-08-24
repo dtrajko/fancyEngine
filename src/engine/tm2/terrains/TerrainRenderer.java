@@ -1,9 +1,11 @@
 package engine.tm2.terrains;
 
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.opengl.GL11;
 import engine.graph.ICamera;
+import engine.tm2.ThinMatrixCamera;
 import engine.tm2.settings.WorldSettings;
 import engine.tm2.terrains.ITerrain;
 import engine.tm2.utils.Light;
@@ -89,9 +91,8 @@ public class TerrainRenderer implements ITerrainRenderer {
 		shader.lightBias.loadVec2(light.getLightBias());
 		shader.lightDirection.loadVec3(light.getDirection());
 		shader.lightColour.loadVec3(light.getColor().getVector());
-		// shader.projectionViewMatrix.loadMatrix(((ThinMatrixCamera) camera).getProjectionViewMatrix());
-		// shader.projectionViewMatrix.loadMatrix(((ThinMatrixCamera) camera).getProjectionMatrix());
-		shader.projectionViewMatrix.loadMatrix(Maths.createTransformationMatrix(new Vector3f(), 0, 0, 0, 1));
+		Matrix4f projectionMatrix = ((ThinMatrixCamera) camera).getProjectionMatrix();
+		shader.projectionViewMatrix.loadMatrix(projectionMatrix);
 	}
 
 	/**

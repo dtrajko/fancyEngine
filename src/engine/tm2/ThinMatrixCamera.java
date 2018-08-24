@@ -8,7 +8,7 @@ import engine.graph.ICamera;
 public class ThinMatrixCamera implements ICamera {
 
 	private static final float FOV = 60;
-	public static final float NEAR_PLANE = 0.5f;
+	public static final float NEAR_PLANE = 0.1f;
 	public static final float FAR_PLANE = 1000;
 
 	private final Vector3f position;
@@ -41,19 +41,22 @@ public class ThinMatrixCamera implements ICamera {
 		return viewMatrix;
 	}
 
-	private Matrix4f createProjectionMatrix() {
-		float aspectRatio = (float) window.getWidth() / window.getHeight();
-		projectionMatrix = new Matrix4f().identity(); // new Matrix4f().perspective(FOV, aspectRatio, NEAR_PLANE, FAR_PLANE);
-		return projectionMatrix; // projectionMatrix;
-	}
-
-	public Matrix4f getProjectionViewMatrix() {
-		// Matrix4f pvm = projectionMatrix.mul(viewMatrix);
-		return new Matrix4f().identity(); // pvm;
+	public Matrix4f createProjectionMatrix() {
+		float aspectRatio = Window.width / Window.height;
+		float y_scale = (float) ((1f / Math.tan(Math.toRadians(FOV / 2f))) * aspectRatio);
+		float x_scale = y_scale / aspectRatio;
+		float frustum_length = FAR_PLANE - NEAR_PLANE;
+		projectionMatrix = new Matrix4f();
+		projectionMatrix.m00(x_scale);
+		projectionMatrix.m11(y_scale);
+		projectionMatrix.m22(-((FAR_PLANE + NEAR_PLANE) / frustum_length));
+		projectionMatrix.m23(-1);
+		projectionMatrix.m32(-((2 * FAR_PLANE * NEAR_PLANE) / frustum_length));
+		projectionMatrix.m33(0);
+		return projectionMatrix;
 	}
 
 	public Matrix4f getProjectionMatrix() {
-		// System.out.println("ThinMatrixCamera getProjectionMatrix " + projectionMatrix);
 		return projectionMatrix;
 	}
 

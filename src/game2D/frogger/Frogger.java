@@ -14,7 +14,7 @@ import engine.IGameLogic;
 import engine.Utils;
 import engine.Window;
 import engine.graph.Camera;
-import engine.graph.MouseInput;
+import engine.graph.Input;
 import engine.gui.fonts.FontFactory;
 import engine.gui.fonts.FontType;
 import engine.gui.fonts.GUIText;
@@ -41,7 +41,7 @@ public class Frogger implements IGameLogic {
 	private static TileRenderer renderer;
 	private static TileSheet sheet;
 	private static Window window;
-	private MouseInput mouseInput;
+	private Input input;
 	private static float SPEED = 0.001f;
 	double frame_cap = 1.0 / GameEngine.TARGET_FPS;
 	public SoundManager soundMgr;
@@ -104,8 +104,8 @@ public class Frogger implements IGameLogic {
 	}
 
 	@Override
-	public void input(Window window, MouseInput mouseInput) {
-		this.mouseInput = mouseInput;
+	public void input(Window window, Input input) {
+		this.input = input;
 		if (switchLevel == true || gameOver()) {
 			if (gameOver()) {
 				score = 0;
@@ -116,14 +116,14 @@ public class Frogger implements IGameLogic {
 		player.input(SPEED, camera, scene, this);			
 		scene.correctCamera(camera);
 
-        if (mouseInput.isKeyReleased(GLFW.GLFW_KEY_ESCAPE)) {
+        if (input.isKeyReleased(GLFW.GLFW_KEY_ESCAPE)) {
         	window.close();
         }
 	}
 
 	@Override
-	public void update(float interval, MouseInput mouseInput) {
-		mouseInput.update(window);
+	public void update(float interval, Input input) {
+		input.update(window);
 		updateGui();
 		scene.update((float) frame_cap, window, camera, this);
 	}
@@ -203,8 +203,8 @@ public class Frogger implements IGameLogic {
 		return current_level;
 	}
 
-	public MouseInput getInput() {
-		return mouseInput;
+	public Input getInput() {
+		return input;
 	}
 
 	public Window getWindow() {

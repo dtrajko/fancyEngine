@@ -7,7 +7,7 @@ import org.lwjgl.glfw.GLFW;
 import engine.IGameLogic;
 import engine.Window;
 import engine.graph.Camera;
-import engine.graph.MouseInput;
+import engine.graph.Input;
 import game.Game2D;
 import game2D.collision.Collision;
 import game2D.render.Animation;
@@ -25,15 +25,15 @@ public class Player extends AnimatedEntity {
 	private static float previous_height;
 	private static int subsequent_jumps = 0;
 	private static int lives = 5;
-	private MouseInput input;
+	private Input input;
 	private Window window;
 
-	public Player(Window window, MouseInput input) {
+	public Player(Window window, Input input) {
 		this(new Transform(), input);
 		this.window = window;
 	}
 
-	public Player(Transform transform, MouseInput input) {
+	public Player(Transform transform, Input input) {
 		super(ANIM_SIZE, transform);
 		this.input = input;
 		this.setAnimation(ANIM_IDLE, new Animation(4, 10, "textures/game2D/player/idle"));

@@ -7,7 +7,7 @@ import engine.IScene;
 import engine.Window;
 import engine.graph.ICamera;
 import engine.graph.IRenderer;
-import engine.graph.MouseInput;
+import engine.graph.Input;
 import engine.sound.SoundManager;
 
 public class ThinMatrix2 implements IGameLogic {
@@ -17,7 +17,7 @@ public class ThinMatrix2 implements IGameLogic {
     private ICamera camera;
     private IScene scene;
     boolean sceneChanged;
-	private MouseInput mouseInput;
+	private Input input;
 
 	public ThinMatrix2() {
 	}
@@ -27,22 +27,22 @@ public class ThinMatrix2 implements IGameLogic {
     	this.window = window;
     	camera = new ThinMatrixCamera(window);
         scene = new ThinMatrixScene();
-        scene.init(window, camera);
+        ((ThinMatrixScene) scene).init(window, camera);
         renderer = new ThinMatrixRenderer();
         renderer.init(window, scene);
 	}
 
 	@Override
-	public void input(Window window, MouseInput mouseInput) {
-		this.mouseInput = mouseInput;
+	public void input(Window window, Input input) {
+		this.input = input;
 
-        if (mouseInput.isKeyReleased(GLFW.GLFW_KEY_ESCAPE)) {
+        if (input.isKeyReleased(GLFW.GLFW_KEY_ESCAPE)) {
         	window.close();
         }
 	}
 
 	@Override
-	public void update(float interval, MouseInput mouseInput) {
+	public void update(float interval, Input input) {
 		scene.update(interval);
 
     	// Update view matrix		
@@ -61,8 +61,8 @@ public class ThinMatrix2 implements IGameLogic {
 	}
 
 	@Override
-	public MouseInput getInput() {
-		return mouseInput;
+	public Input getInput() {
+		return input;
 	}
 
 	@Override
