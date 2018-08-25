@@ -35,28 +35,38 @@ public class Scene implements IScene {
 
 	public void init(Window window) {
 		camera = new Camera();
+		((Camera) camera).setPosition(new Vector3f(0, 10, 40));
 		loader = new Loader();
 
 		ModelTexture texture = new ModelTexture(loader.loadTexture("frame"));
 		RawModel model = loader.loadToVAO(CubeMeshSimple.vertices, CubeMeshSimple.textureCoords, CubeMeshSimple.indices);
 		TexturedModel texturedModel = new TexturedModel(model, texture);
-		Entity entity_1 = new Entity(texturedModel, new Vector3f(0, -5, -40f), 0, 0, 0, 8);
-		Entity entity_2 = new Entity(texturedModel, new Vector3f(12, -5, -40f), 0, 0, 0, 8);
-		Entity entity_3 = new Entity(texturedModel, new Vector3f(-12, -5, -40f), 0, 0, 0, 8);
+		Entity entity_1 = new Entity(texturedModel, new Vector3f(0, 5, 0f), 0, 0, 0, 8);
+		Entity entity_2 = new Entity(texturedModel, new Vector3f(12, 5, 0f), 0, 0, 0, 8);
+		Entity entity_3 = new Entity(texturedModel, new Vector3f(-12, 5, 0f), 0, 0, 0, 8);
 
 		RawModel modelOBJ = OBJLoader.loadOBJModel("dragon", loader);
 		TexturedModel texturedModelOBJ = new TexturedModel(modelOBJ, new ModelTexture(loader.loadTexture("gold")));
 		ModelTexture modelTexture = texturedModelOBJ.getTexture();
 		modelTexture.setShineDamper(10);
 		modelTexture.setReflectivity(1);
-		Entity entityOBJ = new Entity(texturedModelOBJ, new Vector3f(0, 0, -40f), 0, 0, 0, 1);
+		Entity entityOBJ = new Entity(texturedModelOBJ, new Vector3f(0, 10, -20f), 0, 0, 0, 1);
 
-		light = new Light(new Vector3f(0, 20f, -10f), new Vector3f(1, 1, 1));
+		light = new Light(new Vector3f(-500, 500, 500), new Vector3f(1, 1, 1));
+		
+		Terrain terrain_1 = new Terrain(0, 0, loader, new ModelTexture(loader.loadTexture("grass")));
+		Terrain terrain_2 = new Terrain(-1, 0, loader, new ModelTexture(loader.loadTexture("mud")));
+		Terrain terrain_3 = new Terrain(0, -1, loader, new ModelTexture(loader.loadTexture("tiles")));
+		Terrain terrain_4 = new Terrain(-1, -1, loader, new ModelTexture(loader.loadTexture("tiles_gold")));
 		
 		processEntity(entity_1);
 		processEntity(entity_2);
 		processEntity(entity_3);
 		processEntity(entityOBJ);
+		processTerrain(terrain_1);
+		processTerrain(terrain_2);
+		processTerrain(terrain_3);
+		processTerrain(terrain_4);
 	}
 
 	public Map<TexturedModel, List<Entity>> getEntityList() {

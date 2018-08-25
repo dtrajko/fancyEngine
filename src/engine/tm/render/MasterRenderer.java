@@ -27,7 +27,6 @@ public class MasterRenderer {
 	}
 
 	public void render(Window window, IScene scene) {
-
 		prepare();
 		entityRenderer.render(scene);
 		terrainRenderer.render(scene);

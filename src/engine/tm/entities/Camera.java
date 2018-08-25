@@ -15,21 +15,27 @@ public class Camera implements ICamera {
 	private float roll;
 	
 	private float speed;
+	private float gravity;
+	private float y_min;
 
 	public Camera() {
-		speed = 0.5f;
+		speed = 2.0f;
+		gravity = 0; // -speed / 2;
+		y_min = 0;
 	}
 
 	public void move(Input input) {
 
 		// gravity
-		position.y += -speed / 2;
-		if (position.y < 0) position.y = 0;
+		position.y += gravity;
+		if (position.y <= y_min) position.y = y_min;
 		
 		if (input.isKeyDown(GLFW.GLFW_KEY_SPACE)) {
 			position.y += +speed;
 		}
-		
+		if (input.isKeyDown(GLFW.GLFW_KEY_LEFT_SHIFT)) {
+			position.y += -speed;
+		}
 		if (input.isKeyDown(GLFW.GLFW_KEY_A)) {
 			position.x += -speed;
 		}
@@ -41,11 +47,16 @@ public class Camera implements ICamera {
 		}
 		if (input.isKeyDown(GLFW.GLFW_KEY_S)) {
 			position.z += +speed;
-		}
+		}		
 	}
 
 	public Vector3f getPosition() {
 		return position;
+	}
+
+	public void setPosition(Vector3f pos) {
+		position = pos;
+		y_min = -10;
 	}
 
 	public float getPitch() {
