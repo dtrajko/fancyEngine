@@ -8,6 +8,7 @@ import engine.graph.ICamera;
 import engine.graph.Input;
 import engine.tm.entities.Camera;
 import engine.tm.entities.Entity;
+import engine.tm.entities.Light;
 import engine.tm.models.CubeMeshSimple;
 import engine.tm.models.RawModel;
 import engine.tm.models.TexturedModel;
@@ -19,6 +20,7 @@ public class Scene implements IScene {
 
 	private Loader loader;
 	private ICamera camera;
+	private Light light;
 
 	TexturedModel texturedModel;
 	private Entity entity;
@@ -33,9 +35,11 @@ public class Scene implements IScene {
 		texturedModel = new TexturedModel(model, texture);
 		entity = new Entity(texturedModel, new Vector3f(0, 0, -4), 0, 0, 0, 1);
 
-		RawModel modelOBJ = OBJLoader.loadOBJModel("pine", loader);
-		TexturedModel texturedModelOBJ = new TexturedModel(modelOBJ, new ModelTexture(loader.loadTexture("pine")));
-		entityOBJ = new Entity(texturedModelOBJ, new Vector3f(0, -5f, -50), 0, 0, 0, 1);
+		RawModel modelOBJ = OBJLoader.loadOBJModel("dragon", loader);
+		TexturedModel texturedModelOBJ = new TexturedModel(modelOBJ, new ModelTexture(loader.loadTexture("dragon")));
+		entityOBJ = new Entity(texturedModelOBJ, new Vector3f(0, -5f, -50f), 0, 0, 0, 1);
+		
+		light = new Light(new Vector3f(0, -5f, -30f), new Vector3f(1, 1, 1));
 		
 	}
 
@@ -45,6 +49,10 @@ public class Scene implements IScene {
 
 	public Entity getEntity() {
 		return entityOBJ;
+	}
+
+	public Light getLight() {
+		return light;
 	}
 
 	@Override

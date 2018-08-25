@@ -51,6 +51,16 @@ public class Loader {
 		return new RawModel(vaoID, indices.length);
 	}
 
+	public RawModel loadToVAO(float[] positions, float[] textureCoords, float[] normals, int[] indices) {
+		int vaoID = createVAO();
+		bindIndicesBuffer(indices);
+		storeDataInAttributeList(0, 3, positions);
+		storeDataInAttributeList(1, 2, textureCoords);
+		storeDataInAttributeList(2, 3, normals);
+		unbindVAO();
+		return new RawModel(vaoID, indices.length);
+	}
+
 	private void storeDataInAttributeList(int attributeNumber, int coordinateSize, float[] data) {
 		int vboID = GL15.glGenBuffers();
 		vbos.add(vboID);
@@ -69,15 +79,6 @@ public class Loader {
 		return vaoID;
 	}
 
-	public RawModel loadToVAO(float[] positions, float[] textureCoords, float[] normals, int[] indices) {
-		int vaoID = createVAO();
-		bindIndicesBuffer(indices);
-		storeDataInAttributeList(0, 3, positions);
-		storeDataInAttributeList(1, 2, textureCoords);
-		storeDataInAttributeList(2, 3, normals);
-		unbindVAO();
-		return new RawModel(vaoID, indices.length);
-	}
 
 	public RawModel loadToVAO(float[] positions, float[] textureCoords, float[] normals, 
 			float[] tangents, int[] indices) {

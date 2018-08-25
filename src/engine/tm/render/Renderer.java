@@ -39,6 +39,7 @@ public class Renderer implements IRenderer {
 	public void render(Window window, ICamera camera, IScene scene, boolean sceneChanged) {
 		GL11.glViewport(0, 0, window.getWidth(), window.getHeight());
 		prepare();
+		shader.loadLight(((Scene) scene).getLight());
 		shader.loadViewMatrix((Camera) camera);
 		renderModel(((Scene) scene).getEntity(), shader);
 	}
@@ -78,6 +79,7 @@ public class Renderer implements IRenderer {
 		GL30.glBindVertexArray(rawModel.getVaoID());
 		GL20.glEnableVertexAttribArray(0);
 		GL20.glEnableVertexAttribArray(1);
+		GL20.glEnableVertexAttribArray(2);
 
 		Matrix4f transformationMatrix = Maths.createTransformationMatrix(entity.getPosition(), entity.getRotX(), entity.getRotY(), entity.getRotZ(), entity.getScale());
 		shader.loadTransformationMatrix(transformationMatrix);
@@ -87,6 +89,7 @@ public class Renderer implements IRenderer {
 		GL11.glDrawElements(GL11.GL_TRIANGLES, rawModel.getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
 		GL20.glDisableVertexAttribArray(0);
 		GL20.glDisableVertexAttribArray(1);
+		GL20.glDisableVertexAttribArray(2);
 		GL30.glBindVertexArray(0);
 	}
 
