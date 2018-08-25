@@ -1,15 +1,18 @@
 package engine.tm;
 
+import org.lwjgl.glfw.GLFW;
+
 import engine.IGameLogic;
 import engine.IScene;
 import engine.Window;
 import engine.graph.Input;
 import engine.sound.SoundManager;
+import engine.tm.entities.Camera;
 import engine.tm.render.Renderer;
 import engine.tm.scene.Scene;
 
 public class ThinMatrix implements IGameLogic {
-	
+
 	private Renderer renderer;
 	private Window window;
 	private IScene scene;
@@ -26,6 +29,10 @@ public class ThinMatrix implements IGameLogic {
 	@Override
 	public void input(Window window, Input input) {
 		this.input = input;
+
+        if (input.isKeyReleased(GLFW.GLFW_KEY_ESCAPE)) {
+        	window.close();
+        }
 	}
 
 	@Override

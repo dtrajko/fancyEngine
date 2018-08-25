@@ -9,7 +9,7 @@ import engine.IScene;
 import engine.Window;
 import engine.graph.ICamera;
 import engine.graph.IRenderer;
-import engine.tm.Camera;
+import engine.tm.entities.Camera;
 import engine.tm.entities.Entity;
 import engine.tm.models.RawModel;
 import engine.tm.models.TexturedModel;

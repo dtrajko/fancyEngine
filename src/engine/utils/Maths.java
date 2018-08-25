@@ -5,8 +5,7 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 import engine.graph.ICamera;
-import engine.tm.Camera;
-import engine.tm2.ThinMatrixCamera;
+import engine.tm.entities.Camera;
 
 public class Maths {
 

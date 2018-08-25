@@ -2,7 +2,7 @@ package engine.tm.shaders;
 
 import org.joml.Matrix4f;
 
-import engine.tm.Camera;
+import engine.tm.entities.Camera;
 import engine.tm.settings.WorldSettings;
 import engine.tm.toolbox.Maths;
 

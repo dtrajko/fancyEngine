@@ -4,14 +4,13 @@ import engine.GameEngine;
 import engine.IGameLogic;
 import engine.Window;
 import engine.tm.ThinMatrix;
-import engine.tm2.ThinMatrix2;
 import game2D.frogger.Frogger;
 
 public class Main {
 
 	private static int width = 0;
 	private static int height = 0;
-	private static String app = "ThinMatrix"; // Game3D, Game2D, Frogger, ThinMatrix, ThinMatrix2
+	private static String app = "ThinMatrix"; // Game3D, Game2D, Frogger, ThinMatrix
 
     public static void main(String[] args) {
         try {
@@ -29,11 +28,6 @@ public class Main {
 				gameLogic = new ThinMatrix();
 				opts.mode3D = false;
 				opts.cullFace = false;
-				width = height = 0;
-				break;
-			case "ThinMatrix2":
-				gameLogic = new ThinMatrix2();
-				opts.mode3D = false;
 				width = height = 0;
 				break;
 			case "Game3D":
