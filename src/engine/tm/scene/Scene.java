@@ -36,10 +36,13 @@ public class Scene implements IScene {
 		entity = new Entity(texturedModel, new Vector3f(0, 0, -4), 0, 0, 0, 1);
 
 		RawModel modelOBJ = OBJLoader.loadOBJModel("dragon", loader);
-		TexturedModel texturedModelOBJ = new TexturedModel(modelOBJ, new ModelTexture(loader.loadTexture("dragon")));
-		entityOBJ = new Entity(texturedModelOBJ, new Vector3f(0, -5f, -50f), 0, 0, 0, 1);
+		TexturedModel texturedModelOBJ = new TexturedModel(modelOBJ, new ModelTexture(loader.loadTexture("gold")));
+		ModelTexture modelTexture = texturedModelOBJ.getTexture();
+		modelTexture.setShineDamper(10);
+		modelTexture.setReflectivity(1);
+		entityOBJ = new Entity(texturedModelOBJ, new Vector3f(0, -5f, -30f), 0, 0, 0, 1);
 		
-		light = new Light(new Vector3f(0, -5f, -30f), new Vector3f(1, 1, 1));
+		light = new Light(new Vector3f(0, -5f, -10f), new Vector3f(1, 1, 1));
 		
 	}
 

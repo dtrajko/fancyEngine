@@ -15,6 +15,7 @@ import engine.tm.models.RawModel;
 import engine.tm.models.TexturedModel;
 import engine.tm.scene.Scene;
 import engine.tm.shaders.StaticShader;
+import engine.tm.textures.ModelTexture;
 import engine.tm.toolbox.Maths;
 
 public class Renderer implements IRenderer {
@@ -39,7 +40,11 @@ public class Renderer implements IRenderer {
 	public void render(Window window, ICamera camera, IScene scene, boolean sceneChanged) {
 		GL11.glViewport(0, 0, window.getWidth(), window.getHeight());
 		prepare();
+		// diffuse light
 		shader.loadLight(((Scene) scene).getLight());
+		// specular light
+		ModelTexture texture = ((Scene) scene).getEntity().getTexturedModel().getTexture();
+		shader.loadShineVariables(texture.getShineDamper(), texture.getReflectivity());
 		shader.loadViewMatrix((Camera) camera);
 		renderModel(((Scene) scene).getEntity(), shader);
 	}
