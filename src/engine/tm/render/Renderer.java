@@ -54,7 +54,7 @@ public class Renderer implements IRenderer {
 
 	@Override
 	public void clear() {
-		GL11.glClearColor(0, 0, 1, 1);
+		GL11.glClearColor(0.2f, 0.2f, 0.8f, 1);
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_STENCIL_BUFFER_BIT);
 	}

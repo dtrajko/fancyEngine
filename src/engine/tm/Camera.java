@@ -13,23 +13,34 @@ public class Camera implements ICamera {
 	private float pitch;
 	private float yaw;
 	private float roll;
+	
+	private float speed;
 
 	public Camera() {
-		
+		speed = 0.5f;
 	}
-	
+
 	public void move(Input input) {
-		if (input.isKeyDown(GLFW.GLFW_KEY_W)) {
-			position.z += +0.02f;
+		
+		// gravity
+		position.y += -speed / 2;
+		if (position.y < 0) position.y = 0;
+		
+		if (input.isKeyDown(GLFW.GLFW_KEY_SPACE)) {
+			position.y += +speed;
 		}
-		if (input.isKeyDown(GLFW.GLFW_KEY_S)) {
-			position.z += -0.02f;
-		}
+		
 		if (input.isKeyDown(GLFW.GLFW_KEY_A)) {
-			position.x += +0.02f;
+			position.x += -speed;
 		}
 		if (input.isKeyDown(GLFW.GLFW_KEY_D)) {
-			position.x += -0.02f;
+			position.x += +speed;
+		}
+		if (input.isKeyDown(GLFW.GLFW_KEY_W)) {
+			position.z += -speed;
+		}
+		if (input.isKeyDown(GLFW.GLFW_KEY_S)) {
+			position.z += +speed;
 		}
 	}
 
