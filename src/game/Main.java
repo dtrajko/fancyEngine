@@ -26,11 +26,9 @@ public class Main {
 			switch (app) {
 			case "ThinMatrix":
 				gameLogic = new ThinMatrix();
-				opts.mode3D = false;
+				opts.mode3D = true;
 				opts.cullFace = false;
-				// width = height = 0;
-				width = 1280;
-				height = 720;
+				width = height = 0;
 				break;
 			case "Game3D":
 				gameLogic = new Game3D();
