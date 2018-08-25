@@ -8,20 +8,19 @@ import engine.Window;
 import engine.graph.Input;
 import engine.sound.SoundManager;
 import engine.tm.entities.Camera;
-import engine.tm.render.Renderer;
+import engine.tm.render.MasterRenderer;
 import engine.tm.scene.Scene;
 
 public class ThinMatrix implements IGameLogic {
 
-	private Renderer renderer;
+	private MasterRenderer masterRenderer;
 	private Window window;
 	private IScene scene;
 	private Input input;
 
 	@Override
 	public void init(Window window) throws Exception {
-		renderer = new Renderer();
-		renderer.init(window, null);
+		masterRenderer = new MasterRenderer();
 		scene = new Scene();
 		((Scene) scene).init(window);
 	}
@@ -43,12 +42,12 @@ public class ThinMatrix implements IGameLogic {
 
 	@Override
 	public void render(Window window) {
-		renderer.render(window, scene.getCamera(), scene, true);
+		masterRenderer.render(window, scene);
 	}
 
 	@Override
 	public void cleanup() {
-		renderer.cleanup();
+		masterRenderer.cleanUp(scene);
 	}
 
 	@Override

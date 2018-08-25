@@ -1,6 +1,13 @@
 package engine.tm.scene;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.joml.Vector3f;
+import org.lwjgl.opengl.GL11;
+
 import engine.IGameLogic;
 import engine.IScene;
 import engine.Window;
@@ -14,6 +21,7 @@ import engine.tm.models.RawModel;
 import engine.tm.models.TexturedModel;
 import engine.tm.render.Loader;
 import engine.tm.render.OBJLoader;
+import engine.tm.terrains.Terrain;
 import engine.tm.textures.ModelTexture;
 
 public class Scene implements IScene {
@@ -22,9 +30,8 @@ public class Scene implements IScene {
 	private ICamera camera;
 	private Light light;
 
-	TexturedModel texturedModel;
-	private Entity entity;
-	private Entity entityOBJ;
+	private Map<TexturedModel, List<Entity>> entities = new HashMap<TexturedModel, List<Entity>>();
+	private List<Terrain> terrains = new ArrayList<Terrain>();
 
 	public void init(Window window) {
 		camera = new Camera();
@@ -32,38 +39,69 @@ public class Scene implements IScene {
 
 		ModelTexture texture = new ModelTexture(loader.loadTexture("frame"));
 		RawModel model = loader.loadToVAO(CubeMeshSimple.vertices, CubeMeshSimple.textureCoords, CubeMeshSimple.indices);
-		texturedModel = new TexturedModel(model, texture);
-		entity = new Entity(texturedModel, new Vector3f(0, 0, -4), 0, 0, 0, 1);
+		TexturedModel texturedModel = new TexturedModel(model, texture);
+		Entity entity_1 = new Entity(texturedModel, new Vector3f(0, -5, -40f), 0, 0, 0, 8);
+		Entity entity_2 = new Entity(texturedModel, new Vector3f(12, -5, -40f), 0, 0, 0, 8);
+		Entity entity_3 = new Entity(texturedModel, new Vector3f(-12, -5, -40f), 0, 0, 0, 8);
 
 		RawModel modelOBJ = OBJLoader.loadOBJModel("dragon", loader);
 		TexturedModel texturedModelOBJ = new TexturedModel(modelOBJ, new ModelTexture(loader.loadTexture("gold")));
 		ModelTexture modelTexture = texturedModelOBJ.getTexture();
 		modelTexture.setShineDamper(10);
 		modelTexture.setReflectivity(1);
-		entityOBJ = new Entity(texturedModelOBJ, new Vector3f(0, -5f, -30f), 0, 0, 0, 1);
+		Entity entityOBJ = new Entity(texturedModelOBJ, new Vector3f(0, 0, -40f), 0, 0, 0, 1);
+
+		light = new Light(new Vector3f(0, 20f, -10f), new Vector3f(1, 1, 1));
 		
-		light = new Light(new Vector3f(0, -5f, -10f), new Vector3f(1, 1, 1));
-		
+		processEntity(entity_1);
+		processEntity(entity_2);
+		processEntity(entity_3);
+		processEntity(entityOBJ);
 	}
 
-	public TexturedModel getTexturedModel() {
-		return texturedModel;
+	public Map<TexturedModel, List<Entity>> getEntityList() {
+		return entities;
 	}
 
-	public Entity getEntity() {
-		return entityOBJ;
+	public List<Terrain> getTerrains() {
+		return terrains;
+	}
+	
+	public void clearLists() {
+		terrains.clear();
+		entities.clear();
 	}
 
 	public Light getLight() {
 		return light;
 	}
 
+	public void processTerrain(Terrain terrain) {
+		terrains.add(terrain);
+	}
+
+	public void processEntity(Entity entity) {
+		TexturedModel entityModel = entity.getTexturedModel();
+		List<Entity> batch = entities.get(entityModel);
+		if (batch != null) {
+			batch.add(entity);
+		} else {
+			List<Entity> newBatch = new ArrayList<Entity>();
+			newBatch.add(entity);
+			entities.put(entityModel, newBatch);
+		}
+	}
+
 	@Override
 	public void update(float interval, Input input) {
-		entity.increasePosition(0, 0, 0);
-		entity.increaseRotation(1, 1, 0);
 		
-		entityOBJ.increaseRotation(0, 1, 0);
+		for(TexturedModel model: entities.keySet()) {
+			List<Entity> batch = entities.get(model);
+			for(Entity entity : batch) {
+				entity.increaseRotation(0, 1, 0);
+			}
+		}
+		
 	}
 
 	@Override
