@@ -51,14 +51,14 @@ public class Scene implements IScene {
 		ModelTexture modelTexture = texturedModelOBJ.getTexture();
 		modelTexture.setShineDamper(10);
 		modelTexture.setReflectivity(1);
-		Entity entityOBJ = new Entity(texturedModelOBJ, new Vector3f(0, 10, -20f), 0, 0, 0, 1);
+		Entity entityOBJ = new Entity(texturedModelOBJ, new Vector3f(0, 10, 0f), 0, 0, 0, 1);
 
 		light = new Light(new Vector3f(-500, 500, 500), new Vector3f(1, 1, 1));
 		
-		Terrain terrain_1 = new Terrain(0, 0, loader, new ModelTexture(loader.loadTexture("grass")));
-		Terrain terrain_2 = new Terrain(-1, 0, loader, new ModelTexture(loader.loadTexture("mud")));
-		Terrain terrain_3 = new Terrain(0, -1, loader, new ModelTexture(loader.loadTexture("tiles")));
-		Terrain terrain_4 = new Terrain(-1, -1, loader, new ModelTexture(loader.loadTexture("tiles_gold")));
+		Terrain terrain_1 = new Terrain(0, 0, loader, new ModelTexture(loader.loadTexture("grass")).setShineDamper(20).setReflectivity(1));
+		Terrain terrain_2 = new Terrain(-1, 0, loader, new ModelTexture(loader.loadTexture("mud")).setShineDamper(20).setReflectivity(1));
+		Terrain terrain_3 = new Terrain(0, -1, loader, new ModelTexture(loader.loadTexture("tiles")).setShineDamper(20).setReflectivity(1));
+		Terrain terrain_4 = new Terrain(-1, -1, loader, new ModelTexture(loader.loadTexture("tiles_gold")).setShineDamper(20).setReflectivity(1));
 		
 		processEntity(entity_1);
 		processEntity(entity_2);

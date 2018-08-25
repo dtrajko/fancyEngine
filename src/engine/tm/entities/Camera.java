@@ -31,10 +31,10 @@ public class Camera implements ICamera {
 		if (position.y <= y_min) position.y = y_min;
 		
 		if (input.isKeyDown(GLFW.GLFW_KEY_SPACE)) {
-			position.y += +speed;
+			position.y += +speed / 4;
 		}
 		if (input.isKeyDown(GLFW.GLFW_KEY_LEFT_SHIFT)) {
-			position.y += -speed;
+			position.y += -speed / 4;
 		}
 		if (input.isKeyDown(GLFW.GLFW_KEY_A)) {
 			position.x += -speed;
