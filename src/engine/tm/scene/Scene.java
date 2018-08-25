@@ -39,6 +39,7 @@ public class Scene implements IScene {
 		loader = new Loader();
 
 		ModelTexture texture = new ModelTexture(loader.loadTexture("frame"));
+		texture.setShineDamper(20).setReflectivity(1);
 		RawModel model = loader.loadToVAO(CubeMeshSimple.vertices, CubeMeshSimple.textureCoords, CubeMeshSimple.indices);
 		TexturedModel texturedModel = new TexturedModel(model, texture);
 		Entity entity_1 = new Entity(texturedModel, new Vector3f(0, 5, 0f), 0, 0, 0, 8);

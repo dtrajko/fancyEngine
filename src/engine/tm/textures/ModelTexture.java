@@ -19,17 +19,17 @@ public class ModelTexture {
 		return shineDamper;
 	}
 
-	public void setShineDamper(float shineDamper) {
+	public ModelTexture setShineDamper(float shineDamper) {
 		this.shineDamper = shineDamper;
+		return this;
 	}
 
 	public float getReflectivity() {
 		return reflectivity;
 	}
 
-	public void setReflectivity(float reflectivity) {
+	public ModelTexture setReflectivity(float reflectivity) {
 		this.reflectivity = reflectivity;
+		return this;
 	}
-	
-	
 }
