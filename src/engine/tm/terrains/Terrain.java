@@ -32,12 +32,12 @@ public class Terrain {
 		for (int i = 0; i < VERTEX_COUNT; i++){
 			for(int j = 0; j < VERTEX_COUNT; j++){
 
-				float vertice_height = -1.0f;
+				float vertice_height = -0.5f;
 				float normal_x = 1.0f;
 				float normal_y = 1.0f;
 				float normal_z = 0.5f;
-				if ((i % 2 != 0 && j % 2 != 0)) {
-					vertice_height = 1.0f;
+				if ((i % 2 == 0 && j % 2 == 0)) {
+					vertice_height = 0.5f;
 					normal_x = -1.0f;
 					normal_y = 1.0f;
 					normal_z = 1.0f;

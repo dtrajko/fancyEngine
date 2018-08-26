@@ -65,6 +65,36 @@ public class Camera implements ICamera {
 		position.z = newPos.z;		
 	}
 
+	public void moveOld(Input input) {
+
+		// gravity
+		position.y += gravity;
+		if (position.y <= y_min) position.y = y_min;
+		
+		if (input.isKeyDown(GLFW.GLFW_KEY_SPACE)) {
+			position.y += +speed / 4;
+		}
+		if (input.isKeyDown(GLFW.GLFW_KEY_LEFT_SHIFT)) {
+			position.y += -speed / 4;
+		}
+		if (input.isKeyDown(GLFW.GLFW_KEY_A)) {
+			position.x += -speed;
+		}
+		if (input.isKeyDown(GLFW.GLFW_KEY_D)) {
+			position.x += +speed;
+		}
+		if (input.isKeyDown(GLFW.GLFW_KEY_W)) {
+			position.z += -speed;
+		}
+		if (input.isKeyDown(GLFW.GLFW_KEY_S)) {
+			position.z += +speed;
+		}	
+
+		Vector2f rotVec = input.getDisplVec();
+		pitch += rotVec.x;
+		yaw += rotVec.y;
+	}
+
 	public Vector3f calculateNewPosition(float offsetX, float offsetY, float offsetZ) {
 		Vector3f newPos = new Vector3f(position.x, position.y, position.z);
 		if ( offsetZ != 0 ) {
