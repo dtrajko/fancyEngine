@@ -3,6 +3,8 @@ package engine.tm.terrains;
 import engine.tm.loaders.Loader;
 import engine.tm.models.RawModel;
 import engine.tm.textures.ModelTexture;
+import engine.tm.textures.TerrainTexture;
+import engine.tm.textures.TerrainTexturePack;
 
 public class Terrain {
 
@@ -13,10 +15,12 @@ public class Terrain {
 	private float z;
 	
 	private RawModel model;
-	private ModelTexture texture;
+	private TerrainTexturePack texturePack;
+	private TerrainTexture blendMap;
 
-	public Terrain(float gridX, float gridZ, Loader loader, ModelTexture texture) {
-		this.texture = texture;
+	public Terrain(float gridX, float gridZ, Loader loader, TerrainTexturePack texturePack, TerrainTexture blendMap) {
+		this.texturePack = texturePack;
+		this.blendMap = blendMap;
 		this.x = gridX * SIZE;
 		this.z = gridZ * SIZE;
 		this.model = generateTerrain(loader);
@@ -32,15 +36,15 @@ public class Terrain {
 		for (int i = 0; i < VERTEX_COUNT; i++){
 			for(int j = 0; j < VERTEX_COUNT; j++){
 
-				float vertice_height = -0.5f;
-				float normal_x = 1.0f;
+				float vertice_height = -0.3f;
+				float normal_x = 0.0f;
 				float normal_y = 1.0f;
-				float normal_z = 0.5f;
+				float normal_z = 0.0f;
 				if ((i % 2 == 0 && j % 2 == 0)) {
-					vertice_height = 0.5f;
-					normal_x = -1.0f;
+					vertice_height = 0.3f;
+					normal_x = -0.2f;
 					normal_y = 1.0f;
-					normal_z = 1.0f;
+					normal_z = 0.2f;
 				}
 
 				vertices[vertexPointer * 3] = (float) j / ((float) VERTEX_COUNT - 1) * SIZE;
@@ -122,7 +126,11 @@ public class Terrain {
 		return model;
 	}
 
-	public ModelTexture getTexture() {
-		return texture;
+	public TerrainTexturePack getTexturePack() {
+		return texturePack;
+	}
+
+	public TerrainTexture getBlendMap() {
+		return blendMap;
 	}
 }

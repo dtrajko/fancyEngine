@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import engine.IScene;
@@ -71,6 +72,7 @@ public class EntityRenderer {
 		shader.loadSkyColor(MasterRenderer.RED, MasterRenderer.GREEN, MasterRenderer.BLUE);
 		shader.loadFakeLightingVariable(texture.useFakeLighting());
 		shader.loadShineVariables(texture.getShineDamper(), texture.getReflectivity());
+		GL13.glActiveTexture(GL13.GL_TEXTURE0);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, model.getTexture().getID());
 	}
 
@@ -83,6 +85,12 @@ public class EntityRenderer {
 		GL20.glDisableVertexAttribArray(1);
 		GL20.glDisableVertexAttribArray(2);
 		GL30.glBindVertexArray(0);
+		unbindTexture();
+	}
+
+	private void unbindTexture() {
+		GL13.glActiveTexture(GL13.GL_TEXTURE0);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 	}
 
 	public void prepareInstance(Entity entity) {

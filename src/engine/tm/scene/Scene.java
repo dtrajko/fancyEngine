@@ -4,10 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.joml.Vector3f;
-import org.lwjgl.opengl.GL11;
-
 import engine.IGameLogic;
 import engine.IScene;
 import engine.Window;
@@ -18,11 +15,12 @@ import engine.tm.entities.Entity;
 import engine.tm.entities.Light;
 import engine.tm.loaders.Loader;
 import engine.tm.loaders.OBJLoader;
-import engine.tm.models.CubeMeshSimple;
 import engine.tm.models.RawModel;
 import engine.tm.models.TexturedModel;
 import engine.tm.terrains.Terrain;
 import engine.tm.textures.ModelTexture;
+import engine.tm.textures.TerrainTexture;
+import engine.tm.textures.TerrainTexturePack;
 
 public class Scene implements IScene {
 
@@ -40,10 +38,18 @@ public class Scene implements IScene {
 
 		light = new Light(new Vector3f(-500, 500, 500), new Vector3f(1, 1, 1));
 
-		Terrain terrain_1 = new Terrain(0, 0, loader, new ModelTexture(loader.loadTexture("grass")).setShineDamper(20).setReflectivity(1));
-		Terrain terrain_2 = new Terrain(-1, 0, loader, new ModelTexture(loader.loadTexture("mud")).setShineDamper(20).setReflectivity(1));
-		Terrain terrain_3 = new Terrain(0, -1, loader, new ModelTexture(loader.loadTexture("tiles")).setShineDamper(20).setReflectivity(1));
-		Terrain terrain_4 = new Terrain(-1, -1, loader, new ModelTexture(loader.loadTexture("tiles_gold")).setShineDamper(20).setReflectivity(1));
+		TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture("grassy"));
+		TerrainTexture rTexture = new TerrainTexture(loader.loadTexture("dirt"));
+		TerrainTexture gTexture = new TerrainTexture(loader.loadTexture("pinkFlowers"));
+		TerrainTexture bTexture = new TerrainTexture(loader.loadTexture("path"));
+		
+		TerrainTexturePack texturePack = new TerrainTexturePack(backgroundTexture, rTexture, gTexture, bTexture);
+		TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("blendMap"));
+
+		Terrain terrain_1 = new Terrain(0, 0, loader, texturePack, blendMap);
+		Terrain terrain_2 = new Terrain(-1, 0, loader, texturePack, blendMap);
+		Terrain terrain_3 = new Terrain(0, -1, loader, texturePack, blendMap);
+		Terrain terrain_4 = new Terrain(-1, -1, loader, texturePack, blendMap);
 
 		ModelTexture texture = new ModelTexture(loader.loadTexture("frame"));
 		texture.setShineDamper(20).setReflectivity(1);

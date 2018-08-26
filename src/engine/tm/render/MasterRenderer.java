@@ -23,8 +23,8 @@ public class MasterRenderer {
 
 	public MasterRenderer() {
 		createProjectionMatrix();
-		entityRenderer = new EntityRenderer(projectionMatrix);
 		terrainRenderer = new TerrainRenderer(projectionMatrix);
+		entityRenderer = new EntityRenderer(projectionMatrix);
 	}
 
 	public void init(Window window) {
@@ -32,9 +32,8 @@ public class MasterRenderer {
 
 	public void render(Window window, IScene scene) {
 		prepare();
-		entityRenderer.render(scene);
 		terrainRenderer.render(scene);
-
+		entityRenderer.render(scene);
 	}
 
 	public void prepare() {
