@@ -16,7 +16,7 @@ uniform mat4 viewMatrix;
 uniform vec3 lightPosition;
 uniform bool useFakeLighting;
 
-const float density = 0.0035;
+const float density = 0.004;
 const float gradient = 3.0;
 
 void main(void) {

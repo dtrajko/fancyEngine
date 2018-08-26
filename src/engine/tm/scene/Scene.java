@@ -16,11 +16,11 @@ import engine.graph.Input;
 import engine.tm.entities.Camera;
 import engine.tm.entities.Entity;
 import engine.tm.entities.Light;
+import engine.tm.loaders.Loader;
+import engine.tm.loaders.OBJLoader;
 import engine.tm.models.CubeMeshSimple;
 import engine.tm.models.RawModel;
 import engine.tm.models.TexturedModel;
-import engine.tm.render.Loader;
-import engine.tm.render.OBJLoader;
 import engine.tm.terrains.Terrain;
 import engine.tm.textures.ModelTexture;
 

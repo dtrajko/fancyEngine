@@ -1,7 +1,7 @@
 package engine.tm.terrains;
 
+import engine.tm.loaders.Loader;
 import engine.tm.models.RawModel;
-import engine.tm.render.Loader;
 import engine.tm.textures.ModelTexture;
 
 public class Terrain {

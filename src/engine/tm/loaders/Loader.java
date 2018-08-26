@@ -1,4 +1,4 @@
-package engine.tm.render;
+package engine.tm.loaders;
 
 import java.io.InputStream;
 import java.nio.ByteBuffer;
