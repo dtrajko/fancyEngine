@@ -28,6 +28,7 @@ public class Main {
 				gameLogic = new ThinMatrix();
 				opts.mode3D = true;
 				opts.cullFace = false;
+				opts.showTriangles = false;
 				width = height = 0;
 				break;
 			case "Game3D":

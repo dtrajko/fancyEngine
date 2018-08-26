@@ -1,6 +1,8 @@
 package engine.tm.shaders;
 
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
+
 import engine.graph.ICamera;
 import engine.tm.entities.Light;
 import engine.tm.settings.WorldSettings;
@@ -18,6 +20,7 @@ public class TerrainShader extends ShaderProgram {
 	private int location_lightColor;
 	private int location_shineDamper;
 	private int location_reflectivity;
+	private int location_skyColor;
 
 	public TerrainShader() {
 		super(VERTEX_FILE, FRAGMENT_FILE);
@@ -39,6 +42,11 @@ public class TerrainShader extends ShaderProgram {
 		location_lightColor = super.getUniformLocation("lightColor");
 		location_shineDamper = super.getUniformLocation("shineDamper");
 		location_reflectivity = super.getUniformLocation("reflectivity");
+		location_skyColor = super.getUniformLocation("skyColor");
+	}
+
+	public void loadSkyColor(float r, float g, float b) {
+		super.loadVector(location_skyColor, new Vector3f(r, g, b));
 	}
 
 	public void loadShineVariables(float damper, float reflectivity) {
@@ -63,4 +71,5 @@ public class TerrainShader extends ShaderProgram {
 	public void loadProjectionMatrix(Matrix4f matrix) {
 		super.loadMatrix(location_projectionMatrix, matrix);
 	}
+
 }

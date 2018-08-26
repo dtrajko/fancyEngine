@@ -68,6 +68,7 @@ public class EntityRenderer {
 			MasterRenderer.disableCulling();
 		}
 
+		shader.loadSkyColor(MasterRenderer.RED, MasterRenderer.GREEN, MasterRenderer.BLUE);
 		shader.loadFakeLightingVariable(texture.useFakeLighting());
 		shader.loadShineVariables(texture.getShineDamper(), texture.getReflectivity());
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, model.getTexture().getID());
