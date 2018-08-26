@@ -50,16 +50,16 @@ public class Scene implements IScene {
 		// RawModel model = loader.loadToVAO(CubeMeshSimple.vertices, CubeMeshSimple.textureCoords, CubeMeshSimple.indices);
 		RawModel model = OBJLoader.loadOBJModel("cube", loader);
 		TexturedModel texturedModel = new TexturedModel(model, texture);
-		Entity entity_1 = new Entity(texturedModel, new Vector3f(0, 5, 0f), 0, 0, 0, 4);
-		Entity entity_2 = new Entity(texturedModel, new Vector3f(12, 5, 0f), 0, 0, 0, 4);
-		Entity entity_3 = new Entity(texturedModel, new Vector3f(-12, 5, 0f), 0, 0, 0, 4);
+		Entity entity_1 = new Entity(texturedModel, new Vector3f(0, 8, 0f), 0, 0, 0, 4);
+		Entity entity_2 = new Entity(texturedModel, new Vector3f(12, 8, 0f), 0, 0, 0, 4);
+		Entity entity_3 = new Entity(texturedModel, new Vector3f(-12, 8, 0f), 0, 0, 0, 4);
 
 		RawModel modelOBJ = OBJLoader.loadOBJModel("dragon", loader);
 		TexturedModel texturedModelOBJ = new TexturedModel(modelOBJ, new ModelTexture(loader.loadTexture("gold")));
 		ModelTexture modelTexture = texturedModelOBJ.getTexture();
 		modelTexture.setShineDamper(10);
 		modelTexture.setReflectivity(1);
-		Entity entityOBJ = new Entity(texturedModelOBJ, new Vector3f(0, 10, 0f), 0, 0, 0, 1);
+		Entity entityOBJ = new Entity(texturedModelOBJ, new Vector3f(0, 13, 0f), 0, 0, 0, 1);
 
 		TexturedModel grassModel = new TexturedModel(OBJLoader.loadOBJModel("grassModel", loader), new ModelTexture(loader.loadTexture("grassTexture")));
 		Entity grass = new Entity(grassModel, new Vector3f(0, 0, -100f), 0, 0, 0, 4);
