@@ -38,11 +38,11 @@ public class Player extends Entity {
 			upwardsSpeed = 0;
 			isInAir = false;
 			super.getPosition().y = TERRAIN_HEIGHT;
-		} 
+		}		
 	}
 	
 	private void jump() {
-		if (!isInAir) {
+		if (true || !isInAir) {
 			upwardsSpeed = JUMP_POWER;
 			isInAir = true;
 		}

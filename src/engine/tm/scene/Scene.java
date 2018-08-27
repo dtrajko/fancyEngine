@@ -34,10 +34,11 @@ public class Scene implements IScene {
 	private List<Terrain> terrains = new ArrayList<Terrain>();
 
 	public void init(Window window) {
+		
 		camera = new Camera();
-		((Camera) camera).setPosition(new Vector3f(0, 10, 40));
-		loader = new Loader();
+		((Camera) camera).setPosition(new Vector3f(0, 20, 40));
 
+		loader = new Loader();
 		light = new Light(new Vector3f(-500, 500, 500), new Vector3f(1, 1, 1));
 
 		TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture("grassy"));

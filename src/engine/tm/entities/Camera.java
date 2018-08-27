@@ -10,16 +10,21 @@ import engine.graph.Input;
 
 public class Camera implements ICamera {
 	
+	private final float OFFSET_Y = 10; // point to player's head, not feet
+	
 	private Vector3f position = new Vector3f(0, 0, 0);
-	private float pitch;
-	private float yaw;
+	private float pitch = 10;
+	private float yaw = 0;
 	private float roll;
 	
+	private float distanceFromPlayer = 100;
+	private float angleAroundPlayer = 0;
+
 	private float speed;
 	private float gravity;
-	private float y_min;
-	
+	private float y_min;	
 	private Vector3f cameraInc;
+	private Vector2f displVec;
 
 	public Camera() {
 		speed = 2.0f;
@@ -28,6 +33,64 @@ public class Camera implements ICamera {
 		cameraInc = new Vector3f(0.0f, 0.0f, 0.0f);
 	}
 
+	public void moveWithPlayer(Player player, Input input) {
+		displVec = input.getDisplVec();
+		calculateZoom(input);
+		calculatePitch(input);
+		calculateAngleAroundPlayer(input);
+		float horizontalDistance = calculateHorizontalDistance();
+		float verticalDistance = calculateVerticalDistance();
+		calculateCameraPosition(player, horizontalDistance, verticalDistance);
+		float theta = player.getRotY() + angleAroundPlayer;
+		this.yaw = 180 - theta;
+	}
+
+	private void calculateCameraPosition(Player player, float horizontalDistance, float verticalDistance) {
+		float theta = player.getRotY() + angleAroundPlayer;
+		float offsetX = (float) (horizontalDistance * Math.sin(Math.toRadians(theta)));
+		float offsetZ = (float) (horizontalDistance * Math.cos(Math.toRadians(theta)));		
+		position.x = player.getPosition().x - offsetX;
+		position.y = player.getPosition().y + verticalDistance + OFFSET_Y;
+		position.z = player.getPosition().z - offsetZ;
+	}
+
+	private float calculateHorizontalDistance() {
+		return (float) (distanceFromPlayer * Math.cos(Math.toRadians(pitch)));
+	}
+	
+	private float calculateVerticalDistance() {
+		return (float) (distanceFromPlayer * Math.sin(Math.toRadians(pitch)));
+	}
+	
+	private void calculateZoom(Input input) {
+		float zoomLevel = input.getMouseWheelDelta() * 10f;
+		distanceFromPlayer += zoomLevel;
+	}
+
+	/*
+	 * #define GLFW_MOUSE_BUTTON_LEFT    GLFW_MOUSE_BUTTON_1
+     * #define GLFW_MOUSE_BUTTON_MIDDLE  GLFW_MOUSE_BUTTON_3
+     * #define GLFW_MOUSE_BUTTON_RIGHT   GLFW_MOUSE_BUTTON_2
+	 */
+	private void calculatePitch(Input input) {
+		if (input.isMouseButtonDown(GLFW.GLFW_MOUSE_BUTTON_2)) { // right button pressed
+			float pitchChange = displVec.y * 0.5f;
+			pitch -= pitchChange;
+		}
+	}
+
+	private void calculateAngleAroundPlayer(Input input) {
+		if (input.isMouseButtonDown(GLFW.GLFW_MOUSE_BUTTON_1)) { // left button pressed
+			float angleChange = displVec.x * 1f;
+			angleAroundPlayer -= angleChange;
+		}
+	}
+
+	/**
+	 * Stand-alone camera movement, not depending on player position
+	 * 
+	 * @param input
+	 */
 	public void move(Input input) {
 
 		cameraInc = new Vector3f(0.0f, 0.0f, 0.0f);
@@ -63,36 +126,6 @@ public class Camera implements ICamera {
 		position.x = newPos.x;
 		position.y = newPos.y;
 		position.z = newPos.z;		
-	}
-
-	public void moveOld(Input input) {
-
-		// gravity
-		position.y += gravity;
-		if (position.y <= y_min) position.y = y_min;
-		
-		if (input.isKeyDown(GLFW.GLFW_KEY_SPACE)) {
-			position.y += +speed / 4;
-		}
-		if (input.isKeyDown(GLFW.GLFW_KEY_LEFT_SHIFT)) {
-			position.y += -speed / 4;
-		}
-		if (input.isKeyDown(GLFW.GLFW_KEY_A)) {
-			position.x += -speed;
-		}
-		if (input.isKeyDown(GLFW.GLFW_KEY_D)) {
-			position.x += +speed;
-		}
-		if (input.isKeyDown(GLFW.GLFW_KEY_W)) {
-			position.z += -speed;
-		}
-		if (input.isKeyDown(GLFW.GLFW_KEY_S)) {
-			position.z += +speed;
-		}	
-
-		Vector2f rotVec = input.getDisplVec();
-		pitch += rotVec.x;
-		yaw += rotVec.y;
 	}
 
 	public Vector3f calculateNewPosition(float offsetX, float offsetY, float offsetZ) {
@@ -147,6 +180,4 @@ public class Camera implements ICamera {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
-	
 }

@@ -28,7 +28,6 @@ public class ThinMatrix implements IGameLogic {
 	@Override
 	public void input(Window window, Input input) {
 		this.input = input;
-
         if (input.isKeyReleased(GLFW.GLFW_KEY_ESCAPE)) {
         	window.close();
         }
@@ -37,8 +36,8 @@ public class ThinMatrix implements IGameLogic {
 	@Override
 	public void update(float interval, Input input) {
 		scene.update(interval, input);
-		// ((Camera) scene.getCamera()).move(input);
 		((Scene) scene).getPlayer().move(interval, input);
+		((Camera) scene.getCamera()).moveWithPlayer(((Scene) scene).getPlayer(), input);
 	}
 
 	@Override
