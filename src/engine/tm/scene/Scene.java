@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+
 import org.joml.Vector3f;
 import engine.IGameLogic;
 import engine.IScene;
@@ -41,10 +43,10 @@ public class Scene implements IScene {
 		loader = new Loader();
 		light = new Light(new Vector3f(-500, 500, 500), new Vector3f(1, 1, 1));
 
-		TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture("grassy"));
-		TerrainTexture rTexture = new TerrainTexture(loader.loadTexture("dirt"));
-		TerrainTexture gTexture = new TerrainTexture(loader.loadTexture("pinkFlowers"));
-		TerrainTexture bTexture = new TerrainTexture(loader.loadTexture("path"));
+		TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture("terrain_1/bg"));
+		TerrainTexture rTexture = new TerrainTexture(loader.loadTexture("terrain_1/1"));
+		TerrainTexture gTexture = new TerrainTexture(loader.loadTexture("terrain_1/2"));
+		TerrainTexture bTexture = new TerrainTexture(loader.loadTexture("terrain_1/3"));
 		
 		TerrainTexturePack texturePack = new TerrainTexturePack(backgroundTexture, rTexture, gTexture, bTexture);
 		TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("blendMap"));
@@ -53,30 +55,6 @@ public class Scene implements IScene {
 		Terrain terrain_2 = new Terrain(-1, 0,  loader, texturePack, blendMap, "heightmap");
 		Terrain terrain_3 = new Terrain(0, -1,  loader, texturePack, blendMap, "heightmap");
 		Terrain terrain_4 = new Terrain(-1, -1, loader, texturePack, blendMap, "heightmap");
-
-		ModelTexture texture = new ModelTexture(loader.loadTexture("frame"));
-		texture.setShineDamper(20).setReflectivity(1);
-		// RawModel model = loader.loadToVAO(CubeMeshSimple.vertices, CubeMeshSimple.textureCoords, CubeMeshSimple.indices);
-		RawModel model = OBJLoader.loadOBJModel("cube", loader);
-		TexturedModel texturedModel = new TexturedModel(model, texture);
-		Entity entity_1 = new Entity(texturedModel, new Vector3f(0, 8, -30f), 0, 0, 0, 4);
-		Entity entity_2 = new Entity(texturedModel, new Vector3f(12, 8, -30f), 0, 0, 0, 4);
-		Entity entity_3 = new Entity(texturedModel, new Vector3f(-12, 8, -30f), 0, 0, 0, 4);
-
-		RawModel modelOBJ = OBJLoader.loadOBJModel("dragon", loader);
-		TexturedModel texturedModelOBJ = new TexturedModel(modelOBJ, new ModelTexture(loader.loadTexture("gold")));
-		ModelTexture modelTexture = texturedModelOBJ.getTexture();
-		modelTexture.setShineDamper(10);
-		modelTexture.setReflectivity(1);
-		Entity entityOBJ = new Entity(texturedModelOBJ, new Vector3f(0, 13, -30f), 0, 0, 0, 1);
-
-		TexturedModel grassModel = new TexturedModel(OBJLoader.loadOBJModel("grassModel", loader), new ModelTexture(loader.loadTexture("grassTexture")));
-		Entity grass = new Entity(grassModel, new Vector3f(0, 0, -100f), 0, 0, 0, 4);
-		grass.getTexturedModel().getTexture().setTransparent(true).setUseFakeLighting(true);
-
-		TexturedModel fernModel = new TexturedModel(OBJLoader.loadOBJModel("fern", loader), new ModelTexture(loader.loadTexture("fern")));
-		Entity fern = new Entity(fernModel, new Vector3f(0, 0, -100f), 0, 0, 0, 4);
-		fern.getTexturedModel().getTexture().setTransparent(true).setUseFakeLighting(true);
 
 		// player
 		RawModel steveModelRaw = OBJLoader.loadOBJModel("steve", loader);
@@ -88,13 +66,56 @@ public class Scene implements IScene {
 		processTerrain(terrain_3);
 		processTerrain(terrain_4);
 
-		processEntity(entity_1);
-		processEntity(entity_2);
-		processEntity(entity_3);
-		processEntity(entityOBJ);
-		processEntity(grass);
-		processEntity(fern);
-		processEntity(player);
+		generateForestModels();
+
+		processEntity(player);		
+	}
+
+	private void generateForestModels() {
+		Random rand = new Random();
+		Entity entity = null;
+		ModelTexture grassTexture = new ModelTexture(loader.loadTexture("grassTexture"));
+		grassTexture.setTransparent(true).setUseFakeLighting(true);
+		TexturedModel grassModel = new TexturedModel(OBJLoader.loadOBJModel("grassModel", loader), grassTexture);		
+		ModelTexture fernTextureAtlas = new ModelTexture(loader.loadTexture("fern_atlas"));
+		fernTextureAtlas.setNumberOfRows(2);
+		fernTextureAtlas.setTransparent(true).setUseFakeLighting(true);
+		TexturedModel fernModel = new TexturedModel(OBJLoader.loadOBJModel("fern", loader), fernTextureAtlas);
+		TexturedModel pineModel = new TexturedModel(OBJLoader.loadOBJModel("pine", loader), new ModelTexture(loader.loadTexture("pine")));
+
+		for (int i = 0; i < 500; i++) {
+			entity = null;
+			
+			float coordX = rand.nextInt((int) Terrain.SIZE * 2) - Terrain.SIZE;
+			float coordZ = rand.nextInt((int) Terrain.SIZE * 2) - Terrain.SIZE;
+			float coordY = getCurrentTerrain(coordX, coordZ).getHeightOfTerrain(coordX, coordZ);
+			
+			int clearance = 30;
+			if (coordX < -Terrain.SIZE + clearance || coordX > Terrain.SIZE - clearance ||
+				coordZ < -Terrain.SIZE + clearance || coordZ > Terrain.SIZE - clearance ||
+				(coordX > 0 - clearance && coordX < 0 + clearance) ||
+				(coordZ > 0 - clearance && coordZ < 0 + clearance)) {
+				continue;
+			}
+
+			int modelIndex = rand.nextInt(3);
+			int modelSize = rand.nextInt(3) + 2;
+
+			switch (modelIndex) {
+			case 0:
+				entity = new Entity(grassModel, new Vector3f(coordX, coordY, coordZ), 0, 0, 0, modelSize);
+				break;
+			case 1:				
+				entity = new Entity(fernModel, 0, new Vector3f(coordX, coordY, coordZ), 0, 0, 0, modelSize);
+				break;
+			case 2:
+				entity = new Entity(pineModel, 0, new Vector3f(coordX, coordY, coordZ), 0, 0, 0, modelSize);
+				break;
+			}
+			if (entity != null) {
+				processEntity(entity);
+			}
+		}
 	}
 
 	public Map<TexturedModel, List<Entity>> getEntityList() {

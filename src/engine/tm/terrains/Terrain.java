@@ -19,7 +19,7 @@ import engine.tm.toolbox.Maths;
 public class Terrain {
 
 	public static final float SIZE = 800;
-	private static final int MAX_HEIGHT = 60;
+	private static final int MAX_HEIGHT = 30;
 	private static final int MAX_PIXEL_COLOR = 256 * 256 * 256;
 
 	private static int vertexCount = 63;

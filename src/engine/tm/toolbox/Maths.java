@@ -3,6 +3,8 @@ package engine.tm.toolbox;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.joml.Vector3fc;
+
 import engine.graph.ICamera;
 import engine.tm.entities.Camera;
 
@@ -15,10 +17,19 @@ public class Maths {
 		matrix.rotate((float) Math.toRadians(rx), new Vector3f(1, 0, 0));
 		matrix.rotate((float) Math.toRadians(ry), new Vector3f(0, 1, 0));
 		matrix.rotate((float) Math.toRadians(rz), new Vector3f(0, 0, 1));
-		matrix.scale(new Vector3f(scale, scale, scale));		
+		matrix.scale(new Vector3f(scale, scale, scale));
 		return matrix;
 	}
-	
+
+	// 2D, GUI
+	public static Matrix4f createTransformationMatrix(Vector2f translation, Vector2f scale) {
+		Matrix4f matrix = new Matrix4f();
+		matrix.identity();
+		matrix.translate((Vector3fc) translation);
+		matrix.scale(new Vector3f(scale, 1f));
+		return matrix;
+	}
+
 	public static Matrix4f createViewMatrix(ICamera camera) {
 		Matrix4f viewMatrix = new Matrix4f();
 		viewMatrix.identity();
@@ -38,4 +49,5 @@ public class Maths {
 		float l3 = 1.0f - l1 - l2;
 		return l1 * p1.y + l2 * p2.y + l3 * p3.y;
 	}
+
 }

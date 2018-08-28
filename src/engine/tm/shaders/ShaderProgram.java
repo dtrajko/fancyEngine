@@ -115,7 +115,6 @@ public abstract class ShaderProgram {
 		}
 	}
 
-	
 	protected void bindFragOutput(int attachment, String variableName) {
 		GL30.glBindFragDataLocation(programID, attachment, variableName);
 	}
