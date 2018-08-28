@@ -36,7 +36,7 @@ public class ThinMatrix implements IGameLogic {
 	@Override
 	public void update(float interval, Input input) {
 		scene.update(interval, input);
-		((Scene) scene).getPlayer().move(interval, input);
+		((Scene) scene).getPlayer().move(interval, input, scene);
 		((Camera) scene.getCamera()).moveWithPlayer(((Scene) scene).getPlayer(), input);
 	}
 

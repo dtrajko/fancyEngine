@@ -139,6 +139,19 @@ public class Scene implements IScene {
 		}
 	}
 
+	public Terrain getCurrentTerrain(float x, float z) {
+		Terrain currentTerrain = null;
+		// System.out.println("Scene getCurrentTerrain for X: " + x + " and Z: " + z);
+		for (Terrain terrain : terrains) {
+			if (x >= terrain.getX() && x < (terrain.getX() + terrain.SIZE) &&
+				z >= terrain.getZ() && z < (terrain.getZ() + terrain.SIZE)) {
+				currentTerrain = terrain;
+				// System.out.println("Terrain boundaries X: " + terrain.getX() + ", Z: " + terrain.getZ() + " maxX: " + (terrain.getX() + terrain.SIZE) + " maxZ: " + (terrain.getZ() + terrain.SIZE));
+			}
+		}
+		return currentTerrain;
+	}
+
 	@Override
 	public void update(float interval, Input input) {
 		
