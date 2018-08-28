@@ -49,10 +49,10 @@ public class Scene implements IScene {
 		TerrainTexturePack texturePack = new TerrainTexturePack(backgroundTexture, rTexture, gTexture, bTexture);
 		TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("blendMap"));
 
-		Terrain terrain_1 = new Terrain(0, 0, loader, texturePack, blendMap);
-		Terrain terrain_2 = new Terrain(-1, 0, loader, texturePack, blendMap);
-		Terrain terrain_3 = new Terrain(0, -1, loader, texturePack, blendMap);
-		Terrain terrain_4 = new Terrain(-1, -1, loader, texturePack, blendMap);
+		Terrain terrain_1 = new Terrain(0, 0,   loader, texturePack, blendMap, "heightmap");
+		Terrain terrain_2 = new Terrain(-1, 0,  loader, texturePack, blendMap, "heightmap");
+		Terrain terrain_3 = new Terrain(0, -1,  loader, texturePack, blendMap, "heightmap");
+		Terrain terrain_4 = new Terrain(-1, -1, loader, texturePack, blendMap, "heightmap");
 
 		ModelTexture texture = new ModelTexture(loader.loadTexture("frame"));
 		texture.setShineDamper(20).setReflectivity(1);
