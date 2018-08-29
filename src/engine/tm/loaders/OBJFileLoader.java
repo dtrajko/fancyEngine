@@ -11,9 +11,11 @@ import java.util.List;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
+import engine.tm.settings.WorldSettings;
+
 public class OBJFileLoader {
 	
-	private static final String RES_LOC = "res/";
+	private static final String RES_LOC = WorldSettings.RESOURCES_SUBDIR + "/";
 
 	public static ModelData loadOBJ(String objFileName) {
 		FileReader isr = null;

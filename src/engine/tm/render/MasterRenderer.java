@@ -6,27 +6,30 @@ import engine.IScene;
 import engine.Window;
 import engine.tm.gui.GuiRenderer;
 import engine.tm.scene.Scene;
+import engine.tm.skybox.SkyboxRenderer;
 
 public class MasterRenderer {
 
 	private static final float FOV = 70; // field of view angle
 	private static final float NEAR_PLANE = 0.1f;
-	private static final float FAR_PLANE = 1000;
+	private static final float FAR_PLANE = 2200;
 	
-	public static final float RED = 0.4f;
-	public static final float GREEN = 0.6f;
-	public static final float BLUE = 1.0f;
+	public static final float RED   = 0.54f;
+	public static final float GREEN = 0.62f;
+	public static final float BLUE  = 0.69f;
 
 	private Matrix4f projectionMatrix;
 
 	private EntityRenderer entityRenderer;
 	private TerrainRenderer terrainRenderer;
+	private SkyboxRenderer skyboxRenderer;
 	private GuiRenderer guiRenderer;
 
 	public MasterRenderer() {
 		createProjectionMatrix();
 		terrainRenderer = new TerrainRenderer(projectionMatrix);
 		entityRenderer = new EntityRenderer(projectionMatrix);
+		skyboxRenderer = new SkyboxRenderer(projectionMatrix);
 		guiRenderer = new GuiRenderer();
 	}
 
@@ -37,6 +40,7 @@ public class MasterRenderer {
 		prepare();
 		terrainRenderer.render(scene);
 		entityRenderer.render(scene);
+		skyboxRenderer.render(scene);
 		guiRenderer.render(scene);
 	}
 

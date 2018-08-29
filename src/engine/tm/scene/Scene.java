@@ -116,7 +116,7 @@ public class Scene implements IScene {
 			float coordZ = rand.nextInt((int) Terrain.SIZE * 2) - Terrain.SIZE;
 			float coordY = getCurrentTerrain(coordX, coordZ).getHeightOfTerrain(coordX, coordZ);
 			
-			int clearance = 30;
+			int clearance = 50;
 			if (coordX < -Terrain.SIZE + clearance || coordX > Terrain.SIZE - clearance ||
 				coordZ < -Terrain.SIZE + clearance || coordZ > Terrain.SIZE - clearance ||
 				(coordX > 0 - clearance && coordX < 0 + clearance) ||

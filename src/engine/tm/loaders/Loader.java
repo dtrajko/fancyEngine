@@ -1,5 +1,6 @@
 package engine.tm.loaders;
 
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -15,6 +16,8 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL33;
+
+import config.Config;
 import de.matthiasmann.twl.utils.PNGDecoder;
 import de.matthiasmann.twl.utils.PNGDecoder.Format;
 import engine.graph.Texture;
@@ -35,11 +38,11 @@ public class Loader {
 		return new RawModel(vaoID, positions.length / 3);
 	}
 
-	public RawModel loadGuiToVAO(float[] positions) {
+	public RawModel loadToVAO(float[] positions, int dimensions) {
 		int vaoID = createVAO();
-		this.storeDataInAttributeList(0, 2, positions);
+		this.storeDataInAttributeList(0, dimensions, positions);
 		unbindVAO();
-		return new RawModel(vaoID, positions.length / 2);
+		return new RawModel(vaoID, positions.length / dimensions);
 	}
 
 	public RawModel loadToVAO(float[] positions, int[] indices) {
@@ -195,13 +198,6 @@ public class Loader {
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 	}
 
-	public RawModel loadToVAO(float[] positions, int dimensions) {
-		int vaoID = createVAO();
-		this.storeDataInAttributeList(0, dimensions, positions);
-		unbindVAO();
-		return new RawModel(vaoID, positions.length / dimensions);
-	}
-
 	/**
 	 * GL_TEXTURE_CUBE_MAP_POSITIVE_X = Right Face
 	 * GL_TEXTURE_CUBE_MAP_NEGATIVE_X = Left Face
@@ -218,7 +214,7 @@ public class Loader {
 		GL11.glBindTexture(GL13.GL_TEXTURE_CUBE_MAP, texID);
 		
 		for (int i = 0; i < textureFiles.length; i++) {
-			TextureData data = decodeTextureFile(textureFiles[i] + ".png");
+			TextureData data = decodeTextureFile(textureFiles[i]);
 			GL11.glTexImage2D(GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL11.GL_RGBA, data.getWidth(), data.getHeight(), 0,
 				GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, data.getBuffer());
 		}
@@ -235,7 +231,7 @@ public class Loader {
 		int height = 0;
 		ByteBuffer buffer = null;
 		try {
-			InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(fileName);
+			InputStream is = new FileInputStream(WorldSettings.TEXTURES_DIR + "/" + fileName + ".png");
 			PNGDecoder decoder = new PNGDecoder(is);
 			width = decoder.getWidth();
 			height = decoder.getHeight();
