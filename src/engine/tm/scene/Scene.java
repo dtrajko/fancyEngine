@@ -75,16 +75,17 @@ public class Scene implements IScene {
 		
 		setupGui();
 	}
-	
+
 	private void setupLights() {
-		Light light = new Light(new Vector3f(0, 1000, 0), new Vector3f(1, 1, 1));
-		lights.add(light);
+		Light light_sun = new Light(new Vector3f(0, 1000, 0), new Vector3f(1, 1, 1));
+		lights.add(light_sun);
+
 		/*
-		Light light_2 = new Light(new Vector3f(200, 10, -200), new Vector3f(10, 0, 0));
+		Light light_2   = new Light(new Vector3f(200, 10, -200),  new Vector3f(10, 0, 0), new Vector3f(1.0f, 0.01f, 0.002f));
+		Light light_3   = new Light(new Vector3f(-200, 10, -200), new Vector3f(0, 10, 0), new Vector3f(1.0f, 0.01f, 0.002f));
+		Light light_4   = new Light(new Vector3f(0, 10, -400),    new Vector3f(0, 0, 10), new Vector3f(1.0f, 0.01f, 0.002f));
 		lights.add(light_2);
-		Light light_3 = new Light(new Vector3f(-200, 10, -200), new Vector3f(0, 10, 0));
 		lights.add(light_3);
-		Light light_4 = new Light(new Vector3f(0, 10, -400), new Vector3f(0, 0, 10));
 		lights.add(light_4);
 		*/
 	}
