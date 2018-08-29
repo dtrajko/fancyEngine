@@ -25,7 +25,7 @@ public class Maths {
 	public static Matrix4f createTransformationMatrix(Vector2f translation, Vector2f scale) {
 		Matrix4f matrix = new Matrix4f();
 		matrix.identity();
-		matrix.translate((Vector3fc) translation);
+		matrix.translate(new Vector3f(translation, 0f));
 		matrix.scale(new Vector3f(scale, 1f));
 		return matrix;
 	}

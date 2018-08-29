@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 import engine.IGameLogic;
 import engine.IScene;
@@ -16,6 +16,7 @@ import engine.tm.entities.Camera;
 import engine.tm.entities.Entity;
 import engine.tm.entities.Light;
 import engine.tm.entities.Player;
+import engine.tm.gui.GuiTexture;
 import engine.tm.loaders.Loader;
 import engine.tm.loaders.OBJLoader;
 import engine.tm.models.RawModel;
@@ -30,18 +31,20 @@ public class Scene implements IScene {
 	private Loader loader;
 	private ICamera camera;
 	private Player player;
-	private Light light;
 
+	private List<Light> lights = new ArrayList<Light>();
 	private Map<TexturedModel, List<Entity>> entities = new HashMap<TexturedModel, List<Entity>>();
 	private List<Terrain> terrains = new ArrayList<Terrain>();
+	private List<GuiTexture> guis = new ArrayList<GuiTexture>();
 
 	public void init(Window window) {
-		
+
 		camera = new Camera();
 		((Camera) camera).setPosition(new Vector3f(0, 20, 40));
 
 		loader = new Loader();
-		light = new Light(new Vector3f(-500, 500, 500), new Vector3f(1, 1, 1));
+
+		setupLights();
 
 		TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture("terrain_1/bg"));
 		TerrainTexture rTexture = new TerrainTexture(loader.loadTexture("terrain_1/1"));
@@ -68,7 +71,29 @@ public class Scene implements IScene {
 
 		generateForestModels();
 
-		processEntity(player);		
+		processEntity(player);
+		
+		setupGui();
+	}
+	
+	private void setupLights() {
+		Light light = new Light(new Vector3f(0, 1000, 0), new Vector3f(1, 1, 1));
+		lights.add(light);
+		/*
+		Light light_2 = new Light(new Vector3f(200, 10, -200), new Vector3f(10, 0, 0));
+		lights.add(light_2);
+		Light light_3 = new Light(new Vector3f(-200, 10, -200), new Vector3f(0, 10, 0));
+		lights.add(light_3);
+		Light light_4 = new Light(new Vector3f(0, 10, -400), new Vector3f(0, 0, 10));
+		lights.add(light_4);
+		*/
+	}
+
+	private void setupGui() {
+		GuiTexture button = new GuiTexture(loader.loadTexture("gui/button"), new Vector2f(-0.89f, -0.92f), new Vector2f(0.1f, 0.06f));
+		processGui(button);
+		// GuiTexture target = new GuiTexture(loader.loadTexture("gui/bullseye"), new Vector2f(0f, 0f), new Vector2f(0.026f, 0.04f));
+		// processGui(target);		
 	}
 
 	private void generateForestModels() {
@@ -100,13 +125,14 @@ public class Scene implements IScene {
 
 			int modelIndex = rand.nextInt(3);
 			int modelSize = rand.nextInt(3) + 2;
+			int fernTxIndex = rand.nextInt(4);
 
 			switch (modelIndex) {
 			case 0:
 				entity = new Entity(grassModel, new Vector3f(coordX, coordY, coordZ), 0, 0, 0, modelSize);
 				break;
 			case 1:				
-				entity = new Entity(fernModel, 0, new Vector3f(coordX, coordY, coordZ), 0, 0, 0, modelSize);
+				entity = new Entity(fernModel, fernTxIndex, new Vector3f(coordX, coordY, coordZ), 0, 0, 0, modelSize);
 				break;
 			case 2:
 				entity = new Entity(pineModel, 0, new Vector3f(coordX, coordY, coordZ), 0, 0, 0, modelSize);
@@ -125,10 +151,19 @@ public class Scene implements IScene {
 	public List<Terrain> getTerrains() {
 		return terrains;
 	}
-	
+
+	public List<GuiTexture> getGuiElements() {
+		return guis;
+	}
+
+	public List<Light> getLights() {
+		return lights;
+	}
+
 	public void clearLists() {
 		terrains.clear();
 		entities.clear();
+		lights.clear();
 	}
 
 	public Player getPlayer() {
@@ -138,10 +173,6 @@ public class Scene implements IScene {
 	@Override
 	public ICamera getCamera() {
 		return camera;
-	}
-
-	public Light getLight() {
-		return light;
 	}
 
 	public void processTerrain(Terrain terrain) {
@@ -158,6 +189,10 @@ public class Scene implements IScene {
 			newBatch.add(entity);
 			entities.put(entityModel, newBatch);
 		}
+	}
+
+	private void processGui(GuiTexture button) {
+		guis.add(button);
 	}
 
 	public Terrain getCurrentTerrain(float x, float z) {

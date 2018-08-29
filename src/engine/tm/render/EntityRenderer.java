@@ -32,11 +32,11 @@ public class EntityRenderer {
 	}
 	
 	public void render(IScene scene) {
-		Light light = ((Scene) scene).getLight();
+		List<Light> lights = ((Scene) scene).getLights();
 		ICamera camera = ((Scene) scene).getCamera();
 		Map<TexturedModel, List<Entity>> entities = ((Scene) scene).getEntityList();
 		shader.start();
-		shader.loadLight(light);
+		shader.loadLights(lights);
 		shader.loadViewMatrix(camera);
 		for(TexturedModel model: entities.keySet()) {
 			bindTexturedModel(model);

@@ -32,12 +32,12 @@ public class TerrainRenderer {
 
 	public void render(IScene scene) {
 
-		Light light = ((Scene) scene).getLight();
+		List<Light> lights = ((Scene) scene).getLights();
 		ICamera camera = ((Scene) scene).getCamera();
 		List<Terrain> terrains = ((Scene) scene).getTerrains();
 
 		shader.start();
-		shader.loadLight(light);
+		shader.loadLights(lights);
 		shader.loadViewMatrix(camera);
 
 		for (Terrain terrain : terrains) {

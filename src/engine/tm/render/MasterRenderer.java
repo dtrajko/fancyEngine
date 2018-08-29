@@ -4,6 +4,7 @@ import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 import engine.IScene;
 import engine.Window;
+import engine.tm.gui.GuiRenderer;
 import engine.tm.scene.Scene;
 
 public class MasterRenderer {
@@ -20,11 +21,13 @@ public class MasterRenderer {
 
 	private EntityRenderer entityRenderer;
 	private TerrainRenderer terrainRenderer;
+	private GuiRenderer guiRenderer;
 
 	public MasterRenderer() {
 		createProjectionMatrix();
 		terrainRenderer = new TerrainRenderer(projectionMatrix);
 		entityRenderer = new EntityRenderer(projectionMatrix);
+		guiRenderer = new GuiRenderer();
 	}
 
 	public void init(Window window) {
@@ -34,6 +37,7 @@ public class MasterRenderer {
 		prepare();
 		terrainRenderer.render(scene);
 		entityRenderer.render(scene);
+		guiRenderer.render(scene);
 	}
 
 	public void prepare() {
