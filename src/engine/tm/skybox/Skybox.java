@@ -24,6 +24,15 @@ public class Skybox {
 		"skybox_3/front"
 	};
 
+	private static String[] TEXTURE_FILES_NIGHT = {
+		"skybox_2/right", 
+		"skybox_2/left", 
+		"skybox_2/top", 
+		"skybox_2/bottom", 
+		"skybox_2/back", 
+		"skybox_2/front"
+	};
+
 	public static final float[] VERTICES = {
 		-SIZE,  SIZE, -SIZE,
 		-SIZE, -SIZE, -SIZE,
@@ -70,10 +79,12 @@ public class Skybox {
 
 	private RawModel cube;
 	private int texture;
+	private int textureNight;
 
 	public Skybox(Loader loader) {
 		cube = loader.loadToVAO(VERTICES, 3);
 		texture = loader.loadCubeMap(TEXTURE_FILES);
+		textureNight = loader.loadCubeMap(TEXTURE_FILES_NIGHT);
 	}
 
 	public RawModel getCube() {
@@ -82,5 +93,9 @@ public class Skybox {
 
 	public int getTexture() {
 		return texture;
+	}
+
+	public int getTextureNight() {
+		return textureNight;
 	}
 }
