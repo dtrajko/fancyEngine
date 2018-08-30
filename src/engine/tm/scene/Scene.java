@@ -80,7 +80,7 @@ public class Scene implements IScene {
 	}
 
 	private void setupLights() {
-		Light light_sun = new Light(new Vector3f(0, 1000, -600), new Vector3f(1, 1, 1));
+		Light light_sun = new Light(new Vector3f(-500, 2000, -500), new Vector3f(1, 1, 1));
 		lights.add(light_sun);
 
 		/*
@@ -119,7 +119,7 @@ public class Scene implements IScene {
 			float coordZ = rand.nextInt((int) Terrain.SIZE) - Terrain.SIZE / 2;
 			float coordY = getCurrentTerrain(coordX, coordZ).getHeightOfTerrain(coordX, coordZ);
 			
-			int clearance = 40;
+			int clearance = 50;
 			if (coordX < -Terrain.SIZE / 2 + clearance || coordX > Terrain.SIZE / 2 - clearance ||
 				coordZ < -Terrain.SIZE / 2 + clearance * 3 || coordZ > Terrain.SIZE / 2 - clearance) {
 				continue;

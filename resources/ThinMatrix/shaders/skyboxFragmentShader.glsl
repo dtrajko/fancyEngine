@@ -8,8 +8,8 @@ uniform samplerCube cubeMapNight;
 uniform float blendFactor;
 uniform vec3 fogColor;
 
-const float lowerLimit = 10.0;
-const float upperLimit = 60.0;
+const float upperLimit = 1000; // 60.0;
+const float lowerLimit = -1000; // 10.0;
 
 void main(void){
 
