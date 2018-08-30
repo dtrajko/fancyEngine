@@ -14,9 +14,9 @@ public class MasterRenderer {
 	private static final float NEAR_PLANE = 0.1f;
 	private static final float FAR_PLANE = 2200;
 	
-	public static final float RED   = 0.54f;
-	public static final float GREEN = 0.62f;
-	public static final float BLUE  = 0.69f;
+	public static final float RED   = 0.832f;
+	public static final float GREEN = 0.961f;
+	public static final float BLUE  = 0.996f;
 
 	private Matrix4f projectionMatrix;
 

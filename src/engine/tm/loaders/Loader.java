@@ -16,8 +16,6 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL33;
-
-import config.Config;
 import de.matthiasmann.twl.utils.PNGDecoder;
 import de.matthiasmann.twl.utils.PNGDecoder.Format;
 import engine.graph.Texture;
@@ -38,6 +36,13 @@ public class Loader {
 		return new RawModel(vaoID, positions.length / 3);
 	}
 
+	/**
+	 * Used for skybox (dimensions = 3), and gui renderer (dimensions = 2)
+	 * 
+	 * @param positions
+	 * @param dimensions
+	 * @return
+	 */
 	public RawModel loadToVAO(float[] positions, int dimensions) {
 		int vaoID = createVAO();
 		this.storeDataInAttributeList(0, dimensions, positions);
@@ -220,9 +225,9 @@ public class Loader {
 		}
 		GL11.glTexParameteri(GL13.GL_TEXTURE_CUBE_MAP, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
 		GL11.glTexParameteri(GL13.GL_TEXTURE_CUBE_MAP, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
-		textures.add(texID);
 		GL11.glTexParameteri(GL13.GL_TEXTURE_CUBE_MAP, GL11.GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
 		GL11.glTexParameteri(GL13.GL_TEXTURE_CUBE_MAP, GL11.GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
+		textures.add(texID);
 		return texID;
 	}
 

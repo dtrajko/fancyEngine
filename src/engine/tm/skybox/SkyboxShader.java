@@ -1,6 +1,7 @@
 package engine.tm.skybox;
 
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 import engine.tm.entities.Camera;
 import engine.tm.settings.WorldSettings;
@@ -23,14 +24,14 @@ public class SkyboxShader extends ShaderProgram {
 		super.loadMatrix(location_projectionMatrix, matrix);
 	}
 
-	public void loadViewMatrix(Camera camera){
+	public void loadViewMatrix(Camera camera) {
 		Matrix4f matrix = Maths.createViewMatrix(camera);
 		matrix.m30(0);
 		matrix.m31(0);
 		matrix.m31(0);
 		super.loadMatrix(location_viewMatrix, matrix);
 	}
-	
+
 	@Override
 	protected void getAllUniformLocations() {
 		location_projectionMatrix = super.getUniformLocation("projectionMatrix");
@@ -41,5 +42,4 @@ public class SkyboxShader extends ShaderProgram {
 	protected void bindAttributes() {
 		super.bindAttribute(0, "position");
 	}
-
 }

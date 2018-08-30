@@ -21,6 +21,7 @@ import engine.tm.loaders.Loader;
 import engine.tm.loaders.OBJLoader;
 import engine.tm.models.RawModel;
 import engine.tm.models.TexturedModel;
+import engine.tm.skybox.Skybox;
 import engine.tm.terrains.Terrain;
 import engine.tm.textures.ModelTexture;
 import engine.tm.textures.TerrainTexture;
@@ -31,6 +32,7 @@ public class Scene implements IScene {
 	private Loader loader;
 	private ICamera camera;
 	private Player player;
+	private Skybox skybox;
 
 	private List<Light> lights = new ArrayList<Light>();
 	private Map<TexturedModel, List<Entity>> entities = new HashMap<TexturedModel, List<Entity>>();
@@ -43,6 +45,7 @@ public class Scene implements IScene {
 		((Camera) camera).setPosition(new Vector3f(0, 20, 40));
 
 		loader = new Loader();
+		skybox = new Skybox(loader);
 
 		setupLights();
 
@@ -54,20 +57,20 @@ public class Scene implements IScene {
 		TerrainTexturePack texturePack = new TerrainTexturePack(backgroundTexture, rTexture, gTexture, bTexture);
 		TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("blendMap"));
 
-		Terrain terrain_1 = new Terrain(0, 0,   loader, texturePack, blendMap, "heightmap");
-		Terrain terrain_2 = new Terrain(-1, 0,  loader, texturePack, blendMap, "heightmap");
-		Terrain terrain_3 = new Terrain(0, -1,  loader, texturePack, blendMap, "heightmap");
-		Terrain terrain_4 = new Terrain(-1, -1, loader, texturePack, blendMap, "heightmap");
+		Terrain terrain_1 = new Terrain(-0.5f, -0.5f, loader, texturePack, blendMap, "heightmap");
+		processTerrain(terrain_1);
+		// Terrain terrain_2 = new Terrain(-1, 0,  loader, texturePack, blendMap, "heightmap");
+		// Terrain terrain_3 = new Terrain(0, -1,  loader, texturePack, blendMap, "heightmap");
+		// Terrain terrain_4 = new Terrain(-1, -1, loader, texturePack, blendMap, "heightmap");
+		// processTerrain(terrain_2);
+		// processTerrain(terrain_3);
+		// processTerrain(terrain_4);
 
 		// player
 		RawModel steveModelRaw = OBJLoader.loadOBJModel("steve", loader);
 		TexturedModel steveModel = new TexturedModel(steveModelRaw, new ModelTexture(loader.loadTexture("steve")));
 		player = new Player(steveModel, new Vector3f(0, 0, 0), 0, 180, 0, 4);
 
-		processTerrain(terrain_1);
-		processTerrain(terrain_2);
-		processTerrain(terrain_3);
-		processTerrain(terrain_4);
 
 		generateForestModels();
 
@@ -77,7 +80,7 @@ public class Scene implements IScene {
 	}
 
 	private void setupLights() {
-		Light light_sun = new Light(new Vector3f(0, 1000, 0), new Vector3f(1, 1, 1));
+		Light light_sun = new Light(new Vector3f(0, 1000, -600), new Vector3f(1, 1, 1));
 		lights.add(light_sun);
 
 		/*
@@ -109,18 +112,16 @@ public class Scene implements IScene {
 		TexturedModel fernModel = new TexturedModel(OBJLoader.loadOBJModel("fern", loader), fernTextureAtlas);
 		TexturedModel pineModel = new TexturedModel(OBJLoader.loadOBJModel("pine", loader), new ModelTexture(loader.loadTexture("pine")));
 
-		for (int i = 0; i < 500; i++) {
+		for (int i = 0; i < 300; i++) {
 			entity = null;
 			
-			float coordX = rand.nextInt((int) Terrain.SIZE * 2) - Terrain.SIZE;
-			float coordZ = rand.nextInt((int) Terrain.SIZE * 2) - Terrain.SIZE;
+			float coordX = rand.nextInt((int) Terrain.SIZE) - Terrain.SIZE / 2;
+			float coordZ = rand.nextInt((int) Terrain.SIZE) - Terrain.SIZE / 2;
 			float coordY = getCurrentTerrain(coordX, coordZ).getHeightOfTerrain(coordX, coordZ);
 			
-			int clearance = 50;
-			if (coordX < -Terrain.SIZE + clearance || coordX > Terrain.SIZE - clearance ||
-				coordZ < -Terrain.SIZE + clearance || coordZ > Terrain.SIZE - clearance ||
-				(coordX > 0 - clearance && coordX < 0 + clearance) ||
-				(coordZ > 0 - clearance && coordZ < 0 + clearance)) {
+			int clearance = 40;
+			if (coordX < -Terrain.SIZE / 2 + clearance || coordX > Terrain.SIZE / 2 - clearance ||
+				coordZ < -Terrain.SIZE / 2 + clearance * 3 || coordZ > Terrain.SIZE / 2 - clearance) {
 				continue;
 			}
 
@@ -176,6 +177,10 @@ public class Scene implements IScene {
 		return camera;
 	}
 
+	public Skybox getSkybox() {
+		return skybox;
+	}
+
 	public void processTerrain(Terrain terrain) {
 		terrains.add(terrain);
 	}
@@ -200,8 +205,8 @@ public class Scene implements IScene {
 		Terrain currentTerrain = null;
 		// System.out.println("Scene getCurrentTerrain for X: " + x + " and Z: " + z);
 		for (Terrain terrain : terrains) {
-			if (x >= terrain.getX() && x < (terrain.getX() + terrain.SIZE) &&
-				z >= terrain.getZ() && z < (terrain.getZ() + terrain.SIZE)) {
+			if (x >= terrain.getX() && x < (terrain.getX() + Terrain.SIZE) &&
+				z >= terrain.getZ() && z < (terrain.getZ() + Terrain.SIZE)) {
 				currentTerrain = terrain;
 				// System.out.println("Terrain boundaries X: " + terrain.getX() + ", Z: " + terrain.getZ() + " maxX: " + (terrain.getX() + terrain.SIZE) + " maxZ: " + (terrain.getZ() + terrain.SIZE));
 			}
