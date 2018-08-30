@@ -17,7 +17,6 @@ public class Main {
             boolean vSync = false;
             IGameLogic gameLogic;
             GameEngine gameEng;
-
             Window.WindowOptions opts = new Window.WindowOptions();
             opts.cullFace = true;
             opts.showFps = true;
