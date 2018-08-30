@@ -7,8 +7,6 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import engine.IScene;
 import engine.tm.entities.Camera;
-import engine.tm.loaders.Loader;
-import engine.tm.models.RawModel;
 import engine.tm.scene.Scene;
 
 public class SkyboxRenderer {

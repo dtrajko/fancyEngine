@@ -5,8 +5,11 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
+import engine.IScene;
 import engine.graph.ICamera;
 import engine.graph.Input;
+import engine.tm.scene.Scene;
+import engine.tm.terrains.Terrain;
 
 public class Camera implements ICamera {
 	
@@ -33,25 +36,32 @@ public class Camera implements ICamera {
 		cameraInc = new Vector3f(0.0f, 0.0f, 0.0f);
 	}
 
-	public void moveWithPlayer(Player player, Input input) {
+	public void moveWithPlayer(IScene scene, Input input) {
+		Player player = ((Scene)scene).getPlayer();
 		displVec = input.getDisplVec();
 		calculateZoom(input);
 		calculatePitch(input);
 		calculateAngleAroundPlayer(input);
 		float horizontalDistance = calculateHorizontalDistance();
 		float verticalDistance = calculateVerticalDistance();
-		calculateCameraPosition(player, horizontalDistance, verticalDistance);
+		calculateCameraPosition(horizontalDistance, verticalDistance, scene);
 		float theta = player.getRotY() + angleAroundPlayer;
 		this.yaw = 180 - theta;
 	}
 
-	private void calculateCameraPosition(Player player, float horizontalDistance, float verticalDistance) {
+	private void calculateCameraPosition(float horizontalDistance, float verticalDistance, IScene scene) {
+		Player player = ((Scene)scene).getPlayer();
 		float theta = player.getRotY() + angleAroundPlayer;
 		float offsetX = (float) (horizontalDistance * Math.sin(Math.toRadians(theta)));
 		float offsetZ = (float) (horizontalDistance * Math.cos(Math.toRadians(theta)));		
 		position.x = player.getPosition().x - offsetX;
 		position.y = player.getPosition().y + verticalDistance + OFFSET_Y;
 		position.z = player.getPosition().z - offsetZ;
+		
+		Terrain terrain = ((Scene)scene).getCurrentTerrain(position.x, position.z);		
+		if (terrain instanceof Terrain && terrain.getHeightOfTerrain(position.x, position.z) > position.y) {
+			position.y = terrain.getHeightOfTerrain(position.x, position.z) + 5;
+		}
 	}
 
 	private float calculateHorizontalDistance() {
