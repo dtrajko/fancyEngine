@@ -26,6 +26,9 @@ import engine.tm.terrains.Terrain;
 import engine.tm.textures.ModelTexture;
 import engine.tm.textures.TerrainTexture;
 import engine.tm.textures.TerrainTexturePack;
+import engine.tm.toolbox.MousePicker;
+import engine.tm.water.Water;
+import engine.tm.water.WaterTile;
 
 public class Scene implements IScene {
 
@@ -33,22 +36,36 @@ public class Scene implements IScene {
 	private ICamera camera;
 	private Player player;
 	private Skybox skybox;
+	private Water water;
 
 	private List<Light> lights = new ArrayList<Light>();
 	private Map<TexturedModel, List<Entity>> entities = new HashMap<TexturedModel, List<Entity>>();
 	private List<Terrain> terrains = new ArrayList<Terrain>();
+	private List<WaterTile> waterTiles = new ArrayList<WaterTile>();
 	private List<GuiTexture> guis = new ArrayList<GuiTexture>();
-
+	
 	public void init(Window window) {
-
 		camera = new Camera();
 		((Camera) camera).setPosition(new Vector3f(0, 20, 40));
-
 		loader = new Loader();
 		skybox = new Skybox(loader);
-
+		water = new Water(loader);
+		setupTerrains();
+		setupPlayer();
+		generateForestModels();
+		processEntity(player);
 		setupLights();
+		setupGui();
+	}
 
+	private void setupPlayer() {
+		// player
+		RawModel steveModelRaw = OBJLoader.loadOBJModel("steve", loader);
+		TexturedModel steveModel = new TexturedModel(steveModelRaw, new ModelTexture(loader.loadTexture("steve")));
+		player = new Player(steveModel, new Vector3f(0, 0, 0), 0, 180, 0, 4);
+	}
+
+	private void setupTerrains() {
 		TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture("terrain_1/bg"));
 		TerrainTexture rTexture = new TerrainTexture(loader.loadTexture("terrain_1/1"));
 		TerrainTexture gTexture = new TerrainTexture(loader.loadTexture("terrain_1/2"));
@@ -64,25 +81,12 @@ public class Scene implements IScene {
 		// Terrain terrain_4 = new Terrain(-1, -1, loader, texturePack, blendMap, "heightmap");
 		// processTerrain(terrain_2);
 		// processTerrain(terrain_3);
-		// processTerrain(terrain_4);
-
-		// player
-		RawModel steveModelRaw = OBJLoader.loadOBJModel("steve", loader);
-		TexturedModel steveModel = new TexturedModel(steveModelRaw, new ModelTexture(loader.loadTexture("steve")));
-		player = new Player(steveModel, new Vector3f(0, 0, 0), 0, 180, 0, 4);
-
-
-		generateForestModels();
-
-		processEntity(player);
-		
-		setupGui();
+		// processTerrain(terrain_4);		
 	}
 
 	private void setupLights() {
 		Light light_sun = new Light(new Vector3f(-500, 2000, -500), new Vector3f(1, 1, 1));
 		lights.add(light_sun);
-
 		/*
 		Light light_2   = new Light(new Vector3f(200, 10, -200),  new Vector3f(10, 0, 0), new Vector3f(1.0f, 0.01f, 0.002f));
 		Light light_3   = new Light(new Vector3f(-200, 10, -200), new Vector3f(0, 10, 0), new Vector3f(1.0f, 0.01f, 0.002f));
@@ -162,6 +166,10 @@ public class Scene implements IScene {
 		return lights;
 	}
 
+	public List<WaterTile> getWaterTiles() {
+		return waterTiles;
+	}
+
 	public void clearLists() {
 		terrains.clear();
 		entities.clear();
@@ -179,6 +187,10 @@ public class Scene implements IScene {
 
 	public Skybox getSkybox() {
 		return skybox;
+	}
+
+	public Water getWater() {
+		return water;
 	}
 
 	public void processTerrain(Terrain terrain) {
@@ -201,14 +213,23 @@ public class Scene implements IScene {
 		guis.add(button);
 	}
 
+	public Terrain getCurrentTerrain() {
+		Terrain currentTerrain = null;
+		try {
+			currentTerrain = getCurrentTerrain(player.getPosition().x, player.getPosition().z);
+		} catch (Exception e) {
+			System.out.println("Failed to retrieve the current terrain object.");
+			e.printStackTrace();
+		}
+		return currentTerrain;
+	}
+
 	public Terrain getCurrentTerrain(float x, float z) {
 		Terrain currentTerrain = null;
-		// System.out.println("Scene getCurrentTerrain for X: " + x + " and Z: " + z);
 		for (Terrain terrain : terrains) {
 			if (x >= terrain.getX() && x < (terrain.getX() + Terrain.SIZE) &&
 				z >= terrain.getZ() && z < (terrain.getZ() + Terrain.SIZE)) {
 				currentTerrain = terrain;
-				// System.out.println("Terrain boundaries X: " + terrain.getX() + ", Z: " + terrain.getZ() + " maxX: " + (terrain.getX() + terrain.SIZE) + " maxZ: " + (terrain.getZ() + terrain.SIZE));
 			}
 		}
 		return currentTerrain;

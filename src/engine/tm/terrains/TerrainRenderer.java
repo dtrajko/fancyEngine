@@ -1,4 +1,4 @@
-package engine.tm.render;
+package engine.tm.terrains;
 
 import java.util.List;
 import org.joml.Matrix4f;
@@ -11,9 +11,9 @@ import engine.IScene;
 import engine.graph.ICamera;
 import engine.tm.entities.Light;
 import engine.tm.models.RawModel;
+import engine.tm.render.MasterRenderer;
 import engine.tm.scene.Scene;
 import engine.tm.shaders.TerrainShader;
-import engine.tm.terrains.Terrain;
 import engine.tm.textures.ModelTexture;
 import engine.tm.textures.TerrainTexturePack;
 import engine.tm.toolbox.Maths;

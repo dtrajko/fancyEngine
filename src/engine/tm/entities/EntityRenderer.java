@@ -1,4 +1,4 @@
-package engine.tm.render;
+package engine.tm.entities;
 
 import java.util.List;
 import java.util.Map;
@@ -10,10 +10,9 @@ import org.lwjgl.opengl.GL30;
 import engine.IScene;
 import engine.Window;
 import engine.graph.ICamera;
-import engine.tm.entities.Entity;
-import engine.tm.entities.Light;
 import engine.tm.models.RawModel;
 import engine.tm.models.TexturedModel;
+import engine.tm.render.MasterRenderer;
 import engine.tm.scene.Scene;
 import engine.tm.shaders.StaticShader;
 import engine.tm.textures.ModelTexture;

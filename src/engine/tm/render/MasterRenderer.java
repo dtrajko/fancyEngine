@@ -4,16 +4,19 @@ import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 import engine.IScene;
 import engine.Window;
+import engine.tm.entities.EntityRenderer;
 import engine.tm.gui.GuiRenderer;
 import engine.tm.scene.Scene;
 import engine.tm.skybox.SkyboxRenderer;
+import engine.tm.terrains.TerrainRenderer;
+import engine.tm.water.WaterRenderer;
 
 public class MasterRenderer {
 
 	private static final float FOV = 70; // field of view angle
 	private static final float NEAR_PLANE = 0.1f;
 	private static final float FAR_PLANE = 2000;
-	
+
 	public static final float RED   = 0.832f;
 	public static final float GREEN = 0.961f;
 	public static final float BLUE  = 0.996f;
@@ -23,6 +26,7 @@ public class MasterRenderer {
 	private EntityRenderer entityRenderer;
 	private TerrainRenderer terrainRenderer;
 	private SkyboxRenderer skyboxRenderer;
+	private WaterRenderer waterRenderer;
 	private GuiRenderer guiRenderer;
 
 	public MasterRenderer() {
@@ -30,6 +34,7 @@ public class MasterRenderer {
 		terrainRenderer = new TerrainRenderer(projectionMatrix);
 		entityRenderer = new EntityRenderer(projectionMatrix);
 		skyboxRenderer = new SkyboxRenderer(projectionMatrix);
+		waterRenderer = new WaterRenderer(projectionMatrix);
 		guiRenderer = new GuiRenderer();
 	}
 
@@ -41,6 +46,7 @@ public class MasterRenderer {
 		terrainRenderer.render(scene);
 		entityRenderer.render(scene);
 		skyboxRenderer.render(scene);
+		// waterRenderer.render(scene);
 		guiRenderer.render(scene);
 	}
 
@@ -64,6 +70,10 @@ public class MasterRenderer {
 		projectionMatrix.m32(-((2 * FAR_PLANE * NEAR_PLANE) / frustum_length));
 		projectionMatrix.m33(0);
 
+		return projectionMatrix;
+	}
+	
+	public Matrix4f getProjectionMatrix() {
 		return projectionMatrix;
 	}
 

@@ -10,6 +10,7 @@ import engine.sound.SoundManager;
 import engine.tm.entities.Camera;
 import engine.tm.render.MasterRenderer;
 import engine.tm.scene.Scene;
+import engine.tm.toolbox.MousePicker;
 
 public class ThinMatrix implements IGameLogic {
 
@@ -17,12 +18,14 @@ public class ThinMatrix implements IGameLogic {
 	private Window window;
 	private IScene scene;
 	private Input input;
+	private MousePicker mousePicker;
 
 	@Override
 	public void init(Window window) throws Exception {
 		masterRenderer = new MasterRenderer();
 		scene = new Scene();
 		((Scene) scene).init(window);
+		mousePicker = new MousePicker(scene, masterRenderer.getProjectionMatrix());
 	}
 
 	@Override
@@ -38,6 +41,7 @@ public class ThinMatrix implements IGameLogic {
 		scene.update(interval, input);
 		((Scene) scene).getPlayer().move(interval, input, scene);
 		((Camera) scene.getCamera()).moveWithPlayer(scene, input);
+		mousePicker.update(input);		
 	}
 
 	@Override
