@@ -46,7 +46,7 @@ public class MasterRenderer {
 		terrainRenderer.render(scene);
 		entityRenderer.render(scene);
 		skyboxRenderer.render(scene);
-		// waterRenderer.render(scene);
+		waterRenderer.render(scene);
 		guiRenderer.render(scene);
 	}
 

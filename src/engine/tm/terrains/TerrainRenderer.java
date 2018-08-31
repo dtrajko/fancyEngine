@@ -14,7 +14,6 @@ import engine.tm.models.RawModel;
 import engine.tm.render.MasterRenderer;
 import engine.tm.scene.Scene;
 import engine.tm.shaders.TerrainShader;
-import engine.tm.textures.ModelTexture;
 import engine.tm.textures.TerrainTexturePack;
 import engine.tm.toolbox.Maths;
 

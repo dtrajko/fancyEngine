@@ -2,19 +2,18 @@ package engine.tm.water;
 
 public class WaterTile {
      
-    public static final float TILE_SIZE = 800;
+    public static final float TILE_SIZE = 400;
 
-    private float height;
-    private float x,z;
+    private float x, y, z;
 
-    public WaterTile(float centerX, float centerZ, float height){
+    public WaterTile(float centerX, float y, float centerZ){
         this.x = centerX;
         this.z = centerZ;
-        this.height = height;
+        this.y = y;
     }
 
-    public float getHeight() {
-        return height;
+    public float getY() {
+        return y;
     }
  
     public float getX() {

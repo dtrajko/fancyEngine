@@ -49,13 +49,18 @@ public class Scene implements IScene {
 		((Camera) camera).setPosition(new Vector3f(0, 20, 40));
 		loader = new Loader();
 		skybox = new Skybox(loader);
-		water = new Water(loader);
 		setupTerrains();
-		setupPlayer();
 		generateForestModels();
-		processEntity(player);
+		setupPlayer();
+		setupWater();
 		setupLights();
 		setupGui();
+	}
+
+	private void setupWater() {
+		water = new Water(loader);
+		WaterTile waterTile = new WaterTile(0, -5, 0);
+		processWaterTile(waterTile);
 	}
 
 	private void setupPlayer() {
@@ -63,6 +68,7 @@ public class Scene implements IScene {
 		RawModel steveModelRaw = OBJLoader.loadOBJModel("steve", loader);
 		TexturedModel steveModel = new TexturedModel(steveModelRaw, new ModelTexture(loader.loadTexture("steve")));
 		player = new Player(steveModel, new Vector3f(0, 0, 0), 0, 180, 0, 4);
+		processEntity(player);
 	}
 
 	private void setupTerrains() {
@@ -207,6 +213,10 @@ public class Scene implements IScene {
 			newBatch.add(entity);
 			entities.put(entityModel, newBatch);
 		}
+	}
+
+	private void processWaterTile(WaterTile waterTile) {
+		waterTiles.add(waterTile);
 	}
 
 	private void processGui(GuiTexture button) {
