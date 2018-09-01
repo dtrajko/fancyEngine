@@ -217,7 +217,7 @@ public class Frogger implements IGameLogic {
 		Assets.deleteAsset();
 		renderer.clear();
 		if (scene != null) scene.cleanup();
-		soundMgr.cleanup();
+		soundMgr.cleanUp();
 	}
 	
 	public void saveHiScore() {

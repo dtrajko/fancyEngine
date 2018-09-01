@@ -93,7 +93,7 @@ public class SoundManager {
         alDistanceModel(model);
     }
     
-    public void cleanup() {
+    public void cleanUp() {
         for (SoundSource soundSource : soundSourceMap.values()) {
             soundSource.cleanup();
         }

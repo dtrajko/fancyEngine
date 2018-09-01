@@ -1,6 +1,7 @@
 package engine.tm.skybox;
 
 import org.joml.Matrix4f;
+import org.joml.Vector4f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
@@ -27,10 +28,11 @@ public class SkyboxRenderer {
 		shader.stop();
 	}
 
-	public void render(IScene scene) {
+	public void render(IScene scene, Vector4f clipPlane) {
 		Camera camera = (Camera) ((Scene) scene).getCamera();
 		Skybox skybox = ((Scene) scene).getSkybox();
 		shader.start();
+		shader.loadClipPlane(clipPlane);
 		shader.loadViewMatrix(camera);
 		GL30.glBindVertexArray(skybox.getCube().getVaoID());
 		GL20.glEnableVertexAttribArray(0);
@@ -51,7 +53,7 @@ public class SkyboxRenderer {
 		int skyboxTexture = skybox.getTexture();
 		int skyboxTextureNight = skybox.getTextureNight();
 
-		time += 1f / GameEngine.TARGET_UPS * 100;
+		time += 1f / GameEngine.TARGET_UPS * 10;
 		time %= 24000;
 		float blendFactor;
 
@@ -78,6 +80,10 @@ public class SkyboxRenderer {
 		GL13.glActiveTexture(GL13.GL_TEXTURE1);
 		GL11.glBindTexture(GL13.GL_TEXTURE_CUBE_MAP, texture2);
 		shader.loadBlendFactor(blendFactor);
+	}
+
+	public void cleanUp() {
+		shader.cleanUp();
 	}
 
 }

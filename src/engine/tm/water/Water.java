@@ -5,6 +5,8 @@ import engine.tm.models.RawModel;
 
 public class Water {
 
+	public static int HEIGHT = -6;
+
 	private static final String DUDV_MAP = "/water/waterDUDV";
 	private static final String NORMAL_MAP = "/water/normal";
 

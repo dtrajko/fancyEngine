@@ -175,7 +175,7 @@ public class ExplosionParticleEmitter implements IParticleEmitter {
 	}
 
     @Override
-    public void cleanup() {
+    public void cleanUp() {
         for (GameItem particle : getParticles()) {
             particle.cleanup();
         }

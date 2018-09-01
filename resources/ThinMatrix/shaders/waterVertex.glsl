@@ -25,5 +25,4 @@ void main(void) {
  	toCameraVector = cameraPosition - worldPosition.xyz;
 
  	fromLightVector = worldPosition.xyz - lightPosition;
-
 }

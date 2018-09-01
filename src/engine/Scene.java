@@ -426,7 +426,7 @@ public class Scene implements IScene {
         list.remove(gameItem);
     }
 
-    public void cleanup() {
+    public void cleanUp() {
         for (Mesh mesh : meshMap.keySet()) {
             mesh.cleanUp();
         }
@@ -435,7 +435,7 @@ public class Scene implements IScene {
         }
         if (particleEmitters != null) {
             for (IParticleEmitter particleEmitter : particleEmitters) {
-                particleEmitter.cleanup();
+                particleEmitter.cleanUp();
             }
         }
     }

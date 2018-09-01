@@ -655,7 +655,7 @@ public class Renderer {
         }        
     }
 
-    public void cleanup() {
+    public void cleanUp() {
         if (shaderProgram != null) {
             shaderProgram.cleanup();
         }

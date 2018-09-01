@@ -6,7 +6,7 @@ import engine.items.GameItem;
 
 public interface IParticleEmitter {
 
-    void cleanup();
+    void cleanUp();
     
     Particle getBaseParticle();
     

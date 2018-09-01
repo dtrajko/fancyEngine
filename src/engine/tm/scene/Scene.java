@@ -21,12 +21,12 @@ import engine.tm.loaders.Loader;
 import engine.tm.loaders.OBJLoader;
 import engine.tm.models.RawModel;
 import engine.tm.models.TexturedModel;
+import engine.tm.render.MasterRenderer;
 import engine.tm.skybox.Skybox;
 import engine.tm.terrains.Terrain;
 import engine.tm.textures.ModelTexture;
 import engine.tm.textures.TerrainTexture;
 import engine.tm.textures.TerrainTexturePack;
-import engine.tm.toolbox.MousePicker;
 import engine.tm.water.Water;
 import engine.tm.water.WaterTile;
 
@@ -43,7 +43,7 @@ public class Scene implements IScene {
 	private List<Terrain> terrains = new ArrayList<Terrain>();
 	private List<WaterTile> waterTiles = new ArrayList<WaterTile>();
 	private List<GuiTexture> guis = new ArrayList<GuiTexture>();
-	
+
 	public void init(Window window) {
 		camera = new Camera();
 		((Camera) camera).setPosition(new Vector3f(0, 20, 40));
@@ -59,7 +59,7 @@ public class Scene implements IScene {
 
 	private void setupWater() {
 		water = new Water(loader);
-		WaterTile waterTile = new WaterTile(0, -5, 0);
+		WaterTile waterTile = new WaterTile(0, Water.HEIGHT, 0);
 		processWaterTile(waterTile);
 	}
 
@@ -78,13 +78,13 @@ public class Scene implements IScene {
 		TerrainTexture bTexture = new TerrainTexture(loader.loadTexture("terrain_1/3"));
 		
 		TerrainTexturePack texturePack = new TerrainTexturePack(backgroundTexture, rTexture, gTexture, bTexture);
-		TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("blendMap"));
+		TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("terrain_1/blendMap"));
 
-		Terrain terrain_1 = new Terrain(-0.5f, -0.5f, loader, texturePack, blendMap, "heightmap");
+		Terrain terrain_1 = new Terrain(-0.5f, -0.5f, loader, texturePack, blendMap, "terrain_1/heightmap");
 		processTerrain(terrain_1);
-		// Terrain terrain_2 = new Terrain(-1, 0,  loader, texturePack, blendMap, "heightmap");
-		// Terrain terrain_3 = new Terrain(0, -1,  loader, texturePack, blendMap, "heightmap");
-		// Terrain terrain_4 = new Terrain(-1, -1, loader, texturePack, blendMap, "heightmap");
+		// Terrain terrain_2 = new Terrain(-1, 0,  loader, texturePack, blendMap, "terrain_1/heightmap");
+		// Terrain terrain_3 = new Terrain(0, -1,  loader, texturePack, blendMap, "terrain_1/heightmap");
+		// Terrain terrain_4 = new Terrain(-1, -1, loader, texturePack, blendMap, "terrain_1/heightmap");
 		// processTerrain(terrain_2);
 		// processTerrain(terrain_3);
 		// processTerrain(terrain_4);		
@@ -107,7 +107,18 @@ public class Scene implements IScene {
 		GuiTexture button = new GuiTexture(loader.loadTexture("gui/button"), new Vector2f(-0.89f, -0.92f), new Vector2f(0.1f, 0.06f));
 		processGui(button);
 		// GuiTexture target = new GuiTexture(loader.loadTexture("gui/bullseye"), new Vector2f(0f, 0f), new Vector2f(0.026f, 0.04f));
-		// processGui(target);		
+		// processGui(target);
+		/*
+		GuiTexture reflection = new GuiTexture(MasterRenderer.getWaterRenderer().getFBOs().getReflectionTexture(), new Vector2f(-0.78f, 0.7f), new Vector2f(0.2f, 0.26f));
+		processGui(reflection);
+		GuiTexture refraction = new GuiTexture(MasterRenderer.getWaterRenderer().getFBOs().getRefractionTexture(), new Vector2f(-0.78f, 0.14f), new Vector2f(0.2f, 0.26f));
+		processGui(refraction);
+		*/
+		
+		GuiTexture refraction = new GuiTexture(MasterRenderer.getWaterRenderer().getFBOs().getRefractionTexture(), new Vector2f(0.7f, 0.7f), new Vector2f(0.25f, 0.25f));
+		GuiTexture reflection = new GuiTexture(MasterRenderer.getWaterRenderer().getFBOs().getReflectionTexture(), new Vector2f(-0.7f, 0.7f), new Vector2f(0.25f, 0.25f));
+		processGui(refraction);
+		processGui(reflection);
 	}
 
 	private void generateForestModels() {
@@ -122,16 +133,18 @@ public class Scene implements IScene {
 		TexturedModel fernModel = new TexturedModel(OBJLoader.loadOBJModel("fern", loader), fernTextureAtlas);
 		TexturedModel pineModel = new TexturedModel(OBJLoader.loadOBJModel("pine", loader), new ModelTexture(loader.loadTexture("pine")));
 
-		for (int i = 0; i < 300; i++) {
+		int modelsSpawned = 0;
+		while (modelsSpawned < 200) {
 			entity = null;
-			
+
 			float coordX = rand.nextInt((int) Terrain.SIZE) - Terrain.SIZE / 2;
 			float coordZ = rand.nextInt((int) Terrain.SIZE) - Terrain.SIZE / 2;
 			float coordY = getCurrentTerrain(coordX, coordZ).getHeightOfTerrain(coordX, coordZ);
 			
 			int clearance = 50;
 			if (coordX < -Terrain.SIZE / 2 + clearance || coordX > Terrain.SIZE / 2 - clearance ||
-				coordZ < -Terrain.SIZE / 2 + clearance * 3 || coordZ > Terrain.SIZE / 2 - clearance) {
+				coordZ < -Terrain.SIZE / 2 + clearance * 3 || coordZ > Terrain.SIZE / 2 - clearance ||
+				coordY < Water.HEIGHT) {
 				continue;
 			}
 
@@ -153,6 +166,7 @@ public class Scene implements IScene {
 			if (entity != null) {
 				processEntity(entity);
 			}
+			modelsSpawned++;
 		}
 	}
 
@@ -176,12 +190,6 @@ public class Scene implements IScene {
 		return waterTiles;
 	}
 
-	public void clearLists() {
-		terrains.clear();
-		entities.clear();
-		lights.clear();
-	}
-
 	public Player getPlayer() {
 		return player;
 	}
@@ -189,6 +197,10 @@ public class Scene implements IScene {
 	@Override
 	public ICamera getCamera() {
 		return camera;
+	}
+
+	public Loader getLoader() {
+		return loader;
 	}
 
 	public Skybox getSkybox() {
@@ -215,12 +227,12 @@ public class Scene implements IScene {
 		}
 	}
 
-	private void processWaterTile(WaterTile waterTile) {
+	public void processWaterTile(WaterTile waterTile) {
 		waterTiles.add(waterTile);
 	}
 
-	private void processGui(GuiTexture button) {
-		guis.add(button);
+	public void processGui(GuiTexture gui) {
+		guis.add(gui);
 	}
 
 	public Terrain getCurrentTerrain() {
@@ -247,7 +259,6 @@ public class Scene implements IScene {
 
 	@Override
 	public void update(float interval, Input input) {
-		
 		for(TexturedModel model: entities.keySet()) {
 			List<Entity> batch = entities.get(model);
 			for(Entity entity : batch) {
@@ -267,8 +278,17 @@ public class Scene implements IScene {
 		// TODO Auto-generated method stub
 	}
 
+	public void clearLists() {
+		terrains.clear();
+		entities.clear();
+		lights.clear();
+		waterTiles.clear();
+		guis.clear();
+	}
+
 	@Override
-	public void cleanup() {
+	public void cleanUp() {		
+		clearLists();
 		loader.cleanUp();
 	}
 }

@@ -17,13 +17,17 @@ uniform vec3 lightPosition[5];
 uniform bool useFakeLighting;
 uniform float textureAtlasNumRows;
 uniform vec2 textureAtlasOffset;
+uniform vec4 clipPlane;
 
-const float density = 0.0015;
+const float density = 0.001;
 const float gradient = 3.0;
 
 void main(void) {
 
 	vec4 worldPosition = transformationMatrix * vec4(position, 1.0);
+
+	gl_ClipDistance[0] = dot(worldPosition, clipPlane);
+
 	vec4 positionRelativeToCamera = viewMatrix * worldPosition;
 	gl_Position = projectionMatrix * positionRelativeToCamera;
 	pass_textureCoords = (textureCoords / textureAtlasNumRows) + textureAtlasOffset;

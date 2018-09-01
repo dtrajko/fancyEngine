@@ -77,4 +77,13 @@ public class WaterRenderer {
         GL30.glBindVertexArray(0);
         shader.stop();
     }
+
+	public WaterFrameBuffers getFBOs() {
+		return fbos;
+	}
+
+    public void cleanUp() {
+    	fbos.cleanUp();
+    	shader.cleanUp();
+    }
 }

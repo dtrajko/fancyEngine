@@ -1,14 +1,18 @@
 package engine.tm.render;
 
 import org.joml.Matrix4f;
+import org.joml.Vector4f;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL30;
 import engine.IScene;
 import engine.Window;
+import engine.tm.entities.Camera;
 import engine.tm.entities.EntityRenderer;
 import engine.tm.gui.GuiRenderer;
 import engine.tm.scene.Scene;
 import engine.tm.skybox.SkyboxRenderer;
 import engine.tm.terrains.TerrainRenderer;
+import engine.tm.water.Water;
 import engine.tm.water.WaterRenderer;
 
 public class MasterRenderer {
@@ -21,13 +25,13 @@ public class MasterRenderer {
 	public static final float GREEN = 0.961f;
 	public static final float BLUE  = 0.996f;
 
-	private Matrix4f projectionMatrix;
+	private static Matrix4f projectionMatrix;
 
-	private EntityRenderer entityRenderer;
-	private TerrainRenderer terrainRenderer;
-	private SkyboxRenderer skyboxRenderer;
-	private WaterRenderer waterRenderer;
-	private GuiRenderer guiRenderer;
+	private static EntityRenderer entityRenderer;
+	private static TerrainRenderer terrainRenderer;
+	private static SkyboxRenderer skyboxRenderer;
+	private static WaterRenderer waterRenderer;
+	private static GuiRenderer guiRenderer;
 
 	public MasterRenderer() {
 		createProjectionMatrix();
@@ -41,13 +45,44 @@ public class MasterRenderer {
 	public void init(Window window) {
 	}
 
+	public static WaterRenderer getWaterRenderer() {
+		return waterRenderer;
+	}
+
 	public void render(Window window, IScene scene) {
-		prepare();
-		terrainRenderer.render(scene);
-		entityRenderer.render(scene);
-		skyboxRenderer.render(scene);
-		waterRenderer.render(scene);
+
+		GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
+
+		Camera camera = (Camera) ((Scene) scene).getCamera();
+
+		// render reflection texture
+		waterRenderer.getFBOs().bindReflectionFrameBuffer();
+		float distance = 2 * (camera.getPosition().y - Water.HEIGHT);
+		camera.getPosition().y -= distance;
+		camera.invertPitch();
+		renderScene(scene, new Vector4f(0, 1, 0, -Water.HEIGHT));
+		camera.getPosition().y += distance;
+		camera.invertPitch();
+
+		// render refraction texture
+		waterRenderer.getFBOs().bindRefractionFrameBuffer();
+		renderScene(scene, new Vector4f(0, -1, 0, Water.HEIGHT));
+
+		// render to screen
+		GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
+		waterRenderer.getFBOs().unbindCurrentFrameBuffer();
+		renderScene(scene, new Vector4f(0, -1, 0, 10000));
+		waterRenderer.render(scene);		
 		guiRenderer.render(scene);
+
+		GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
+	}	
+
+	public void renderScene(IScene scene, Vector4f clipPlane) {
+		prepare();
+		terrainRenderer.render(scene, clipPlane);
+		entityRenderer.render(scene, clipPlane);
+		skyboxRenderer.render(scene, clipPlane);
 	}
 
 	public void prepare() {
@@ -78,9 +113,12 @@ public class MasterRenderer {
 	}
 
 	public void cleanUp(IScene scene) {
-		((Scene) scene).clearLists();
-		entityRenderer.cleanUp();
+		scene.cleanUp();
 		terrainRenderer.cleanUp();
+		entityRenderer.cleanUp();
+		skyboxRenderer.cleanUp();
+		waterRenderer.cleanUp();
+		guiRenderer.cleanUp();
 	}
 
 	public static void enableCulling() {

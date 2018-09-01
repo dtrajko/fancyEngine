@@ -3,6 +3,7 @@ package engine.tm.terrains;
 import java.util.List;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
@@ -29,14 +30,17 @@ public class TerrainRenderer {
 		shader.stop();
 	}
 
-	public void render(IScene scene) {
+	public void render(IScene scene, Vector4f clipPlane) {
 
 		List<Light> lights = ((Scene) scene).getLights();
 		ICamera camera = ((Scene) scene).getCamera();
 		List<Terrain> terrains = ((Scene) scene).getTerrains();
 
 		shader.start();
+		shader.loadClipPlane(clipPlane);
+		shader.loadSkyColor(MasterRenderer.RED, MasterRenderer.GREEN, MasterRenderer.BLUE);
 		shader.loadLights(lights);
+		shader.loadShineVariables(1, 0);
 		shader.loadViewMatrix(camera);
 
 		for (Terrain terrain : terrains) {
@@ -48,6 +52,10 @@ public class TerrainRenderer {
 
 		shader.stop();
 	}
+	
+	public void render(IScene scene) {
+		render(scene, new Vector4f());
+	}
 
 	private void bindTerrain(Terrain terrain) {
 		RawModel rawModel = terrain.getModel();
@@ -55,11 +63,7 @@ public class TerrainRenderer {
 		GL20.glEnableVertexAttribArray(0);
 		GL20.glEnableVertexAttribArray(1);
 		GL20.glEnableVertexAttribArray(2);
-
 		bindTextures(terrain);
-
-		shader.loadSkyColor(MasterRenderer.RED, MasterRenderer.GREEN, MasterRenderer.BLUE);
-		shader.loadShineVariables(1, 0);
 	}
 
 	private void bindTextures(Terrain terrain) {

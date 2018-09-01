@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 import engine.graph.ICamera;
 import engine.tm.entities.Light;
@@ -32,6 +33,7 @@ public class TerrainShader extends ShaderProgram {
 	private int location_gTexture;
 	private int location_bTexture;
 	private int location_blendMap;
+	private int location_clipPlane;
 
 	public TerrainShader() {
 		super(VERTEX_FILE, FRAGMENT_FILE);
@@ -57,6 +59,7 @@ public class TerrainShader extends ShaderProgram {
 		location_gTexture = super.getUniformLocation("gTexture");
 		location_bTexture = super.getUniformLocation("bTexture");
 		location_blendMap = super.getUniformLocation("blendMap");
+		location_clipPlane = super.getUniformLocation("clipPlane");
 
 		location_lightPosition = new int[MAX_LIGHTS];
 		location_lightColor = new int[MAX_LIGHTS];
@@ -75,6 +78,10 @@ public class TerrainShader extends ShaderProgram {
 		super.loadInt(location_gTexture, 2);
 		super.loadInt(location_bTexture, 3);
 		super.loadInt(location_blendMap, 4);
+	}
+
+	public void loadClipPlane(Vector4f clipPlane) {
+		super.load4DVector(location_clipPlane, clipPlane);
 	}
 
 	public void loadSkyColor(float r, float g, float b) {

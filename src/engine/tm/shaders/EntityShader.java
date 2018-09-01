@@ -5,6 +5,7 @@ import java.util.List;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 import engine.graph.ICamera;
 import engine.tm.entities.Camera;
@@ -12,7 +13,7 @@ import engine.tm.entities.Light;
 import engine.tm.settings.WorldSettings;
 import engine.tm.toolbox.Maths;
 
-public class StaticShader extends ShaderProgram {
+public class EntityShader extends ShaderProgram {
 	
 	private static final int MAX_LIGHTS = WorldSettings.MAX_LIGHTS;
 
@@ -31,8 +32,9 @@ public class StaticShader extends ShaderProgram {
 	private int location_skyColor;
 	private int location_textureAtlasNumRows;
 	private int location_textureAtlasOffset;
+	private int location_clipPlane;
 
-	public StaticShader() {
+	public EntityShader() {
 		super(VERTEX_FILE, FRAGMENT_FILE);
 	}
 
@@ -54,6 +56,7 @@ public class StaticShader extends ShaderProgram {
 		location_skyColor = super.getUniformLocation("skyColor");
 		location_textureAtlasNumRows = super.getUniformLocation("textureAtlasNumRows");
 		location_textureAtlasOffset = super.getUniformLocation("textureAtlasOffset");
+		location_clipPlane = super.getUniformLocation("clipPlane");
 		
 		location_lightPosition = new int[MAX_LIGHTS];
 		location_lightColor = new int[MAX_LIGHTS];
@@ -63,6 +66,10 @@ public class StaticShader extends ShaderProgram {
 			location_lightColor[i] = super.getUniformLocation("lightColor[" + i + "]");
 			location_attenuation[i] = super.getUniformLocation("attenuation[" + i + "]");
 		}
+	}
+
+	public void loadClipPlane(Vector4f clipPlane) {
+		super.load4DVector(location_clipPlane, clipPlane);
 	}
 
 	public void loadTextureAtlasNumRows(int numberOfRows) {

@@ -23,7 +23,7 @@ public class Terrain {
 	private static final int MAX_PIXEL_COLOR = 256 * 256 * 256;
 
 	private static int vertexCount = 63;
-	
+
 	private float x;
 	private float z;
 	
@@ -66,7 +66,7 @@ public class Terrain {
 				if (i % 2 == 0 && j % 2 == 0
 					&& i > 0 && i < vertexCount - 1
 					&& j > 0 && j < vertexCount - 1) {
-					vertice_height -= 1.0f;
+					vertice_height += -0.5f;
 				}
 				heights[j][i] = vertice_height;
 				vertices[vertexPointer * 3] = (float) j / ((float) vertexCount - 1) * SIZE;
@@ -122,9 +122,9 @@ public class Terrain {
 			return 0;
 		}
 		float height = image.getRGB(x, z);
-		height += this.MAX_PIXEL_COLOR / 2f;
-		height /= this.MAX_PIXEL_COLOR / 2f;
-		height *= this.MAX_HEIGHT;
+		height += MAX_PIXEL_COLOR / 2f;
+		height /= MAX_PIXEL_COLOR / 2f;
+		height *= MAX_HEIGHT;
 		return height;
 	}
 

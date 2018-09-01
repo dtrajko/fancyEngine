@@ -3,6 +3,7 @@ package engine.tm.entities;
 import java.util.List;
 import java.util.Map;
 import org.joml.Matrix4f;
+import org.joml.Vector4f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
@@ -14,38 +15,43 @@ import engine.tm.models.RawModel;
 import engine.tm.models.TexturedModel;
 import engine.tm.render.MasterRenderer;
 import engine.tm.scene.Scene;
-import engine.tm.shaders.StaticShader;
+import engine.tm.shaders.EntityShader;
 import engine.tm.textures.ModelTexture;
 import engine.tm.toolbox.Maths;
 
 public class EntityRenderer {
 
-	private StaticShader shader;
+	private EntityShader shader;
 
 	public EntityRenderer(Matrix4f projectionMatrix) {
-		this.shader = new StaticShader();
+		this.shader = new EntityShader();
 		shader.start();
 		shader.loadProjectionMatrix(projectionMatrix);
 		shader.stop();
 	}
-	
-	public void render(IScene scene) {
+
+	public void render(IScene scene, Vector4f clipPlane) {
 		List<Light> lights = ((Scene) scene).getLights();
 		ICamera camera = ((Scene) scene).getCamera();
 		Map<TexturedModel, List<Entity>> entities = ((Scene) scene).getEntityList();
 		shader.start();
+		shader.loadClipPlane(clipPlane);
 		shader.loadLights(lights);
 		shader.loadViewMatrix(camera);
-		for(TexturedModel model: entities.keySet()) {
+		for (TexturedModel model: entities.keySet()) {
 			bindTexturedModel(model);
 			List<Entity> batch = entities.get(model);
-			for(Entity entity:batch) {
+			for (Entity entity : batch) {
 				prepareInstance(entity);
 				GL11.glDrawElements(GL11.GL_TRIANGLES, model.getRawModel().getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
 			}
 			unbindTexturedModel();
 		}
 		shader.stop();		
+	}
+
+	public void render(IScene scene) {
+		render(scene, new Vector4f());
 	}
 
 	/**

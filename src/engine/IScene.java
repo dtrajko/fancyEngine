@@ -10,6 +10,6 @@ public interface IScene {
 	void update(float interval, Input input);
 	void resetScene(Window window, ICamera camera, IGameLogic game);
 	void save();
-	void cleanup();
+	void cleanUp();
 	ICamera getCamera();
 }

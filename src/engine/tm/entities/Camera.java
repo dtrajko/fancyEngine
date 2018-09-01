@@ -115,16 +115,16 @@ public class Camera implements ICamera {
 		if (input.isKeyDown(GLFW.GLFW_KEY_LEFT_SHIFT)) {
 			cameraInc.y += -speed / 4;
 		}
-		if (input.isKeyDown(GLFW.GLFW_KEY_A)) {
+		if (input.isKeyDown(GLFW.GLFW_KEY_A) || input.isKeyDown(GLFW.GLFW_KEY_LEFT)) {
 			cameraInc.x += -speed;
 		}
-		if (input.isKeyDown(GLFW.GLFW_KEY_D)) {
+		if (input.isKeyDown(GLFW.GLFW_KEY_D) || input.isKeyDown(GLFW.GLFW_KEY_RIGHT)) {
 			cameraInc.x += +speed;
 		}
-		if (input.isKeyDown(GLFW.GLFW_KEY_W)) {
+		if (input.isKeyDown(GLFW.GLFW_KEY_W) || input.isKeyDown(GLFW.GLFW_KEY_UP)) {
 			cameraInc.z += -speed;
 		}
-		if (input.isKeyDown(GLFW.GLFW_KEY_S)) {
+		if (input.isKeyDown(GLFW.GLFW_KEY_S) || input.isKeyDown(GLFW.GLFW_KEY_DOWN)) {
 			cameraInc.z += +speed;
 		}
 
@@ -171,6 +171,10 @@ public class Camera implements ICamera {
 
 	public float getRoll() {
 		return roll;
+	}
+
+	public void invertPitch() {
+		this.pitch = -pitch;
 	}
 
 	@Override

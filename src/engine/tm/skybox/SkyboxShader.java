@@ -2,6 +2,7 @@ package engine.tm.skybox;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 import engine.GameEngine;
 import engine.tm.entities.Camera;
@@ -22,6 +23,7 @@ public class SkyboxShader extends ShaderProgram {
 	private int location_cubeMap;
 	private int location_cubeMapNight;
 	private int location_blendFactor;
+	private int location_clipPlane;
 
 	private float rotation = 0;
 
@@ -37,6 +39,12 @@ public class SkyboxShader extends ShaderProgram {
 		location_cubeMap = super.getUniformLocation("cubeMap");
 		location_cubeMapNight = super.getUniformLocation("cubeMapNight");
 		location_blendFactor = super.getUniformLocation("blendFactor");
+		location_clipPlane = super.getUniformLocation("clipPlane");
+	}
+
+	public void loadClipPlane(Vector4f clipPlane) {
+		super.load4DVector(location_clipPlane, clipPlane);
+		
 	}
 
 	public void loadProjectionMatrix(Matrix4f matrix){
