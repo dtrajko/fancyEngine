@@ -71,7 +71,7 @@ public class MasterRenderer {
 		// render to screen
 		GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
 		waterRenderer.getFBOs().unbindCurrentFrameBuffer();
-		renderScene(scene, new Vector4f(0, -1, 0, 10000));
+		renderScene(scene, new Vector4f(0, 0, 0, 0));
 		waterRenderer.render(scene);		
 		guiRenderer.render(scene);
 
