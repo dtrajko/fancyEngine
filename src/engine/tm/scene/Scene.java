@@ -76,45 +76,20 @@ public class Scene implements IScene {
 		TerrainTexture rTexture = new TerrainTexture(loader.loadTexture("terrain_1/1"));
 		TerrainTexture gTexture = new TerrainTexture(loader.loadTexture("terrain_1/2"));
 		TerrainTexture bTexture = new TerrainTexture(loader.loadTexture("terrain_1/3"));
-		
+
 		TerrainTexturePack texturePack = new TerrainTexturePack(backgroundTexture, rTexture, gTexture, bTexture);
 		TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("terrain_1/blendMap"));
 
 		Terrain terrain_1 = new Terrain(-0.5f, -0.5f, loader, texturePack, blendMap, "terrain_1/heightmap");
-		processTerrain(terrain_1);
-		// Terrain terrain_2 = new Terrain(-1, 0,  loader, texturePack, blendMap, "terrain_1/heightmap");
-		// Terrain terrain_3 = new Terrain(0, -1,  loader, texturePack, blendMap, "terrain_1/heightmap");
-		// Terrain terrain_4 = new Terrain(-1, -1, loader, texturePack, blendMap, "terrain_1/heightmap");
-		// processTerrain(terrain_2);
-		// processTerrain(terrain_3);
-		// processTerrain(terrain_4);		
+		processTerrain(terrain_1);	
 	}
 
 	private void setupLights() {
 		Light light_sun = new Light(new Vector3f(-500, 2000, -500), new Vector3f(1, 1, 1));
 		lights.add(light_sun);
-		/*
-		Light light_2   = new Light(new Vector3f(200, 10, -200),  new Vector3f(10, 0, 0), new Vector3f(1.0f, 0.01f, 0.002f));
-		Light light_3   = new Light(new Vector3f(-200, 10, -200), new Vector3f(0, 10, 0), new Vector3f(1.0f, 0.01f, 0.002f));
-		Light light_4   = new Light(new Vector3f(0, 10, -400),    new Vector3f(0, 0, 10), new Vector3f(1.0f, 0.01f, 0.002f));
-		lights.add(light_2);
-		lights.add(light_3);
-		lights.add(light_4);
-		*/
 	}
 
 	private void setupGui() {
-		GuiTexture button = new GuiTexture(loader.loadTexture("gui/button"), new Vector2f(-0.89f, -0.92f), new Vector2f(0.1f, 0.06f));
-		processGui(button);
-		// GuiTexture target = new GuiTexture(loader.loadTexture("gui/bullseye"), new Vector2f(0f, 0f), new Vector2f(0.026f, 0.04f));
-		// processGui(target);
-		/*
-		GuiTexture reflection = new GuiTexture(MasterRenderer.getWaterRenderer().getFBOs().getReflectionTexture(), new Vector2f(-0.78f, 0.7f), new Vector2f(0.2f, 0.26f));
-		processGui(reflection);
-		GuiTexture refraction = new GuiTexture(MasterRenderer.getWaterRenderer().getFBOs().getRefractionTexture(), new Vector2f(-0.78f, 0.14f), new Vector2f(0.2f, 0.26f));
-		processGui(refraction);
-		*/
-		
 		GuiTexture refraction = new GuiTexture(MasterRenderer.getWaterRenderer().getFBOs().getRefractionTexture(), new Vector2f(0.7f, 0.7f), new Vector2f(0.25f, 0.25f));
 		GuiTexture reflection = new GuiTexture(MasterRenderer.getWaterRenderer().getFBOs().getReflectionTexture(), new Vector2f(-0.7f, 0.7f), new Vector2f(0.25f, 0.25f));
 		processGui(refraction);

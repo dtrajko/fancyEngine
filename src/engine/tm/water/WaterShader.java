@@ -13,9 +13,9 @@ public class WaterShader extends ShaderProgram {
     private final static String VERTEX_FILE = WorldSettings.RESOURCES_SUBDIR + "/shaders/waterVertex.glsl";
     private final static String FRAGMENT_FILE = WorldSettings.RESOURCES_SUBDIR + "/shaders/waterFragment.glsl";
 
-    private int location_modelMatrix;
-    private int location_viewMatrix;
     private int location_projectionMatrix;
+    private int location_viewMatrix;
+    private int location_modelMatrix;
     private int location_reflectionTexture;
     private int location_refractionTexture;
     private int location_dudvMap;
