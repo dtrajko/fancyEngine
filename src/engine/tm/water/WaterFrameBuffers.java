@@ -24,12 +24,16 @@ public class WaterFrameBuffers {
     private int refractionTexture;
     private int refractionDepthTexture;
 
+	private int minimapFrameBuffer;
+	private int minimapTexture;
+
     public WaterFrameBuffers() { //call when loading the game
     	initializeReflectionFrameBuffer();
     	initializeRefractionFrameBuffer();
+    	initializeMinimapFrameBuffer();
     }
 
-    private void initializeReflectionFrameBuffer() {
+	private void initializeReflectionFrameBuffer() {
         reflectionFrameBuffer = createFrameBuffer();
         reflectionTexture = createTextureAttachment(REFLECTION_WIDTH, REFLECTION_HEIGHT);
         reflectionDepthBuffer = createDepthBufferAttachment(REFLECTION_WIDTH, REFLECTION_HEIGHT);
@@ -42,6 +46,12 @@ public class WaterFrameBuffers {
         refractionDepthTexture = createDepthTextureAttachment(REFRACTION_WIDTH, REFRACTION_HEIGHT);
         unbindCurrentFrameBuffer();
     }
+
+    private void initializeMinimapFrameBuffer() {
+    	minimapFrameBuffer = createFrameBuffer();
+    	minimapTexture = createTextureAttachment(REFLECTION_WIDTH, REFLECTION_HEIGHT);
+        unbindCurrentFrameBuffer();
+	}
 
     private int createFrameBuffer() {
         int frameBuffer = GL30.glGenFramebuffers();
@@ -89,6 +99,10 @@ public class WaterFrameBuffers {
         bindFrameBuffer(refractionFrameBuffer, REFRACTION_WIDTH, REFRACTION_HEIGHT);
     }
 
+	public void bindMinimapFrameBuffer() {
+		bindFrameBuffer(minimapFrameBuffer, REFLECTION_WIDTH, REFLECTION_HEIGHT);
+	}
+
     public void unbindCurrentFrameBuffer() { // call to switch to default frame buffer
         GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
         GL11.glViewport(0, 0, Window.width, Window.height);
@@ -106,6 +120,10 @@ public class WaterFrameBuffers {
         return refractionDepthTexture;
     }
 
+    public int getMinimapTexture() { // get the resulting minimap texture
+        return minimapTexture;
+    }
+
     private void bindFrameBuffer(int frameBuffer, int width, int height){
     	GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0); // To make sure the texture isn't bound
     	GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, frameBuffer);
@@ -119,6 +137,7 @@ public class WaterFrameBuffers {
         GL30.glDeleteFramebuffers(refractionFrameBuffer);
         GL11.glDeleteTextures(refractionTexture);
         GL11.glDeleteTextures(refractionDepthTexture);
+        GL30.glDeleteFramebuffers(minimapFrameBuffer);
+        GL11.glDeleteTextures(minimapTexture);
     }
-
 }

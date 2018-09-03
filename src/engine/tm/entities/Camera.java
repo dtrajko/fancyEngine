@@ -161,12 +161,24 @@ public class Camera implements ICamera {
 		y_min = -10;
 	}
 
+	public void setPitch(float pitch) {
+		this.pitch = pitch;
+	}
+
 	public float getPitch() {
 		return pitch;
 	}
 
+	public void setYaw(float yaw) {
+		this.yaw = yaw;
+	}
+
 	public float getYaw() {
 		return yaw;
+	}
+
+	public void setRoll(float roll) {
+		this.roll = roll;
 	}
 
 	public float getRoll() {

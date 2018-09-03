@@ -1,6 +1,7 @@
 package engine.tm.render;
 
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
@@ -8,6 +9,7 @@ import engine.IScene;
 import engine.Window;
 import engine.tm.entities.Camera;
 import engine.tm.entities.EntityRenderer;
+import engine.tm.entities.Player;
 import engine.tm.gui.GuiRenderer;
 import engine.tm.scene.Scene;
 import engine.tm.skybox.SkyboxRenderer;
@@ -68,15 +70,41 @@ public class MasterRenderer {
 		waterRenderer.getFBOs().bindRefractionFrameBuffer();
 		renderScene(scene, new Vector4f(0, -1, 0, Water.HEIGHT));
 
+		renderMinimap(scene);
+
 		// render to screen
 		GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
 		waterRenderer.getFBOs().unbindCurrentFrameBuffer();
 		renderScene(scene, new Vector4f(0, 0, 0, 0));
-		waterRenderer.render(scene);		
+		waterRenderer.render(scene);
 		guiRenderer.render(scene);
 
 		GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
-	}	
+	}
+	
+	public void renderMinimap(IScene scene) {
+
+		Camera camera = (Camera) ((Scene) scene).getCamera();
+		Player player = ((Scene) scene).getPlayer();
+
+		// render minimap
+		waterRenderer.getFBOs().bindMinimapFrameBuffer();
+		Vector3f cameraPosition = camera.getPosition();
+		float currentPitch = camera.getPitch();
+		float currentYaw = camera.getYaw();
+		float currentRoll = camera.getRoll();
+		camera.setPosition(new Vector3f(player.getPosition().x, 400, player.getPosition().z));
+		camera.setPitch(90);
+		camera.setYaw(currentYaw - 180);
+		camera.setRoll(currentRoll - 360);
+		prepare();
+		terrainRenderer.render(scene, new Vector4f(0, 1, 0, -Water.HEIGHT));
+		entityRenderer.render(scene);
+		camera.setPosition(cameraPosition);
+		camera.setPitch(currentPitch);
+		camera.setYaw(currentYaw);
+		camera.setRoll(currentRoll);		
+	}
 
 	public void renderScene(IScene scene, Vector4f clipPlane) {
 		prepare();
