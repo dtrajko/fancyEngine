@@ -18,7 +18,7 @@ public class WaterRenderer {
 	private WaterShader shader;
 	
 	private WaterFrameBuffers fbos;
-	private static final float WAVE_SPEED = 0.03f;
+	private static final float WAVE_SPEED = 0.02f;
 	private float moveFactor = 0;
 
     public WaterRenderer(Matrix4f projectionMatrix) {

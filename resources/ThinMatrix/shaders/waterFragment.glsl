@@ -14,12 +14,11 @@ uniform sampler2D dudvMap;
 uniform sampler2D normalMap;
 uniform sampler2D depthMap;
 uniform vec3 lightColor;
-
 uniform float moveFactor;
 
-const float waveStrength = 0.01;
-const float shineDamper = 10.0;
-const float reflectivity = 0.1;
+const float waveStrength = 0.04;
+const float shineDamper = 20.0;
+const float reflectivity = 0.5;
 
 void main(void) {
 
@@ -43,7 +42,7 @@ void main(void) {
 	refractTexCoords += totalDistortion;
 	refractTexCoords.x = clamp(refractTexCoords.x, 0.001, 0.999);
 	refractTexCoords.y = clamp(refractTexCoords.y, 0.001, 0.999);
-	
+
 	reflectTexCoords += totalDistortion;
 	reflectTexCoords.x = clamp(reflectTexCoords.x, 0.001, 0.999);
 	reflectTexCoords.y = clamp(reflectTexCoords.y, -0.999, -0.001);
@@ -58,7 +57,7 @@ void main(void) {
 
 	vec3 viewVector = normalize(toCameraVector);
 	float refractiveFactor = dot(viewVector, vec3(0.0, 1.0, 0.0));
-	refractiveFactor = pow(refractiveFactor, 1.0);
+	refractiveFactor = pow(refractiveFactor, 0.5);
 	refractiveFactor = clamp(refractiveFactor, 0.0, 1.0);
 
 	vec3 reflectedLight = reflect(normalize(fromLightVector), normal);
