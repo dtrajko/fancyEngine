@@ -122,5 +122,4 @@ public class EntityShader extends ShaderProgram {
 		// System.out.println("StaticShader viewMatrix: " + viewMatrix);
 		super.loadMatrix(location_viewMatrix, viewMatrix);
 	}
-
 }
