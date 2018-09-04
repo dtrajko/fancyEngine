@@ -1,13 +1,15 @@
 package engine.loaders;
 
+import engine.tm.loaders.Loader;
+
 public class LoaderFactory {
 
-	private static RawModelLoader rawModelLoader = null;
+	private static Loader loader = null;
 
-	public static RawModelLoader getRawModelLoader() {
-		if (rawModelLoader == null) {
-			rawModelLoader = new RawModelLoader();
+	public static Loader getLoader() {
+		if (loader == null) {
+			loader = new Loader();
 		}
-		return rawModelLoader;
+		return loader;
 	}
 }

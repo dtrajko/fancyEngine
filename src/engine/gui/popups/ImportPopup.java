@@ -16,9 +16,9 @@ import engine.graph.Texture;
 import engine.gui.GuiElement;
 import engine.gui.GuiManager;
 import engine.gui.fonts.FontFactory;
-import engine.gui.fonts.FontType;
-import engine.gui.fonts.GUIText;
-import engine.gui.fonts.TextMaster;
+import engine.tm.gui.fonts.FontType;
+import engine.tm.gui.fonts.GUIText;
+import engine.tm.gui.fonts.TextMaster;
 import engine.utils.FileSystem;
 import game.Game3D;
 
@@ -55,7 +55,6 @@ public class ImportPopup {
 			float buttonTextStepY = 0.0632f;
 
 			for (String file : files) {
-
 				GuiElement guiLongButton = new GuiElement(textureLongButton, new Vector3f(0.0f, buttonY, 1), new Vector2f(0.31f, 0.053f)); // 0.130
 				guiLongButton.setImportDialog(true).setClickable(true).setTitle(file);
 				guiManager.addGuiElement(guiLongButton);
@@ -67,7 +66,6 @@ public class ImportPopup {
 				buttonY += buttonStepY;
 				buttonTextY += buttonTextStepY;
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}	
@@ -112,10 +110,10 @@ public class ImportPopup {
 	public void setEnabled(boolean value) {
 		enabled = value;
 	}
-	
+
 	public List<String> listSaveFiles() {
 		int listMaxSize = 12;
-		String savesDirPath = Config.RESOURCES_DIR + "/saves/";
+		String savesDirPath = Config.RESOURCES_DIR + "/saves/3D/";
 		final File savesDir = new File(savesDirPath);
 		List<String> files = FileSystem.listFilesForFolder(savesDir);
 		files = files.subList(0, files.size() < listMaxSize ? files.size() : listMaxSize);

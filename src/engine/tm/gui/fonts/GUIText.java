@@ -1,4 +1,4 @@
-package engine.gui.fonts;
+package engine.tm.gui.fonts;
 
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -95,7 +95,7 @@ public class GUIText {
 	/**
 	 * @return the colour of the text.
 	 */
-	public Vector3f getColour() {
+	public Vector3f getColor() {
 		return colour;
 	}
 

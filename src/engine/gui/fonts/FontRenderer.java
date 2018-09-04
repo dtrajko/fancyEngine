@@ -9,6 +9,8 @@ import org.lwjgl.opengl.GL30;
 import config.Config;
 import engine.Utils;
 import engine.graph.ShaderProgram;
+import engine.tm.gui.fonts.FontType;
+import engine.tm.gui.fonts.GUIText;
 
 public class FontRenderer {
 	
@@ -51,7 +53,7 @@ public class FontRenderer {
 		GL30.glBindVertexArray(text.getMesh());
 		GL20.glEnableVertexAttribArray(0);
 		GL20.glEnableVertexAttribArray(1);
-		guiShaderProgram.loadColor(text.getColour());
+		guiShaderProgram.loadColor(text.getColor());
 		guiShaderProgram.loadTranslation(text.getPosition());
 		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, text.getVertexCount());
 		GL20.glDisableVertexAttribArray(0);

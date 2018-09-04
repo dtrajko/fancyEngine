@@ -1,28 +1,25 @@
-package engine.gui.fonts;
+package engine.tm.gui.fonts;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import engine.gui.fonts.FontType;
-import engine.gui.fonts.GUIText;
-import engine.gui.fonts.TextMeshData;
-import engine.loaders.RawModelLoader;
+import engine.gui.fonts.FontRenderer;
+import engine.tm.loaders.Loader;
 
 public class TextMaster {
 
-	private static RawModelLoader loader;
+	private static Loader loader;
 	private static FontRenderer renderer;
 	private Map<FontType, List<GUIText>> guiTextsMap = new HashMap<FontType, List<GUIText>>();
 	private List<GUIText> guiTexts;
-	
+
 	public TextMaster() {
 		renderer = new FontRenderer();
 	}
 
 	public void init() {
-		loader = new RawModelLoader();
+		loader = new Loader();
 		guiTexts = new ArrayList<GUIText>();
 		try {
 			renderer.setupShader();

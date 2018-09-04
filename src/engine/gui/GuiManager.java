@@ -66,7 +66,7 @@ public class GuiManager {
     }
 
 	public boolean input(Input input, Window window, IScene scene) {
-        
+
         if (inventory_popup.isEnabled()) {
         	inventory_popup.input(this, input, window, scene);
             nextBlock = inventory_popup.getNextBlock();

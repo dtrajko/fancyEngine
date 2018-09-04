@@ -16,6 +16,7 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL33;
+import config.Config;
 import de.matthiasmann.twl.utils.PNGDecoder;
 import de.matthiasmann.twl.utils.PNGDecoder.Format;
 import engine.graph.Texture;
@@ -77,7 +78,6 @@ public class Loader {
 		return new RawModel(vaoID, indices.length);
 	}
 
-
 	public int loadToVAO(float[] positions, float[] textureCoords) {
 		int vaoID = createVAO();
 		storeDataInAttributeList(0, 2, positions);
@@ -85,7 +85,6 @@ public class Loader {
 		unbindVAO();
 		return vaoID;
 	}
-
 
 	public RawModel loadToVAO(float[] positions, float[] textureCoords, float[] normals, float[] tangents, int[] indices) {
 		int vaoID = createVAO();
@@ -162,6 +161,23 @@ public class Loader {
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_REPEAT);
 
 		return textureID;
+	}
+
+	public int loadTexture(String fileName, float bias) {
+		Texture texture = null;
+		try {
+			InputStream is = new FileInputStream(Config.RESOURCES_DIR + "/fonts/" + fileName + ".png");
+			texture = new Texture(is);
+			GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
+			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR_MIPMAP_LINEAR);
+			GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL14.GL_TEXTURE_LOD_BIAS, bias);
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.err.println("Tried to load texture " + fileName + ".png, didn't work.");
+			System.exit(-1);
+		}
+		textures.add(texture.getId());
+		return texture.getId();
 	}
 
 	public List<Integer> getVAOs() {
