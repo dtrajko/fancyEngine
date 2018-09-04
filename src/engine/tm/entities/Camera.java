@@ -4,7 +4,6 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
-
 import engine.IScene;
 import engine.graph.ICamera;
 import engine.graph.Input;

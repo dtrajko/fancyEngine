@@ -3,7 +3,6 @@ package engine.tm.toolbox;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
-
 import engine.graph.ICamera;
 import engine.tm.entities.Camera;
 
@@ -21,7 +20,7 @@ public class Maths {
 	}
 
 	// 2D, GUI
-	public static Matrix4f createTransformationMatrix(Vector2f translation, Vector2f scale) {
+	public static Matrix4f createTransformationMatrix2D(Vector2f translation, Vector2f scale) {
 		Matrix4f matrix = new Matrix4f();
 		matrix.identity();
 		matrix.translate(new Vector3f(translation, 0f));

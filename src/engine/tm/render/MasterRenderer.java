@@ -84,7 +84,7 @@ public class MasterRenderer {
 
 		GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
 	}
-	
+
 	public void renderMinimap(IScene scene) {
 
 		Camera camera = (Camera) ((Scene) scene).getCamera();
@@ -96,10 +96,9 @@ public class MasterRenderer {
 		float currentPitch = camera.getPitch();
 		float currentYaw = camera.getYaw();
 		float currentRoll = camera.getRoll();
-		camera.setPosition(new Vector3f(player.getPosition().x, 400, player.getPosition().z));
+		camera.setPosition(new Vector3f(player.getPosition().x, 500, player.getPosition().z));
 		camera.setPitch(90);
 		camera.setYaw(currentYaw - 180);
-		camera.setRoll(currentRoll - 360);
 		prepare();
 		terrainRenderer.render(scene, new Vector4f(0, 1, 0, -Water.HEIGHT));
 		entityRenderer.render(scene);
@@ -107,7 +106,6 @@ public class MasterRenderer {
 		camera.setPosition(cameraPosition);
 		camera.setPitch(currentPitch);
 		camera.setYaw(currentYaw);
-		camera.setRoll(currentRoll);		
 	}
 
 	public void renderScene(IScene scene, Vector4f clipPlane) {
