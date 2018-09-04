@@ -87,8 +87,7 @@ public class Loader {
 	}
 
 
-	public RawModel loadToVAO(float[] positions, float[] textureCoords, float[] normals, 
-			float[] tangents, int[] indices) {
+	public RawModel loadToVAO(float[] positions, float[] textureCoords, float[] normals, float[] tangents, int[] indices) {
 		int vaoID = createVAO();
 		bindIndicesBuffer(indices);
 		storeDataInAttributeList(0, 3, positions);

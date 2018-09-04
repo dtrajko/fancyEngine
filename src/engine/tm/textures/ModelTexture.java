@@ -3,6 +3,7 @@ package engine.tm.textures;
 public class ModelTexture {
 
 	private int textureID;
+	private int normalMap;
 	
 	private float shineDamper = 1;
 	private float reflectivity = 0;
@@ -27,6 +28,15 @@ public class ModelTexture {
 	public ModelTexture setNumberOfRows(int numberOfRows) {
 		this.numberOfRows = numberOfRows;
 		return this;
+	}
+
+	public ModelTexture setNormalMap(int normalMap) {
+		this.normalMap = normalMap;
+		return this;
+	}
+
+	public int getNormalMap() {
+		return normalMap;
 	}
 
 	public float getShineDamper() {
@@ -64,5 +74,4 @@ public class ModelTexture {
 		this.useFakeLighting = useFakeLighting;
 		return this;
 	}
-
 }

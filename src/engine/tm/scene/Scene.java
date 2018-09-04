@@ -21,6 +21,7 @@ import engine.tm.loaders.Loader;
 import engine.tm.loaders.OBJLoader;
 import engine.tm.models.RawModel;
 import engine.tm.models.TexturedModel;
+import engine.tm.normalMapping.NormalMappedObjLoader;
 import engine.tm.render.MasterRenderer;
 import engine.tm.skybox.Skybox;
 import engine.tm.terrains.Terrain;
@@ -40,6 +41,7 @@ public class Scene implements IScene {
 
 	private List<Light> lights = new ArrayList<Light>();
 	private Map<TexturedModel, List<Entity>> entities = new HashMap<TexturedModel, List<Entity>>();
+	private Map<TexturedModel, List<Entity>> normalMapEntities = new HashMap<TexturedModel, List<Entity>>();
 	private List<Terrain> terrains = new ArrayList<Terrain>();
 	private List<WaterTile> waterTiles = new ArrayList<WaterTile>();
 	private List<GuiTexture> guis = new ArrayList<GuiTexture>();
@@ -51,6 +53,7 @@ public class Scene implements IScene {
 		skybox = new Skybox(loader);
 		setupTerrains();
 		generateForestModels();
+		generateNormalMapEntities();
 		setupPlayer();
 		setupWater();
 		setupLights();
@@ -148,9 +151,51 @@ public class Scene implements IScene {
 			modelsSpawned++;
 		}
 	}
+	
+	private void generateNormalMapEntities() {
+		// normal map entities
+		ModelTexture crateTexture = new ModelTexture(loader.loadTexture("normalMaps/crate"));
+		crateTexture.setNormalMap(loader.loadTexture("normalMaps/crateNormal"));
+		crateTexture.setShineDamper(10);
+		crateTexture.setReflectivity(0.5f);
+		TexturedModel crateTexturedModel = new TexturedModel(NormalMappedObjLoader.loadOBJ("crate", loader), crateTexture);
+		float coordX = -100;
+		float coordZ = -280;
+		float coordY = getCurrentTerrain(coordX, coordZ).getHeightOfTerrain(coordX, coordZ) + 4;
+		Entity crateModel = new Entity(crateTexturedModel, new Vector3f(coordX, coordY, coordZ), 0, 0, 0, 0.05f);		
+		processNormalMapEntity(crateModel);
+
+		ModelTexture barrelTexture = new ModelTexture(loader.loadTexture("normalMaps/barrel"));
+		barrelTexture.setNormalMap(loader.loadTexture("normalMaps/barrelNormal"));
+		barrelTexture.setShineDamper(10);
+		barrelTexture.setReflectivity(0.5f);
+		TexturedModel barrelTexturedModel = new TexturedModel(NormalMappedObjLoader.loadOBJ("barrel", loader), barrelTexture);
+		coordX = -200;
+		coordZ = -305;
+		coordY = getCurrentTerrain(coordX, coordZ).getHeightOfTerrain(coordX, coordZ) + 10;
+		Entity barrelModel = new Entity(barrelTexturedModel, new Vector3f(coordX, coordY, coordZ), 0, 0, 0, 2f);		
+		processNormalMapEntity(barrelModel);
+
+		ModelTexture boulderTexture = new ModelTexture(loader.loadTexture("normalMaps/boulder"));
+		boulderTexture.setNormalMap(loader.loadTexture("normalMaps/boulderNormal"));
+		boulderTexture.setShineDamper(10);
+		boulderTexture.setReflectivity(0.5f);
+		TexturedModel boulderTexturedModel = new TexturedModel(NormalMappedObjLoader.loadOBJ("boulder", loader), boulderTexture);
+		coordX = 260;
+		coordZ = -330;
+		coordY = getCurrentTerrain(coordX, coordZ).getHeightOfTerrain(coordX, coordZ);
+		Entity boulderModel = new Entity(boulderTexturedModel, new Vector3f(coordX, coordY, coordZ), 0, 90, 45, 2f);
+		Entity boulderModel2 = new Entity(boulderTexturedModel, new Vector3f(coordX + 20, coordY, coordZ), -90, 0, 0, 2f);
+		processNormalMapEntity(boulderModel);
+		processNormalMapEntity(boulderModel2);
+	}
 
 	public Map<TexturedModel, List<Entity>> getEntityList() {
 		return entities;
+	}
+
+	public Map<TexturedModel, List<Entity>> getNormalMapEntityList() {
+		return normalMapEntities;
 	}
 
 	public List<Terrain> getTerrains() {
@@ -206,6 +251,18 @@ public class Scene implements IScene {
 		}
 	}
 
+	public void processNormalMapEntity(Entity entity) {
+		TexturedModel entityModel = entity.getTexturedModel();
+		List<Entity> batch = normalMapEntities.get(entityModel);
+		if (batch != null) {
+			batch.add(entity);
+		} else {
+			List<Entity> newBatch = new ArrayList<Entity>();
+			newBatch.add(entity);
+			normalMapEntities.put(entityModel, newBatch);
+		}
+	}
+
 	public void processWaterTile(WaterTile waterTile) {
 		waterTiles.add(waterTile);
 	}
@@ -244,7 +301,6 @@ public class Scene implements IScene {
 				// entity.increaseRotation(0, 1, 0);
 			}
 		}
-		
 	}
 
 	@Override
@@ -260,6 +316,7 @@ public class Scene implements IScene {
 	public void clearLists() {
 		terrains.clear();
 		entities.clear();
+		normalMapEntities.clear();
 		lights.clear();
 		waterTiles.clear();
 		guis.clear();

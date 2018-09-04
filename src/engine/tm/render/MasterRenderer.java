@@ -11,6 +11,7 @@ import engine.tm.entities.Camera;
 import engine.tm.entities.EntityRenderer;
 import engine.tm.entities.Player;
 import engine.tm.gui.GuiRenderer;
+import engine.tm.normalMapping.NormalMappingRenderer;
 import engine.tm.scene.Scene;
 import engine.tm.skybox.SkyboxRenderer;
 import engine.tm.terrains.TerrainRenderer;
@@ -29,8 +30,9 @@ public class MasterRenderer {
 
 	private static Matrix4f projectionMatrix;
 
-	private static EntityRenderer entityRenderer;
 	private static TerrainRenderer terrainRenderer;
+	private static EntityRenderer entityRenderer;
+	private static NormalMappingRenderer normalMapRenderer;
 	private static SkyboxRenderer skyboxRenderer;
 	private static WaterRenderer waterRenderer;
 	private static GuiRenderer guiRenderer;
@@ -39,6 +41,7 @@ public class MasterRenderer {
 		createProjectionMatrix();
 		terrainRenderer = new TerrainRenderer(projectionMatrix);
 		entityRenderer = new EntityRenderer(projectionMatrix);
+		normalMapRenderer = new NormalMappingRenderer(projectionMatrix);
 		skyboxRenderer = new SkyboxRenderer(projectionMatrix);
 		waterRenderer = new WaterRenderer(projectionMatrix);
 		guiRenderer = new GuiRenderer();
@@ -100,6 +103,7 @@ public class MasterRenderer {
 		prepare();
 		terrainRenderer.render(scene, new Vector4f(0, 1, 0, -Water.HEIGHT));
 		entityRenderer.render(scene);
+		normalMapRenderer.render(scene, new Vector4f(0, 0, 0, 0));
 		camera.setPosition(cameraPosition);
 		camera.setPitch(currentPitch);
 		camera.setYaw(currentYaw);
@@ -110,6 +114,7 @@ public class MasterRenderer {
 		prepare();
 		terrainRenderer.render(scene, clipPlane);
 		entityRenderer.render(scene, clipPlane);
+		normalMapRenderer.render(scene, clipPlane);
 		skyboxRenderer.render(scene, clipPlane);
 	}
 
@@ -144,6 +149,7 @@ public class MasterRenderer {
 		scene.cleanUp();
 		terrainRenderer.cleanUp();
 		entityRenderer.cleanUp();
+		normalMapRenderer.cleanUp();
 		skyboxRenderer.cleanUp();
 		waterRenderer.cleanUp();
 		guiRenderer.cleanUp();

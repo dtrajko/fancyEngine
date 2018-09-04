@@ -16,7 +16,7 @@ uniform sampler2D depthMap;
 uniform vec3 lightColor;
 uniform float moveFactor;
 
-const float waveStrength = 0.04;
+const float waveStrength = 0.02;
 const float shineDamper = 20.0;
 const float reflectivity = 0.5;
 
