@@ -43,7 +43,6 @@ public class Player extends Entity {
 
 		super.increasePosition(dx, upwardsSpeed, dz);
 		super.increaseRotation(0, currentTurnSpeed * interval * turnCoef, 0);
-		
 
 		Terrain currentTerrain = ((Scene) scene).getCurrentTerrain(super.getPosition().x, super.getPosition().z);
 		float terrainHeight = TERRAIN_HEIGHT;

@@ -63,7 +63,9 @@ public class Scene implements IScene {
 	private void setupWater() {
 		water = new Water(loader);
 		WaterTile waterTile = new WaterTile(0, Water.HEIGHT, 0);
+		WaterTile waterTile_2 = new WaterTile(0, Water.HEIGHT, -WaterTile.TILE_SIZE * 2);
 		processWaterTile(waterTile);
+		processWaterTile(waterTile_2);
 	}
 
 	private void setupPlayer() {
@@ -79,12 +81,13 @@ public class Scene implements IScene {
 		TerrainTexture rTexture = new TerrainTexture(loader.loadTexture("terrain_1/1"));
 		TerrainTexture gTexture = new TerrainTexture(loader.loadTexture("terrain_1/2"));
 		TerrainTexture bTexture = new TerrainTexture(loader.loadTexture("terrain_1/3"));
-
 		TerrainTexturePack texturePack = new TerrainTexturePack(backgroundTexture, rTexture, gTexture, bTexture);
 		TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("terrain_1/blendMap"));
-
 		Terrain terrain_1 = new Terrain(-0.5f, -0.5f, loader, texturePack, blendMap, "terrain_1/heightmap");
-		processTerrain(terrain_1);	
+		processTerrain(terrain_1);
+		TerrainTexture blendMap_2 = new TerrainTexture(loader.loadTexture("terrain_2/blendMap"));
+		Terrain terrain_2 = new Terrain(-0.5f, -1.5f, loader, texturePack, blendMap_2, "terrain_2/heightmap");
+		processTerrain(terrain_2);
 	}
 
 	private void setupLights() {
@@ -119,14 +122,15 @@ public class Scene implements IScene {
 		while (modelsSpawned < 200) {
 			entity = null;
 
-			float coordX = rand.nextInt((int) Terrain.SIZE) - Terrain.SIZE / 2;
-			float coordZ = rand.nextInt((int) Terrain.SIZE) - Terrain.SIZE / 2;
+			float coordX = rand.nextInt((int) Terrain.SIZE) - Terrain.SIZE * 1/2;
+			float coordZ = rand.nextInt((int) Terrain.SIZE * 2) - Terrain.SIZE * 3/2;
 			float coordY = getCurrentTerrain(coordX, coordZ).getHeightOfTerrain(coordX, coordZ);
 			
-			int clearance = 50;
-			if (coordX < -Terrain.SIZE / 2 + clearance || coordX > Terrain.SIZE / 2 - clearance ||
-				coordZ < -Terrain.SIZE / 2 + clearance * 3 || coordZ > Terrain.SIZE / 2 - clearance ||
-				coordY < Water.HEIGHT) {
+			float clearance = 50;
+			if (coordX < -Terrain.SIZE * 1/2 + clearance || coordX > Terrain.SIZE * 1/2 - clearance ||
+				coordZ < -Terrain.SIZE * 3/2 + clearance || coordZ > Terrain.SIZE * 1/2 - clearance ||
+				(coordZ < -175 && coordZ > -625) || 
+				coordY < Water.HEIGHT + 5.0f) {
 				continue;
 			}
 
