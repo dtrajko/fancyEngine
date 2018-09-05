@@ -90,8 +90,14 @@ public class GUIText {
 	 * @param b
 	 *            - blue value, between 0 and 1.
 	 */
-	public void setColor(float r, float g, float b) {
+	public GUIText setColor(float r, float g, float b) {
 		color.set(r, g, b);
+		return this;
+	}
+
+	public GUIText setColor(Vector3f color) {
+		this.color = color;
+		return this;
 	}
 
 	/**

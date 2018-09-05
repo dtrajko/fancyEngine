@@ -123,23 +123,21 @@ public class Scene implements IScene {
 	}
 
 	private void updateText() {
-	
 		Camera camera = (Camera) this.camera;
-
 		TextMaster.emptyTextMap();
-		
 		float offsetX = 0.01f;
 		float offsetY = 0.84f;
+		Vector3f color = new Vector3f(1, 1, 1);
 		String line_0 = "FPS: " + GameEngine.getFPS() + " / " + GameEngine.TARGET_FPS;
 		String line_1 = "Player position:     " + (int) player.getPosition().x + "  " + (int) player.getPosition().y + "  " + (int) player.getPosition().z;
 		String line_2 = "Player rotation:     " + (int) player.getRotX() + "  " + (int) player.getRotY() + "  " + (int) player.getRotZ();
 		String line_3 = "Camera position:  " + (int) camera.getPosition().x + "  " + (int) camera.getPosition().y + "  " + (int) camera.getPosition().z;
 		String line_4 = "Camera rotation:  " + (int) camera.getRotation().x + "  " + (int) camera.getRotation().y + "  " + (int) camera.getRotation().z;
-		text[0] = new GUIText(line_0, 1, font, new Vector2f(offsetX, offsetY), 1f, false);
-		text[1] = new GUIText(line_1, 1, font, new Vector2f(offsetX, offsetY + 0.03f), 1f, false);
-		text[2] = new GUIText(line_2, 1, font, new Vector2f(offsetX, offsetY + 0.06f), 1f, false);
-		text[3] = new GUIText(line_3, 1, font, new Vector2f(offsetX, offsetY + 0.09f), 1f, false);
-		text[4] = new GUIText(line_4, 1, font, new Vector2f(offsetX, offsetY + 0.12f), 1f, false);
+		text[0] = new GUIText(line_0, 1, font, new Vector2f(offsetX, offsetY), 1f, false).setColor(color);
+		text[1] = new GUIText(line_1, 1, font, new Vector2f(offsetX, offsetY + 0.03f), 1f, false).setColor(color);
+		text[2] = new GUIText(line_2, 1, font, new Vector2f(offsetX, offsetY + 0.06f), 1f, false).setColor(color);
+		text[3] = new GUIText(line_3, 1, font, new Vector2f(offsetX, offsetY + 0.09f), 1f, false).setColor(color);
+		text[4] = new GUIText(line_4, 1, font, new Vector2f(offsetX, offsetY + 0.12f), 1f, false).setColor(color);
 		TextMaster.loadText(text[0]);
 		TextMaster.loadText(text[1]);
 		TextMaster.loadText(text[2]);
