@@ -40,6 +40,7 @@ public class Camera implements ICamera {
 		displVec = input.getDisplVec();
 		calculateZoom(input);
 		calculatePitch(input);
+		calculateRoll(input);
 		calculateAngleAroundPlayer(input);
 		float horizontalDistance = calculateHorizontalDistance();
 		float verticalDistance = calculateVerticalDistance();
@@ -66,7 +67,7 @@ public class Camera implements ICamera {
 	private float calculateHorizontalDistance() {
 		return (float) (distanceFromPlayer * Math.cos(Math.toRadians(pitch)));
 	}
-	
+
 	private float calculateVerticalDistance() {
 		return (float) (distanceFromPlayer * Math.sin(Math.toRadians(pitch)));
 	}
@@ -74,6 +75,15 @@ public class Camera implements ICamera {
 	private void calculateZoom(Input input) {
 		float zoomLevel = input.getMouseWheelDelta() * 10f;
 		distanceFromPlayer += zoomLevel;
+	}
+
+	private void calculateRoll(Input input) {
+		if (input.isKeyDown(GLFW.GLFW_KEY_1)) {
+			roll += speed;
+		}
+		if (input.isKeyDown(GLFW.GLFW_KEY_2)) {
+			roll += -speed;
+		}
 	}
 
 	/*
@@ -186,6 +196,10 @@ public class Camera implements ICamera {
 
 	public void invertPitch() {
 		this.pitch = -pitch;
+	}
+
+	public void invertRoll() {
+		this.roll = -roll;
 	}
 
 	@Override

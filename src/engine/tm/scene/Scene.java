@@ -132,7 +132,7 @@ public class Scene implements IScene {
 		String line_1 = "Player position:     " + (int) player.getPosition().x + "  " + (int) player.getPosition().y + "  " + (int) player.getPosition().z;
 		String line_2 = "Player rotation:     " + (int) player.getRotX() + "  " + (int) player.getRotY() + "  " + (int) player.getRotZ();
 		String line_3 = "Camera position:  " + (int) camera.getPosition().x + "  " + (int) camera.getPosition().y + "  " + (int) camera.getPosition().z;
-		String line_4 = "Camera rotation:  " + (int) camera.getRotation().x + "  " + (int) camera.getRotation().y + "  " + (int) camera.getRotation().z;
+		String line_4 = "Camera rotation  [ pitch: " + (int) camera.getRotation().x + "  yaw: " + (int) camera.getRotation().y + "  roll: " + (int) camera.getRotation().z + " ]";
 		text[0] = new GUIText(line_0, 1, font, new Vector2f(offsetX, offsetY), 1f, false).setColor(color);
 		text[1] = new GUIText(line_1, 1, font, new Vector2f(offsetX, offsetY + 0.03f), 1f, false).setColor(color);
 		text[2] = new GUIText(line_2, 1, font, new Vector2f(offsetX, offsetY + 0.06f), 1f, false).setColor(color);

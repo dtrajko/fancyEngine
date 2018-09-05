@@ -65,9 +65,11 @@ public class MasterRenderer {
 		float distance = 2 * (camera.getPosition().y - Water.HEIGHT);
 		camera.getPosition().y -= distance;
 		camera.invertPitch();
+		camera.invertRoll();
 		renderScene(scene, new Vector4f(0, 1, 0, -Water.HEIGHT));
 		camera.getPosition().y += distance;
 		camera.invertPitch();
+		camera.invertRoll();
 
 		// render refraction texture
 		waterRenderer.getFBOs().bindRefractionFrameBuffer();
