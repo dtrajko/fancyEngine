@@ -29,7 +29,7 @@ public class Hud implements IHud {
 
     private static final String FONT_NAME = "BOLD";
     private long vg;
-    private NVGColor colour;
+    private NVGColor color;
     private final DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
     private DoubleBuffer posx;
     private DoubleBuffer posy;
@@ -48,12 +48,12 @@ public class Hud implements IHud {
 		try {
 			fontTexture = new FontTexture(FONT, CHARSET);
 	        statusTextItem = new TextItem("...", fontTexture);
-	        statusTextItem.getMesh().getMaterial().setAmbientColour(new Vector4f(1.0f, 1.0f, 1.0f, 0.5f));
+	        statusTextItem.getMesh().getMaterial().setAmbientColor(new Vector4f(1.0f, 1.0f, 1.0f, 0.5f));
 
 	        Font bullseyeFont = new Font("Monospaced", Font.PLAIN, 60); // Century, Garamond, Monospaced
 	        bullseyeFontTexture = new FontTexture(bullseyeFont, CHARSET);
 	        bullseyeTextItem = new TextItem("+", bullseyeFontTexture);
-	        bullseyeTextItem.getMesh().getMaterial().setAmbientColour(new Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
+	        bullseyeTextItem.getMesh().getMaterial().setAmbientColor(new Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
 			bullseyeTextItem.setPosition(window.getWidth() / 2 - 20, window.getHeight() / 2 - 40, 0);
 
 	        // Create list that holds the items that compose the HUD
@@ -84,13 +84,13 @@ public class Hud implements IHud {
         // Upper ribbon
         nvgBeginPath(vg);
         nvgRect(vg, 0, window.getHeight() - 100, window.getWidth(), 50);
-        nvgFillColor(vg, rgba(0x23, 0xa1, 0xf1, 200, colour));
+        nvgFillColor(vg, rgba(0x23, 0xa1, 0xf1, 200, color));
         nvgFill(vg);
 
         // Lower ribbon
         nvgBeginPath(vg);
         nvgRect(vg, 0, window.getHeight() - 50, window.getWidth(), 10);
-        nvgFillColor(vg, rgba(0xc1, 0xe3, 0xf9, 200, colour));
+        nvgFillColor(vg, rgba(0xc1, 0xe3, 0xf9, 200, color));
         nvgFill(vg);
 
         GLFW.glfwGetCursorPos(window.getWindowHandle(), posx, posy);
@@ -104,7 +104,7 @@ public class Hud implements IHud {
         // Circle
         nvgBeginPath(vg);
         nvgCircle(vg, xcenter, ycenter, radius);
-        nvgFillColor(vg, rgba(0xc1, 0xe3, 0xf9, 200, colour));
+        nvgFillColor(vg, rgba(0xc1, 0xe3, 0xf9, 200, color));
         nvgFill(vg);
 
         // Clicks Text
@@ -112,9 +112,9 @@ public class Hud implements IHud {
         nvgFontFace(vg, FONT_NAME);
         nvgTextAlign(vg, NVG_ALIGN_CENTER | NVG_ALIGN_TOP);
         if (hover) {
-            nvgFillColor(vg, rgba(0x00, 0x00, 0x00, 255, colour));
+            nvgFillColor(vg, rgba(0x00, 0x00, 0x00, 255, color));
         } else {
-            nvgFillColor(vg, rgba(0x23, 0xa1, 0xf1, 255, colour));
+            nvgFillColor(vg, rgba(0x23, 0xa1, 0xf1, 255, color));
 
         }
         nvgText(vg, 50, window.getHeight() - 87, String.format("%02d", counter));
@@ -123,7 +123,7 @@ public class Hud implements IHud {
         nvgFontSize(vg, 40.0f);
         nvgFontFace(vg, FONT_NAME);
         nvgTextAlign(vg, NVG_ALIGN_LEFT | NVG_ALIGN_TOP);
-        nvgFillColor(vg, rgba(0xe6, 0xea, 0xed, 255, colour));
+        nvgFillColor(vg, rgba(0xe6, 0xea, 0xed, 255, color));
         nvgText(vg, window.getWidth() - 150, window.getHeight() - 95, dateFormat.format(new Date()));
 
         nvgEndFrame(vg);
@@ -134,13 +134,13 @@ public class Hud implements IHud {
     }
 
     /*
-    private NVGColor rgba(int r, int g, int b, int a, NVGColor colour) {
-        colour.r(r / 255.0f);
-        colour.g(g / 255.0f);
-        colour.b(b / 255.0f);
-        colour.a(a / 255.0f);
+    private NVGColor rgba(int r, int g, int b, int a, NVGColor color) {
+        color.r(r / 255.0f);
+        color.g(g / 255.0f);
+        color.b(b / 255.0f);
+        color.a(a / 255.0f);
 
-        return colour;
+        return color;
     }
     */
 }

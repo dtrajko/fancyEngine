@@ -13,7 +13,7 @@ import engine.tm.shaders.ShaderProgram;
 
 public class NormalMappingShader extends ShaderProgram {
 
-	private static final int MAX_LIGHTS = 5;
+	private static final int MAX_LIGHTS = WorldSettings.MAX_LIGHTS;
 
 	private static final String VERTEX_FILE = WorldSettings.RESOURCES_SUBDIR + "/shaders/normalMapVertexShader.glsl";
 	private static final String FRAGMENT_FILE = WorldSettings.RESOURCES_SUBDIR + "/shaders/normalMapFragmentShader.glsl";

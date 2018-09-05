@@ -1,4 +1,4 @@
-package engine.gui.fonts;
+package engine.tm.gui.fonts;
 
 import java.util.List;
 import java.util.Map;
@@ -6,31 +6,21 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
-import config.Config;
-import engine.Utils;
-import engine.graph.ShaderProgram;
-import engine.tm.gui.fonts.FontType;
-import engine.tm.gui.fonts.GUIText;
 
 public class FontRenderer {
-	
-	private ShaderProgram shader;
-	
+
+	private FontShader shader;
+
 	public FontRenderer() {
-		shader = new ShaderProgram();
-    	shader.createVertexShader(Utils.loadResource(Config.RESOURCES_DIR + "/shaders/font_vertex.vs"));
-    	shader.createFragmentShader(Utils.loadResource(Config.RESOURCES_DIR + "/shaders/font_fragment.fs"));
-    	shader.link();
-    	shader.createUniform("color");
-    	shader.createUniform("translation");
+		shader = new FontShader();
 	}
 
-	public void render(Map<FontType, List<GUIText>> guiTextElements) {
+	public void render(Map<FontType, List<GUIText>> texts) {
 		prepare();
-		for (FontType font: guiTextElements.keySet()) {
+		for (FontType font: texts.keySet()) {
 			GL13.glActiveTexture(GL13.GL_TEXTURE0);
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, font.getTextureAtlas());
-			for (GUIText text: guiTextElements.get(font)) {
+			for (GUIText text: texts.get(font)) {
 				renderText(text);
 			}
 		}
@@ -38,11 +28,10 @@ public class FontRenderer {
 	}
 
 	private void prepare(){
-		shader.bind();
-	}
-
-	private void endRendering(){
-		shader.unbind();
+		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		GL11.glDisable(GL11.GL_DEPTH_TEST);
+		shader.start();
 	}
 
 	private void renderText(GUIText text){
@@ -56,8 +45,14 @@ public class FontRenderer {
 		GL20.glDisableVertexAttribArray(1);
 		GL30.glBindVertexArray(0);
 	}
+	
+	private void endRendering(){
+		shader.stop();
+		GL11.glDisable(GL11.GL_BLEND);
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
+	}
 
-	public void cleanUp() {
-		shader.cleanup();
+	public void cleanUp(){
+		shader.cleanUp();
 	}
 }

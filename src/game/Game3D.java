@@ -248,7 +248,7 @@ public class Game3D implements IGameLogic {
 	}
 
     @Override
-    public void cleanup() {
+    public void cleanUp() {
     	scene.save();
     	scene.cleanUp();
         renderer.cleanUp();

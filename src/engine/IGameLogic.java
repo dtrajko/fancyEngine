@@ -13,5 +13,5 @@ public interface IGameLogic {
 	Input getInput();
 	SoundManager getSoundManager();
 	void initGui();
-	void cleanup();
+	void cleanUp();
 }

@@ -1,5 +1,6 @@
 package engine.tm.scene;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -7,6 +8,8 @@ import java.util.Map;
 import java.util.Random;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+
+import engine.GameEngine;
 import engine.IGameLogic;
 import engine.IScene;
 import engine.Window;
@@ -17,12 +20,16 @@ import engine.tm.entities.Entity;
 import engine.tm.entities.Light;
 import engine.tm.entities.Player;
 import engine.tm.gui.GuiTexture;
+import engine.tm.gui.fonts.FontType;
+import engine.tm.gui.fonts.GUIText;
+import engine.tm.gui.fonts.TextMaster;
 import engine.tm.loaders.Loader;
 import engine.tm.loaders.OBJLoader;
 import engine.tm.models.RawModel;
 import engine.tm.models.TexturedModel;
 import engine.tm.normalMapping.NormalMappedObjLoader;
 import engine.tm.render.MasterRenderer;
+import engine.tm.settings.WorldSettings;
 import engine.tm.skybox.Skybox;
 import engine.tm.terrains.Terrain;
 import engine.tm.textures.ModelTexture;
@@ -45,6 +52,9 @@ public class Scene implements IScene {
 	private List<Terrain> terrains = new ArrayList<Terrain>();
 	private List<WaterTile> waterTiles = new ArrayList<WaterTile>();
 	private List<GuiTexture> guis = new ArrayList<GuiTexture>();
+	
+	private FontType font;
+	private GUIText[] text;
 
 	public void init(Window window) {
 		camera = new Camera();
@@ -58,6 +68,7 @@ public class Scene implements IScene {
 		setupWater();
 		setupLights();
 		setupGui();
+		setupText();
 	}
 
 	private void setupWater() {
@@ -104,6 +115,36 @@ public class Scene implements IScene {
 		processGui(reflection);
 		processGui(minimap);
 		processGui(mmTarget);
+	}
+	
+	private void setupText() {
+		font = new FontType(loader.loadTexture("candara"), WorldSettings.FONTS_DIR + "/candara.fnt");
+		text = new GUIText[5];
+	}
+
+	private void updateText() {
+	
+		Camera camera = (Camera) this.camera;
+
+		TextMaster.emptyTextMap();
+		
+		float offsetX = 0.01f;
+		float offsetY = 0.84f;
+		String line_0 = "FPS: " + GameEngine.getFPS() + " / " + GameEngine.TARGET_FPS;
+		String line_1 = "Player position:     " + (int) player.getPosition().x + "  " + (int) player.getPosition().y + "  " + (int) player.getPosition().z;
+		String line_2 = "Player rotation:     " + (int) player.getRotX() + "  " + (int) player.getRotY() + "  " + (int) player.getRotZ();
+		String line_3 = "Camera position:  " + (int) camera.getPosition().x + "  " + (int) camera.getPosition().y + "  " + (int) camera.getPosition().z;
+		String line_4 = "Camera rotation:  " + (int) camera.getRotation().x + "  " + (int) camera.getRotation().y + "  " + (int) camera.getRotation().z;
+		text[0] = new GUIText(line_0, 1, font, new Vector2f(offsetX, offsetY), 1f, false);
+		text[1] = new GUIText(line_1, 1, font, new Vector2f(offsetX, offsetY + 0.03f), 1f, false);
+		text[2] = new GUIText(line_2, 1, font, new Vector2f(offsetX, offsetY + 0.06f), 1f, false);
+		text[3] = new GUIText(line_3, 1, font, new Vector2f(offsetX, offsetY + 0.09f), 1f, false);
+		text[4] = new GUIText(line_4, 1, font, new Vector2f(offsetX, offsetY + 0.12f), 1f, false);
+		TextMaster.loadText(text[0]);
+		TextMaster.loadText(text[1]);
+		TextMaster.loadText(text[2]);
+		TextMaster.loadText(text[3]);
+		TextMaster.loadText(text[4]);
 	}
 
 	private void generateForestModels() {
@@ -305,6 +346,7 @@ public class Scene implements IScene {
 				// entity.increaseRotation(0, 1, 0);
 			}
 		}
+		updateText();
 	}
 
 	@Override

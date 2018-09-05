@@ -1,44 +1,41 @@
 package engine.gui;
 
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
-
 import config.Config;
 import engine.Utils;
 import engine.Window;
 import engine.graph.ShaderProgram;
+import engine.tm.loaders.Loader;
 import engine.tm.models.RawModel;
 import engine.utils.Maths;
 
 public class GuiRenderer {
 
+	private ShaderProgram shader;
 	private final RawModel quad;
-	private ShaderProgram guiShaderProgram;
-	private GuiLoader loader;
+	private Loader loader;
 
 	public GuiRenderer() {
+		loader = new Loader();
 		float[] positions = { -1, 1, -1, -1, 1, 1, 1, -1};
-		loader = new GuiLoader();
-		this.quad = loader.loadToVAO(positions);
+		this.quad = loader.loadToVAO(positions, 2);
+		shader = new ShaderProgram();
+		shader.createVertexShader(Utils.loadResource(Config.RESOURCES_DIR + "/shaders/gui_vertex.vs"));
+		shader.createFragmentShader(Utils.loadResource(Config.RESOURCES_DIR + "/shaders/gui_fragment.fs"));
+		shader.link();
+		// Create uniforms for orthographic-model transformationMatrix and GUI texture
+		shader.createUniform("transformationMatrix");
+		shader.createUniform("guiTexture");
+		shader.createUniform("mouseOver");
 	}
 
-	public void setupGuiShader() throws Exception {
-    	guiShaderProgram = new ShaderProgram();
-    	guiShaderProgram.createVertexShader(Utils.loadResource(Config.RESOURCES_DIR + "/shaders/gui_vertex.vs"));
-    	guiShaderProgram.createFragmentShader(Utils.loadResource(Config.RESOURCES_DIR + "/shaders/gui_fragment.fs"));
-    	guiShaderProgram.link();
-
-        // Create uniforms for orthographic-model transformationMatrix and GUI texture
-    	guiShaderProgram.createUniform("transformationMatrix");
-    	guiShaderProgram.createUniform("guiTexture");
-    	guiShaderProgram.createUniform("mouseOver");
-    }
-
 	public void render(GuiManager guiManager, Window window) {
-		guiShaderProgram.bind();
+		shader.bind();
 		GL30.glBindVertexArray(quad.getVaoID());
 		GL20.glEnableVertexAttribArray(0);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -58,19 +55,22 @@ public class GuiRenderer {
 			}
 			GL13.glActiveTexture(GL13.GL_TEXTURE0);
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, gui.getTexture());
-			Matrix4f orthoMatrix = Maths.createTransformationMatrix(gui.getGuiTexture().getPosition(), gui.getGuiTexture().getRotation(), gui.getGuiTexture().getScale());
-			guiShaderProgram.setUniform("transformationMatrix", orthoMatrix);
+			Matrix4f orthoMatrix = Maths.createTransformationMatrix(
+				new Vector3f(gui.getGuiTexture().getPosition(), 0f),
+				new Vector3f(gui.getGuiTexture().getRotation(), 0f),
+				gui.getGuiTexture().getScale());
+			shader.setUniform("transformationMatrix", orthoMatrix);
 			int mouseOver = gui.isMouseOver() ? 1 : 0;
-			guiShaderProgram.setUniform("mouseOver", mouseOver);
+			shader.setUniform("mouseOver", mouseOver);
 			GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
 		}
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL20.glDisableVertexAttribArray(0);
 		GL30.glBindVertexArray(0);
-		guiShaderProgram.unbind();
+		shader.unbind();
 	}
 
 	public void cleanUp() {
-		guiShaderProgram.cleanup();
+		shader.cleanup();
 	}
 }

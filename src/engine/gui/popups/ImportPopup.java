@@ -16,9 +16,9 @@ import engine.graph.Texture;
 import engine.gui.GuiElement;
 import engine.gui.GuiManager;
 import engine.gui.fonts.FontFactory;
+import engine.gui.fonts.TextMaster;
 import engine.tm.gui.fonts.FontType;
 import engine.tm.gui.fonts.GUIText;
-import engine.tm.gui.fonts.TextMaster;
 import engine.utils.FileSystem;
 import game.Game3D;
 

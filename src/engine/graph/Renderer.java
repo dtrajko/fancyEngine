@@ -54,7 +54,7 @@ public class Renderer {
     private ShaderProgram skyBoxShaderProgram;
     private ShaderProgram particlesShaderProgram;
     private ShaderProgram fontShaderProgram;
-    
+
     private GuiRenderer guiRenderer;
     private FontRenderer textRenderer;
 
@@ -82,9 +82,7 @@ public class Renderer {
         setupHudShader();
         setupFontShader();
         guiRenderer = new GuiRenderer();
-        guiRenderer.setupGuiShader();
         textRenderer = new FontRenderer();
-        textRenderer.setupShader();
     }
 
     private void setupParticlesShader() throws Exception {
@@ -127,7 +125,7 @@ public class Renderer {
         skyBoxShaderProgram.createUniform("modelViewMatrix");
         skyBoxShaderProgram.createUniform("texture_sampler");
         skyBoxShaderProgram.createUniform("ambientLight");
-        skyBoxShaderProgram.createUniform("colour");
+        skyBoxShaderProgram.createUniform("color");
         skyBoxShaderProgram.createUniform("hasTexture");
     }
 
@@ -183,9 +181,9 @@ public class Renderer {
         hudShaderProgram.createFragmentShader(Utils.loadResource(Config.RESOURCES_DIR + "/shaders/hud_fragment.fs"));
         hudShaderProgram.link();
 
-        // Create uniforms for orthographic-model projection matrix and base colour
+        // Create uniforms for orthographic-model projection matrix and base color
         hudShaderProgram.createUniform("projModelMatrix");
-        hudShaderProgram.createUniform("colour");
+        hudShaderProgram.createUniform("color");
         hudShaderProgram.createUniform("hasTexture");
     }
 
@@ -444,7 +442,7 @@ public class Renderer {
             Matrix4f modelViewMatrix = transformation.buildModelViewMatrix(skyBox, viewMatrix);
             skyBoxShaderProgram.setUniform("modelViewMatrix", modelViewMatrix);
             skyBoxShaderProgram.setUniform("ambientLight", ((Scene) scene).getSceneLight().getSkyBoxLight());
-            skyBoxShaderProgram.setUniform("colour", mesh.getMaterial().getAmbientColour());
+            skyBoxShaderProgram.setUniform("color", mesh.getMaterial().getAmbientColor());
             skyBoxShaderProgram.setUniform("hasTexture", mesh.getMaterial().isTextured() ? 1 : 0);
 
             mesh.render();
@@ -514,7 +512,7 @@ public class Renderer {
                 // Set ortohtaphic and model matrix for this HUD item
                 Matrix4f projModelMatrix = transformation.buildOrthoProjModelMatrix(gameItem, ortho);
                 hudShaderProgram.setUniform("projModelMatrix", projModelMatrix);
-                hudShaderProgram.setUniform("colour", gameItem.getMesh().getMaterial().getAmbientColour());
+                hudShaderProgram.setUniform("color", gameItem.getMesh().getMaterial().getAmbientColor());
                 hudShaderProgram.setUniform("hasTexture", gameItem.getMesh().getMaterial().isTextured() ? 1 : 0);                
 
                 // Render the mesh for this HUD item

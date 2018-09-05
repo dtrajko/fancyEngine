@@ -13,6 +13,7 @@ public class GameEngine implements Runnable {
     private final Input input;
     private double lastFps;
     private int fps;
+    private static int displayFPS;
     private String windowTitle;
 
     public GameEngine(String windowTitle, boolean vSync, Window.WindowOptions opts, IGameLogic gameLogic) throws Exception {
@@ -92,7 +93,7 @@ public class GameEngine implements Runnable {
     }
 
     protected void cleanup() {
-        gameLogic.cleanup();                
+        gameLogic.cleanUp();                
     }
     
     private void sync() {
@@ -120,10 +121,15 @@ public class GameEngine implements Runnable {
         if ( window.getWindowOptions().showFps && timer.getLastLoopTime() - lastFps > 1 ) {
             lastFps = timer.getLastLoopTime();
             window.setWindowTitle(windowTitle + " - " + fps + " FPS");
+            displayFPS = fps;
             fps = 0;
         }
         fps++;
         gameLogic.render(window);
         window.update();
-    }    
+    }
+    
+    public static int getFPS() {
+    	return displayFPS;
+    }
 }

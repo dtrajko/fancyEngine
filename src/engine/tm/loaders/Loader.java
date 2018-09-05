@@ -142,9 +142,11 @@ public class Loader {
 
 	public int loadTexture(String fileName) {
 		int textureID = -1;
-		try {
-			textureID = Texture.loadTexture(WorldSettings.TEXTURES_DIR + "/" + fileName + ".png");
-			
+		String fullFilePath = WorldSettings.TEXTURES_DIR + "/" + fileName + ".png";
+		try {			
+			InputStream is = new FileInputStream(fullFilePath);
+			textureID = new Texture(is).getId();
+
 			GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
 			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR_MIPMAP_LINEAR);
 			GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL14.GL_TEXTURE_LOD_BIAS, -0.4f);

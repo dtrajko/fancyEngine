@@ -201,8 +201,8 @@ public class Scene implements IScene {
         load(meshTypesMap, "snapshot.txt");
 
         // Fog
-        Vector3f fogColour = new Vector3f(0.5f, 0.5f, 0.5f);
-        setFog(new Fog(true, fogColour, 0.01f));
+        Vector3f fogColor = new Vector3f(0.5f, 0.5f, 0.5f);
+        setFog(new Fog(true, fogColor, 0.01f));
 
         // Setup  SkyBox
         SkyBox skyBox = new SkyBox(Config.RESOURCES_DIR + "/models/skybox.obj", Config.RESOURCES_DIR + "/textures/skybox_minecraft.png");

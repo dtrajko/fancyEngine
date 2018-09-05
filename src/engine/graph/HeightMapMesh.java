@@ -10,7 +10,7 @@ import engine.Utils;
 
 public class HeightMapMesh {
 
-    private static final int MAX_COLOUR = 255 * 255 * 255;
+    private static final int MAX_COLOR = 255 * 255 * 255;
     public static final float STARTX = -0.5f;
     public static final float STARTZ = -0.5f;
     private final float minY;
@@ -168,7 +168,7 @@ public class HeightMapMesh {
 
     private float getHeight(int x, int z, int width, ByteBuffer buffer) {
         int argb = getRGB(x, z, width, buffer);
-        return this.minY + Math.abs(this.maxY - this.minY) * ((float) argb / (float) MAX_COLOUR);
+        return this.minY + Math.abs(this.maxY - this.minY) * ((float) argb / (float) MAX_COLOR);
     }
 
     public static int getRGB(int x, int z, int width, ByteBuffer buffer) {

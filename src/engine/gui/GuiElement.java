@@ -5,6 +5,7 @@ import org.joml.Vector3f;
 import engine.graph.Mesh;
 import engine.graph.Texture;
 import engine.items.Box2D;
+import engine.tm.gui.GuiTexture;
 
 public class GuiElement {
 
@@ -24,7 +25,7 @@ public class GuiElement {
 
 	public GuiElement(Texture texture, Vector3f position, Vector2f scale) {
 		super();
-		this.texture = new GuiTexture(texture.getId(), position, scale);
+		this.texture = new GuiTexture(texture.getId(), new Vector2f(position.x, position.y), scale);
 		setAABB();
 		selected = false;
 		mouseOver = false;

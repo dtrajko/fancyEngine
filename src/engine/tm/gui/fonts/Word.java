@@ -9,7 +9,7 @@ import java.util.List;
  *
  */
 public class Word {
-	
+
 	private List<Character> characters = new ArrayList<Character>();
 	private double width = 0;
 	private double fontSize;
@@ -26,7 +26,7 @@ public class Word {
 	 * Adds a character to the end of the current word and increases the screen-space width of the word.
 	 * @param character - the character to be added.
 	 */
-	protected void addCharacter(Character character){
+	protected void addCharacter(Character character) {		
 		characters.add(character);
 		width += character.getxAdvance() * fontSize;
 	}

@@ -22,18 +22,18 @@ public class MD5Loader {
      *
      * @param md5Model The MD5 Model
      * @param animModel The MD5 Animation
-     * @param defaultColour Default colour to use if there are no textures
+     * @param defaultColor Default color to use if there are no textures
      * @return
      * @throws Exception
      */
-    public static AnimGameItem process(MD5Model md5Model, MD5AnimModel animModel, Vector4f defaultColour) throws Exception {
+    public static AnimGameItem process(MD5Model md5Model, MD5AnimModel animModel, Vector4f defaultColor) throws Exception {
         List<Matrix4f> invJointMatrices = calcInJointMatrices(md5Model);
         List<AnimatedFrame> animatedFrames = processAnimationFrames(md5Model, animModel, invJointMatrices);
 
         List<Mesh> list = new ArrayList<>();
         for (MD5Mesh md5Mesh : md5Model.getMeshes()) {
             Mesh mesh = generateMesh(md5Model, md5Mesh);
-            handleTexture(mesh, md5Mesh, defaultColour);
+            handleTexture(mesh, md5Mesh, defaultColor);
             list.add(mesh);
         }
 
@@ -241,7 +241,7 @@ public class MD5Loader {
         return result;
     }
 
-    private static void handleTexture(Mesh mesh, MD5Mesh md5Mesh, Vector4f defaultColour) throws Exception {
+    private static void handleTexture(Mesh mesh, MD5Mesh md5Mesh, Vector4f defaultColor) throws Exception {
         String texturePath = md5Mesh.getTexture();
         if (texturePath != null && texturePath.length() > 0) {
             Texture texture = new Texture(texturePath);
@@ -260,7 +260,7 @@ public class MD5Loader {
             }
             mesh.setMaterial(material);
         } else {
-            mesh.setMaterial(new Material(defaultColour, 1));
+            mesh.setMaterial(new Material(defaultColor, 1));
         }
     }
 }

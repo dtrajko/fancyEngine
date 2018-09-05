@@ -16,10 +16,10 @@ import engine.Window;
 import engine.graph.Camera;
 import engine.graph.Input;
 import engine.gui.fonts.FontFactory;
+import engine.gui.fonts.TextMaster;
 import engine.sound.SoundManager;
 import engine.tm.gui.fonts.FontType;
 import engine.tm.gui.fonts.GUIText;
-import engine.tm.gui.fonts.TextMaster;
 import engine.utils.Util;
 import game2D.assets.Assets;
 import game2D.entities.Player;
@@ -212,7 +212,7 @@ public class Frogger implements IGameLogic {
 	}
 
 	@Override
-	public void cleanup() {
+	public void cleanUp() {
 		saveHiScore();
 		Assets.deleteAsset();
 		renderer.clear();

@@ -22,7 +22,7 @@ struct Attenuation
 
 struct PointLight
 {
-    vec3 colour;
+    vec3 color;
     // Light position is assumed to be in view coordinates
     vec3 position;
     float intensity;
@@ -38,7 +38,7 @@ struct SpotLight
 
 struct DirectionalLight
 {
-    vec3 colour;
+    vec3 color;
     vec3 direction;
     float intensity;
 };
@@ -56,7 +56,7 @@ struct Material
 struct Fog
 {
     int activeFog;
-    vec3 colour;
+    vec3 color;
     float density;
 };
 
@@ -80,7 +80,7 @@ vec4 ambientC;
 vec4 diffuseC;
 vec4 speculrC;
 
-void setupColours(Material material, vec2 textCoord)
+void setupColors(Material material, vec2 textCoord)
 {
     if (material.hasTexture == 1)
     {
@@ -96,14 +96,14 @@ void setupColours(Material material, vec2 textCoord)
     }
 }
 
-vec4 calcLightColour(vec3 light_colour, float light_intensity, vec3 position, vec3 to_light_dir, vec3 normal)
+vec4 calcLightColor(vec3 light_color, float light_intensity, vec3 position, vec3 to_light_dir, vec3 normal)
 {
-    vec4 diffuseColour = vec4(0, 0, 0, 0);
-    vec4 specColour = vec4(0, 0, 0, 0);
+    vec4 diffuseColor = vec4(0, 0, 0, 0);
+    vec4 specColor = vec4(0, 0, 0, 0);
 
     // Diffuse Light
     float diffuseFactor = max(dot(normal, to_light_dir), 0.0);
-    diffuseColour = diffuseC * vec4(light_colour, 1.0) * light_intensity * diffuseFactor;
+    diffuseColor = diffuseC * vec4(light_color, 1.0) * light_intensity * diffuseFactor;
 
     // Specular Light
     vec3 camera_direction = normalize(-position);
@@ -111,22 +111,22 @@ vec4 calcLightColour(vec3 light_colour, float light_intensity, vec3 position, ve
     vec3 reflected_light = normalize(reflect(from_light_dir , normal));
     float specularFactor = max( dot(camera_direction, reflected_light), 0.0);
     specularFactor = pow(specularFactor, specularPower);
-    specColour = speculrC * light_intensity  * specularFactor * material.reflectance * vec4(light_colour, 1.0);
+    specColor = speculrC * light_intensity  * specularFactor * material.reflectance * vec4(light_color, 1.0);
 
-    return (diffuseColour + specColour);
+    return (diffuseColor + specColor);
 }
 
 vec4 calcPointLight(PointLight light, vec3 position, vec3 normal)
 {
     vec3 light_direction = light.position - position;
     vec3 to_light_dir  = normalize(light_direction);
-    vec4 light_colour = calcLightColour(light.colour, light.intensity, position, to_light_dir, normal);
+    vec4 light_color = calcLightColor(light.color, light.intensity, position, to_light_dir, normal);
 
     // Apply Attenuation
     float distance = length(light_direction);
     float attenuationInv = light.att.constant + light.att.linear * distance +
         light.att.exponent * distance * distance;
-    return light_colour / attenuationInv;
+    return light_color / attenuationInv;
 }
 
 vec4 calcSpotLight(SpotLight light, vec3 position, vec3 normal)
@@ -136,30 +136,30 @@ vec4 calcSpotLight(SpotLight light, vec3 position, vec3 normal)
     vec3 from_light_dir  = -to_light_dir;
     float spot_alfa = dot(from_light_dir, normalize(light.conedir));
     
-    vec4 colour = vec4(0, 0, 0, 0);
+    vec4 color = vec4(0, 0, 0, 0);
     
     if ( spot_alfa > light.cutoff ) 
     {
-        colour = calcPointLight(light.pl, position, normal);
-        colour *= (1.0 - (1.0 - spot_alfa)/(1.0 - light.cutoff));
+        color = calcPointLight(light.pl, position, normal);
+        color *= (1.0 - (1.0 - spot_alfa)/(1.0 - light.cutoff));
     }
-    return colour;    
+    return color;    
 }
 
 vec4 calcDirectionalLight(DirectionalLight light, vec3 position, vec3 normal)
 {
-    return calcLightColour(light.colour, light.intensity, position, normalize(light.direction), normal);
+    return calcLightColor(light.color, light.intensity, position, normalize(light.direction), normal);
 }
 
-vec4 calcFog(vec3 pos, vec4 colour, Fog fog, vec3 ambientLight, DirectionalLight dirLight)
+vec4 calcFog(vec3 pos, vec4 color, Fog fog, vec3 ambientLight, DirectionalLight dirLight)
 {
-    vec3 fogColor = fog.colour * (ambientLight + dirLight.colour * dirLight.intensity);
+    vec3 fogColor = fog.color * (ambientLight + dirLight.color * dirLight.intensity);
     float distance = length(pos);
     float fogFactor = 1.0 / exp( (distance * fog.density)* (distance * fog.density));
     fogFactor = clamp( fogFactor, 0.0, 1.0 );
 
-    vec3 resultColour = mix(fogColor, colour.xyz, fogFactor);
-    return vec4(resultColour.xyz, colour.w);
+    vec3 resultColor = mix(fogColor, color.xyz, fogFactor);
+    return vec4(resultColor.xyz, color.w);
 }
 
 vec3 calcNormal(Material material, vec3 normal, vec2 text_coord, mat4 modelViewMatrix)
@@ -232,7 +232,7 @@ float calcShadow(vec4 position, int idx)
 
 void main()
 {
-    setupColours(material, outTexCoord);
+    setupColors(material, outTexCoord);
 
     vec3 currNomal = calcNormal(material, mvVertexNormal, outTexCoord, outModelViewMatrix);
 

@@ -13,7 +13,7 @@ import engine.graph.Input;
 import engine.graph.Texture;
 import engine.gui.GuiElement;
 import engine.gui.GuiManager;
-import engine.tm.gui.fonts.TextMaster;
+import engine.gui.fonts.TextMaster;
 
 public class InventoryPopup {
 

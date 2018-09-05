@@ -3,8 +3,6 @@ package engine.tm.gui.fonts;
 import java.util.ArrayList;
 import java.util.List;
 
-import engine.Window;
-
 public class TextMeshCreator {
 
 	protected static final double LINE_HEIGHT = 0.03f;
@@ -12,8 +10,8 @@ public class TextMeshCreator {
 
 	private MetaFile metaData;
 
-	protected TextMeshCreator(String metaFile, Window window) {
-		metaData = new MetaFile(metaFile, window);
+	protected TextMeshCreator(String metaFile) {
+		metaData = new MetaFile(metaFile);
 	}
 
 	protected TextMeshData createTextMesh(GUIText text) {

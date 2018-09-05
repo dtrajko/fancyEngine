@@ -4,72 +4,49 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import engine.gui.fonts.FontRenderer;
+import engine.tm.gui.fonts.FontType;
+import engine.tm.gui.fonts.GUIText;
+import engine.tm.gui.fonts.TextMeshData;
 import engine.tm.loaders.Loader;
 
 public class TextMaster {
 
 	private static Loader loader;
 	private static FontRenderer renderer;
-	private Map<FontType, List<GUIText>> guiTextsMap = new HashMap<FontType, List<GUIText>>();
-	private List<GUIText> guiTexts;
+	private static Map<FontType, List<GUIText>> texts = new HashMap<FontType, List<GUIText>>();
 
-	public TextMaster() {
+	public static void init() {
 		renderer = new FontRenderer();
-	}
-
-	public void init() {
 		loader = new Loader();
-		guiTexts = new ArrayList<GUIText>();
-		try {
-			renderer.setupShader();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
-	public void render() {
-		renderer.render(guiTextsMap);
-	}
-
-	public List<GUIText> getGuiTexts() {
-		return guiTexts;
-	}
-
-	public Map<FontType, List<GUIText>> getGuiTextsMap() {
-		return guiTextsMap;
-	}
-
-	public GUIText getGuiText(int index) {
-		return guiTexts.get(index);
-	}
-
-	public void setGuiText(int index, GUIText newGuiText) {
-		guiTexts.add(index, newGuiText);
-		loadText(newGuiText);
-	}
-
-	public void loadText(GUIText text) {
+	public static void loadText(GUIText text) {
 		FontType font = text.getFont();
-		TextMeshData textMeshData = font.loadText(text);
-		int vao = loader.loadToVAO(textMeshData.getVertexPositions(), textMeshData.getTextureCoords());
-		text.setMeshInfo(vao, textMeshData.getVertexCount());
-		List<GUIText> textBatch = guiTextsMap.get(font);
+		TextMeshData data = font.loadText(text);		
+		int vao = loader.loadToVAO(data.getVertexPositions(), data.getTextureCoords());
+		text.setMeshInfo(vao, data.getVertexCount());
+		List<GUIText> textBatch = texts.get(font);
 		if (textBatch == null) {
 			textBatch = new ArrayList<GUIText>();
-			guiTextsMap.put(font, textBatch);
+			texts.put(font, textBatch);
 		}
-		textBatch.add(text);
+		textBatch.add(text);		
 	}
 
-	public void removeText(GUIText text) {
-		List<GUIText> textBatch = guiTextsMap.get(text.getFont());
-		if (textBatch != null) {
-			textBatch.remove(text);
-			if (textBatch.isEmpty()) {
-				guiTextsMap.remove(text.getFont());
-			}			
+	public static void removeText(GUIText text) {
+		List<GUIText> textBatch = texts.get(text.getFont());
+		textBatch.remove(text);
+		if (textBatch.isEmpty()) {
+			texts.remove(text.getFont());
 		}
+	}
+
+	public static void emptyTextMap() {
+		texts.clear();
+	}
+
+	public static void render() {
+		renderer.render(texts);
 	}
 
 	public static void cleanUp() {

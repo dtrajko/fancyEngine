@@ -19,7 +19,7 @@ import org.lwjgl.BufferUtils;
 
 public class Utils {
 
-    public static String loadResource(String fileName) throws Exception {
+    public static String loadResource(String fileName) {
         return readFile(fileName);
     }
 

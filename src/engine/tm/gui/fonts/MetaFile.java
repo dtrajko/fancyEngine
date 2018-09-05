@@ -48,9 +48,9 @@ public class MetaFile {
 	 * @param file
 	 *            - the font file.
 	 */
-	protected MetaFile(String file, Window window) {
-		this.aspectRatio = (double) window.getWidth() / (double) window.getHeight();
-		if (openFile(file)) {
+	protected MetaFile(String filePath) {
+		this.aspectRatio = (double) Window.width / (double) Window.height;
+		if (openFile(filePath)) {
 			loadPaddingData();
 			loadLineSizes();
 			int imageWidth = getValueOfVariable("scaleW");
@@ -136,16 +136,15 @@ public class MetaFile {
 	 * @param file
 	 *            - the font file.
 	 */
-	private boolean openFile(String file) {
-		
+	private boolean openFile(String filePath) {
+
 		try {
-			InputStream is = new FileInputStream(Config.RESOURCES_DIR + "/fonts/" + file + ".fnt");
+			InputStream is = new FileInputStream(filePath);
 			InputStreamReader isr = new InputStreamReader(is);
 			reader = new BufferedReader(isr);
 			return true;
 		} catch (Exception e) {
-			// e.printStackTrace();
-			System.err.println("Couldn't read font meta file!");
+			System.err.println("Couldn't read font meta file [" + filePath + "]!");
 			return false;
 		}
 	}

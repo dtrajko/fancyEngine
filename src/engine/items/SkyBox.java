@@ -18,10 +18,10 @@ public class SkyBox extends GameItem {
         setPosition(0, 0, 0);
     }
 
-    public SkyBox(String objModel, Vector4f colour) throws Exception {
+    public SkyBox(String objModel, Vector4f color) throws Exception {
         super();
         Mesh skyBoxMesh = OBJLoader.loadMesh(objModel);
-        Material material = new Material(colour, 0);
+        Material material = new Material(color, 0);
         skyBoxMesh.setMaterial(material);
         setMesh(skyBoxMesh);
         setPosition(0, 0, 0);

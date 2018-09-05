@@ -157,7 +157,7 @@ public class Game2D implements IGameLogic {
 	}
 
 	@Override
-	public void cleanup() {
+	public void cleanUp() {
 		Assets.deleteAsset();
 		renderer.clear();
 		level.cleanup();

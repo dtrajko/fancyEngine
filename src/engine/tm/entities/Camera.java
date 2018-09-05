@@ -196,8 +196,7 @@ public class Camera implements ICamera {
 
 	@Override
 	public Vector3f getRotation() {
-		// TODO Auto-generated method stub
-		return null;
+		return new Vector3f(pitch, yaw, roll);
 	}
 
 	@Override
