@@ -55,8 +55,8 @@ public class Particle {
 		float frameTimeSeconds = 1.0f / GameEngine.getFPS();
 		velocity.y += Player.getGravity() * this.gravityEffect * frameTimeSeconds;
 		reusableChange.set(velocity);
-		reusableChange.normalize(frameTimeSeconds);
-		reusableChange.add(this.position, this.position);
+		reusableChange.normalize(1.0f / GameEngine.getFPS());
+		reusableChange.add(this.position);
 		updateTextureCoordInfo();
 		Vector3f camPos = new Vector3f(camera.getPosition());
 		distance = camPos.sub(position).lengthSquared();

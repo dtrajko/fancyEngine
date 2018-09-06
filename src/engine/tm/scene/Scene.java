@@ -82,9 +82,9 @@ public class Scene implements IScene {
 
 	private void setupParticles() {
 		ParticleTexture particleTexture = new ParticleTexture(loader.loadTexture("particles/particleAtlas"), 4, true);
-		particleSystemComplex = new ParticleSystemComplex(particleTexture, 50f, 10f, -10f, 20f, 2f);
+		particleSystemComplex = new ParticleSystemComplex(particleTexture, 50f, 100f, 0f, 20f, 2f);
 		particleSystemComplex.setLifeError(0.1f);
-		particleSystemComplex.setSpeedError(0.25f);
+		particleSystemComplex.setSpeedError(0.0f);
 		particleSystemComplex.setScaleError(0.5f);
 		particleSystemComplex.randomizeRotation();
 		// setupParticlesFire();

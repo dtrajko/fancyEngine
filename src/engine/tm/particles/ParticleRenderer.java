@@ -120,7 +120,7 @@ public class ParticleRenderer {
 		modelViewMatrix.identity();
 		Matrix4f modelMatrix = new Matrix4f();
 		modelMatrix.identity();
-		modelMatrix.translate(position, modelMatrix);
+		modelMatrix.translate(position);
 		modelMatrix.m00(viewMatrix.m00());
 		modelMatrix.m01(viewMatrix.m10());
 		modelMatrix.m02(viewMatrix.m20());

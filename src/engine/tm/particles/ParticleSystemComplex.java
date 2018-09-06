@@ -79,7 +79,7 @@ public class ParticleSystemComplex {
 
 	private void emitParticle(Vector3f center) {
 		Vector3f velocity = null;
-		if(direction!=null){
+		if(direction != null){
 			velocity = generateRandomUnitVectorWithinCone(direction, directionDeviation);
 		}else{
 			velocity = generateRandomUnitVector();
