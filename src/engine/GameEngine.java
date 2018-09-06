@@ -132,4 +132,8 @@ public class GameEngine implements Runnable {
     public static int getFPS() {
     	return displayFPS;
     }
+
+    public Timer getTimer() {
+    	return timer;
+    }
 }

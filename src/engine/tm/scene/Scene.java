@@ -1,6 +1,5 @@
 package engine.tm.scene;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,7 +7,7 @@ import java.util.Map;
 import java.util.Random;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
-
+import org.lwjgl.glfw.GLFW;
 import engine.GameEngine;
 import engine.IGameLogic;
 import engine.IScene;
@@ -28,6 +27,11 @@ import engine.tm.loaders.OBJLoader;
 import engine.tm.models.RawModel;
 import engine.tm.models.TexturedModel;
 import engine.tm.normalMapping.NormalMappedObjLoader;
+import engine.tm.particles.Particle;
+import engine.tm.particles.ParticleMaster;
+import engine.tm.particles.ParticleSystemComplex;
+import engine.tm.particles.ParticleSystemSimple;
+import engine.tm.particles.ParticleTexture;
 import engine.tm.render.MasterRenderer;
 import engine.tm.settings.WorldSettings;
 import engine.tm.skybox.Skybox;
@@ -37,6 +41,7 @@ import engine.tm.textures.TerrainTexture;
 import engine.tm.textures.TerrainTexturePack;
 import engine.tm.water.Water;
 import engine.tm.water.WaterTile;
+import engine.utils.Maths;
 
 public class Scene implements IScene {
 
@@ -53,8 +58,14 @@ public class Scene implements IScene {
 	private List<WaterTile> waterTiles = new ArrayList<WaterTile>();
 	private List<GuiTexture> guis = new ArrayList<GuiTexture>();
 	
-	private FontType font;
+	private FontType font_1;
+	private FontType font_2;
 	private GUIText[] text;
+	
+	private ParticleSystemSimple particleSystemSimple;
+	private ParticleSystemComplex particleSystemComplex;
+	private ParticleSystemComplex particleSystemFire;
+	private ParticleSystemComplex particleSystemSmoke;
 
 	public void init(Window window) {
 		camera = new Camera();
@@ -67,8 +78,69 @@ public class Scene implements IScene {
 		setupPlayer();
 		setupWater();
 		setupLights();
+		setupParticles();
 		setupGui();
 		setupText();
+	}
+
+	private void setupParticles() {
+		ParticleTexture particleTexture = new ParticleTexture(loader.loadTexture("particles/particleAtlas"), 4, true);
+		// particleSystemSimple = new ParticleSystemSimple(particleTexture, 50f, 0.5f, -2.0f, 10f);
+		particleSystemComplex = new ParticleSystemComplex(particleTexture, /* pps */ 50f, /* speed */ 10f, /* gravity */ -10f, /* life */ 20f, /* scale */ 2f);
+		particleSystemComplex.setLifeError(0.1f);
+		particleSystemComplex.setSpeedError(0.25f);
+		particleSystemComplex.setScaleError(0.5f);
+		particleSystemComplex.randomizeRotation();
+		// setupParticlesFire();
+	}
+
+	private void setupParticlesFire() {
+
+		ParticleTexture particleTextureFire = new ParticleTexture(loader.loadTexture("particles/fire"), 8, true);
+		ParticleTexture particleTextureSmoke = new ParticleTexture(loader.loadTexture("particles/smoke"), 8, false);
+
+		particleSystemFire = new ParticleSystemComplex(particleTextureFire, 100f, 1f, -1.0f, 2f, 20f);
+		particleSystemFire.setLifeError(0.1f);
+		particleSystemFire.setSpeedError(0.25f);
+		particleSystemFire.setScaleError(0.5f);
+		particleSystemFire.randomizeRotation();
+		particleSystemSmoke = new ParticleSystemComplex(particleTextureSmoke, 100f, 100f, -100f, 20f, 20f);
+		particleSystemSmoke.setLifeError(0.5f);
+		particleSystemSmoke.setSpeedError(0.5f);
+		particleSystemSmoke.setScaleError(0.5f);
+		particleSystemSmoke.randomizeRotation();
+		particleSystemSmoke.setDirection(new Vector3f(-0.5f, -0.5f, -0.5f), 1f);
+	}
+
+	private void updateParticles(Input input) {
+		if (input.isMouseButtonDown(GLFW.GLFW_MOUSE_BUTTON_3)) {
+			float coordX = player.getPosition().x;
+			float coordY = player.getPosition().y + 12;
+			float coordZ = player.getPosition().z;
+			// particleSystemSimple.generateParticles(new Vector3f(coordX, coordY, coordZ));			
+			particleSystemComplex.generateParticles(new Vector3f(coordX, coordY, coordZ));
+		}
+		// updateParticlesFire();
+	}
+
+	private void updateParticlesFire() {
+		float coordX = -120;
+		float coordZ = -800;
+		float coordY = this.getCurrentTerrain().getHeightOfTerrain(coordX, coordZ);
+		particleSystemFire.generateParticles(new Vector3f(coordX, coordY, coordZ));
+		particleSystemSmoke.generateParticles(new Vector3f(coordX, coordY + 10, coordZ));
+	}
+
+	@Override
+	public void update(float interval, Input input) {
+		for(TexturedModel model: entities.keySet()) {
+			List<Entity> batch = entities.get(model);
+			for(Entity entity : batch) {
+				// entity.increaseRotation(0, 1, 0);
+			}
+		}
+		updateParticles(input);
+		updateText();
 	}
 
 	private void setupWater() {
@@ -118,31 +190,38 @@ public class Scene implements IScene {
 	}
 	
 	private void setupText() {
-		font = new FontType(loader.loadTexture("candara"), WorldSettings.FONTS_DIR + "/candara.fnt");
-		text = new GUIText[5];
+		font_1 = new FontType(loader.loadTexture("arial"), WorldSettings.FONTS_DIR + "/arial.fnt");
+		font_2 = new FontType(loader.loadTexture("segoe"), WorldSettings.FONTS_DIR + "/segoe.fnt");
+		text = new GUIText[6];
 	}
 
 	private void updateText() {
 		Camera camera = (Camera) this.camera;
 		TextMaster.emptyTextMap();
 		float offsetX = 0.01f;
-		float offsetY = 0.84f;
+		float offsetY = 0.80f;
 		Vector3f color = new Vector3f(1, 1, 1);
 		String line_0 = "FPS: " + GameEngine.getFPS() + " / " + GameEngine.TARGET_FPS;
-		String line_1 = "Player position:     " + (int) player.getPosition().x + "  " + (int) player.getPosition().y + "  " + (int) player.getPosition().z;
-		String line_2 = "Player rotation:     " + (int) player.getRotX() + "  " + (int) player.getRotY() + "  " + (int) player.getRotZ();
+		String line_1 = "Player position:  " + (int) player.getPosition().x + "  " + (int) player.getPosition().y + "  " + (int) player.getPosition().z;
+		String line_2 = "Player rotation:  " + (int) player.getRotX() + "  " + Maths.angleTo360Range((int) player.getRotY()) + "  " + (int) player.getRotZ();
 		String line_3 = "Camera position:  " + (int) camera.getPosition().x + "  " + (int) camera.getPosition().y + "  " + (int) camera.getPosition().z;
-		String line_4 = "Camera rotation  [ pitch: " + (int) camera.getRotation().x + "  yaw: " + (int) camera.getRotation().y + "  roll: " + (int) camera.getRotation().z + " ]";
-		text[0] = new GUIText(line_0, 1, font, new Vector2f(offsetX, offsetY), 1f, false).setColor(color);
-		text[1] = new GUIText(line_1, 1, font, new Vector2f(offsetX, offsetY + 0.03f), 1f, false).setColor(color);
-		text[2] = new GUIText(line_2, 1, font, new Vector2f(offsetX, offsetY + 0.06f), 1f, false).setColor(color);
-		text[3] = new GUIText(line_3, 1, font, new Vector2f(offsetX, offsetY + 0.09f), 1f, false).setColor(color);
-		text[4] = new GUIText(line_4, 1, font, new Vector2f(offsetX, offsetY + 0.12f), 1f, false).setColor(color);
+		String line_4 = "Camera rotation  [ pitch: " + (int) camera.getRotation().x + "  yaw: " + Maths.angleTo360Range((int) camera.getRotation().y) + "  roll: " + (int) camera.getRotation().z + " ]";
+		String line_5 = "Particles active:  " + ParticleMaster.getParticlesCount();
+		text[0] = new GUIText(line_0, 1, font_1, new Vector2f(offsetX, offsetY), 1f, false).setColor(color);
+		text[1] = new GUIText(line_1, 1, font_1, new Vector2f(offsetX, offsetY + 0.03f), 1f, false).setColor(color);
+		text[2] = new GUIText(line_2, 1, font_1, new Vector2f(offsetX, offsetY + 0.06f), 1f, false).setColor(color);
+		text[3] = new GUIText(line_3, 1, font_1, new Vector2f(offsetX, offsetY + 0.09f), 1f, false).setColor(color);
+		text[4] = new GUIText(line_4, 1, font_1, new Vector2f(offsetX, offsetY + 0.12f), 1f, false).setColor(color);
+		text[5] = new GUIText(line_5, 1, font_1, new Vector2f(offsetX, offsetY + 0.15f), 1f, false).setColor(color);
 		TextMaster.loadText(text[0]);
 		TextMaster.loadText(text[1]);
 		TextMaster.loadText(text[2]);
 		TextMaster.loadText(text[3]);
 		TextMaster.loadText(text[4]);
+		TextMaster.loadText(text[5]);
+
+		// GUIText distFieldText = new GUIText("A sample string of text!", 7, font_2, new Vector2f(0.0f, 0.4f), 1f, true).setColor(color);
+		// TextMaster.loadText(distFieldText);
 	}
 
 	private void generateForestModels() {
@@ -334,17 +413,6 @@ public class Scene implements IScene {
 			}
 		}
 		return currentTerrain;
-	}
-
-	@Override
-	public void update(float interval, Input input) {
-		for(TexturedModel model: entities.keySet()) {
-			List<Entity> batch = entities.get(model);
-			for(Entity entity : batch) {
-				// entity.increaseRotation(0, 1, 0);
-			}
-		}
-		updateText();
 	}
 
 	@Override

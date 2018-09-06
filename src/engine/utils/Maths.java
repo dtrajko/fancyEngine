@@ -90,4 +90,11 @@ public class Maths {
 		normal.normalize();
 		return normal;
 	}
+
+    public static int angleTo360Range(int angle) {
+    	angle %= 360;
+    	angle = angle < 0 ? 360 + angle : angle;
+    	return angle;
+    }
+
 }

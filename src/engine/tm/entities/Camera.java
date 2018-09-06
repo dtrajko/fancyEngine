@@ -9,15 +9,16 @@ import engine.graph.ICamera;
 import engine.graph.Input;
 import engine.tm.scene.Scene;
 import engine.tm.terrains.Terrain;
+import engine.tm.toolbox.Maths;
 
 public class Camera implements ICamera {
-	
+
 	private final float OFFSET_Y = 10; // point to player's head, not feet
 	
 	private Vector3f position = new Vector3f(0, 0, 0);
 	private float pitch = 10;
 	private float yaw = 0;
-	private float roll;
+	private float roll = 0;
 	
 	private float distanceFromPlayer = 100;
 	private float angleAroundPlayer = 0;
@@ -77,15 +78,6 @@ public class Camera implements ICamera {
 		distanceFromPlayer += zoomLevel;
 	}
 
-	private void calculateRoll(Input input) {
-		if (input.isKeyDown(GLFW.GLFW_KEY_1)) {
-			roll += speed;
-		}
-		if (input.isKeyDown(GLFW.GLFW_KEY_2)) {
-			roll += -speed;
-		}
-	}
-
 	/*
 	 * #define GLFW_MOUSE_BUTTON_LEFT    GLFW_MOUSE_BUTTON_1
      * #define GLFW_MOUSE_BUTTON_MIDDLE  GLFW_MOUSE_BUTTON_3
@@ -95,6 +87,15 @@ public class Camera implements ICamera {
 		if (input.isMouseButtonDown(GLFW.GLFW_MOUSE_BUTTON_2)) { // right button pressed
 			float pitchChange = displVec.y * 0.5f;
 			pitch -= pitchChange;
+		}
+	}
+
+	private void calculateRoll(Input input) {
+		if (input.isKeyDown(GLFW.GLFW_KEY_1)) {
+			this.roll += speed;
+		}
+		if (input.isKeyDown(GLFW.GLFW_KEY_2)) {
+			this.roll += -speed;
 		}
 	}
 
@@ -215,7 +216,6 @@ public class Camera implements ICamera {
 
 	@Override
 	public Matrix4f updateViewMatrix() {
-		// TODO Auto-generated method stub
-		return null;
+		return Maths.createViewMatrix(this);
 	}
 }

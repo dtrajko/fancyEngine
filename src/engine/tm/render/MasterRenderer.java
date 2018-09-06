@@ -11,7 +11,10 @@ import engine.tm.entities.Camera;
 import engine.tm.entities.EntityRenderer;
 import engine.tm.entities.Player;
 import engine.tm.gui.GuiRenderer;
+import engine.tm.gui.fonts.TextMaster;
+import engine.tm.loaders.Loader;
 import engine.tm.normalMapping.NormalMappingRenderer;
+import engine.tm.particles.ParticleMaster;
 import engine.tm.scene.Scene;
 import engine.tm.skybox.SkyboxRenderer;
 import engine.tm.terrains.TerrainRenderer;
@@ -47,7 +50,8 @@ public class MasterRenderer {
 		guiRenderer = new GuiRenderer();
 	}
 
-	public void init(Window window) {
+	public void init(Window window, Loader loader) {
+		ParticleMaster.init(loader, projectionMatrix);
 	}
 
 	public static WaterRenderer getWaterRenderer() {
@@ -82,7 +86,12 @@ public class MasterRenderer {
 		waterRenderer.getFBOs().unbindCurrentFrameBuffer();
 		renderScene(scene, new Vector4f(0, 0, 0, 0));
 		waterRenderer.render(scene);
+
+		// after the 3D stuff and before the 2D stuff
+		ParticleMaster.renderParticles(camera);
+
 		guiRenderer.render(scene);
+		TextMaster.render();
 
 		GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
 	}
