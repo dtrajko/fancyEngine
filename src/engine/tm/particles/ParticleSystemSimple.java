@@ -13,7 +13,8 @@ public class ParticleSystemSimple {
 	
 	private ParticleTexture texture;
 	
-	public ParticleSystemSimple(ParticleTexture texture, float pps, float speed, float gravityComplient, float lifeLength) {
+	public ParticleSystemSimple(ParticleTexture texture, float pps, float speed, float gravityComplient,
+			float lifeLength) {
 		this.texture = texture;
 		this.pps = pps;
 		this.speed = speed;

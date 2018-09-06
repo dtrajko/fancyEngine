@@ -27,10 +27,8 @@ import engine.tm.loaders.OBJLoader;
 import engine.tm.models.RawModel;
 import engine.tm.models.TexturedModel;
 import engine.tm.normalMapping.NormalMappedObjLoader;
-import engine.tm.particles.Particle;
 import engine.tm.particles.ParticleMaster;
 import engine.tm.particles.ParticleSystemComplex;
-import engine.tm.particles.ParticleSystemSimple;
 import engine.tm.particles.ParticleTexture;
 import engine.tm.render.MasterRenderer;
 import engine.tm.settings.WorldSettings;
@@ -62,7 +60,6 @@ public class Scene implements IScene {
 	private FontType font_2;
 	private GUIText[] text;
 	
-	private ParticleSystemSimple particleSystemSimple;
 	private ParticleSystemComplex particleSystemComplex;
 	private ParticleSystemComplex particleSystemFire;
 	private ParticleSystemComplex particleSystemSmoke;
@@ -85,8 +82,7 @@ public class Scene implements IScene {
 
 	private void setupParticles() {
 		ParticleTexture particleTexture = new ParticleTexture(loader.loadTexture("particles/particleAtlas"), 4, true);
-		// particleSystemSimple = new ParticleSystemSimple(particleTexture, 50f, 0.5f, -2.0f, 10f);
-		particleSystemComplex = new ParticleSystemComplex(particleTexture, /* pps */ 50f, /* speed */ 10f, /* gravity */ -10f, /* life */ 20f, /* scale */ 2f);
+		particleSystemComplex = new ParticleSystemComplex(particleTexture, 50f, 10f, -10f, 20f, 2f);
 		particleSystemComplex.setLifeError(0.1f);
 		particleSystemComplex.setSpeedError(0.25f);
 		particleSystemComplex.setScaleError(0.5f);

@@ -61,9 +61,6 @@ public class Particle {
 		Vector3f camPos = new Vector3f(camera.getPosition());
 		distance = camPos.sub(position).lengthSquared();
 		this.elapsedTime += frameTimeSeconds;
-
-		// System.out.println("Particle update FrameTimeSec: " + frameTimeSeconds + " velocityY: " + velocity.y + " distance: " + distance + " elapsedTime: " + this.elapsedTime + " lifeLength: " + this.lifeLength);
-
 		return this.elapsedTime < this.lifeLength;
 		
 	}

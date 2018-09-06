@@ -17,7 +17,8 @@ public class ParticleSystemComplex {
 	private ParticleTexture texture;
 	private Random random = new Random();
 
-	public ParticleSystemComplex(ParticleTexture texture, float pps, float speed, float gravityComplient, float lifeLength, float scale) {
+	public ParticleSystemComplex(ParticleTexture texture, float pps, float speed, float gravityComplient,
+			float lifeLength, float scale) {
 		this.texture = texture;
 		this.pps = pps;
 		this.averageSpeed = speed;
@@ -64,7 +65,7 @@ public class ParticleSystemComplex {
 	}
 
 	public void generateParticles(Vector3f systemCenter) {
-		float delta = 0.008f; // (1.0f / GameEngine.getFPS());
+		float delta = 1.0f / GameEngine.getFPS();
 		float particlesToCreate = pps * delta;
 		int count = (int) Math.floor(particlesToCreate);
 		float partialParticle = particlesToCreate % 1;
@@ -87,7 +88,8 @@ public class ParticleSystemComplex {
 		velocity.normalize(generateValue(averageSpeed, speedError));
 		float scale = generateValue(averageScale, scaleError);
 		float lifeLength = generateValue(averageLifeLength, lifeError);
-		new Particle().setActive(this.texture, new Vector3f(center), velocity, gravityComplient, lifeLength, generateRotation(), scale);
+		new Particle().setActive(this.texture, new Vector3f(center), velocity, gravityComplient, lifeLength,
+				generateRotation(), scale);
 	}
 
 	private float generateValue(float average, float errorMargin) {

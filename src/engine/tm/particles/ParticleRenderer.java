@@ -54,7 +54,8 @@ public class ParticleRenderer {
 			pointer = 0;
 			float[] vboData = new float[particleList.size() * INSTANCE_DATA_LENGTH];
 			for (Particle particle: particleList) {
-				updateModelViewMatrix(particle.getPosition(), particle.getRotation(), particle.getScale(), viewMatrix, vboData);
+				updateModelViewMatrix(particle.getPosition(), particle.getRotation(), particle.getScale(), 
+						viewMatrix, vboData);
 				updateTexCoordInfo(particle, vboData);
 			}
 			loader.updateVbo(vbo, vboData, buffer);
@@ -113,7 +114,8 @@ public class ParticleRenderer {
 		shader.loadNumberOfRows(texture.getNumberOfRows());
 	}
 
-	private void updateModelViewMatrix(Vector3f position, float rotation, float scale, Matrix4f viewMatrix, float[] vboData) {
+	private void updateModelViewMatrix(Vector3f position, float rotation, float scale,
+			Matrix4f viewMatrix, float[] vboData) {
 		Matrix4f modelViewMatrix = new Matrix4f();
 		modelViewMatrix.identity();
 		Matrix4f modelMatrix = new Matrix4f();
