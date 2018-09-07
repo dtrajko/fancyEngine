@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+
+import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
@@ -29,6 +31,7 @@ import engine.tm.models.TexturedModel;
 import engine.tm.normalMapping.NormalMappedObjLoader;
 import engine.tm.particles.ParticleMaster;
 import engine.tm.particles.ParticleSystemComplex;
+import engine.tm.particles.ParticleSystemShoot;
 import engine.tm.particles.ParticleTexture;
 import engine.tm.render.MasterRenderer;
 import engine.tm.settings.WorldSettings;
@@ -60,9 +63,13 @@ public class Scene implements IScene {
 	private FontType font_2;
 	private GUIText[] text;
 	
+	private ParticleTexture particleTexture;
 	private ParticleSystemComplex particleSystemComplex;
 	private ParticleSystemComplex particleSystemFire;
 	private ParticleSystemComplex particleSystemSmoke;
+	private ParticleSystemShoot particleSystemShoot;
+
+	private boolean fireMode = true;
 
 	public void init(Window window) {
 		camera = new Camera();
@@ -81,20 +88,43 @@ public class Scene implements IScene {
 	}
 
 	private void setupParticles() {
-		ParticleTexture particleTexture = new ParticleTexture(loader.loadTexture("particles/particleAtlas"), 4, true);
-		particleSystemComplex = new ParticleSystemComplex(particleTexture, 50f, 100f, 0f, 20f, 2f);
-		particleSystemComplex.setLifeError(0.1f);
-		particleSystemComplex.setSpeedError(0.0f);
-		particleSystemComplex.setScaleError(0.5f);
-		particleSystemComplex.randomizeRotation();
+		fireMode = true;
+		particleTexture = new ParticleTexture(loader.loadTexture("particles/particleAtlas"), 4, true);
+		// particleSystemShoot = new ParticleSystemShoot(particleTexture, 20f, 20f, -2.0f, 5f); // magic circle around the player
+		particleSystemShoot = new ParticleSystemShoot(particleTexture, 300f, 50f, -2.0f, 2f);
 		// setupParticlesFire();
 	}
 
-	private void setupParticlesFire() {
+	private void updateParticles(Input input) {
 
+		if (input.isKeyReleased(GLFW.GLFW_KEY_F)) {
+			fireMode = !fireMode;
+			if (fireMode) {
+				particleSystemShoot = new ParticleSystemShoot(particleTexture, 300f, 50f, -2.0f, 2f);
+			} else {
+				particleSystemShoot = new ParticleSystemShoot(particleTexture, 20f, 20f, -2.0f, 5f); // magic circle around the player
+			}
+		}
+
+		if (input.isMouseButtonDown(GLFW.GLFW_MOUSE_BUTTON_3)) {
+			float coordX = player.getPosition().x;
+			float coordY = player.getPosition().y + 10;
+			float coordZ = player.getPosition().z;
+			// particleSystemSimple.generateParticles(new Vector3f(coordX, coordY, coordZ));
+			// particleSystemComplex.generateParticles(new Vector3f(coordX, coordY, coordZ));
+
+			float playerDX = (float) (Math.sin(Math.toRadians(player.getRotY())));
+			float playerDY = 0;
+			float playerDZ = (float) (Math.cos(Math.toRadians(player.getRotY())));
+			Vector3f playerDirection = new Vector3f(playerDX, playerDY, playerDZ);
+			particleSystemShoot.generateParticles(new Vector3f(coordX, coordY, coordZ), playerDirection);
+		}
+		// updateParticlesFire();
+	}
+
+	private void setupParticlesFire() {
 		ParticleTexture particleTextureFire = new ParticleTexture(loader.loadTexture("particles/fire"), 8, true);
 		ParticleTexture particleTextureSmoke = new ParticleTexture(loader.loadTexture("particles/smoke"), 8, false);
-
 		particleSystemFire = new ParticleSystemComplex(particleTextureFire, 100f, 1f, -1.0f, 2f, 20f);
 		particleSystemFire.setLifeError(0.1f);
 		particleSystemFire.setSpeedError(0.25f);
@@ -106,17 +136,6 @@ public class Scene implements IScene {
 		particleSystemSmoke.setScaleError(0.5f);
 		particleSystemSmoke.randomizeRotation();
 		particleSystemSmoke.setDirection(new Vector3f(-0.5f, -0.5f, -0.5f), 1f);
-	}
-
-	private void updateParticles(Input input) {
-		if (input.isMouseButtonDown(GLFW.GLFW_MOUSE_BUTTON_3)) {
-			float coordX = player.getPosition().x;
-			float coordY = player.getPosition().y + 12;
-			float coordZ = player.getPosition().z;
-			// particleSystemSimple.generateParticles(new Vector3f(coordX, coordY, coordZ));			
-			particleSystemComplex.generateParticles(new Vector3f(coordX, coordY, coordZ));
-		}
-		// updateParticlesFire();
 	}
 
 	private void updateParticlesFire() {

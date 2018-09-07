@@ -205,8 +205,7 @@ public class Camera implements ICamera {
 
 	@Override
 	public Matrix4f getViewMatrix() {
-		// TODO Auto-generated method stub
-		return null;
+		return Maths.createViewMatrix(this);
 	}
 
 	@Override

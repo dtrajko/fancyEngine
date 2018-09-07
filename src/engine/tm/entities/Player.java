@@ -12,7 +12,7 @@ import engine.tm.terrains.Terrain;
 public class Player extends Entity {
 	
 	private static final float RUN_SPEED = 80;
-	private static final float TURN_SPEED = 160;
+	private static final float TURN_SPEED = 80;
 	private static final float GRAVITY = -2.0f; // -2.0f;
 	private static final float JUMP_POWER = 2.0f;
 	private static final float TERRAIN_HEIGHT = 0;
@@ -88,9 +88,9 @@ public class Player extends Entity {
 		}
 
 		if (input.isKeyDown(GLFW.GLFW_KEY_D) || input.isKeyDown(GLFW.GLFW_KEY_RIGHT)) {
-			this.currentTurnSpeed = -TURN_SPEED;
+			this.currentTurnSpeed = -TURN_SPEED * speedCoef;
 		} else if (input.isKeyDown(GLFW.GLFW_KEY_A) || input.isKeyDown(GLFW.GLFW_KEY_LEFT)) {
-			this.currentTurnSpeed = TURN_SPEED;
+			this.currentTurnSpeed = TURN_SPEED * speedCoef;
 		} else {
 			this.currentTurnSpeed = 0;
 		}

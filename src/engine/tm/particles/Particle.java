@@ -52,17 +52,16 @@ public class Particle {
 	}
 
 	protected boolean update(Camera camera) {
-		float frameTimeSeconds = 1.0f / GameEngine.getFPS();
+		float frameTimeSeconds = 1.0f / GameEngine.TARGET_UPS;
 		velocity.y += Player.getGravity() * this.gravityEffect * frameTimeSeconds;
 		reusableChange.set(velocity);
-		reusableChange.normalize(1.0f / GameEngine.getFPS());
+		reusableChange.normalize(1.0f / GameEngine.TARGET_UPS);
 		reusableChange.add(this.position);
 		updateTextureCoordInfo();
 		Vector3f camPos = new Vector3f(camera.getPosition());
 		distance = camPos.sub(position).lengthSquared();
 		this.elapsedTime += frameTimeSeconds;
 		return this.elapsedTime < this.lifeLength;
-		
 	}
 
 	public float getDistance() {
