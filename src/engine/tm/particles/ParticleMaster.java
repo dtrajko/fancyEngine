@@ -7,12 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.joml.Matrix4f;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL31;
-
 import engine.tm.entities.Camera;
 import engine.tm.loaders.Loader;
-import engine.tm.toolbox.Maths;
 
 public class ParticleMaster {
 
@@ -48,10 +44,6 @@ public class ParticleMaster {
 	public static void renderParticles(Camera camera) {
 		renderer.render(particles, camera);
 	}
-
-	public static void cleanUp() {
-		renderer.cleanUp();
-	}
 	
 	public static void addParticle(Particle particle) {
 		List<Particle> list = particles.get(particle.getTexture());
@@ -69,5 +61,9 @@ public class ParticleMaster {
 			totalCount += particleList.size();
 		}
 		return totalCount;
+	}
+
+	public static void cleanUp() {
+		renderer.cleanUp();
 	}
 }
