@@ -11,7 +11,7 @@ import engine.IScene;
 import engine.graph.ICamera;
 import engine.graph.Input;
 import engine.tm.scene.Scene;
-import engine.tm.terrains.Terrain;
+import engine.tm.terrains.ITerrain;
 
 public class MousePicker {
 
@@ -41,7 +41,7 @@ public class MousePicker {
 		return currentRay;
 	}
 
-	private Terrain getTerrain(float worldX, float worldZ) {
+	private ITerrain getTerrain(float worldX, float worldZ) {
 		return ((Scene) scene).getCurrentTerrain();
 	}
 
@@ -100,7 +100,7 @@ public class MousePicker {
 		float half = start + ((finish - start) / 2f);
 		if (count >= RECURSION_COUNT) {
 			Vector3f endPoint = getPointOnRay(ray, half);
-			Terrain terrain = getTerrain(endPoint.x, endPoint.z);
+			ITerrain terrain = getTerrain(endPoint.x, endPoint.z);
 			if (terrain != null) {
 				return endPoint;
 			} else {
@@ -125,7 +125,7 @@ public class MousePicker {
 	}
 
 	private boolean isUnderGround(Vector3f testPoint) {
-		Terrain terrain = getTerrain(testPoint.x, testPoint.z);
+		ITerrain terrain = getTerrain(testPoint.x, testPoint.z);
 		float height = 0;
 		if (terrain != null) {
 			height = terrain.getHeightOfTerrain(testPoint.x, testPoint.z);

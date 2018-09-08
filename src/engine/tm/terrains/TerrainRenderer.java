@@ -34,7 +34,7 @@ public class TerrainRenderer {
 
 		List<Light> lights = ((Scene) scene).getLights();
 		ICamera camera = ((Scene) scene).getCamera();
-		List<Terrain> terrains = ((Scene) scene).getTerrains();
+		List<ITerrain> terrains = ((Scene) scene).getTerrains();
 
 		shader.start();
 		shader.loadClipPlane(clipPlane);
@@ -43,7 +43,7 @@ public class TerrainRenderer {
 		shader.loadShineVariables(1, 0);
 		shader.loadViewMatrix(camera);
 
-		for (Terrain terrain : terrains) {
+		for (ITerrain terrain : terrains) {
 			bindTerrain(terrain);
 			loadModelMatrix(terrain);
 			GL11.glDrawElements(GL11.GL_TRIANGLES, terrain.getModel().getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
@@ -57,7 +57,7 @@ public class TerrainRenderer {
 		render(scene, new Vector4f());
 	}
 
-	private void bindTerrain(Terrain terrain) {
+	private void bindTerrain(ITerrain terrain) {
 		RawModel rawModel = terrain.getModel();
 		GL30.glBindVertexArray(rawModel.getVaoID());
 		GL20.glEnableVertexAttribArray(0);
@@ -66,7 +66,7 @@ public class TerrainRenderer {
 		bindTextures(terrain);
 	}
 
-	private void bindTextures(Terrain terrain) {
+	private void bindTextures(ITerrain terrain) {
 		TerrainTexturePack texturePack = terrain.getTexturePack();
 		GL13.glActiveTexture(GL13.GL_TEXTURE0);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texturePack.getBackgroundTexture().getTextureID());
@@ -101,7 +101,7 @@ public class TerrainRenderer {
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 	}
 
-	private void loadModelMatrix(Terrain terrain) {
+	private void loadModelMatrix(ITerrain terrain) {
 		Matrix4f transformationMatrix = Maths.createTransformationMatrix(
 				new Vector3f(terrain.getX(), 0, terrain.getZ()), 0, 0, 0, 1);
 			shader.loadTransformationMatrix(transformationMatrix);

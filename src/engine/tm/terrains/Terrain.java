@@ -3,12 +3,9 @@ package engine.tm.terrains;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-
 import javax.imageio.ImageIO;
-
 import org.joml.Vector2f;
 import org.joml.Vector3f;
-
 import engine.tm.loaders.Loader;
 import engine.tm.models.RawModel;
 import engine.tm.settings.WorldSettings;
@@ -16,7 +13,7 @@ import engine.tm.textures.TerrainTexture;
 import engine.tm.textures.TerrainTexturePack;
 import engine.tm.toolbox.Maths;
 
-public class Terrain {
+public class Terrain implements ITerrain {
 
 	public static final float SIZE = 800;
 	private static final int MAX_HEIGHT = 30;
@@ -34,7 +31,8 @@ public class Terrain {
 
 	private float[][] heights;
 
-	public Terrain(float gridX, float gridZ, Loader loader, TerrainTexturePack texturePack, TerrainTexture blendMap, String heightMap) {
+	public Terrain(float gridX, float gridZ, Loader loader, TerrainTexturePack texturePack, 
+			TerrainTexture blendMap, String heightMap) {
 		this.texturePack = texturePack;
 		this.blendMap = blendMap;
 		this.heightMap = heightMap;

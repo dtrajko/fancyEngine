@@ -36,7 +36,9 @@ import engine.tm.particles.ParticleTexture;
 import engine.tm.render.MasterRenderer;
 import engine.tm.settings.WorldSettings;
 import engine.tm.skybox.Skybox;
+import engine.tm.terrains.ITerrain;
 import engine.tm.terrains.Terrain;
+import engine.tm.terrains.TerrainProcedural;
 import engine.tm.textures.ModelTexture;
 import engine.tm.textures.TerrainTexture;
 import engine.tm.textures.TerrainTexturePack;
@@ -55,7 +57,7 @@ public class Scene implements IScene {
 	private List<Light> lights = new ArrayList<Light>();
 	private Map<TexturedModel, List<Entity>> entities = new HashMap<TexturedModel, List<Entity>>();
 	private Map<TexturedModel, List<Entity>> normalMapEntities = new HashMap<TexturedModel, List<Entity>>();
-	private List<Terrain> terrains = new ArrayList<Terrain>();
+	private List<ITerrain> terrains = new ArrayList<ITerrain>();
 	private List<WaterTile> waterTiles = new ArrayList<WaterTile>();
 	private List<GuiTexture> guis = new ArrayList<GuiTexture>();
 	
@@ -76,7 +78,7 @@ public class Scene implements IScene {
 		((Camera) camera).setPosition(new Vector3f(0, 20, 40));
 		loader = new Loader();
 		skybox = new Skybox(loader);
-		setupTerrains();
+		setupTerrainsProcedural();
 		generateForestModels();
 		generateNormalMapEntities();
 		setupPlayer();
@@ -187,6 +189,20 @@ public class Scene implements IScene {
 		Terrain terrain_2 = new Terrain(-0.5f, -1.5f, loader, texturePack, blendMap_2, "terrain_2/heightmap");
 		processTerrain(terrain_2);
 	}
+	
+	private void setupTerrainsProcedural() {
+		TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture("terrain_1/bg"));
+		TerrainTexture rTexture = new TerrainTexture(loader.loadTexture("terrain_1/1"));
+		TerrainTexture gTexture = new TerrainTexture(loader.loadTexture("terrain_1/2"));
+		TerrainTexture bTexture = new TerrainTexture(loader.loadTexture("terrain_1/3"));
+		TerrainTexturePack texturePack = new TerrainTexturePack(backgroundTexture, rTexture, gTexture, bTexture);
+		TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("terrain_1/blendMap"));
+		TerrainProcedural terrain_1 = new TerrainProcedural(-0.5f, -0.5f, loader, texturePack, blendMap, "terrain_1/heightmap");
+		processTerrain(terrain_1);
+		TerrainTexture blendMap_2 = new TerrainTexture(loader.loadTexture("terrain_2/blendMap"));
+		TerrainProcedural terrain_2 = new TerrainProcedural(-0.5f, -1.5f, loader, texturePack, blendMap_2, "terrain_2/heightmap");
+		processTerrain(terrain_2);
+	}
 
 	private void setupLights() {
 		Light light_sun = new Light(new Vector3f(-500, 2000, -500), new Vector3f(1, 1, 1));
@@ -207,33 +223,36 @@ public class Scene implements IScene {
 	private void setupText() {
 		font_1 = new FontType(loader.loadTexture("arial"), WorldSettings.FONTS_DIR + "/arial.fnt");
 		font_2 = new FontType(loader.loadTexture("segoe"), WorldSettings.FONTS_DIR + "/segoe.fnt");
-		text = new GUIText[6];
+		text = new GUIText[10];
 	}
 
 	private void updateText() {
 		Camera camera = (Camera) this.camera;
 		TextMaster.emptyTextMap();
 		float offsetX = 0.01f;
-		float offsetY = 0.80f;
+		float offsetY = 0.77f;
 		Vector3f color = new Vector3f(1, 1, 1);
 		String line_0 = "FPS: " + GameEngine.getFPS() + " / " + GameEngine.TARGET_FPS;
-		String line_1 = "Player position:  " + (int) player.getPosition().x + "  " + (int) player.getPosition().y + "  " + (int) player.getPosition().z;
-		String line_2 = "Player rotation:  " + (int) player.getRotX() + "  " + Maths.angleTo360Range((int) player.getRotY()) + "  " + (int) player.getRotZ();
-		String line_3 = "Camera position:  " + (int) camera.getPosition().x + "  " + (int) camera.getPosition().y + "  " + (int) camera.getPosition().z;
-		String line_4 = "Camera rotation  [ pitch: " + (int) camera.getRotation().x + "  yaw: " + Maths.angleTo360Range((int) camera.getRotation().y) + "  roll: " + (int) camera.getRotation().z + " ]";
-		String line_5 = "Particles active:  " + ParticleMaster.getParticlesCount();
+		String line_1 = "Player role: " + (fireMode ? "Warrior" : "Wizard");
+		String line_2 = "Player position:  " + (int) player.getPosition().x + "  " + (int) player.getPosition().y + "  " + (int) player.getPosition().z;
+		String line_3 = "Player rotation:  " + (int) player.getRotX() + "  " + Maths.angleTo360Range((int) player.getRotY()) + "  " + (int) player.getRotZ();
+		String line_4 = "Camera position:  " + (int) camera.getPosition().x + "  " + (int) camera.getPosition().y + "  " + (int) camera.getPosition().z;
+		String line_5 = "Camera rotation  [ pitch: " + (int) camera.getRotation().x + "  yaw: " + Maths.angleTo360Range((int) camera.getRotation().y) + "  roll: " + (int) camera.getRotation().z + " ]";
+		String line_6 = "Particles active:  " + ParticleMaster.getParticlesCount();
 		text[0] = new GUIText(line_0, 1, font_1, new Vector2f(offsetX, offsetY), 1f, false).setColor(color);
 		text[1] = new GUIText(line_1, 1, font_1, new Vector2f(offsetX, offsetY + 0.03f), 1f, false).setColor(color);
 		text[2] = new GUIText(line_2, 1, font_1, new Vector2f(offsetX, offsetY + 0.06f), 1f, false).setColor(color);
 		text[3] = new GUIText(line_3, 1, font_1, new Vector2f(offsetX, offsetY + 0.09f), 1f, false).setColor(color);
 		text[4] = new GUIText(line_4, 1, font_1, new Vector2f(offsetX, offsetY + 0.12f), 1f, false).setColor(color);
 		text[5] = new GUIText(line_5, 1, font_1, new Vector2f(offsetX, offsetY + 0.15f), 1f, false).setColor(color);
+		text[6] = new GUIText(line_6, 1, font_1, new Vector2f(offsetX, offsetY + 0.18f), 1f, false).setColor(color);
 		TextMaster.loadText(text[0]);
 		TextMaster.loadText(text[1]);
 		TextMaster.loadText(text[2]);
 		TextMaster.loadText(text[3]);
 		TextMaster.loadText(text[4]);
 		TextMaster.loadText(text[5]);
+		TextMaster.loadText(text[6]);
 
 		// GUIText distFieldText = new GUIText("A sample string of text!", 7, font_2, new Vector2f(0.0f, 0.4f), 1f, true).setColor(color);
 		// TextMaster.loadText(distFieldText);
@@ -335,7 +354,7 @@ public class Scene implements IScene {
 		return normalMapEntities;
 	}
 
-	public List<Terrain> getTerrains() {
+	public List<ITerrain> getTerrains() {
 		return terrains;
 	}
 
@@ -372,7 +391,7 @@ public class Scene implements IScene {
 		return water;
 	}
 
-	public void processTerrain(Terrain terrain) {
+	public void processTerrain(ITerrain terrain) {
 		terrains.add(terrain);
 	}
 
@@ -408,8 +427,8 @@ public class Scene implements IScene {
 		guis.add(gui);
 	}
 
-	public Terrain getCurrentTerrain() {
-		Terrain currentTerrain = null;
+	public ITerrain getCurrentTerrain() {
+		ITerrain currentTerrain = null;
 		try {
 			currentTerrain = getCurrentTerrain(player.getPosition().x, player.getPosition().z);
 		} catch (Exception e) {
@@ -419,9 +438,9 @@ public class Scene implements IScene {
 		return currentTerrain;
 	}
 
-	public Terrain getCurrentTerrain(float x, float z) {
-		Terrain currentTerrain = null;
-		for (Terrain terrain : terrains) {
+	public ITerrain getCurrentTerrain(float x, float z) {
+		ITerrain currentTerrain = null;
+		for (ITerrain terrain : terrains) {
 			if (x >= terrain.getX() && x < (terrain.getX() + Terrain.SIZE) &&
 				z >= terrain.getZ() && z < (terrain.getZ() + Terrain.SIZE)) {
 				currentTerrain = terrain;

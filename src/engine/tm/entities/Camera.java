@@ -8,6 +8,7 @@ import engine.IScene;
 import engine.graph.ICamera;
 import engine.graph.Input;
 import engine.tm.scene.Scene;
+import engine.tm.terrains.ITerrain;
 import engine.tm.terrains.Terrain;
 import engine.tm.toolbox.Maths;
 
@@ -59,8 +60,8 @@ public class Camera implements ICamera {
 		position.y = player.getPosition().y + verticalDistance + OFFSET_Y;
 		position.z = player.getPosition().z - offsetZ;
 		
-		Terrain terrain = ((Scene)scene).getCurrentTerrain(position.x, position.z);		
-		if (terrain instanceof Terrain && terrain.getHeightOfTerrain(position.x, position.z) > position.y) {
+		ITerrain terrain = ((Scene)scene).getCurrentTerrain(position.x, position.z);		
+		if (terrain instanceof ITerrain && terrain.getHeightOfTerrain(position.x, position.z) > position.y) {
 			position.y = terrain.getHeightOfTerrain(position.x, position.z) + 5;
 		}
 	}

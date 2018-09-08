@@ -7,7 +7,7 @@ import engine.IScene;
 import engine.graph.Input;
 import engine.tm.models.TexturedModel;
 import engine.tm.scene.Scene;
-import engine.tm.terrains.Terrain;
+import engine.tm.terrains.ITerrain;
 
 public class Player extends Entity {
 	
@@ -44,7 +44,7 @@ public class Player extends Entity {
 		super.increasePosition(dx, upwardsSpeed, dz);
 		super.increaseRotation(0, currentTurnSpeed * interval * turnCoef, 0);
 
-		Terrain currentTerrain = ((Scene) scene).getCurrentTerrain(super.getPosition().x, super.getPosition().z);
+		ITerrain currentTerrain = ((Scene) scene).getCurrentTerrain(super.getPosition().x, super.getPosition().z);
 		float terrainHeight = TERRAIN_HEIGHT;
 		if (currentTerrain != null) {
 			terrainHeight = currentTerrain.getHeightOfTerrain(super.getPosition().x, super.getPosition().z);
