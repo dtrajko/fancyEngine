@@ -16,7 +16,7 @@ uniform mat4 viewMatrix;
 uniform vec3 lightPosition[5];
 uniform vec4 clipPlane;
 
-const float density = 0.001;
+const float density = 0.000;
 const float gradient = 3.0;
 
 void main(void) {

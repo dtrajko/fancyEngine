@@ -9,7 +9,7 @@ import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import engine.IScene;
-import engine.tm.entities.Camera;
+import engine.graph.ICamera;
 import engine.tm.entities.Entity;
 import engine.tm.entities.Light;
 import engine.tm.models.RawModel;
@@ -32,16 +32,13 @@ public class NormalMappingRenderer {
 	}
 
 	public void render(IScene scene, Vector4f clipPlane) {
-
-		Map<TexturedModel, List<Entity>> entities = ((Scene) scene).getNormalMapEntityList();
-		
 		List<Light> lights = ((Scene) scene).getLights();
-		Camera camera = (Camera) ((Scene) scene).getCamera();
-
+		ICamera camera = ((Scene) scene).getCamera();
+		Map<TexturedModel, List<Entity>> entities = ((Scene) scene).getNormalMapEntityList();
 		shader.start();
 		prepare(clipPlane, lights, camera);
 		for (TexturedModel model : entities.keySet()) {
-			prepareTexturedModel(model);
+			bindTexturedModel(model);
 			List<Entity> batch = entities.get(model);
 			for (Entity entity : batch) {
 				prepareInstance(entity);
@@ -51,12 +48,21 @@ public class NormalMappingRenderer {
 		}
 		shader.stop();
 	}
-	
-	public void cleanUp(){
-		shader.cleanUp();
+
+	private void prepare(Vector4f clipPlane, List<Light> lights, ICamera camera) {
+		shader.loadClipPlane(clipPlane);
+		// need to be public variables in MasterRenderer
+		shader.loadSkyColor(MasterRenderer.RED, MasterRenderer.GREEN, MasterRenderer.BLUE);
+		Matrix4f viewMatrix = Maths.createViewMatrix(camera);
+		shader.loadLights(lights, viewMatrix);
+		shader.loadViewMatrix(viewMatrix);
 	}
 
-	private void prepareTexturedModel(TexturedModel model) {
+	public void render(IScene scene) {
+		render(scene, new Vector4f());
+	}
+
+	private void bindTexturedModel(TexturedModel model) {
 		RawModel rawModel = model.getRawModel();
 		GL30.glBindVertexArray(rawModel.getVaoID());
 		GL20.glEnableVertexAttribArray(0);
@@ -91,13 +97,7 @@ public class NormalMappingRenderer {
 		shader.loadOffset(entity.getTextureOffsetX(), entity.getTextureOffsetY());
 	}
 
-	private void prepare(Vector4f clipPlane, List<Light> lights, Camera camera) {
-		shader.loadClipPlane(clipPlane);
-		// need to be public variables in MasterRenderer
-		shader.loadSkyColor(MasterRenderer.RED, MasterRenderer.GREEN, MasterRenderer.BLUE);
-		Matrix4f viewMatrix = Maths.createViewMatrix(camera);
-		shader.loadLights(lights, viewMatrix);
-		shader.loadViewMatrix(viewMatrix);
+	public void cleanUp(){
+		shader.cleanUp();
 	}
-
 }

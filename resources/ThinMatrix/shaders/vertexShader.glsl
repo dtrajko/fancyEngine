@@ -19,7 +19,7 @@ uniform float textureAtlasNumRows;
 uniform vec2 textureAtlasOffset;
 uniform vec4 clipPlane;
 
-const float density = 0.001;
+const float density = 0.000;
 const float gradient = 3.0;
 
 void main(void) {

@@ -35,10 +35,8 @@ public class EntityRenderer {
 		ICamera camera = ((Scene) scene).getCamera();
 		Map<TexturedModel, List<Entity>> entities = ((Scene) scene).getEntityList();
 		shader.start();
-		shader.loadClipPlane(clipPlane);
-		shader.loadLights(lights);
-		shader.loadViewMatrix(camera);
-		for (TexturedModel model: entities.keySet()) {
+		prepare(clipPlane, lights, camera);
+		for (TexturedModel model : entities.keySet()) {
 			bindTexturedModel(model);
 			List<Entity> batch = entities.get(model);
 			for (Entity entity : batch) {
@@ -48,6 +46,13 @@ public class EntityRenderer {
 			unbindTexturedModel();
 		}
 		shader.stop();		
+	}
+
+	private void prepare(Vector4f clipPlane, List<Light> lights, ICamera camera) {
+		shader.loadClipPlane(clipPlane);
+		shader.loadLights(lights);
+		Matrix4f viewMatrix = Maths.createViewMatrix(camera);
+		shader.loadViewMatrix(viewMatrix);
 	}
 
 	public void render(IScene scene) {

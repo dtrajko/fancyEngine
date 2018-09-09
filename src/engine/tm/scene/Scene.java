@@ -78,7 +78,7 @@ public class Scene implements IScene {
 		((Camera) camera).setPosition(new Vector3f(0, 20, 40));
 		loader = new Loader();
 		skybox = new Skybox(loader);
-		setupTerrainsProcedural();
+		setupTerrains(); // setupTerrainsProcedural();
 		generateForestModels();
 		generateNormalMapEntities();
 		setupPlayer();
@@ -212,8 +212,8 @@ public class Scene implements IScene {
 	private void setupGui() {
 		GuiTexture refraction = new GuiTexture(MasterRenderer.getWaterRenderer().getFBOs().getRefractionTexture(), new Vector2f(0.86f, 0.56f), new Vector2f(0.12f, 0.12f));
 		GuiTexture reflection = new GuiTexture(MasterRenderer.getWaterRenderer().getFBOs().getReflectionTexture(), new Vector2f(0.86f, 0.84f), new Vector2f(0.12f, 0.12f));
-		GuiTexture minimap    = new GuiTexture(MasterRenderer.getWaterRenderer().getFBOs().getMinimapTexture(),    new Vector2f(-0.84f, 0.72f), new Vector2f(-0.14f, 0.24f));
-		GuiTexture mmTarget   = new GuiTexture(loader.loadTexture("gui/bullseye"), new Vector2f(-0.84f, 0.72f), new Vector2f(0.02f, 0.036f));
+		GuiTexture minimap    = new GuiTexture(MasterRenderer.getWaterRenderer().getFBOs().getMinimapTexture(),    new Vector2f(-0.78f, 0.76f), new Vector2f(-0.2f, 0.2f));
+		GuiTexture mmTarget   = new GuiTexture(loader.loadTexture("gui/bullseye"), new Vector2f(-0.78f, 0.76f), new Vector2f(0.02f, 0.036f));
 		processGui(refraction);
 		processGui(reflection);
 		processGui(minimap);

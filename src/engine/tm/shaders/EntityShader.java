@@ -117,9 +117,7 @@ public class EntityShader extends ShaderProgram {
 		super.loadMatrix(location_projectionMatrix, projection);
 	}
 
-	public void loadViewMatrix(ICamera camera) {
-		Matrix4f viewMatrix = Maths.createViewMatrix(camera);
-		// System.out.println("StaticShader viewMatrix: " + viewMatrix);
+	public void loadViewMatrix(Matrix4f viewMatrix){
 		super.loadMatrix(location_viewMatrix, viewMatrix);
 	}
 }

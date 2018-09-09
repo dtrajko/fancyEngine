@@ -23,9 +23,9 @@ import engine.tm.water.WaterRenderer;
 
 public class MasterRenderer {
 
-	private static final float FOV = 70; // field of view angle
-	private static final float NEAR_PLANE = 0.1f;
-	private static final float FAR_PLANE = 2000;
+	public static final float FOV = 70; // field of view angle
+	public static final float NEAR_PLANE = 0.1f;
+	public static final float FAR_PLANE = 3000;
 
 	public static final float RED   = 0.832f;
 	public static final float GREEN = 0.961f;
@@ -107,7 +107,7 @@ public class MasterRenderer {
 		float currentPitch = camera.getPitch();
 		float currentYaw = camera.getYaw();
 		float currentRoll = camera.getRoll();
-		camera.setPosition(new Vector3f(player.getPosition().x, 500, player.getPosition().z));
+		camera.setPosition(new Vector3f(player.getPosition().x, 620, player.getPosition().z));
 		camera.setPitch(90);
 		camera.setYaw(currentYaw - 180);
 		prepare();
@@ -134,12 +134,12 @@ public class MasterRenderer {
 	}
 
 	private Matrix4f createProjectionMatrix() {
+		projectionMatrix = new Matrix4f();
 		float aspectRatio = (float) Window.width / (float) Window.height;		
 		float y_scale = (float) ((1f / Math.tan(Math.toRadians(FOV / 2f))) * aspectRatio);
 		float x_scale = y_scale / aspectRatio;
 		float frustum_length = FAR_PLANE - NEAR_PLANE;
 
-		projectionMatrix = new Matrix4f();
 		projectionMatrix.m00(x_scale);
 		projectionMatrix.m11(y_scale);
 		projectionMatrix.m22(-((FAR_PLANE + NEAR_PLANE) / frustum_length));

@@ -7,9 +7,11 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
+import engine.graph.ICamera;
 import engine.tm.entities.Light;
 import engine.tm.settings.WorldSettings;
 import engine.tm.shaders.ShaderProgram;
+import engine.tm.toolbox.Maths;
 
 public class NormalMappingShader extends ShaderProgram {
 
@@ -113,12 +115,12 @@ public class NormalMappingShader extends ShaderProgram {
 		}
 	}
 
-	protected void loadViewMatrix(Matrix4f viewMatrix){
-		super.loadMatrix(location_viewMatrix, viewMatrix);
-	}
-
 	protected void loadProjectionMatrix(Matrix4f projection){
 		super.loadMatrix(location_projectionMatrix, projection);
+	}
+
+	protected void loadViewMatrix(Matrix4f viewMatrix){
+		super.loadMatrix(location_viewMatrix, viewMatrix);
 	}
 
 	private Vector3f getEyeSpacePosition(Light light, Matrix4f viewMatrix){

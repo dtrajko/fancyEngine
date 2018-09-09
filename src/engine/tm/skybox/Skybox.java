@@ -5,7 +5,7 @@ import engine.tm.models.RawModel;
 
 public class Skybox {
 
-	public static final float SIZE = 1200f;
+	public static final float SIZE = 1600f;
 
 	/**
 	 * GL_TEXTURE_CUBE_MAP_POSITIVE_X = Right Face
