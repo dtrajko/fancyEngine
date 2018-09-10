@@ -2,7 +2,7 @@
 
 in vec2 textureCoords;
 
-out vec4 out_colour;
+out vec4 out_color;
 
 uniform sampler2D modelTexture;
 
@@ -13,6 +13,6 @@ void main(void){
 		discard;
 	}
 
-	out_colour = vec4(1.0);
+	out_color = vec4(1.0);
 	
 }

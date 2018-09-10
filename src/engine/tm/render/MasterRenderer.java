@@ -1,5 +1,8 @@
 package engine.tm.render;
 
+import java.util.List;
+import java.util.Map;
+
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -8,14 +11,17 @@ import org.lwjgl.opengl.GL30;
 import engine.IScene;
 import engine.Window;
 import engine.tm.entities.Camera;
+import engine.tm.entities.Entity;
 import engine.tm.entities.EntityRenderer;
+import engine.tm.entities.Light;
 import engine.tm.entities.Player;
 import engine.tm.gui.GuiRenderer;
 import engine.tm.gui.fonts.TextMaster;
-import engine.tm.loaders.Loader;
+import engine.tm.models.TexturedModel;
 import engine.tm.normalMapping.NormalMappingRenderer;
 import engine.tm.particles.ParticleMaster;
 import engine.tm.scene.Scene;
+import engine.tm.shadows.ShadowMapMasterRenderer;
 import engine.tm.skybox.SkyboxRenderer;
 import engine.tm.terrains.TerrainRenderer;
 import engine.tm.water.Water;
@@ -38,6 +44,7 @@ public class MasterRenderer {
 	private static NormalMappingRenderer normalMapRenderer;
 	private static SkyboxRenderer skyboxRenderer;
 	private static WaterRenderer waterRenderer;
+	private static ShadowMapMasterRenderer shadowMapRenderer;
 	private static GuiRenderer guiRenderer;
 
 	public MasterRenderer() {
@@ -47,15 +54,28 @@ public class MasterRenderer {
 		normalMapRenderer = new NormalMappingRenderer(projectionMatrix);
 		skyboxRenderer = new SkyboxRenderer(projectionMatrix);
 		waterRenderer = new WaterRenderer(projectionMatrix);
+		shadowMapRenderer = new ShadowMapMasterRenderer();
 		guiRenderer = new GuiRenderer();
 	}
 
-	public void init(Window window, Loader loader) {
-		ParticleMaster.init(loader, projectionMatrix);
+	public void init(IScene scene) {
+		ParticleMaster.init(((Scene) scene).getLoader(), projectionMatrix);
+		shadowMapRenderer.init(((Scene) scene).getCamera());
 	}
 
 	public static WaterRenderer getWaterRenderer() {
 		return waterRenderer;
+	}
+
+	public void renderShadowMap(IScene scene) {
+		// System.out.println("\n\n" + "renderShadowMap Start render cycle");
+		Map<TexturedModel, List<Entity>> entities = ((Scene) scene).getEntityList();
+		Light sun = ((Scene) scene).getLights().get(0);
+		shadowMapRenderer.render(entities, sun);
+	}
+
+	public static int getShadowMapTexture() {
+		return shadowMapRenderer.getShadowMap();
 	}
 
 	public void render(Window window, IScene scene) {
@@ -63,6 +83,8 @@ public class MasterRenderer {
 		GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
 
 		Camera camera = (Camera) ((Scene) scene).getCamera();
+
+		renderShadowMap(scene);
 
 		// render reflection texture
 		waterRenderer.getFBOs().bindReflectionFrameBuffer();
@@ -161,6 +183,7 @@ public class MasterRenderer {
 		normalMapRenderer.cleanUp();
 		skyboxRenderer.cleanUp();
 		waterRenderer.cleanUp();
+		shadowMapRenderer.cleanUp();
 		guiRenderer.cleanUp();
 	}
 

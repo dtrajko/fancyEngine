@@ -72,12 +72,19 @@ public class Scene implements IScene {
 	private ParticleSystemShoot particleSystemShoot;
 
 	private boolean fireMode = true;
+	
+	private MasterRenderer masterRenderer;
 
-	public void init(Window window) {
+	public Scene() {
 		camera = new Camera();
-		((Camera) camera).setPosition(new Vector3f(0, 20, 40));
 		loader = new Loader();
 		skybox = new Skybox(loader);
+		masterRenderer = new MasterRenderer();
+		((Camera) camera).setPosition(new Vector3f(0, 20, 40));
+	}
+
+	public void init() {
+		masterRenderer.init(this);
 		setupTerrains(); // setupTerrainsProcedural();
 		generateForestModels();
 		generateNormalMapEntities();
@@ -87,6 +94,10 @@ public class Scene implements IScene {
 		setupParticles();
 		setupGui();
 		setupText();
+	}
+
+	public MasterRenderer getMasterRenderer() {
+		return masterRenderer;
 	}
 
 	private void setupParticles() {
@@ -205,21 +216,23 @@ public class Scene implements IScene {
 	}
 
 	private void setupLights() {
-		Light light_sun = new Light(new Vector3f(-500, 2000, -500), new Vector3f(1, 1, 1));
+		Light light_sun = new Light(new Vector3f(5000, 10000, 5000), new Vector3f(1, 1, 1));
 		lights.add(light_sun);
 	}
 
 	private void setupGui() {
-		GuiTexture refraction = new GuiTexture(MasterRenderer.getWaterRenderer().getFBOs().getRefractionTexture(), new Vector2f(0.86f, 0.56f), new Vector2f(0.12f, 0.12f));
 		GuiTexture reflection = new GuiTexture(MasterRenderer.getWaterRenderer().getFBOs().getReflectionTexture(), new Vector2f(0.86f, 0.84f), new Vector2f(0.12f, 0.12f));
+		GuiTexture refraction = new GuiTexture(MasterRenderer.getWaterRenderer().getFBOs().getRefractionTexture(), new Vector2f(0.86f, 0.56f), new Vector2f(0.12f, 0.12f));
 		GuiTexture minimap    = new GuiTexture(MasterRenderer.getWaterRenderer().getFBOs().getMinimapTexture(),    new Vector2f(-0.78f, 0.76f), new Vector2f(-0.2f, 0.2f));
+		GuiTexture shadowMap  = new GuiTexture(MasterRenderer.getShadowMapTexture(),                               new Vector2f(-0.78f, 0.32f), new Vector2f(0.2f, 0.2f)); // new Vector2f(0.86f, 0.28f), new Vector2f(0.12f, 0.12f));
 		GuiTexture mmTarget   = new GuiTexture(loader.loadTexture("gui/bullseye"), new Vector2f(-0.78f, 0.76f), new Vector2f(0.02f, 0.036f));
-		processGui(refraction);
 		processGui(reflection);
+		processGui(refraction);
+		processGui(shadowMap);
 		processGui(minimap);
 		processGui(mmTarget);
 	}
-	
+
 	private void setupText() {
 		font_1 = new FontType(loader.loadTexture("arial"), WorldSettings.FONTS_DIR + "/arial.fnt");
 		font_2 = new FontType(loader.loadTexture("segoe"), WorldSettings.FONTS_DIR + "/segoe.fnt");

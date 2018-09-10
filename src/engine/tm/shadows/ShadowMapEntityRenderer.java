@@ -12,6 +12,7 @@ import engine.tm.models.RawModel;
 import engine.tm.models.TexturedModel;
 import engine.tm.render.MasterRenderer;
 import engine.tm.toolbox.Maths;
+import engine.utils.Util;
 
 public class ShadowMapEntityRenderer {
 
@@ -70,7 +71,8 @@ public class ShadowMapEntityRenderer {
 	 *            - the model to be bound.
 	 */
 	private void bindModel(RawModel rawModel) {
-		GL30.glBindVertexArray(rawModel.getVaoID());
+		// System.out.println("SMER rawModel vaoID: " + rawModel.getVaoID());
+		GL30.glBindVertexArray(rawModel.getVaoID());		
 		GL20.glEnableVertexAttribArray(0);
 		GL20.glEnableVertexAttribArray(1);
 	}
@@ -89,7 +91,6 @@ public class ShadowMapEntityRenderer {
 				entity.getRotX(), entity.getRotY(), entity.getRotZ(), entity.getScale());
 		Matrix4f mvpMatrix = new Matrix4f();
 		projectionViewMatrix.mul(modelMatrix, mvpMatrix);
-		
 		shader.loadMvpMatrix(mvpMatrix);
 	}
 }

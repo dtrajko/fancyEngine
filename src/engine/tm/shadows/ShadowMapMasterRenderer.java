@@ -6,10 +6,11 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
-import engine.tm.entities.Camera;
+import engine.graph.ICamera;
 import engine.tm.entities.Entity;
 import engine.tm.entities.Light;
 import engine.tm.models.TexturedModel;
+import engine.utils.Util;
 
 /**
  * This class is in charge of using all of the classes in the shadows package to
@@ -45,11 +46,14 @@ public class ShadowMapMasterRenderer {
 	 * @param camera
 	 *            - the camera being used in the scene.
 	 */
-	public ShadowMapMasterRenderer(Camera camera) {
+	public ShadowMapMasterRenderer() {
 		shader = new ShadowShader();
-		shadowBox = new ShadowBox(lightViewMatrix, camera);
 		shadowFbo = new ShadowFrameBuffer(SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
 		entityRenderer = new ShadowMapEntityRenderer(shader, projectionViewMatrix);
+	}
+
+	public void init(ICamera camera) {
+		shadowBox = new ShadowBox(lightViewMatrix, camera);		
 	}
 
 	/**
@@ -85,15 +89,7 @@ public class ShadowMapMasterRenderer {
 	 * @return The to-shadow-map-space matrix.
 	 */
 	public Matrix4f getToShadowMapSpaceMatrix() {
-		return offset.mul(projectionViewMatrix);
-	}
-
-	/**
-	 * Clean up the shader and FBO on closing.
-	 */
-	public void cleanUp() {
-		shader.cleanUp();
-		shadowFbo.cleanUp();
+		return projectionViewMatrix.mul(offset);
 	}
 
 	/**
@@ -102,6 +98,7 @@ public class ShadowMapMasterRenderer {
 	 *         each frame.
 	 */
 	public int getShadowMap() {
+		// System.out.println("SMMP shadow map: " + shadowFbo.getShadowMap());
 		return shadowFbo.getShadowMap();
 	}
 
@@ -135,11 +132,12 @@ public class ShadowMapMasterRenderer {
 	private void prepare(Vector3f lightDirection, ShadowBox box) {
 		updateOrthoProjectionMatrix(box.getWidth(), box.getHeight(), box.getLength());
 		updateLightViewMatrix(lightDirection, box.getCenter());
-		projectionViewMatrix = projectionMatrix.mul(lightViewMatrix);
+		projectionMatrix.mul(lightViewMatrix, projectionViewMatrix);
+		// System.out.println("SMMP projectionViewMatrix:\n" + Util.printMatrix4f(projectionViewMatrix));
 		shadowFbo.bindFrameBuffer();
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
-		shader.start();
+		shader.start();		
 	}
 
 	/**
@@ -167,6 +165,7 @@ public class ShadowMapMasterRenderer {
 	 *            - the center of the "view cuboid" in world space.
 	 */
 	private void updateLightViewMatrix(Vector3f direction, Vector3f center) {
+		// System.out.println("SMMP direction: " + Util.printVector3f(direction) + " center: " + Util.printVector3f(center));
 		direction.normalize();
 		center.negate();
 		lightViewMatrix.identity();
@@ -174,8 +173,10 @@ public class ShadowMapMasterRenderer {
 		lightViewMatrix.rotate(pitch, new Vector3f(1, 0, 0));
 		float yaw = (float) Math.toDegrees(((float) Math.atan(direction.x / direction.z)));
 		yaw = direction.z > 0 ? yaw - 180 : yaw;
-		lightViewMatrix.rotate((float) -Math.toRadians(yaw), new Vector3f(0, 1, 0));
+		// System.out.println("SMMP updateLightViewMatrix: yaw: " + yaw);
+		lightViewMatrix.rotate((float) -Math.toRadians(yaw), new Vector3f(0, 1, 0));		
 		lightViewMatrix.translate(center);
+		// System.out.println("SMMP lightViewMatrix:\n" + Util.printMatrix4f(lightViewMatrix));		
 	}
 
 	/**
@@ -196,6 +197,8 @@ public class ShadowMapMasterRenderer {
 		projectionMatrix.m11(2f / height);
 		projectionMatrix.m22(-2f / length);
 		projectionMatrix.m33(1);
+		// System.out.println("SMMP updateOrthoProjectionMatrix:\n" + Util.printMatrix4f(projectionMatrix));
+		
 	}
 
 	/**
@@ -210,5 +213,13 @@ public class ShadowMapMasterRenderer {
 		offset.translate(new Vector3f(0.5f, 0.5f, 0.5f));
 		offset.scale(new Vector3f(0.5f, 0.5f, 0.5f));
 		return offset;
+	}
+
+	/**
+	 * Clean up the shader and FBO on closing.
+	 */
+	public void cleanUp() {
+		shader.cleanUp();
+		shadowFbo.cleanUp();
 	}
 }

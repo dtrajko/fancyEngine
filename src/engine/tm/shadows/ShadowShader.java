@@ -3,6 +3,7 @@ package engine.tm.shadows;
 import org.joml.Matrix4f;
 import engine.tm.settings.WorldSettings;
 import engine.tm.shaders.ShaderProgram;
+import engine.utils.Util;
 
 public class ShadowShader extends ShaderProgram {
 
@@ -22,6 +23,7 @@ public class ShadowShader extends ShaderProgram {
 	}
 	
 	protected void loadMvpMatrix(Matrix4f mvpMatrix){
+		// System.out.println("ShadowShader mvpMatrix:\n" + Util.printMatrix4f(mvpMatrix));
 		super.loadMatrix(location_mvpMatrix, mvpMatrix);
 	}
 
