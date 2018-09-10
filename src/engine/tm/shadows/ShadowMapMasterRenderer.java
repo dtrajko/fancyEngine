@@ -53,7 +53,7 @@ public class ShadowMapMasterRenderer {
 	}
 
 	public void init(ICamera camera) {
-		shadowBox = new ShadowBox(lightViewMatrix, camera);		
+		shadowBox = new ShadowBox(lightViewMatrix, camera);
 	}
 
 	/**
@@ -98,7 +98,6 @@ public class ShadowMapMasterRenderer {
 	 *         each frame.
 	 */
 	public int getShadowMap() {
-		// System.out.println("SMMP shadow map: " + shadowFbo.getShadowMap());
 		return shadowFbo.getShadowMap();
 	}
 
@@ -131,9 +130,8 @@ public class ShadowMapMasterRenderer {
 	 */
 	private void prepare(Vector3f lightDirection, ShadowBox box) {
 		updateOrthoProjectionMatrix(box.getWidth(), box.getHeight(), box.getLength());
-		updateLightViewMatrix(lightDirection, box.getCenter());
+		updateLightViewMatrix(lightDirection, box.getCenter());		
 		projectionMatrix.mul(lightViewMatrix, projectionViewMatrix);
-		// System.out.println("SMMP projectionViewMatrix:\n" + Util.printMatrix4f(projectionViewMatrix));
 		shadowFbo.bindFrameBuffer();
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
@@ -165,7 +163,6 @@ public class ShadowMapMasterRenderer {
 	 *            - the center of the "view cuboid" in world space.
 	 */
 	private void updateLightViewMatrix(Vector3f direction, Vector3f center) {
-		// System.out.println("SMMP direction: " + Util.printVector3f(direction) + " center: " + Util.printVector3f(center));
 		direction.normalize();
 		center.negate();
 		lightViewMatrix.identity();
@@ -173,10 +170,8 @@ public class ShadowMapMasterRenderer {
 		lightViewMatrix.rotate(pitch, new Vector3f(1, 0, 0));
 		float yaw = (float) Math.toDegrees(((float) Math.atan(direction.x / direction.z)));
 		yaw = direction.z > 0 ? yaw - 180 : yaw;
-		// System.out.println("SMMP updateLightViewMatrix: yaw: " + yaw);
-		lightViewMatrix.rotate((float) -Math.toRadians(yaw), new Vector3f(0, 1, 0));		
+		lightViewMatrix.rotate((float) -Math.toRadians(yaw), new Vector3f(0, 1, 0));
 		lightViewMatrix.translate(center);
-		// System.out.println("SMMP lightViewMatrix:\n" + Util.printMatrix4f(lightViewMatrix));		
 	}
 
 	/**
@@ -196,9 +191,7 @@ public class ShadowMapMasterRenderer {
 		projectionMatrix.m00(2f / width);
 		projectionMatrix.m11(2f / height);
 		projectionMatrix.m22(-2f / length);
-		projectionMatrix.m33(1);
-		// System.out.println("SMMP updateOrthoProjectionMatrix:\n" + Util.printMatrix4f(projectionMatrix));
-		
+		projectionMatrix.m33(1);		
 	}
 
 	/**

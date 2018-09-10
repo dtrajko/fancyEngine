@@ -10,7 +10,6 @@ import engine.tm.entities.Camera;
 import engine.tm.entities.Player;
 import engine.tm.gui.fonts.TextMaster;
 import engine.tm.particles.ParticleMaster;
-import engine.tm.render.MasterRenderer;
 import engine.tm.scene.Scene;
 import engine.tm.toolbox.MousePicker;
 

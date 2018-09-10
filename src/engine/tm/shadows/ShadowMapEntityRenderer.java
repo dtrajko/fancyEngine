@@ -71,7 +71,6 @@ public class ShadowMapEntityRenderer {
 	 *            - the model to be bound.
 	 */
 	private void bindModel(RawModel rawModel) {
-		// System.out.println("SMER rawModel vaoID: " + rawModel.getVaoID());
 		GL30.glBindVertexArray(rawModel.getVaoID());		
 		GL20.glEnableVertexAttribArray(0);
 		GL20.glEnableVertexAttribArray(1);
