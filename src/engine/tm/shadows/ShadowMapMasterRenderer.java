@@ -73,11 +73,20 @@ public class ShadowMapMasterRenderer {
 	 */
 	public void render(Map<TexturedModel, List<Entity>> entities, Light sun) {
 		shadowBox.update();
-		Vector3f sunPosition = sun.getPosition();
-		Vector3f lightDirection = new Vector3f(-sunPosition.x, -sunPosition.y, -sunPosition.z);
+		Vector3f lightDirection = new Vector3f(-sun.getPosition().x, -sun.getPosition().y, -sun.getPosition().z);
 		prepare(lightDirection, shadowBox);
 		entityRenderer.render(entities);
 		finish();
+	}
+
+	/**
+	 * Finish the shadow render pass. Stops the shader and unbinds the shadow
+	 * FBO, so everything rendered after this point is rendered to the screen,
+	 * rather than to the shadow FBO.
+	 */
+	private void finish() {
+		shader.stop();
+		shadowFbo.unbindFrameBuffer();
 	}
 
 	/**
@@ -139,16 +148,6 @@ public class ShadowMapMasterRenderer {
 	}
 
 	/**
-	 * Finish the shadow render pass. Stops the shader and unbinds the shadow
-	 * FBO, so everything rendered after this point is rendered to the screen,
-	 * rather than to the shadow FBO.
-	 */
-	private void finish() {
-		shader.stop();
-		shadowFbo.unbindFrameBuffer();
-	}
-
-	/**
 	 * Updates the "view" matrix of the light. This creates a view matrix which
 	 * will line up the direction of the "view cuboid" with the direction of the
 	 * light. The light itself has no position, so the "view" matrix is centered
@@ -167,10 +166,11 @@ public class ShadowMapMasterRenderer {
 		center.negate();
 		lightViewMatrix.identity();
 		float pitch = (float) Math.acos(new Vector2f(direction.x, direction.z).length());
+		float yawDeg = (float) Math.toDegrees(((float) Math.atan(direction.x / direction.z)));
+		yawDeg = direction.z > 0 ? yawDeg - 180 : yawDeg;
+		float yaw = (float) -Math.toRadians(yawDeg);
 		lightViewMatrix.rotate(pitch, new Vector3f(1, 0, 0));
-		float yaw = (float) Math.toDegrees(((float) Math.atan(direction.x / direction.z)));
-		yaw = direction.z > 0 ? yaw - 180 : yaw;
-		lightViewMatrix.rotate((float) -Math.toRadians(yaw), new Vector3f(0, 1, 0));
+		lightViewMatrix.rotate(yaw,   new Vector3f(0, 1, 0));
 		lightViewMatrix.translate(center);
 	}
 
@@ -204,7 +204,7 @@ public class ShadowMapMasterRenderer {
 	private static Matrix4f createOffset() {
 		Matrix4f offset = new Matrix4f();
 		offset.translate(new Vector3f(0.5f, 0.5f, 0.5f));
-		offset.scale(new Vector3f(0.5f, 0.5f, 0.5f));
+		offset.scale(0.5f);
 		return offset;
 	}
 

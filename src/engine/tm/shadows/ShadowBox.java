@@ -7,7 +7,6 @@ import engine.Window;
 import engine.graph.ICamera;
 import engine.tm.entities.Camera;
 import engine.tm.render.MasterRenderer;
-import engine.utils.Util;
 
 /**
  * Represents the 3D cuboidal area of the world in which objects will cast
@@ -71,8 +70,8 @@ public class ShadowBox {
 		toFar.normalize(SHADOW_DISTANCE);
 		Vector3f toNear = new Vector3f(forwardVector3f);
 		toNear.normalize(MasterRenderer.NEAR_PLANE);
-		Vector3f centerNear = toNear.add(new Vector3f(cam.getPosition().x, cam.getPosition().y, cam.getPosition().z));
-		Vector3f centerFar = toFar.add(new Vector3f(cam.getPosition().x, cam.getPosition().y, cam.getPosition().z));
+		Vector3f centerNear = toNear.add(cam.getPosition());
+		Vector3f centerFar = toFar.add(cam.getPosition());
 
 		Vector4f[] points = calculateFrustumVertices(rotation, forwardVector3f, centerNear, centerFar);
 
@@ -118,9 +117,8 @@ public class ShadowBox {
 		float y = (minY + maxY) / 2f;
 		float z = (minZ + maxZ) / 2f;
 		Vector4f center4f = new Vector4f(x, y, z, 1);
-		Matrix4f invertedLight = new Matrix4f();		
-		lightViewMatrix.invert(invertedLight);
-		invertedLight.transform(center4f, center4f);
+		Matrix4f invertedLight = lightViewMatrix.invert();
+		invertedLight.transform(center4f);
 		Vector3f center3f = new Vector3f(center4f.x, center4f.y, center4f.z);	
 		return center3f;
 	}
@@ -167,18 +165,13 @@ public class ShadowBox {
 		Vector4f upVector4f = new Vector4f();
 		rotation.transform(UP, upVector4f);
 		Vector3f upVector = new Vector3f(upVector4f.x, upVector4f.y, upVector4f.z);
-		Vector3f rightVector = new Vector3f();
-		forwardVector.cross(upVector, rightVector);		
+		Vector3f rightVector = forwardVector.cross(upVector);		
 		Vector3f downVector = new Vector3f(-upVector.x, -upVector.y, -upVector.z);
 		Vector3f leftVector = new Vector3f(-rightVector.x, -rightVector.y, -rightVector.z);
-		Vector3f farTop = new Vector3f();
-		centerFar.add(new Vector3f(upVector.x * farHeight, upVector.y * farHeight, upVector.z * farHeight), farTop);
-		Vector3f farBottom = new Vector3f();
-		centerFar.add(new Vector3f(downVector.x * farHeight, downVector.y * farHeight, downVector.z * farHeight), farBottom);
-		Vector3f nearTop = new Vector3f();
-		centerNear.add(new Vector3f(upVector.x * nearHeight, upVector.y * nearHeight, upVector.z * nearHeight), nearTop);
-		Vector3f nearBottom = new Vector3f();
-		centerNear.add(new Vector3f(downVector.x * nearHeight, downVector.y * nearHeight, downVector.z * nearHeight), nearBottom);
+		Vector3f farTop = centerFar.add(new Vector3f(upVector.x * farHeight, upVector.y * farHeight, upVector.z * farHeight));
+		Vector3f farBottom = centerFar.add(new Vector3f(downVector.x * farHeight, downVector.y * farHeight, downVector.z * farHeight));
+		Vector3f nearTop = centerNear.add(new Vector3f(upVector.x * nearHeight, upVector.y * nearHeight, upVector.z * nearHeight));
+		Vector3f nearBottom = centerNear.add(new Vector3f(downVector.x * nearHeight, downVector.y * nearHeight, downVector.z * nearHeight));
 
 		Vector4f[] points = new Vector4f[8];		
 		points[0] = calculateLightSpaceFrustumCorner(farTop, rightVector, farWidth);
@@ -207,7 +200,7 @@ public class ShadowBox {
 	private Vector4f calculateLightSpaceFrustumCorner(Vector3f startPoint, Vector3f direction, float width) {
 		Vector3f point = startPoint.add(new Vector3f(direction.x * width, direction.y * width, direction.z * width));		
 		Vector4f point4f = new Vector4f(point.x, point.y, point.z, 1f);
-		lightViewMatrix.transform(point4f, point4f);
+		point4f = lightViewMatrix.transform(point4f);
 		return point4f;
 	}
 

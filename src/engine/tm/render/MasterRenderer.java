@@ -128,7 +128,6 @@ public class MasterRenderer {
 		Vector3f cameraPosition = camera.getPosition();
 		float currentPitch = camera.getPitch();
 		float currentYaw = camera.getYaw();
-		float currentRoll = camera.getRoll();
 		camera.setPosition(new Vector3f(player.getPosition().x, 620, player.getPosition().z));
 		camera.setPitch(90);
 		camera.setYaw(currentYaw - 180);
@@ -171,7 +170,16 @@ public class MasterRenderer {
 
 		return projectionMatrix;
 	}
-	
+
+	public static void enableCulling() {
+		GL11.glEnable(GL11.GL_CULL_FACE);
+		GL11.glCullFace(GL11.GL_BACK);
+	}
+
+	public static void disableCulling() {
+		GL11.glDisable(GL11.GL_CULL_FACE);
+	}
+
 	public Matrix4f getProjectionMatrix() {
 		return projectionMatrix;
 	}
@@ -185,14 +193,5 @@ public class MasterRenderer {
 		waterRenderer.cleanUp();
 		shadowMapRenderer.cleanUp();
 		guiRenderer.cleanUp();
-	}
-
-	public static void enableCulling() {
-		GL11.glEnable(GL11.GL_CULL_FACE);
-		GL11.glCullFace(GL11.GL_BACK);
-	}
-
-	public static void disableCulling() {
-		GL11.glDisable(GL11.GL_CULL_FACE);
 	}
 }

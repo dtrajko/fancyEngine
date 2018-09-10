@@ -12,7 +12,6 @@ import engine.tm.models.RawModel;
 import engine.tm.models.TexturedModel;
 import engine.tm.render.MasterRenderer;
 import engine.tm.toolbox.Maths;
-import engine.utils.Util;
 
 public class ShadowMapEntityRenderer {
 
