@@ -93,10 +93,10 @@ public class Camera implements ICamera {
 
 	private void calculateRoll(Input input) {
 		if (input.isKeyDown(GLFW.GLFW_KEY_1)) {
-			this.roll += speed;
+			// this.roll += speed;
 		}
 		if (input.isKeyDown(GLFW.GLFW_KEY_2)) {
-			this.roll += -speed;
+			// this.roll += -speed;
 		}
 	}
 

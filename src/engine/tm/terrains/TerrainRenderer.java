@@ -14,7 +14,8 @@ import engine.tm.entities.Light;
 import engine.tm.models.RawModel;
 import engine.tm.render.MasterRenderer;
 import engine.tm.scene.Scene;
-import engine.tm.shaders.TerrainShader;
+import engine.tm.shadows.ShadowBox;
+import engine.tm.shadows.ShadowMapMasterRenderer;
 import engine.tm.textures.TerrainTexturePack;
 import engine.tm.toolbox.Maths;
 
@@ -26,11 +27,18 @@ public class TerrainRenderer {
 		this.shader = new TerrainShader();
 		shader.start();
 		shader.loadProjectionMatrix(projectionMatrix);
+		shader.loadShadowDistance(ShadowBox.SHADOW_DISTANCE);
+		shader.loadShadowMapSize(ShadowMapMasterRenderer.SHADOW_MAP_SIZE);
 		shader.connectTextureUnits();
 		shader.stop();
 	}
 
-	public void render(IScene scene, Vector4f clipPlane) {
+	public void render(IScene scene, Vector4f clipPlane, Matrix4f toShadowMapSpace) {
+
+		if (toShadowMapSpace == null) {
+			toShadowMapSpace = new Matrix4f();
+			toShadowMapSpace.identity();
+		}
 
 		List<Light> lights = ((Scene) scene).getLights();
 		ICamera camera = ((Scene) scene).getCamera();
@@ -42,6 +50,7 @@ public class TerrainRenderer {
 		shader.loadLights(lights);
 		shader.loadShineVariables(1, 0);
 		shader.loadViewMatrix(camera);
+		shader.loadToShadowMapSpaceMatrix(toShadowMapSpace);
 
 		for (ITerrain terrain : terrains) {
 			bindTerrain(terrain);
@@ -52,9 +61,15 @@ public class TerrainRenderer {
 
 		shader.stop();
 	}
-	
+
 	public void render(IScene scene) {
-		render(scene, new Vector4f());
+		render(scene, new Vector4f(0, 0, 0, 0));
+	}
+
+	public void render(IScene scene, Vector4f clipPlane) {
+		Matrix4f toShadowMapSpace = new Matrix4f();
+		toShadowMapSpace.identity();
+		render(scene, clipPlane, toShadowMapSpace);
 	}
 
 	private void bindTerrain(ITerrain terrain) {

@@ -7,6 +7,7 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL30;
 import engine.IScene;
 import engine.Window;
@@ -30,7 +31,7 @@ import engine.tm.water.WaterRenderer;
 public class MasterRenderer {
 
 	public static final float FOV = 70; // field of view angle
-	public static final float NEAR_PLANE = 0.1f;
+	public static final float NEAR_PLANE = 1.0f;
 	public static final float FAR_PLANE = 3000;
 
 	public static final float RED   = 0.832f;
@@ -60,22 +61,11 @@ public class MasterRenderer {
 
 	public void init(IScene scene) {
 		ParticleMaster.init(((Scene) scene).getLoader(), projectionMatrix);
-		shadowMapRenderer.init(((Scene) scene).getCamera());
+		shadowMapRenderer.init(scene);
 	}
 
 	public static WaterRenderer getWaterRenderer() {
 		return waterRenderer;
-	}
-
-	public void renderShadowMap(IScene scene) {
-		// System.out.println("\n\n" + "renderShadowMap Start render cycle");
-		Map<TexturedModel, List<Entity>> entities = ((Scene) scene).getEntityList();
-		Light sun = ((Scene) scene).getLights().get(0);
-		shadowMapRenderer.render(entities, sun);
-	}
-
-	public static int getShadowMapTexture() {
-		return shadowMapRenderer.getShadowMap();
 	}
 
 	public void render(Window window, IScene scene) {
@@ -118,6 +108,17 @@ public class MasterRenderer {
 		GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
 	}
 
+	public void renderShadowMap(IScene scene) {
+		// System.out.println("\n\n" + "renderShadowMap Start render cycle");
+		Map<TexturedModel, List<Entity>> entities = ((Scene) scene).getEntityList();
+		Light sun = ((Scene) scene).getLights().get(0);
+		shadowMapRenderer.render(entities, sun);
+	}
+
+	public static int getShadowMapTexture() {
+		return shadowMapRenderer.getShadowMap();
+	}
+
 	public void renderMinimap(IScene scene) {
 
 		Camera camera = (Camera) ((Scene) scene).getCamera();
@@ -142,7 +143,7 @@ public class MasterRenderer {
 
 	public void renderScene(IScene scene, Vector4f clipPlane) {
 		prepare();
-		terrainRenderer.render(scene, clipPlane);
+		terrainRenderer.render(scene, clipPlane, shadowMapRenderer.getToShadowMapSpaceMatrix());
 		entityRenderer.render(scene, clipPlane);
 		normalMapRenderer.render(scene, clipPlane);
 		skyboxRenderer.render(scene, clipPlane);
@@ -152,6 +153,8 @@ public class MasterRenderer {
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 		GL11.glClearColor(RED, GREEN, BLUE, 1.0f);
+		GL13.glActiveTexture(GL13.GL_TEXTURE5);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, getShadowMapTexture());
 	}
 
 	private Matrix4f createProjectionMatrix() {

@@ -15,7 +15,6 @@ import engine.tm.models.RawModel;
 import engine.tm.models.TexturedModel;
 import engine.tm.render.MasterRenderer;
 import engine.tm.scene.Scene;
-import engine.tm.shaders.EntityShader;
 import engine.tm.textures.ModelTexture;
 import engine.tm.toolbox.Maths;
 

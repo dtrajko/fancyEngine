@@ -1,4 +1,4 @@
-package engine.tm.shaders;
+package engine.tm.terrains;
 
 import java.util.List;
 
@@ -9,6 +9,7 @@ import org.joml.Vector4f;
 import engine.graph.ICamera;
 import engine.tm.entities.Light;
 import engine.tm.settings.WorldSettings;
+import engine.tm.shaders.ShaderProgram;
 import engine.tm.textures.TerrainTexture;
 import engine.tm.toolbox.Maths;
 
@@ -34,6 +35,10 @@ public class TerrainShader extends ShaderProgram {
 	private int location_bTexture;
 	private int location_blendMap;
 	private int location_clipPlane;
+	private int location_toShadowMapSpace;
+	private int location_shadowMap;
+	private int location_shadowDistance;
+	private int location_shadowMapSize;
 
 	public TerrainShader() {
 		super(VERTEX_FILE, FRAGMENT_FILE);
@@ -60,6 +65,10 @@ public class TerrainShader extends ShaderProgram {
 		location_bTexture = super.getUniformLocation("bTexture");
 		location_blendMap = super.getUniformLocation("blendMap");
 		location_clipPlane = super.getUniformLocation("clipPlane");
+		location_toShadowMapSpace = super.getUniformLocation("toShadowMapSpace");
+		location_shadowMap = super.getUniformLocation("shadowMap");
+		location_shadowDistance = super.getUniformLocation("shadowDistance");
+		location_shadowMapSize = super.getUniformLocation("shadowMapSize");
 
 		location_lightPosition = new int[MAX_LIGHTS];
 		location_lightColor = new int[MAX_LIGHTS];
@@ -74,10 +83,23 @@ public class TerrainShader extends ShaderProgram {
 
 	public void connectTextureUnits() {
 		super.loadInt(location_backgroundTexture, 0);
-		super.loadInt(location_rTexture, 1);
-		super.loadInt(location_gTexture, 2);
-		super.loadInt(location_bTexture, 3);
-		super.loadInt(location_blendMap, 4);
+		super.loadInt(location_rTexture,  1);
+		super.loadInt(location_gTexture,  2);
+		super.loadInt(location_bTexture,  3);
+		super.loadInt(location_blendMap,  4);
+		super.loadInt(location_shadowMap, 5);
+	}
+
+	public void loadShadowMapSize(float shadowMapSize) {
+		super.loadFloat(location_shadowMapSize, shadowMapSize);
+	}
+
+	public void loadShadowDistance(float shadowDistance) {
+		super.loadFloat(location_shadowDistance, shadowDistance);
+	}
+
+	public void loadToShadowMapSpaceMatrix(Matrix4f toShadowMapSpace) {
+		super.loadMatrix(location_toShadowMapSpace, toShadowMapSpace);
 	}
 
 	public void loadClipPlane(Vector4f clipPlane) {

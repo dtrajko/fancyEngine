@@ -3,7 +3,6 @@ package engine.tm.shadows;
 import org.joml.Matrix4f;
 import engine.tm.settings.WorldSettings;
 import engine.tm.shaders.ShaderProgram;
-import engine.utils.Util;
 
 public class ShadowShader extends ShaderProgram {
 

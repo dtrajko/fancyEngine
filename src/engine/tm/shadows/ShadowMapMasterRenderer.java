@@ -6,10 +6,13 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
+
+import engine.IScene;
 import engine.graph.ICamera;
 import engine.tm.entities.Entity;
 import engine.tm.entities.Light;
 import engine.tm.models.TexturedModel;
+import engine.tm.scene.Scene;
 import engine.utils.Util;
 
 /**
@@ -23,7 +26,7 @@ import engine.utils.Util;
  */
 public class ShadowMapMasterRenderer {
 
-	private static final int SHADOW_MAP_SIZE = 4096;
+	public static final int SHADOW_MAP_SIZE = 2048;
 
 	private ShadowFrameBuffer shadowFbo;
 	private ShadowShader shader;
@@ -52,8 +55,8 @@ public class ShadowMapMasterRenderer {
 		entityRenderer = new ShadowMapEntityRenderer(shader, projectionViewMatrix);
 	}
 
-	public void init(ICamera camera) {
-		shadowBox = new ShadowBox(lightViewMatrix, camera);
+	public void init(IScene scene) {
+		shadowBox = new ShadowBox(lightViewMatrix, scene);
 	}
 
 	/**
@@ -73,7 +76,8 @@ public class ShadowMapMasterRenderer {
 	 */
 	public void render(Map<TexturedModel, List<Entity>> entities, Light sun) {
 		shadowBox.update();
-		Vector3f lightDirection = new Vector3f(-sun.getPosition().x, -sun.getPosition().y, -sun.getPosition().z);
+		Vector3f sunPosition = sun.getPosition();
+		Vector3f lightDirection = new Vector3f(-sunPosition.x, -sunPosition.y, -sunPosition.z);
 		prepare(lightDirection, shadowBox);
 		entityRenderer.render(entities);
 		finish();
@@ -98,7 +102,9 @@ public class ShadowMapMasterRenderer {
 	 * @return The to-shadow-map-space matrix.
 	 */
 	public Matrix4f getToShadowMapSpaceMatrix() {
-		return projectionViewMatrix.mul(offset);
+		Matrix4f toShadowMapSpace = new Matrix4f();
+		offset.mul(projectionViewMatrix, toShadowMapSpace);
+		return toShadowMapSpace;
 	}
 
 	/**
@@ -139,12 +145,12 @@ public class ShadowMapMasterRenderer {
 	 */
 	private void prepare(Vector3f lightDirection, ShadowBox box) {
 		updateOrthoProjectionMatrix(box.getWidth(), box.getHeight(), box.getLength());
-		updateLightViewMatrix(lightDirection, box.getCenter());		
+		updateLightViewMatrix(lightDirection, box.getCenter());
 		projectionMatrix.mul(lightViewMatrix, projectionViewMatrix);
 		shadowFbo.bindFrameBuffer();
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
-		shader.start();		
+		shader.start();
 	}
 
 	/**

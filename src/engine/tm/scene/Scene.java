@@ -5,11 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-
-import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.opengl.GL11;
+
 import engine.GameEngine;
 import engine.IGameLogic;
 import engine.IScene;
@@ -49,6 +49,7 @@ import engine.utils.Maths;
 public class Scene implements IScene {
 
 	private Loader loader;
+	private MasterRenderer masterRenderer;
 	private ICamera camera;
 	private Player player;
 	private Skybox skybox;
@@ -62,18 +63,14 @@ public class Scene implements IScene {
 	private List<GuiTexture> guis = new ArrayList<GuiTexture>();
 	
 	private FontType font_1;
-	private FontType font_2;
 	private GUIText[] text;
 	
 	private ParticleTexture particleTexture;
-	private ParticleSystemComplex particleSystemComplex;
 	private ParticleSystemComplex particleSystemFire;
 	private ParticleSystemComplex particleSystemSmoke;
 	private ParticleSystemShoot particleSystemShoot;
 
 	private boolean fireMode = true;
-	
-	private MasterRenderer masterRenderer;
 
 	public Scene() {
 		camera = new Camera();
@@ -96,6 +93,36 @@ public class Scene implements IScene {
 		setupText();
 	}
 
+	private void setupLights() {
+		Light light_sun = new Light(new Vector3f(-5000, 8000, -5000), new Vector3f(1, 1, 1));
+		lights.add(light_sun);
+	}
+
+	private void setupGui() {
+		GuiTexture reflection = new GuiTexture(MasterRenderer.getWaterRenderer().getFBOs().getReflectionTexture(), new Vector2f(0.86f, 0.84f), new Vector2f(0.12f, 0.12f));
+		GuiTexture refraction = new GuiTexture(MasterRenderer.getWaterRenderer().getFBOs().getRefractionTexture(), new Vector2f(0.86f, 0.56f), new Vector2f(0.12f, 0.12f));
+		GuiTexture minimap    = new GuiTexture(MasterRenderer.getWaterRenderer().getFBOs().getMinimapTexture(),    new Vector2f(-0.78f, 0.76f), new Vector2f(-0.2f, 0.2f));
+		GuiTexture shadowMap  = new GuiTexture(MasterRenderer.getShadowMapTexture(),                               new Vector2f(-0.78f, 0.32f), new Vector2f(0.2f, 0.2f)); // new Vector2f(0.86f, 0.28f), new Vector2f(0.12f, 0.12f));
+		GuiTexture mmTarget   = new GuiTexture(loader.loadTexture("gui/bullseye"), new Vector2f(-0.78f, 0.76f), new Vector2f(0.02f, 0.036f));
+		processGui(reflection);
+		processGui(refraction);
+		processGui(shadowMap);
+		processGui(minimap);
+		processGui(mmTarget);
+	}
+
+	@Override
+	public void update(float interval, Input input) {
+		for(TexturedModel model: entities.keySet()) {
+			List<Entity> batch = entities.get(model);
+			for(Entity entity : batch) {
+				// entity.increaseRotation(0, 1, 0);
+			}
+		}
+		updateParticles(input);
+		updateText();
+	}
+
 	public MasterRenderer getMasterRenderer() {
 		return masterRenderer;
 	}
@@ -103,7 +130,6 @@ public class Scene implements IScene {
 	private void setupParticles() {
 		fireMode = true;
 		particleTexture = new ParticleTexture(loader.loadTexture("particles/particleAtlas"), 4, true);
-		// particleSystemShoot = new ParticleSystemShoot(particleTexture, 20f, 20f, -2.0f, 5f); // magic circle around the player
 		particleSystemShoot = new ParticleSystemShoot(particleTexture, 300f, 50f, -2.0f, 2f);
 		// setupParticlesFire();
 	}
@@ -123,8 +149,6 @@ public class Scene implements IScene {
 			float coordX = player.getPosition().x;
 			float coordY = player.getPosition().y + 10;
 			float coordZ = player.getPosition().z;
-			// particleSystemSimple.generateParticles(new Vector3f(coordX, coordY, coordZ));
-			// particleSystemComplex.generateParticles(new Vector3f(coordX, coordY, coordZ));
 
 			float playerDX = (float) (Math.sin(Math.toRadians(player.getRotY())));
 			float playerDY = 0;
@@ -159,18 +183,6 @@ public class Scene implements IScene {
 		particleSystemSmoke.generateParticles(new Vector3f(coordX, coordY + 10, coordZ));
 	}
 
-	@Override
-	public void update(float interval, Input input) {
-		for(TexturedModel model: entities.keySet()) {
-			List<Entity> batch = entities.get(model);
-			for(Entity entity : batch) {
-				// entity.increaseRotation(0, 1, 0);
-			}
-		}
-		updateParticles(input);
-		updateText();
-	}
-
 	private void setupWater() {
 		water = new Water(loader);
 		WaterTile waterTile = new WaterTile(0, Water.HEIGHT, 0);
@@ -200,7 +212,7 @@ public class Scene implements IScene {
 		Terrain terrain_2 = new Terrain(-0.5f, -1.5f, loader, texturePack, blendMap_2, "terrain_2/heightmap");
 		processTerrain(terrain_2);
 	}
-	
+
 	private void setupTerrainsProcedural() {
 		TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture("terrain_1/bg"));
 		TerrainTexture rTexture = new TerrainTexture(loader.loadTexture("terrain_1/1"));
@@ -215,27 +227,8 @@ public class Scene implements IScene {
 		processTerrain(terrain_2);
 	}
 
-	private void setupLights() {
-		Light light_sun = new Light(new Vector3f(5000, 10000, 5000), new Vector3f(1, 1, 1));
-		lights.add(light_sun);
-	}
-
-	private void setupGui() {
-		GuiTexture reflection = new GuiTexture(MasterRenderer.getWaterRenderer().getFBOs().getReflectionTexture(), new Vector2f(0.86f, 0.84f), new Vector2f(0.12f, 0.12f));
-		GuiTexture refraction = new GuiTexture(MasterRenderer.getWaterRenderer().getFBOs().getRefractionTexture(), new Vector2f(0.86f, 0.56f), new Vector2f(0.12f, 0.12f));
-		GuiTexture minimap    = new GuiTexture(MasterRenderer.getWaterRenderer().getFBOs().getMinimapTexture(),    new Vector2f(-0.78f, 0.76f), new Vector2f(-0.2f, 0.2f));
-		GuiTexture shadowMap  = new GuiTexture(MasterRenderer.getShadowMapTexture(),                               new Vector2f(-0.78f, 0.32f), new Vector2f(0.2f, 0.2f)); // new Vector2f(0.86f, 0.28f), new Vector2f(0.12f, 0.12f));
-		GuiTexture mmTarget   = new GuiTexture(loader.loadTexture("gui/bullseye"), new Vector2f(-0.78f, 0.76f), new Vector2f(0.02f, 0.036f));
-		processGui(reflection);
-		processGui(refraction);
-		processGui(shadowMap);
-		processGui(minimap);
-		processGui(mmTarget);
-	}
-
 	private void setupText() {
 		font_1 = new FontType(loader.loadTexture("arial"), WorldSettings.FONTS_DIR + "/arial.fnt");
-		font_2 = new FontType(loader.loadTexture("segoe"), WorldSettings.FONTS_DIR + "/segoe.fnt");
 		text = new GUIText[10];
 	}
 
@@ -243,7 +236,7 @@ public class Scene implements IScene {
 		Camera camera = (Camera) this.camera;
 		TextMaster.emptyTextMap();
 		float offsetX = 0.01f;
-		float offsetY = 0.77f;
+		float offsetY = 0.74f;
 		Vector3f color = new Vector3f(1, 1, 1);
 		String line_0 = "FPS: " + GameEngine.getFPS() + " / " + GameEngine.TARGET_FPS;
 		String line_1 = "Player role: " + (fireMode ? "Warrior" : "Wizard");
@@ -251,14 +244,16 @@ public class Scene implements IScene {
 		String line_3 = "Player rotation:  " + (int) player.getRotX() + "  " + Maths.angleTo360Range((int) player.getRotY()) + "  " + (int) player.getRotZ();
 		String line_4 = "Camera position:  " + (int) camera.getPosition().x + "  " + (int) camera.getPosition().y + "  " + (int) camera.getPosition().z;
 		String line_5 = "Camera rotation  [ pitch: " + (int) camera.getRotation().x + "  yaw: " + Maths.angleTo360Range((int) camera.getRotation().y) + "  roll: " + (int) camera.getRotation().z + " ]";
-		String line_6 = "Particles active:  " + ParticleMaster.getParticlesCount();
+		String line_6 = "Entities spawned:  " + getEntitiesCount();
+		String line_7 = "Particles active:  " + ParticleMaster.getParticlesCount();
 		text[0] = new GUIText(line_0, 1, font_1, new Vector2f(offsetX, offsetY), 1f, false).setColor(color);
-		text[1] = new GUIText(line_1, 1, font_1, new Vector2f(offsetX, offsetY + 0.03f), 1f, false).setColor(color);
-		text[2] = new GUIText(line_2, 1, font_1, new Vector2f(offsetX, offsetY + 0.06f), 1f, false).setColor(color);
-		text[3] = new GUIText(line_3, 1, font_1, new Vector2f(offsetX, offsetY + 0.09f), 1f, false).setColor(color);
-		text[4] = new GUIText(line_4, 1, font_1, new Vector2f(offsetX, offsetY + 0.12f), 1f, false).setColor(color);
-		text[5] = new GUIText(line_5, 1, font_1, new Vector2f(offsetX, offsetY + 0.15f), 1f, false).setColor(color);
-		text[6] = new GUIText(line_6, 1, font_1, new Vector2f(offsetX, offsetY + 0.18f), 1f, false).setColor(color);
+		text[1] = new GUIText(line_1, 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
+		text[2] = new GUIText(line_2, 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
+		text[3] = new GUIText(line_3, 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
+		text[4] = new GUIText(line_4, 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
+		text[5] = new GUIText(line_5, 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
+		text[6] = new GUIText(line_6, 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
+		text[7] = new GUIText(line_7, 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
 		TextMaster.loadText(text[0]);
 		TextMaster.loadText(text[1]);
 		TextMaster.loadText(text[2]);
@@ -266,9 +261,21 @@ public class Scene implements IScene {
 		TextMaster.loadText(text[4]);
 		TextMaster.loadText(text[5]);
 		TextMaster.loadText(text[6]);
+		TextMaster.loadText(text[7]);
 
 		// GUIText distFieldText = new GUIText("A sample string of text!", 7, font_2, new Vector2f(0.0f, 0.4f), 1f, true).setColor(color);
 		// TextMaster.loadText(distFieldText);
+	}
+	
+	public int getEntitiesCount() {
+		int count = 0;
+		for (TexturedModel model : entities.keySet()) {
+			count += entities.get(model).size();
+		}
+		for (TexturedModel model : this.normalMapEntities.keySet()) {
+			count += normalMapEntities.get(model).size();
+		}
+		return count;
 	}
 
 	private void generateForestModels() {
@@ -284,7 +291,7 @@ public class Scene implements IScene {
 		TexturedModel pineModel = new TexturedModel(OBJLoader.loadOBJModel("pine", loader), new ModelTexture(loader.loadTexture("pine")));
 
 		int modelsSpawned = 0;
-		while (modelsSpawned < 200) {
+		while (modelsSpawned < 100) {
 			entity = null;
 
 			float coordX = rand.nextInt((int) Terrain.SIZE) - Terrain.SIZE * 1/2;
