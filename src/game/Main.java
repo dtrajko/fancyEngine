@@ -28,6 +28,7 @@ public class Main {
 				opts.mode3D = true;
 				opts.cullFace = true;
 				opts.showTriangles = false;
+				opts.antialiasing = true;
 				width = height = 0;
 				break;
 			case "Game3D":

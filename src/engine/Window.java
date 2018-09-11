@@ -4,6 +4,9 @@ import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
+
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
@@ -136,9 +139,10 @@ public class Window {
         // Antialiasing
         if (opts.antialiasing) {
             glfwWindowHint(GLFW_SAMPLES, 4);
-        }        
+            GL11.glEnable(GL13.GL_MULTISAMPLE);
+        }
     }
-    
+
     public void close() {
     	glfwSetWindowShouldClose(windowHandle, true);
     }
