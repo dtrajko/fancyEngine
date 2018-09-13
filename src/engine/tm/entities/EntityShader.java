@@ -6,11 +6,8 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
-
-import engine.graph.ICamera;
 import engine.tm.settings.WorldSettings;
 import engine.tm.shaders.ShaderProgram;
-import engine.tm.toolbox.Maths;
 
 public class EntityShader extends ShaderProgram {
 	
@@ -107,12 +104,10 @@ public class EntityShader extends ShaderProgram {
 	}
 
 	public void loadTransformationMatrix(Matrix4f matrix) {
-		// System.out.println("StaticShader transformationMatrix: " + matrix);
 		super.loadMatrix(location_transformationMatrix, matrix);
 	}
 
 	public void loadProjectionMatrix(Matrix4f projection) {
-		// System.out.println("StaticShader projectionMatrix: " + projection);
 		super.loadMatrix(location_projectionMatrix, projection);
 	}
 

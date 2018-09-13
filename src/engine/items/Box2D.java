@@ -15,9 +15,9 @@ public class Box2D {
     }
 
     public boolean contains(float x2, float y2) {
-        return x2 >= x
-                && y2 >= y
-                && x2 < x + width
-                && y2 < y + height;
+		boolean contains = 
+				x2 >= x && x2 < x + width &&
+				y2 >= y && y2 < y + height;
+		return contains;
     }
 }

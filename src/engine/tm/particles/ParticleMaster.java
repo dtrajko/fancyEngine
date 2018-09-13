@@ -7,8 +7,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.joml.Matrix4f;
+
+import engine.IScene;
 import engine.tm.entities.Camera;
 import engine.tm.loaders.Loader;
+import engine.tm.scene.Scene;
 
 public class ParticleMaster {
 
@@ -19,7 +22,8 @@ public class ParticleMaster {
 		renderer = new ParticleRenderer(loader, projectionMatrix);
 	}
 
-	public static void update(Camera camera) {
+	public static void update(IScene scene) {
+		Camera camera = (Camera) ((Scene) scene).getCamera();
 		Iterator<Entry<ParticleTexture, List<Particle>>> mapIterator = particles.entrySet().iterator();
 		while (mapIterator.hasNext()) {
 			Entry<ParticleTexture, List<Particle>> entry = mapIterator.next();
@@ -27,7 +31,7 @@ public class ParticleMaster {
 			Iterator<Particle> iterator = list.iterator();
 			while (iterator.hasNext()) {
 				Particle p = iterator.next();
-				boolean stillAlive = p.update(camera);
+				boolean stillAlive = p.update(scene);
 				if (!stillAlive) {
 					iterator.remove();
 					if (list.isEmpty()) {

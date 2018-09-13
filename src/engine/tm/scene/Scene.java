@@ -54,8 +54,7 @@ public class Scene implements IScene {
 	private Water water;
 
 	private List<Light> lights = new ArrayList<Light>();
-	private Map<TexturedModel, List<Entity>> entities = new HashMap<TexturedModel, List<Entity>>();
-	private Map<TexturedModel, List<Entity>> normalMapEntities = new HashMap<TexturedModel, List<Entity>>();
+	private static Map<TexturedModel, List<Entity>> entities = new HashMap<TexturedModel, List<Entity>>();
 	private List<ITerrain> terrains = new ArrayList<ITerrain>();
 	private List<WaterTile> waterTiles = new ArrayList<WaterTile>();
 	private List<GuiTexture> guis = new ArrayList<GuiTexture>();
@@ -111,12 +110,6 @@ public class Scene implements IScene {
 
 	@Override
 	public void update(float interval, Input input) {
-		for(TexturedModel model: entities.keySet()) {
-			List<Entity> batch = entities.get(model);
-			for(Entity entity : batch) {
-				// entity.increaseRotation(0, 1, 0);
-			}
-		}
 		updateParticles(input);
 		updateText();
 	}
@@ -128,7 +121,7 @@ public class Scene implements IScene {
 	private void setupParticles() {
 		fireMode = true;
 		particleTexture = new ParticleTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/particles/particleAtlas.png"), 4, true);
-		particleSystemShoot = new ParticleSystemShoot(particleTexture, 300f, 50f, -2.0f, 2f);
+		particleSystemShoot = new ParticleSystemShoot(particleTexture, 400f, 20f, -2.0f, 2f);
 		// setupParticlesFire();
 	}
 
@@ -260,20 +253,20 @@ public class Scene implements IScene {
 		TextMaster.loadText(text[5]);
 		TextMaster.loadText(text[6]);
 		TextMaster.loadText(text[7]);
-
-		// GUIText distFieldText = new GUIText("A sample string of text!", 7, font_2, new Vector2f(0.0f, 0.4f), 1f, true).setColor(color);
-		// TextMaster.loadText(distFieldText);
 	}
-	
+
 	public int getEntitiesCount() {
 		int count = 0;
 		for (TexturedModel model : entities.keySet()) {
 			count += entities.get(model).size();
 		}
-		for (TexturedModel model : this.normalMapEntities.keySet()) {
-			count += normalMapEntities.get(model).size();
-		}
 		return count;
+	}
+
+	public void removeEntity(Entity entity) {
+		for (TexturedModel model : entities.keySet()) {
+			entities.get(model).remove(entity);
+		}
 	}
 
 	private void generateForestModels() {
@@ -341,7 +334,7 @@ public class Scene implements IScene {
 		float coordY = getCurrentTerrain(coordX, coordZ).getHeightOfTerrain(coordX, coordZ);
 		Entity crateModel = new Entity(crateTexturedModel, new Vector3f(coordX, coordY, coordZ), 0, 0, 0, 0.05f);
 		crateModel.setSolid(true);
-		processNormalMapEntity(crateModel);
+		processEntity(crateModel);
 
 		ModelTexture barrelTexture = new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/normalMaps/barrel.png"));
 		barrelTexture.setNormalMap(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/normalMaps/barrelNormal.png"));
@@ -353,7 +346,7 @@ public class Scene implements IScene {
 		coordY = getCurrentTerrain(coordX, coordZ).getHeightOfTerrain(coordX, coordZ);
 		Entity barrelModel = new Entity(barrelTexturedModel, new Vector3f(coordX, coordY, coordZ), 0, 0, 0, 2f);
 		barrelModel.setSolid(true);
-		processNormalMapEntity(barrelModel);
+		processEntity(barrelModel);
 
 		ModelTexture boulderTexture = new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/normalMaps/boulder.png"));
 		boulderTexture.setNormalMap(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/normalMaps/boulderNormal.png"));
@@ -367,16 +360,12 @@ public class Scene implements IScene {
 		boulderModel.setSolid(true);
 		Entity boulderModel2 = new Entity(boulderTexturedModel, new Vector3f(coordX + 20, coordY, coordZ), -90, 0, 0, 2f);
 		boulderModel2.setSolid(true);
-		processNormalMapEntity(boulderModel);
-		processNormalMapEntity(boulderModel2);
+		processEntity(boulderModel);
+		processEntity(boulderModel2);
 	}
 
 	public Map<TexturedModel, List<Entity>> getEntityList() {
 		return entities;
-	}
-
-	public Map<TexturedModel, List<Entity>> getNormalMapEntityList() {
-		return normalMapEntities;
 	}
 
 	public List<ITerrain> getTerrains() {
@@ -436,49 +425,28 @@ public class Scene implements IScene {
 		}
 	}
 
-	public void processNormalMapEntity(Entity entity) {
-
-		// set the bounding box
-		entity.setBoundingBox();
-
-		TexturedModel entityModel = entity.getTexturedModel();
-		List<Entity> batch = normalMapEntities.get(entityModel);
-		if (batch != null) {
-			batch.add(entity);
-		} else {
-			List<Entity> newBatch = new ArrayList<Entity>();
-			newBatch.add(entity);
-			normalMapEntities.put(entityModel, newBatch);
-		}
-	}
-
-	public boolean inCollision(float x, float y, float z) {
-		boolean inCollision = false;
+	public Entity getEntityInCollisionWith(float x, float y, float z) {
+		Entity entityInCollisionWith = null;
 		for(TexturedModel model: entities.keySet()) {
 			List<Entity> batch = entities.get(model);
 			for(Entity entity : batch) {
 				if (inCollisionWithEntity(entity, x, y, z)) {
-					inCollision = true;
+					entityInCollisionWith = entity;
 					break;
 				}
 			}
 		}
-		for(TexturedModel model: normalMapEntities.keySet()) {
-			List<Entity> batch = normalMapEntities.get(model);
-			for(Entity entity : batch) {
-				if (inCollisionWithEntity(entity, x, y, z)) {
-					inCollision = true;
-					break;
-				}
-			}
-		}
-		return inCollision;
+		return entityInCollisionWith;
+	}
+
+	public boolean inCollision(float x, float y, float z) {
+		Entity entity = getEntityInCollisionWith(x, y, z);
+		return entity != null;
 	}
 
 	public boolean inCollisionWithEntity(Entity entity, float x, float y, float z) {
 		if (entity instanceof Player) return false;
-		if (!entity.isSolid()) return false;
-		if (entity.getBoundingBox().contains(x, y, z)) {
+		if (entity.getBoundingBox().contains(x, y, z, 10.0f)) {
 			return true;
 		}
 		return false;
@@ -527,7 +495,6 @@ public class Scene implements IScene {
 	public void clearLists() {
 		terrains.clear();
 		entities.clear();
-		normalMapEntities.clear();
 		lights.clear();
 		waterTiles.clear();
 		guis.clear();

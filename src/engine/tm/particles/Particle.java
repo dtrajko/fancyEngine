@@ -3,8 +3,11 @@ package engine.tm.particles;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import engine.GameEngine;
+import engine.IScene;
 import engine.tm.entities.Camera;
+import engine.tm.entities.Entity;
 import engine.tm.entities.Player;
+import engine.tm.scene.Scene;
 
 public class Particle {
 
@@ -51,7 +54,9 @@ public class Particle {
 		return scale;
 	}
 
-	protected boolean update(Camera camera) {
+	protected boolean update(IScene scene) {
+		Camera camera = (Camera) ((Scene) scene).getCamera();
+		boolean stillAlive = true;
 		float frameTimeSeconds = 1.0f / GameEngine.TARGET_UPS;
 		velocity.y += Player.getGravity() * this.gravityEffect * frameTimeSeconds;
 		reusableChange.set(velocity);
@@ -61,7 +66,15 @@ public class Particle {
 		Vector3f camPos = new Vector3f(camera.getPosition());
 		distance = camPos.sub(position).lengthSquared();
 		this.elapsedTime += frameTimeSeconds;
-		return this.elapsedTime < this.lifeLength;
+		stillAlive = this.elapsedTime < this.lifeLength;
+		if (stillAlive) {
+			Entity entity = ((Scene) scene).getEntityInCollisionWith(position.x, position.y, position.z);
+			if (entity instanceof Entity) {
+				((Scene) scene).removeEntity(entity);
+				stillAlive = false;
+			}
+		}
+		return stillAlive;
 	}
 
 	public float getDistance() {

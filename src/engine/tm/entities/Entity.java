@@ -41,6 +41,15 @@ public class Entity {
 		return this;
 	}
 
+	public boolean isUsingNormalMap() {
+		int normalMapID = texturedModel.getTexture().getNormalMap();
+		if (normalMapID != -1) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	public float getTextureOffsetX() {
 		int column = textureIndex % texturedModel.getTexture().getNumberOfRows();
 		float offsetX = (float) column / (float) texturedModel.getTexture().getNumberOfRows();

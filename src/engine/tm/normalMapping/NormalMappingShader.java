@@ -7,11 +7,9 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
-import engine.graph.ICamera;
 import engine.tm.entities.Light;
 import engine.tm.settings.WorldSettings;
 import engine.tm.shaders.ShaderProgram;
-import engine.tm.toolbox.Maths;
 
 public class NormalMappingShader extends ShaderProgram {
 
@@ -28,9 +26,10 @@ public class NormalMappingShader extends ShaderProgram {
 	private int location_attenuation[];
 	private int location_shineDamper;
 	private int location_reflectivity;
+	private int location_useFakeLighting;
 	private int location_skyColor;
-	private int location_numberOfRows;
-	private int location_offset;
+	private int location_textureAtlasNumRows;
+	private int location_textureAtlasOffset;
 	private int location_plane;
 	private int location_modelTexture;
 	private int location_normalMap;
@@ -54,9 +53,10 @@ public class NormalMappingShader extends ShaderProgram {
 		location_viewMatrix = super.getUniformLocation("viewMatrix");
 		location_shineDamper = super.getUniformLocation("shineDamper");
 		location_reflectivity = super.getUniformLocation("reflectivity");
+		location_useFakeLighting = super.getUniformLocation("useFakeLighting");
 		location_skyColor = super.getUniformLocation("skyColor");
-		location_numberOfRows = super.getUniformLocation("numberOfRows");
-		location_offset = super.getUniformLocation("offset");
+		location_textureAtlasNumRows = super.getUniformLocation("textureAtlasNumRows");
+		location_textureAtlasOffset = super.getUniformLocation("textureAtlasOffset");
 		location_plane = super.getUniformLocation("plane");
 		location_modelTexture = super.getUniformLocation("modelTexture");
 		location_normalMap = super.getUniformLocation("normalMap");
@@ -71,37 +71,41 @@ public class NormalMappingShader extends ShaderProgram {
 		}
 	}
 
-	protected void connectTextureUnits(){
+	public void connectTextureUnits(){
 		super.loadInt(location_modelTexture, 0);
 		super.loadInt(location_normalMap, 1);
 	}
 
-	protected void loadClipPlane(Vector4f plane){
+	public void loadClipPlane(Vector4f plane){
 		super.load4DVector(location_plane, plane);
 	}
 
-	protected void loadNumberOfRows(int numberOfRows){
-		super.loadFloat(location_numberOfRows, numberOfRows);
+	public void loadTextureAtlasNumRows(int numberOfRows) {
+		super.loadFloat(location_textureAtlasNumRows, numberOfRows);
 	}
 
-	protected void loadOffset(float x, float y){
-		super.load2DVector(location_offset, new Vector2f(x, y));
+	public void loadTextureAtlasOffset(float x, float y) {
+		super.load2DVector(location_textureAtlasOffset, new Vector2f(x, y));
 	}
 
-	protected void loadSkyColor(float r, float g, float b) {
+	public void loadFakeLightingVariable(boolean useFakeLighting) {
+		super.loadBoolean(location_useFakeLighting, useFakeLighting);
+	}
+
+	public void loadSkyColor(float r, float g, float b) {
 		super.loadVector(location_skyColor, new Vector3f(r, g, b));
 	}
 
-	protected void loadShineVariables(float damper,float reflectivity){
+	public void loadShineVariables(float damper,float reflectivity){
 		super.loadFloat(location_shineDamper, damper);
 		super.loadFloat(location_reflectivity, reflectivity);
 	}
 
-	protected void loadTransformationMatrix(Matrix4f matrix){
+	public void loadTransformationMatrix(Matrix4f matrix){
 		super.loadMatrix(location_transformationMatrix, matrix);
 	}
 
-	protected void loadLights(List<Light> lights, Matrix4f viewMatrix){
+	public void loadLights(List<Light> lights, Matrix4f viewMatrix) {
 		for (int i = 0; i < MAX_LIGHTS; i++){
 			if (i < lights.size()){
 				super.loadVector(location_lightPositionEyeSpace[i], getEyeSpacePosition(lights.get(i), viewMatrix));
@@ -115,11 +119,11 @@ public class NormalMappingShader extends ShaderProgram {
 		}
 	}
 
-	protected void loadProjectionMatrix(Matrix4f projection){
+	public void loadProjectionMatrix(Matrix4f projection){
 		super.loadMatrix(location_projectionMatrix, projection);
 	}
 
-	protected void loadViewMatrix(Matrix4f viewMatrix){
+	public void loadViewMatrix(Matrix4f viewMatrix){
 		super.loadMatrix(location_viewMatrix, viewMatrix);
 	}
 

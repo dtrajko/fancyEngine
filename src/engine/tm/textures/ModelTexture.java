@@ -3,20 +3,20 @@ package engine.tm.textures;
 public class ModelTexture {
 
 	private int textureID;
-	private int normalMap;
-	
+	private int normalMap = -1;
+
 	private float shineDamper = 1;
 	private float reflectivity = 0;
-	
+
 	private boolean isTransparent = false;
 	private boolean useFakeLighting = false;
-	
+
 	private int numberOfRows = 1;
 
 	public ModelTexture(int id) {
 		this.textureID = id;
 	}
-	
+
 	public int getID() {
 		return this.textureID;
 	}

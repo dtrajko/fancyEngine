@@ -2,7 +2,6 @@ package engine.tm.entities;
 
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
-
 import engine.IScene;
 import engine.graph.Input;
 import engine.tm.models.TexturedModel;
@@ -11,7 +10,7 @@ import engine.tm.terrains.ITerrain;
 
 public class Player extends Entity {
 	
-	private static final float RUN_SPEED = 80;
+	private static final float RUN_SPEED = 40;
 	private static final float TURN_SPEED = 80;
 	private static final float GRAVITY = -2.0f; // -2.0f;
 	private static final float JUMP_POWER = 2.0f;
@@ -45,7 +44,9 @@ public class Player extends Entity {
 		super.increaseRotation(0, currentTurnSpeed * interval * turnCoef, 0);
 
 		Vector3f currentPos = this.getPosition();
-		if (((Scene) scene).inCollision(currentPos.x, currentPos.y, currentPos.z)) {
+
+		Entity entity = ((Scene) scene).getEntityInCollisionWith(currentPos.x, currentPos.y, currentPos.z);
+		if (entity instanceof Entity && entity.isSolid()) {
 			super.decreasePosition(dx, upwardsSpeed, dz);
 		}
 
@@ -59,7 +60,7 @@ public class Player extends Entity {
 			upwardsSpeed = 0;
 			isInAir = false;
 			super.getPosition().y = terrainHeight;
-		}		
+		}
 	}
 
 	private void jump() {

@@ -34,7 +34,7 @@ public class NormalMappingRenderer {
 	public void render(IScene scene, Vector4f clipPlane) {
 		List<Light> lights = ((Scene) scene).getLights();
 		ICamera camera = ((Scene) scene).getCamera();
-		Map<TexturedModel, List<Entity>> entities = ((Scene) scene).getNormalMapEntityList();
+		Map<TexturedModel, List<Entity>> entities = ((Scene) scene).getEntityList();
 		shader.start();
 		prepare(clipPlane, lights, camera);
 		for (TexturedModel model : entities.keySet()) {
@@ -70,7 +70,7 @@ public class NormalMappingRenderer {
 		GL20.glEnableVertexAttribArray(2);
 		GL20.glEnableVertexAttribArray(3);
 		ModelTexture texture = model.getTexture();
-		shader.loadNumberOfRows(texture.getNumberOfRows());
+		shader.loadTextureAtlasNumRows(texture.getNumberOfRows());
 		if (texture.isTransparent()) {
 			MasterRenderer.disableCulling();
 		}
@@ -94,7 +94,7 @@ public class NormalMappingRenderer {
 		Matrix4f transformationMatrix = Maths.createTransformationMatrix(entity.getPosition(), entity.getRotX(),
 				entity.getRotY(), entity.getRotZ(), entity.getScale());
 		shader.loadTransformationMatrix(transformationMatrix);
-		shader.loadOffset(entity.getTextureOffsetX(), entity.getTextureOffsetY());
+		shader.loadTextureAtlasOffset(entity.getTextureOffsetX(), entity.getTextureOffsetY());
 	}
 
 	public void cleanUp(){

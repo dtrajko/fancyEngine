@@ -42,7 +42,6 @@ public class MasterRenderer {
 
 	private static TerrainRenderer terrainRenderer;
 	private static EntityRenderer entityRenderer;
-	private static NormalMappingRenderer normalMapRenderer;
 	private static SkyboxRenderer skyboxRenderer;
 	private static WaterRenderer waterRenderer;
 	private static ShadowMapMasterRenderer shadowMapRenderer;
@@ -52,7 +51,6 @@ public class MasterRenderer {
 		createProjectionMatrix();
 		terrainRenderer = new TerrainRenderer(projectionMatrix);
 		entityRenderer = new EntityRenderer(projectionMatrix);
-		normalMapRenderer = new NormalMappingRenderer(projectionMatrix);
 		skyboxRenderer = new SkyboxRenderer(projectionMatrix);
 		waterRenderer = new WaterRenderer(projectionMatrix);
 		shadowMapRenderer = new ShadowMapMasterRenderer();
@@ -109,7 +107,6 @@ public class MasterRenderer {
 	}
 
 	public void renderShadowMap(IScene scene) {
-		// System.out.println("\n\n" + "renderShadowMap Start render cycle");
 		Map<TexturedModel, List<Entity>> entities = ((Scene) scene).getEntityList();
 		Light sun = ((Scene) scene).getLights().get(0);
 		shadowMapRenderer.render(entities, sun);
@@ -135,7 +132,6 @@ public class MasterRenderer {
 		prepare();
 		terrainRenderer.render(scene, new Vector4f(0, 1, 0, -Water.HEIGHT));
 		entityRenderer.render(scene);
-		normalMapRenderer.render(scene, new Vector4f(0, 0, 0, 0));
 		camera.setPosition(cameraPosition);
 		camera.setPitch(currentPitch);
 		camera.setYaw(currentYaw);
@@ -145,7 +141,6 @@ public class MasterRenderer {
 		prepare();
 		terrainRenderer.render(scene, clipPlane, shadowMapRenderer.getToShadowMapSpaceMatrix());
 		entityRenderer.render(scene, clipPlane);
-		normalMapRenderer.render(scene, clipPlane);
 		skyboxRenderer.render(scene, clipPlane);
 	}
 
@@ -191,7 +186,6 @@ public class MasterRenderer {
 		scene.cleanUp();
 		terrainRenderer.cleanUp();
 		entityRenderer.cleanUp();
-		normalMapRenderer.cleanUp();
 		skyboxRenderer.cleanUp();
 		waterRenderer.cleanUp();
 		shadowMapRenderer.cleanUp();

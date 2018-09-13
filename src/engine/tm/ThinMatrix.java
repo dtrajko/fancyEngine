@@ -44,7 +44,7 @@ public class ThinMatrix implements IGameLogic {
 		player.move(interval, input, scene);
 		((Camera) scene.getCamera()).moveWithPlayer(scene, input);
 		mousePicker.update(input);
-		ParticleMaster.update((Camera) scene.getCamera());
+		ParticleMaster.update(scene);
 	}
 
 	@Override
