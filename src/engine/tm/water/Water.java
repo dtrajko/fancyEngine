@@ -2,13 +2,14 @@ package engine.tm.water;
 
 import engine.tm.loaders.Loader;
 import engine.tm.models.RawModel;
+import engine.tm.settings.WorldSettings;
 
 public class Water {
 
 	public static int HEIGHT = -6;
 
-	private static final String DUDV_MAP = "/water/waterDUDV";
-	private static final String NORMAL_MAP = "/water/normal";
+	private static final String DUDV_MAP = WorldSettings.TEXTURES_DIR + "/water/waterDUDV.png";
+	private static final String NORMAL_MAP = WorldSettings.TEXTURES_DIR + "/water/normal.png";
 
     private RawModel quad;
     private int dudvTexture;

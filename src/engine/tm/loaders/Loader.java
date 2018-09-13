@@ -142,51 +142,35 @@ public class Loader {
 		return buffer;
 	}
 
-	public int loadTexture(String fileName) {
+	public int loadTexture(String fileFullPath) {
+		return loadTexture(fileFullPath, 0.0f);
+	}
+
+	public int loadTexture(String fileFullPath, float bias) {
 		int textureID = -1;
-		String fullFilePath = WorldSettings.TEXTURES_DIR + "/" + fileName + ".png";
-		try {			
-			InputStream is = new FileInputStream(fullFilePath);
+		try {
+			InputStream is = new FileInputStream(fileFullPath);
 			textureID = new Texture(is).getId();
 
 			GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
 			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR_MIPMAP_LINEAR);
-			GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL14.GL_TEXTURE_LOD_BIAS, 0.0f);
+			GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL14.GL_TEXTURE_LOD_BIAS, bias);
 			
 			if (GL.getCapabilities().GL_EXT_texture_filter_anisotropic) {
 				float amount = Math.min(4f, GL11.glGetFloat(EXTTextureFilterAnisotropic.GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT));
 				GL11.glTexParameterf(GL11.GL_TEXTURE_2D, EXTTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY_EXT, amount);
 			}
-
 			textures.add(textureID);
-			
 		} catch (Exception e) {
+			System.err.println("Tried to load texture [" + fileFullPath + "], didn't work.");
 			e.printStackTrace();
+			System.exit(-1);
 		}
-
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_REPEAT);
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_REPEAT);
-
 		return textureID;
-	}
-
-	public int loadFontTexture(String fileName, float bias) {
-		Texture texture = null;
-		try {
-			InputStream is = new FileInputStream(Config.RESOURCES_DIR + "/fonts/" + fileName + ".png");
-			texture = new Texture(is);
-			GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
-			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR_MIPMAP_LINEAR);
-			GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL14.GL_TEXTURE_LOD_BIAS, bias);
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.err.println("Tried to load texture " + fileName + ".png, didn't work.");
-			System.exit(-1);
-		}
-		textures.add(texture.getId());
-		return texture.getId();
 	}
 
 	public List<Integer> getVAOs() {

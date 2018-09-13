@@ -13,22 +13,23 @@ public class FontFactory {
 
 	public static FontType getFont(String fontName, Window window) {
 		FontType font = null;
+		String textureFullPath = Config.RESOURCES_DIR + "/fonts/" + fontName + ".png";
 		switch(fontName) {
 			case "candara":
 				if (candara == null) {
-					candara = new FontType(LoaderFactory.getLoader().loadFontTexture(fontName, 0), Config.FONT_DIR + "/" + fontName + ".fnt");
+					candara = new FontType(LoaderFactory.getLoader().loadTexture(textureFullPath, 0), Config.FONT_DIR + "/" + fontName + ".fnt");
 				}
 				font = candara;	
 				break;
 			case "calibri":
 				if (calibri == null) {
-					calibri = new FontType(LoaderFactory.getLoader().loadFontTexture(fontName, 0), Config.FONT_DIR + "/" + fontName + ".fnt");
+					calibri = new FontType(LoaderFactory.getLoader().loadTexture(textureFullPath, 0), Config.FONT_DIR + "/" + fontName + ".fnt");
 				}
 				font = calibri;	
 				break;
 			case "kenney":
 				if (kenney == null) {
-					kenney = new FontType(LoaderFactory.getLoader().loadFontTexture(fontName, 0), Config.FONT_DIR + "/" + fontName + ".fnt");
+					kenney = new FontType(LoaderFactory.getLoader().loadTexture(textureFullPath, 0), Config.FONT_DIR + "/" + fontName + ".fnt");
 				}
 				font = kenney;	
 				break;

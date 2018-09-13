@@ -103,7 +103,7 @@ public class Scene implements IScene {
 		GuiTexture refraction = new GuiTexture(MasterRenderer.getWaterRenderer().getFBOs().getRefractionTexture(), new Vector2f(0.86f, 0.56f), new Vector2f(0.12f, 0.12f));
 		GuiTexture minimap    = new GuiTexture(MasterRenderer.getWaterRenderer().getFBOs().getMinimapTexture(),    new Vector2f(-0.78f, 0.76f), new Vector2f(-0.2f, 0.2f));
 		GuiTexture shadowMap  = new GuiTexture(MasterRenderer.getShadowMapTexture(),                               new Vector2f(-0.78f, 0.32f), new Vector2f(0.2f, 0.2f)); // new Vector2f(0.86f, 0.28f), new Vector2f(0.12f, 0.12f));
-		GuiTexture mmTarget   = new GuiTexture(loader.loadTexture("gui/bullseye"), new Vector2f(-0.78f, 0.76f), new Vector2f(0.02f, 0.036f));
+		GuiTexture mmTarget   = new GuiTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/gui/bullseye.png"), new Vector2f(-0.78f, 0.76f), new Vector2f(0.02f, 0.036f));
 		processGui(reflection);
 		processGui(refraction);
 		processGui(shadowMap);
@@ -129,7 +129,7 @@ public class Scene implements IScene {
 
 	private void setupParticles() {
 		fireMode = true;
-		particleTexture = new ParticleTexture(loader.loadTexture("particles/particleAtlas"), 4, true);
+		particleTexture = new ParticleTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/particles/particleAtlas.png"), 4, true);
 		particleSystemShoot = new ParticleSystemShoot(particleTexture, 300f, 50f, -2.0f, 2f);
 		// setupParticlesFire();
 	}
@@ -160,8 +160,8 @@ public class Scene implements IScene {
 	}
 
 	private void setupParticlesFire() {
-		ParticleTexture particleTextureFire = new ParticleTexture(loader.loadTexture("particles/fire"), 8, true);
-		ParticleTexture particleTextureSmoke = new ParticleTexture(loader.loadTexture("particles/smoke"), 8, false);
+		ParticleTexture particleTextureFire = new ParticleTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/particles/fire.png"), 8, true);
+		ParticleTexture particleTextureSmoke = new ParticleTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/particles/smoke.png"), 8, false);
 		particleSystemFire = new ParticleSystemComplex(particleTextureFire, 100f, 1f, -1.0f, 2f, 20f);
 		particleSystemFire.setLifeError(0.1f);
 		particleSystemFire.setSpeedError(0.25f);
@@ -194,41 +194,41 @@ public class Scene implements IScene {
 	private void setupPlayer() {
 		// player
 		RawModel steveModelRaw = OBJLoader.loadOBJModel("steve", loader);
-		TexturedModel steveModel = new TexturedModel(steveModelRaw, new ModelTexture(loader.loadTexture("steve")));
+		TexturedModel steveModel = new TexturedModel(steveModelRaw, new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/steve.png")));
 		player = new Player(steveModel, new Vector3f(0, 0, 0), 0, 180, 0, 4);
 		processEntity(player);
 	}
 
 	private void setupTerrains() {
-		TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture("terrain_1/bg"));
-		TerrainTexture rTexture = new TerrainTexture(loader.loadTexture("terrain_1/1"));
-		TerrainTexture gTexture = new TerrainTexture(loader.loadTexture("terrain_1/2"));
-		TerrainTexture bTexture = new TerrainTexture(loader.loadTexture("terrain_1/3"));
+		TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/terrain_1/bg.png"));
+		TerrainTexture rTexture = new TerrainTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/terrain_1/1.png"));
+		TerrainTexture gTexture = new TerrainTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/terrain_1/2.png"));
+		TerrainTexture bTexture = new TerrainTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/terrain_1/3.png"));
 		TerrainTexturePack texturePack = new TerrainTexturePack(backgroundTexture, rTexture, gTexture, bTexture);
-		TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("terrain_1/blendMap"));
+		TerrainTexture blendMap = new TerrainTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/terrain_1/blendMap.png"));
 		Terrain terrain_1 = new Terrain(-0.5f, -0.5f, loader, texturePack, blendMap, "terrain_1/heightmap");
 		processTerrain(terrain_1);
-		TerrainTexture blendMap_2 = new TerrainTexture(loader.loadTexture("terrain_2/blendMap"));
+		TerrainTexture blendMap_2 = new TerrainTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/terrain_2/blendMap.png"));
 		Terrain terrain_2 = new Terrain(-0.5f, -1.5f, loader, texturePack, blendMap_2, "terrain_2/heightmap");
 		processTerrain(terrain_2);
 	}
 
 	private void setupTerrainsProcedural() {
-		TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture("terrain_1/bg"));
-		TerrainTexture rTexture = new TerrainTexture(loader.loadTexture("terrain_1/1"));
-		TerrainTexture gTexture = new TerrainTexture(loader.loadTexture("terrain_1/2"));
-		TerrainTexture bTexture = new TerrainTexture(loader.loadTexture("terrain_1/3"));
+		TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/terrain_1/bg.png"));
+		TerrainTexture rTexture = new TerrainTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/terrain_1/1.png"));
+		TerrainTexture gTexture = new TerrainTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/terrain_1/2.png"));
+		TerrainTexture bTexture = new TerrainTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/terrain_1/3.png"));
 		TerrainTexturePack texturePack = new TerrainTexturePack(backgroundTexture, rTexture, gTexture, bTexture);
-		TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("terrain_1/blendMap"));
+		TerrainTexture blendMap = new TerrainTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/terrain_1/blendMap.png"));
 		TerrainProcedural terrain_1 = new TerrainProcedural(-0.5f, -0.5f, loader, texturePack, blendMap, "terrain_1/heightmap");
 		processTerrain(terrain_1);
-		TerrainTexture blendMap_2 = new TerrainTexture(loader.loadTexture("terrain_2/blendMap"));
+		TerrainTexture blendMap_2 = new TerrainTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/terrain_2/blendMap.png"));
 		TerrainProcedural terrain_2 = new TerrainProcedural(-0.5f, -1.5f, loader, texturePack, blendMap_2, "terrain_2/heightmap");
 		processTerrain(terrain_2);
 	}
 
 	private void setupText() {
-		font_1 = new FontType(loader.loadTexture("arial"), WorldSettings.FONTS_DIR + "/arial.fnt");
+		font_1 = new FontType(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/arial.png"), WorldSettings.FONTS_DIR + "/arial.fnt");
 		text = new GUIText[10];
 	}
 
@@ -281,14 +281,14 @@ public class Scene implements IScene {
 	private void generateForestModels() {
 		Random rand = new Random();
 		Entity entity = null;
-		ModelTexture grassTexture = new ModelTexture(loader.loadTexture("grassTexture"));
+		ModelTexture grassTexture = new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/grassTexture.png"));
 		grassTexture.setTransparent(true).setUseFakeLighting(true);
 		TexturedModel grassModel = new TexturedModel(OBJLoader.loadOBJModel("grassModel", loader), grassTexture);		
-		ModelTexture fernTextureAtlas = new ModelTexture(loader.loadTexture("fern_atlas"));
+		ModelTexture fernTextureAtlas = new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/fern_atlas.png"));
 		fernTextureAtlas.setNumberOfRows(2);
 		fernTextureAtlas.setTransparent(true).setUseFakeLighting(true);
 		TexturedModel fernModel = new TexturedModel(OBJLoader.loadOBJModel("fern", loader), fernTextureAtlas);
-		TexturedModel pineModel = new TexturedModel(OBJLoader.loadOBJModel("pine", loader), new ModelTexture(loader.loadTexture("pine")));
+		TexturedModel pineModel = new TexturedModel(OBJLoader.loadOBJModel("pine", loader), new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/pine.png")));
 
 		int modelsSpawned = 0;
 		while (modelsSpawned < 100) {
@@ -330,8 +330,8 @@ public class Scene implements IScene {
 	
 	private void generateNormalMapEntities() {
 		// normal map entities
-		ModelTexture crateTexture = new ModelTexture(loader.loadTexture("normalMaps/crate"));
-		crateTexture.setNormalMap(loader.loadTexture("normalMaps/crateNormal"));
+		ModelTexture crateTexture = new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/normalMaps/crate.png"));
+		crateTexture.setNormalMap(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/normalMaps/crateNormal.png"));
 		crateTexture.setShineDamper(10);
 		crateTexture.setReflectivity(0.5f);
 		TexturedModel crateTexturedModel = new TexturedModel(NormalMappedObjLoader.loadOBJ("crate", loader), crateTexture);
@@ -341,8 +341,8 @@ public class Scene implements IScene {
 		Entity crateModel = new Entity(crateTexturedModel, new Vector3f(coordX, coordY, coordZ), 0, 0, 0, 0.05f);		
 		processNormalMapEntity(crateModel);
 
-		ModelTexture barrelTexture = new ModelTexture(loader.loadTexture("normalMaps/barrel"));
-		barrelTexture.setNormalMap(loader.loadTexture("normalMaps/barrelNormal"));
+		ModelTexture barrelTexture = new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/normalMaps/barrel.png"));
+		barrelTexture.setNormalMap(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/normalMaps/barrelNormal.png"));
 		barrelTexture.setShineDamper(10);
 		barrelTexture.setReflectivity(0.5f);
 		TexturedModel barrelTexturedModel = new TexturedModel(NormalMappedObjLoader.loadOBJ("barrel", loader), barrelTexture);
@@ -352,8 +352,8 @@ public class Scene implements IScene {
 		Entity barrelModel = new Entity(barrelTexturedModel, new Vector3f(coordX, coordY, coordZ), 0, 0, 0, 2f);		
 		processNormalMapEntity(barrelModel);
 
-		ModelTexture boulderTexture = new ModelTexture(loader.loadTexture("normalMaps/boulder"));
-		boulderTexture.setNormalMap(loader.loadTexture("normalMaps/boulderNormal"));
+		ModelTexture boulderTexture = new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/normalMaps/boulder.png"));
+		boulderTexture.setNormalMap(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/normalMaps/boulderNormal.png"));
 		boulderTexture.setShineDamper(10);
 		boulderTexture.setReflectivity(0.5f);
 		TexturedModel boulderTexturedModel = new TexturedModel(NormalMappedObjLoader.loadOBJ("boulder", loader), boulderTexture);
