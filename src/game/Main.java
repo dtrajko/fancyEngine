@@ -34,6 +34,7 @@ public class Main {
 			case "Game3D":
 				gameLogic = new Game3D();
 				opts.mode3D = true;
+				opts.antialiasing = true;
 				width = height = 0;
 				break;
 			case "Game2D":

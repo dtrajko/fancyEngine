@@ -115,6 +115,12 @@ public class Window {
 
         GL.createCapabilities();
 
+        // Antialiasing
+        if (opts.antialiasing) {
+            glfwWindowHint(GLFW_SAMPLES, 4);
+            GL11.glEnable(GL13.GL_MULTISAMPLE);
+        }
+
         // Set the clear color
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         
@@ -134,12 +140,6 @@ public class Window {
         if (opts.cullFace) {
             glEnable(GL_CULL_FACE);
             glCullFace(GL_BACK);
-        }
-
-        // Antialiasing
-        if (opts.antialiasing) {
-            glfwWindowHint(GLFW_SAMPLES, 4);
-            GL11.glEnable(GL13.GL_MULTISAMPLE);
         }
     }
 

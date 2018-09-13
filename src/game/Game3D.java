@@ -249,10 +249,10 @@ public class Game3D implements IGameLogic {
 
     @Override
     public void cleanUp() {
-    	scene.save();
-    	scene.cleanUp();
-        renderer.cleanUp();
-        soundMgr.cleanUp();
+		// scene.save();
+		scene.cleanUp();
+		renderer.cleanUp();
+		soundMgr.cleanUp();
     }
 
     public static HashMap<String, Mesh> getMeshTypesMap() {

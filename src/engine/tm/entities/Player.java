@@ -44,6 +44,11 @@ public class Player extends Entity {
 		super.increasePosition(dx, upwardsSpeed, dz);
 		super.increaseRotation(0, currentTurnSpeed * interval * turnCoef, 0);
 
+		Vector3f currentPos = this.getPosition();
+		if (((Scene) scene).inCollision(currentPos.x, currentPos.y, currentPos.z)) {
+			super.decreasePosition(dx, upwardsSpeed, dz);
+		}
+
 		ITerrain currentTerrain = ((Scene) scene).getCurrentTerrain(super.getPosition().x, super.getPosition().z);
 		float terrainHeight = TERRAIN_HEIGHT;
 		if (currentTerrain != null) {

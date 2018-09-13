@@ -1,5 +1,7 @@
 package engine.items;
 
+import org.joml.Vector3f;
+
 import engine.graph.Camera;
 
 public class Box3D {
@@ -14,6 +16,10 @@ public class Box3D {
         this.y = y;
         this.z = z;
         this.scale = scale;
+    }
+
+    public boolean contains(float x, float y, float z) {
+        return contains(x, y, z, false, null);
     }
 
     public boolean contains(float x2, float y2, float z2, boolean cameraCollision, Camera camera) {
