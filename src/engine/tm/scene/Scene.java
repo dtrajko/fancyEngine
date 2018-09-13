@@ -121,7 +121,7 @@ public class Scene implements IScene {
 	private void setupParticles() {
 		fireMode = true;
 		particleTexture = new ParticleTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/particles/particleAtlas.png"), 4, true);
-		particleSystemShoot = new ParticleSystemShoot(particleTexture, 400f, 20f, -2.0f, 2f);
+		particleSystemShoot = new ParticleSystemShoot(particleTexture, 400f, 10f, 0.0f, 2f);
 		// setupParticlesFire();
 	}
 
@@ -130,9 +130,9 @@ public class Scene implements IScene {
 		if (input.isKeyReleased(GLFW.GLFW_KEY_F)) {
 			fireMode = !fireMode;
 			if (fireMode) {
-				particleSystemShoot = new ParticleSystemShoot(particleTexture, 300f, 50f, -2.0f, 2f);
+				particleSystemShoot = new ParticleSystemShoot(particleTexture, 300f, 50f, -0.25f, 2f);
 			} else {
-				particleSystemShoot = new ParticleSystemShoot(particleTexture, 20f, 20f, -2.0f, 5f); // magic circle around the player
+				particleSystemShoot = new ParticleSystemShoot(particleTexture, 20f, 50f, -0.25f, 5f); // magic circle around the player
 			}
 		}
 

@@ -60,12 +60,12 @@ public class Particle {
 		float frameTimeSeconds = 1.0f / GameEngine.TARGET_UPS;
 		velocity.y += Player.getGravity() * this.gravityEffect * frameTimeSeconds;
 		reusableChange.set(velocity);
-		reusableChange.normalize(1.0f / GameEngine.TARGET_UPS);
+		reusableChange.mul(frameTimeSeconds, reusableChange);
 		reusableChange.add(this.position);
 		updateTextureCoordInfo();
 		Vector3f camPos = new Vector3f(camera.getPosition());
 		distance = camPos.sub(position).lengthSquared();
-		this.elapsedTime += frameTimeSeconds;
+		this.elapsedTime += frameTimeSeconds;		
 		stillAlive = this.elapsedTime < this.lifeLength;
 		if (stillAlive) {
 			Entity entity = ((Scene) scene).getEntityInCollisionWith(position.x, position.y, position.z);
