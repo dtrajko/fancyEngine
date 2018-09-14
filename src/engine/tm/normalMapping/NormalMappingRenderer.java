@@ -1,5 +1,7 @@
 package engine.tm.normalMapping;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.joml.Matrix4f;
@@ -23,6 +25,9 @@ public class NormalMappingRenderer {
 
 	private NormalMappingShader shader;
 
+	// contains only normal map entities
+	private static Map<TexturedModel, List<Entity>> entities = new HashMap<TexturedModel, List<Entity>>();
+
 	public NormalMappingRenderer(Matrix4f projectionMatrix) {
 		this.shader = new NormalMappingShader();
 		shader.start();
@@ -31,10 +36,28 @@ public class NormalMappingRenderer {
 		shader.stop();
 	}
 
+	public void init(IScene scene) {
+		entities.clear();
+		Map<TexturedModel, List<Entity>> entitiesTmp = ((Scene) scene).getEntityList();
+		for (TexturedModel model : entitiesTmp.keySet()) {
+			List<Entity> batchTmp = entitiesTmp.get(model);
+			for (Entity entity : batchTmp) {
+				if (!entity.isUsingNormalMap()) continue; // handled by EntityRenderer
+				List<Entity> batch = entities.get(model);
+				if (batch != null) {
+					batch.add(entity);
+				} else {
+					List<Entity> newBatch = new ArrayList<Entity>();
+					newBatch.add(entity);
+					entities.put(model, newBatch);
+				}
+			}
+		}
+	}
+
 	public void render(IScene scene, Vector4f clipPlane) {
 		List<Light> lights = ((Scene) scene).getLights();
 		ICamera camera = ((Scene) scene).getCamera();
-		Map<TexturedModel, List<Entity>> entities = ((Scene) scene).getEntityList();
 		shader.start();
 		prepare(clipPlane, lights, camera);
 		for (TexturedModel model : entities.keySet()) {

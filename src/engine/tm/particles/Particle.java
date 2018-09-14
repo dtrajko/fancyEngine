@@ -68,7 +68,7 @@ public class Particle {
 		this.elapsedTime += frameTimeSeconds;		
 		stillAlive = this.elapsedTime < this.lifeLength;
 		if (stillAlive) {
-			Entity entity = ((Scene) scene).getEntityInCollisionWith(position.x, position.y, position.z);
+			Entity entity = ((Scene) scene).getEntityInCollisionWith(position.x, position.y, position.z, 10.0f);
 			if (entity instanceof Entity) {
 				((Scene) scene).removeEntity(entity);
 				stillAlive = false;

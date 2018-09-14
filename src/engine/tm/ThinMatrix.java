@@ -25,7 +25,7 @@ public class ThinMatrix implements IGameLogic {
 		scene = new Scene();
 		((Scene) scene).init();
 		TextMaster.init();
-		ParticleMaster.init(((Scene) scene).getLoader(), ((Scene) scene).getMasterRenderer().getProjectionMatrix());
+		ParticleMaster.init(scene, ((Scene) scene).getMasterRenderer().getProjectionMatrix());
 		mousePicker = new MousePicker(scene, ((Scene) scene).getMasterRenderer().getProjectionMatrix());
 	}
 

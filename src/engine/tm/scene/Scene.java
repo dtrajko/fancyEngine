@@ -54,6 +54,7 @@ public class Scene implements IScene {
 	private Water water;
 
 	private List<Light> lights = new ArrayList<Light>();
+	// contains both regular and normal map entities
 	private static Map<TexturedModel, List<Entity>> entities = new HashMap<TexturedModel, List<Entity>>();
 	private List<ITerrain> terrains = new ArrayList<ITerrain>();
 	private List<WaterTile> waterTiles = new ArrayList<WaterTile>();
@@ -78,7 +79,6 @@ public class Scene implements IScene {
 	}
 
 	public void init() {
-		masterRenderer.init(this);
 		setupTerrains(); // setupTerrainsProcedural();
 		generateForestModels();
 		generateNormalMapEntities();
@@ -88,6 +88,30 @@ public class Scene implements IScene {
 		setupParticles();
 		setupGui();
 		setupText();
+		masterRenderer.init(this); // should be called after entities list is populated
+	}
+
+	public void processEntity(Entity entity) {
+
+		// set the bounding box
+		entity.setBoundingBox();
+
+		TexturedModel entityModel = entity.getTexturedModel();
+		List<Entity> batch = entities.get(entityModel);
+		if (batch != null) {
+			batch.add(entity);
+		} else {
+			List<Entity> newBatch = new ArrayList<Entity>();
+			newBatch.add(entity);
+			entities.put(entityModel, newBatch);
+		}
+	}
+
+	public void removeEntity(Entity entity) {
+		for (TexturedModel model : entities.keySet()) {
+			entities.get(model).remove(entity);
+		}
+		masterRenderer.init(this);
 	}
 
 	private void setupLights() {
@@ -263,12 +287,6 @@ public class Scene implements IScene {
 		return count;
 	}
 
-	public void removeEntity(Entity entity) {
-		for (TexturedModel model : entities.keySet()) {
-			entities.get(model).remove(entity);
-		}
-	}
-
 	private void generateForestModels() {
 		Random rand = new Random();
 		Entity entity = null;
@@ -409,28 +427,12 @@ public class Scene implements IScene {
 		terrains.add(terrain);
 	}
 
-	public void processEntity(Entity entity) {
-
-		// set the bounding box
-		entity.setBoundingBox();
-
-		TexturedModel entityModel = entity.getTexturedModel();
-		List<Entity> batch = entities.get(entityModel);
-		if (batch != null) {
-			batch.add(entity);
-		} else {
-			List<Entity> newBatch = new ArrayList<Entity>();
-			newBatch.add(entity);
-			entities.put(entityModel, newBatch);
-		}
-	}
-
-	public Entity getEntityInCollisionWith(float x, float y, float z) {
+	public Entity getEntityInCollisionWith(float x, float y, float z, float range) {
 		Entity entityInCollisionWith = null;
 		for(TexturedModel model: entities.keySet()) {
 			List<Entity> batch = entities.get(model);
 			for(Entity entity : batch) {
-				if (inCollisionWithEntity(entity, x, y, z)) {
+				if (inCollisionWithEntity(entity, x, y, z, range)) {
 					entityInCollisionWith = entity;
 					break;
 				}
@@ -440,13 +442,13 @@ public class Scene implements IScene {
 	}
 
 	public boolean inCollision(float x, float y, float z) {
-		Entity entity = getEntityInCollisionWith(x, y, z);
+		Entity entity = getEntityInCollisionWith(x, y, z, 0.0f);
 		return entity != null;
 	}
 
-	public boolean inCollisionWithEntity(Entity entity, float x, float y, float z) {
+	public boolean inCollisionWithEntity(Entity entity, float x, float y, float z, float range) {
 		if (entity instanceof Player) return false;
-		if (entity.getBoundingBox().contains(x, y, z, 10.0f)) {
+		if (entity.getBoundingBox().contains(x, y, z, range)) {
 			return true;
 		}
 		return false;
