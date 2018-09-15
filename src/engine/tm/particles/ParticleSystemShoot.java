@@ -30,7 +30,7 @@ public class ParticleSystemShoot {
 		float particlesToCreate = pps * delta;
 		int count = (int) Math.floor(particlesToCreate);
 		float partialParticle = particlesToCreate % 1;
-		float scale = 10;
+		float scale = 5;
 		for(int i = 0; i < count; i++) {
 			this.systemCenter.add(this.direction);
 			scale *= 0.9f;
@@ -44,6 +44,6 @@ public class ParticleSystemShoot {
 	}
 
 	private void emitParticle(Vector3f center, float scale) {
-		new Particle().setActive(this.texture, new Vector3f(center), center, gravityComplient, lifeLength, 10, scale);
+		new Particle().setActive(this.texture, new Vector3f(center), center, gravityComplient, lifeLength, 10, scale, true);
 	}
 }

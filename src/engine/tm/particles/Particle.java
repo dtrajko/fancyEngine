@@ -25,12 +25,13 @@ public class Particle {
 	private float distance;
 	private Vector3f reusableChange = new Vector3f();
 	private boolean alive = false;
+	private boolean checkCollision = false;
 
 	public Particle() {
 	}
 
 	public void setActive(ParticleTexture texture, Vector3f position, Vector3f velocity, 
-			float gravityEffect, float lifeLength, float rotation, float scale) {
+			float gravityEffect, float lifeLength, float rotation, float scale, boolean checkCollision) {
 		this.alive = true;
 		this.position = position;
 		this.velocity = velocity;
@@ -39,6 +40,7 @@ public class Particle {
 		this.rotation = rotation;
 		this.scale = scale;
 		this.texture = texture;
+		this.checkCollision = checkCollision;
 		ParticleMaster.addParticle(this);
 	}
 
@@ -67,9 +69,12 @@ public class Particle {
 		distance = camPos.sub(position).lengthSquared();
 		this.elapsedTime += frameTimeSeconds;		
 		stillAlive = this.elapsedTime < this.lifeLength;
-		if (stillAlive) {
-			Entity entity = ((Scene) scene).getEntityInCollisionWith(position.x, position.y, position.z, 10.0f);
+		if (stillAlive && checkCollision) {
+			Entity entity = ((Scene) scene).getEntityInCollisionWith(position.x, position.y, position.z, 5.0f);
 			if (entity instanceof Entity) {
+				Vector3f entPos = entity.getPosition();
+				((Scene) scene).getFireManager().startFire(new Vector3f(entPos.x, entPos.y, entPos.z));
+				checkCollision = false;
 				((Scene) scene).removeEntity(entity);
 				stillAlive = false;
 			}

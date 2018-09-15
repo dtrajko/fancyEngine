@@ -16,15 +16,17 @@ public class ParticleSystemComplex {
 	private float directionDeviation = 0;
 	private ParticleTexture texture;
 	private Random random = new Random();
+	private boolean checkCollision = false;
 
 	public ParticleSystemComplex(ParticleTexture texture, float pps, float speed, float gravityComplient,
-			float lifeLength, float scale) {
+			float lifeLength, float scale, boolean checkCollision) {
 		this.texture = texture;
 		this.pps = pps;
 		this.averageSpeed = speed;
 		this.gravityComplient = gravityComplient;
 		this.averageLifeLength = lifeLength;
 		this.averageScale = scale;
+		this.checkCollision = checkCollision;
 	}
 
 	/**
@@ -89,7 +91,7 @@ public class ParticleSystemComplex {
 		float scale = generateValue(averageScale, scaleError);
 		float lifeLength = generateValue(averageLifeLength, lifeError);
 		new Particle().setActive(this.texture, new Vector3f(center), velocity, gravityComplient, lifeLength,
-				generateRotation(), scale);
+				generateRotation(), scale, checkCollision);
 	}
 
 	private float generateValue(float average, float errorMargin) {

@@ -27,8 +27,8 @@ import engine.tm.loaders.OBJLoader;
 import engine.tm.models.RawModel;
 import engine.tm.models.TexturedModel;
 import engine.tm.normalMapping.NormalMappedObjLoader;
+import engine.tm.particles.FireMaster;
 import engine.tm.particles.ParticleMaster;
-import engine.tm.particles.ParticleSystemComplex;
 import engine.tm.particles.ParticleSystemShoot;
 import engine.tm.particles.ParticleTexture;
 import engine.tm.render.MasterRenderer;
@@ -64,11 +64,9 @@ public class Scene implements IScene {
 	private GUIText[] text;
 
 	private ParticleTexture particleTexture;
-	private ParticleSystemComplex particleSystemFire;
-	private ParticleSystemComplex particleSystemSmoke;
 	private ParticleSystemShoot particleSystemShoot;
-
 	private boolean fireMode = true;
+	private FireMaster fireManager;
 
 	public Scene() {
 		camera = new Camera();
@@ -76,6 +74,7 @@ public class Scene implements IScene {
 		skybox = new Skybox(loader);
 		masterRenderer = new MasterRenderer();
 		((Camera) camera).setPosition(new Vector3f(0, 20, 40));
+		fireManager = new FireMaster(loader);
 	}
 
 	public void init() {
@@ -136,66 +135,42 @@ public class Scene implements IScene {
 	public void update(float interval, Input input) {
 		updateParticles(input);
 		updateText();
+		fireManager.update();
 	}
 
 	public MasterRenderer getMasterRenderer() {
 		return masterRenderer;
 	}
 
+	public FireMaster getFireManager() {
+		return fireManager;
+	}
+
 	private void setupParticles() {
 		fireMode = true;
 		particleTexture = new ParticleTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/particles/particleAtlas.png"), 4, true);
 		particleSystemShoot = new ParticleSystemShoot(particleTexture, 400f, 10f, 0.0f, 2f);
-		// setupParticlesFire();
 	}
 
 	private void updateParticles(Input input) {
-
 		if (input.isKeyReleased(GLFW.GLFW_KEY_F)) {
 			fireMode = !fireMode;
 			if (fireMode) {
-				particleSystemShoot = new ParticleSystemShoot(particleTexture, 300f, 50f, -0.25f, 2f);
+				particleSystemShoot = new ParticleSystemShoot(particleTexture, 300f, 50f, -0.5f, 1f);
 			} else {
 				particleSystemShoot = new ParticleSystemShoot(particleTexture, 20f, 50f, -0.25f, 5f); // magic circle around the player
 			}
 		}
-
 		if (input.isMouseButtonDown(GLFW.GLFW_MOUSE_BUTTON_3)) {
 			float coordX = player.getPosition().x;
-			float coordY = player.getPosition().y + 10;
+			float coordY = player.getPosition().y + 6;
 			float coordZ = player.getPosition().z;
-
 			float playerDX = (float) (Math.sin(Math.toRadians(player.getRotY())));
 			float playerDY = 0;
 			float playerDZ = (float) (Math.cos(Math.toRadians(player.getRotY())));
 			Vector3f playerDirection = new Vector3f(playerDX, playerDY, playerDZ);
 			particleSystemShoot.generateParticles(new Vector3f(coordX, coordY, coordZ), playerDirection);
 		}
-		// updateParticlesFire();
-	}
-
-	private void setupParticlesFire() {
-		ParticleTexture particleTextureFire = new ParticleTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/particles/fire.png"), 8, true);
-		ParticleTexture particleTextureSmoke = new ParticleTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/particles/smoke.png"), 8, false);
-		particleSystemFire = new ParticleSystemComplex(particleTextureFire, 100f, 1f, -1.0f, 2f, 20f);
-		particleSystemFire.setLifeError(0.1f);
-		particleSystemFire.setSpeedError(0.25f);
-		particleSystemFire.setScaleError(0.5f);
-		particleSystemFire.randomizeRotation();
-		particleSystemSmoke = new ParticleSystemComplex(particleTextureSmoke, 100f, 100f, -100f, 20f, 20f);
-		particleSystemSmoke.setLifeError(0.5f);
-		particleSystemSmoke.setSpeedError(0.5f);
-		particleSystemSmoke.setScaleError(0.5f);
-		particleSystemSmoke.randomizeRotation();
-		particleSystemSmoke.setDirection(new Vector3f(-0.5f, -0.5f, -0.5f), 1f);
-	}
-
-	private void updateParticlesFire() {
-		float coordX = -120;
-		float coordZ = -800;
-		float coordY = this.getCurrentTerrain().getHeightOfTerrain(coordX, coordZ);
-		particleSystemFire.generateParticles(new Vector3f(coordX, coordY, coordZ));
-		particleSystemSmoke.generateParticles(new Vector3f(coordX, coordY + 10, coordZ));
 	}
 
 	private void setupWater() {
