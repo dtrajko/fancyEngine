@@ -6,7 +6,6 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.glfw.GLFW;
-
 import engine.IScene;
 import engine.graph.ICamera;
 import engine.graph.Input;
@@ -77,13 +76,15 @@ public class MousePicker {
 
 	private Vector4f toEyeCoords(Vector4f clipCoords) {
 		Matrix4f invertedProjection = projectionMatrix.invert();
-		Vector4f eyeCoords = invertedProjection.transform(clipCoords);
+		Vector4f eyeCoords = new Vector4f();
+		invertedProjection.transform(clipCoords, eyeCoords);
 		return new Vector4f(eyeCoords.x, eyeCoords.y, -1f, 0f);
 	}
 
 	private Vector3f toWorldCoords(Vector4f eyeCoords) {
 		Matrix4f invertedView = viewMatrix.invert();
-		Vector4f rayWorld = invertedView.transform(eyeCoords);
+		Vector4f rayWorld = new Vector4f();
+		invertedView.transform(eyeCoords, rayWorld);
 		Vector3f mouseRay = new Vector3f(rayWorld.x, rayWorld.y, rayWorld.z);
 		mouseRay.normalize();
 		return mouseRay;

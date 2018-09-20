@@ -5,11 +5,12 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import engine.IScene;
+import engine.Window;
 import engine.graph.ICamera;
 import engine.graph.Input;
+import engine.tm.render.MasterRenderer;
 import engine.tm.scene.Scene;
 import engine.tm.terrains.ITerrain;
-import engine.tm.terrains.Terrain;
 import engine.tm.toolbox.Maths;
 
 public class Camera implements ICamera {
@@ -30,11 +31,37 @@ public class Camera implements ICamera {
 	private Vector3f cameraInc;
 	private Vector2f displVec;
 
+	private Matrix4f projectionMatrix;
+	private Matrix4f viewMatrix = new Matrix4f();
+
 	public Camera() {
 		speed = 2.0f;
 		gravity = 0; // -speed / 2;
 		y_min = 0;
 		cameraInc = new Vector3f(0.0f, 0.0f, 0.0f);
+		projectionMatrix = createProjectionMatrix();
+	}
+
+	private static Matrix4f createProjectionMatrix() {
+		Matrix4f projectionMatrix = new Matrix4f();
+		float aspectRatio = (float) Window.width / (float) Window.height;
+		float y_scale = (float) ((1f / Math.tan(Math.toRadians(MasterRenderer.FOV / 2f))) * aspectRatio);
+		float x_scale = y_scale / aspectRatio;
+		float frustum_length = MasterRenderer.FAR_PLANE - MasterRenderer.NEAR_PLANE;
+
+		projectionMatrix.m00(x_scale);
+		projectionMatrix.m11(y_scale);
+		projectionMatrix.m22(-((MasterRenderer.FAR_PLANE + MasterRenderer.NEAR_PLANE) / frustum_length));
+		projectionMatrix.m23(-1);
+		projectionMatrix.m32(-((2 * MasterRenderer.NEAR_PLANE * MasterRenderer.FAR_PLANE) / frustum_length));
+		projectionMatrix.m33(0);
+		return projectionMatrix;
+	}
+
+	@Override
+	public Matrix4f updateViewMatrix() {
+		viewMatrix = Maths.createViewMatrix(this);
+		return viewMatrix;
 	}
 
 	public void moveWithPlayer(IScene scene, Input input) {
@@ -49,6 +76,7 @@ public class Camera implements ICamera {
 		calculateCameraPosition(horizontalDistance, verticalDistance, scene);
 		float theta = player.getRotY() + angleAroundPlayer;
 		this.yaw = 180 - theta;
+		updateViewMatrix();
 	}
 
 	private void calculateCameraPosition(float horizontalDistance, float verticalDistance, IScene scene) {
@@ -146,7 +174,9 @@ public class Camera implements ICamera {
 		Vector3f newPos = calculateNewPosition(cameraInc.x, cameraInc.y, cameraInc.z);
 		position.x = newPos.x;
 		position.y = newPos.y;
-		position.z = newPos.z;		
+		position.z = newPos.z;
+
+		updateViewMatrix();
 	}
 
 	public Vector3f calculateNewPosition(float offsetX, float offsetY, float offsetZ) {
@@ -215,7 +245,7 @@ public class Camera implements ICamera {
 	}
 
 	@Override
-	public Matrix4f updateViewMatrix() {
-		return Maths.createViewMatrix(this);
+	public Matrix4f getProjectionViewMatrix() {
+		return projectionMatrix.mul(viewMatrix);
 	}
 }

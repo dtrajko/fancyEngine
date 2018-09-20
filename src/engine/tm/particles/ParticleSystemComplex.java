@@ -124,7 +124,7 @@ public class ParticleSystemComplex {
 			float rotateAngle = (float) Math.acos(coneDirection.dot(new Vector3f(0, 0, 1)));
 			Matrix4f rotationMatrix = new Matrix4f();
 			rotationMatrix.rotate(-rotateAngle, rotateAxis);
-			rotationMatrix.transform(direction);
+			rotationMatrix.transform(direction, direction);
 		} else if (coneDirection.z == -1) {
 			direction.z *= -1;
 		}

@@ -121,4 +121,10 @@ public class Camera implements ICamera {
 	public Matrix4f getOrthoProjection() {
 		return orthoProjectionMatrix.translate(position, new Matrix4f());
 	}
+
+	@Override
+	public Matrix4f getProjectionViewMatrix() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
