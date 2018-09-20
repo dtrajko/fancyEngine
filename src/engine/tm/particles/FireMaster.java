@@ -12,8 +12,8 @@ public class FireMaster {
 	private static List<Fire> fires = new ArrayList<Fire>();
 	private static List<Vector3f> locations = new ArrayList<Vector3f>();
 	private Loader loader;
-	private int MAX_FIRES = 5;
-	private int MAX_LIFETIME = 4;
+	private int MAX_FIRES = 3;
+	private int MAX_LIFETIME = 3;
 
 	public FireMaster(Loader loader) {
 		this.loader = loader;

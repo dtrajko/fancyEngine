@@ -73,7 +73,7 @@ public class Scene implements IScene {
 		loader = new Loader();
 		skybox = new Skybox(loader);
 		masterRenderer = new MasterRenderer();
-		((Camera) camera).setPosition(new Vector3f(0, 20, 40));
+		// ((Camera) camera).setPosition(new Vector3f(0, 20, 40));
 		fireManager = new FireMaster(loader);
 	}
 
@@ -88,6 +88,14 @@ public class Scene implements IScene {
 		setupGui();
 		setupText();
 		masterRenderer.init(this); // should be called after entities list is populated
+	}
+
+	private void setupPlayer() {
+		// player
+		RawModel steveModelRaw = OBJLoader.loadOBJModel("steve", loader);
+		TexturedModel steveModel = new TexturedModel(steveModelRaw, new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/steve.png")));
+		player = new Player(steveModel, new Vector3f(0, 0, 0), 0, 180, 0, 4);
+		processEntity(player);
 	}
 
 	public void processEntity(Entity entity) {
@@ -119,15 +127,17 @@ public class Scene implements IScene {
 	}
 
 	private void setupGui() {
-		GuiTexture reflection = new GuiTexture(MasterRenderer.getWaterRenderer().getFBOs().getReflectionTexture(), new Vector2f(0.86f, 0.84f), new Vector2f(0.12f, 0.12f));
-		GuiTexture refraction = new GuiTexture(MasterRenderer.getWaterRenderer().getFBOs().getRefractionTexture(), new Vector2f(0.86f, 0.56f), new Vector2f(0.12f, 0.12f));
-		GuiTexture minimap    = new GuiTexture(MasterRenderer.getWaterRenderer().getFBOs().getMinimapTexture(),    new Vector2f(-0.78f, 0.76f), new Vector2f(-0.2f, 0.2f));
-		GuiTexture shadowMap  = new GuiTexture(MasterRenderer.getShadowMapTexture(),                               new Vector2f(-0.78f, 0.32f), new Vector2f(0.2f, 0.2f)); // new Vector2f(0.86f, 0.28f), new Vector2f(0.12f, 0.12f));
-		GuiTexture mmTarget   = new GuiTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/gui/bullseye.png"), new Vector2f(-0.78f, 0.76f), new Vector2f(0.02f, 0.036f));
+		GuiTexture reflection  = new GuiTexture(MasterRenderer.getWaterRenderer().getFBOs().getReflectionTexture(), new Vector2f(0.86f, 0.84f), new Vector2f(0.12f, 0.12f));
+		GuiTexture refraction  = new GuiTexture(MasterRenderer.getWaterRenderer().getFBOs().getRefractionTexture(), new Vector2f(0.86f, 0.56f), new Vector2f(0.12f, 0.12f));
+		GuiTexture minimap     = new GuiTexture(MasterRenderer.getWaterRenderer().getFBOs().getMinimapTexture(),    new Vector2f(-0.78f, 0.76f), new Vector2f(-0.2f, 0.2f));
+		GuiTexture shadowMap   = new GuiTexture(MasterRenderer.getShadowMapTexture(),                               new Vector2f(-0.78f, 0.32f), new Vector2f(0.2f, 0.2f)); // new Vector2f(0.86f, 0.28f), new Vector2f(0.12f, 0.12f));
+		GuiTexture mmTargetMap = new GuiTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/gui/bullseye.png"), new Vector2f(-0.78f, 0.76f), new Vector2f(0.02f, 0.036f));
+		GuiTexture mmTarget    = new GuiTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/gui/bullseye.png"), new Vector2f(0.0f, 0.0f), new Vector2f(0.02f, 0.036f));
 		processGui(reflection);
 		processGui(refraction);
 		processGui(shadowMap);
 		processGui(minimap);
+		processGui(mmTargetMap);
 		processGui(mmTarget);
 	}
 
@@ -156,7 +166,7 @@ public class Scene implements IScene {
 		if (input.isKeyReleased(GLFW.GLFW_KEY_F)) {
 			fireMode = !fireMode;
 			if (fireMode) {
-				particleSystemShoot = new ParticleSystemShoot(particleTexture, 300f, 50f, -0.5f, 1f);
+				particleSystemShoot = new ParticleSystemShoot(particleTexture, 200f, 60f, 0.0f, 1f);
 			} else {
 				particleSystemShoot = new ParticleSystemShoot(particleTexture, 20f, 50f, -0.25f, 5f); // magic circle around the player
 			}
@@ -179,14 +189,6 @@ public class Scene implements IScene {
 		WaterTile waterTile_2 = new WaterTile(0, Water.HEIGHT, -WaterTile.TILE_SIZE * 2);
 		processWaterTile(waterTile);
 		processWaterTile(waterTile_2);
-	}
-
-	private void setupPlayer() {
-		// player
-		RawModel steveModelRaw = OBJLoader.loadOBJModel("steve", loader);
-		TexturedModel steveModel = new TexturedModel(steveModelRaw, new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/steve.png")));
-		player = new Player(steveModel, new Vector3f(0, 0, 0), 0, 180, 0, 4);
-		processEntity(player);
 	}
 
 	private void setupTerrains() {

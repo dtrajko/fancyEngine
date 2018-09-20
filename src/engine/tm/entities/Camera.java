@@ -14,14 +14,14 @@ import engine.tm.toolbox.Maths;
 
 public class Camera implements ICamera {
 
-	private final float OFFSET_Y = 10; // point to player's head, not feet
+	private final float OFFSET_Y = 32; // point to player's head, not feet
 	
 	private Vector3f position = new Vector3f(0, 0, 0);
 	private float pitch = 10;
 	private float yaw = 0;
 	private float roll = 0;
 	
-	private float distanceFromPlayer = 100;
+	private float distanceFromPlayer = 65;
 	private float angleAroundPlayer = 0;
 
 	private float speed;
