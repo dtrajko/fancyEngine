@@ -39,7 +39,7 @@ public class AnimatedModelLoader {
 	 *            - the texture file.
 	 * @return The diffuse texture.
 	 */
-	private static Texture loadTexture(MyFile textureFile) {
+	public static Texture loadTexture(MyFile textureFile) {
 		Texture diffuseTexture = Texture.newTexture(textureFile).anisotropic().create();
 		return diffuseTexture;
 	}
@@ -52,7 +52,7 @@ public class AnimatedModelLoader {
 	 *            - the joints data from the collada file for the head joint.
 	 * @return The created joint, with all its descendants added.
 	 */
-	private static Joint createJoints(JointData data) {
+	public static Joint createJoints(JointData data) {
 		Joint joint = new Joint(data.index, data.nameId, data.bindLocalTransform);
 		for (JointData child : data.children) {
 			joint.addChild(createJoints(child));
@@ -68,7 +68,7 @@ public class AnimatedModelLoader {
 	 *            VAO.
 	 * @return The VAO containing all the mesh data for the model.
 	 */
-	private static Vao createVao(MeshData data) {
+	public static Vao createVao(MeshData data) {
 		Vao vao = Vao.create();
 		vao.bind();
 		vao.createIndexBuffer(data.getIndices());

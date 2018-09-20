@@ -34,7 +34,7 @@ public abstract class ShaderProgram {
 		getAllUniformLocations();
 	}
 
-	public ShaderProgram(MyFile vertexFile, MyFile fragmentFile, String... inVariables) {
+	public ShaderProgram(String vertexFile, String fragmentFile, String[] inVariables) {
 		int vertexShaderID = loadShader(vertexFile, GL20.GL_VERTEX_SHADER);
 		int fragmentShaderID = loadShader(fragmentFile, GL20.GL_FRAGMENT_SHADER);
 		programID = GL20.glCreateProgram();

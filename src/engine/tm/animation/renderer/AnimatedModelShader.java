@@ -1,5 +1,6 @@
 package engine.tm.animation.renderer;
 
+import engine.tm.settings.WorldSettings;
 import engine.tm.shaders.ShaderProgram;
 import engine.tm.shaders.UniformMat4Array;
 import engine.tm.shaders.UniformMatrix;
@@ -9,11 +10,12 @@ import engine.utils.MyFile;
 
 public class AnimatedModelShader extends ShaderProgram {
 
-	private static final int MAX_JOINTS = 50;// max number of joints in a skeleton
+	private static final int MAX_JOINTS = 50; // max number of joints in a skeleton
 	private static final int DIFFUSE_TEX_UNIT = 0;
+	
+	private static final String VERTEX_FILE = WorldSettings.RESOURCES_SUBDIR + "/shaders/animatedEntityVertex.glsl";
+	private static final String FRAGMENT_FILE = WorldSettings.RESOURCES_SUBDIR + "/shaders/animatedEntityFragment.glsl";
 
-	private static final MyFile VERTEX_SHADER = new MyFile("renderer", "animatedEntityVertex.glsl");
-	private static final MyFile FRAGMENT_SHADER = new MyFile("renderer", "animatedEntityFragment.glsl");
 
 	protected UniformMatrix projectionViewMatrix = new UniformMatrix("projectionViewMatrix");
 	protected UniformVec3 lightDirection = new UniformVec3("lightDirection");
@@ -27,8 +29,7 @@ public class AnimatedModelShader extends ShaderProgram {
 	 * the diffuse texture will be sampled from texture unit 0.
 	 */
 	public AnimatedModelShader() {
-		super(VERTEX_SHADER, FRAGMENT_SHADER, "in_position", "in_textureCoords", "in_normal", "in_jointIndices",
-				"in_weights");
+		super(VERTEX_FILE, FRAGMENT_FILE, new String[]{ "in_position", "in_textureCoords", "in_normal", "in_jointIndices", "in_weights" });
 		super.storeAllUniformLocations(projectionViewMatrix, diffuseMap, lightDirection, jointTransforms);
 		connectTextureUnits();
 	}

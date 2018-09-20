@@ -1,6 +1,9 @@
 package engine.tm.textures;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 
 import org.lwjgl.opengl.EXTTextureFilterAnisotropic;
@@ -55,17 +58,17 @@ public class TextureUtils {
 		int height = 0;
 		ByteBuffer buffer = null;
 		try {
-			InputStream in = file.getInputStream();
-			PNGDecoder decoder = new PNGDecoder(in);
+			InputStream is = new FileInputStream(file.getPath());			
+			PNGDecoder decoder = new PNGDecoder(is);
 			width = decoder.getWidth();
 			height = decoder.getHeight();
 			buffer = ByteBuffer.allocateDirect(4 * width * height);
 			decoder.decode(buffer, width * 4, Format.BGRA);
 			buffer.flip();
-			in.close();
+			is.close();
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.err.println("Tried to load texture " + file.getName() + " , didn't work");
+			System.err.println("Tried to load texture " + file.getPath() + " , didn't work");
 			System.exit(-1);
 		}
 		return new TextureData(buffer, width, height);

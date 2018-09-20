@@ -11,6 +11,7 @@ import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL30;
 import engine.IScene;
 import engine.Window;
+import engine.tm.animation.renderer.AnimatedModelRenderer;
 import engine.tm.entities.Camera;
 import engine.tm.entities.Entity;
 import engine.tm.entities.EntityRenderer;
@@ -43,6 +44,7 @@ public class MasterRenderer {
 	private static TerrainRenderer terrainRenderer;
 	private static EntityRenderer entityRenderer;
 	private static NormalMappingRenderer normalMappingRenderer;
+	private static AnimatedModelRenderer animatedModelRenderer;
 	private static SkyboxRenderer skyboxRenderer;
 	private static WaterRenderer waterRenderer;
 	private static ShadowMapMasterRenderer shadowMapRenderer;
@@ -53,6 +55,7 @@ public class MasterRenderer {
 		terrainRenderer = new TerrainRenderer(projectionMatrix);
 		entityRenderer = new EntityRenderer(projectionMatrix);
 		normalMappingRenderer = new NormalMappingRenderer(projectionMatrix);
+		animatedModelRenderer = new AnimatedModelRenderer();
 		skyboxRenderer = new SkyboxRenderer(projectionMatrix);
 		waterRenderer = new WaterRenderer(projectionMatrix);
 		shadowMapRenderer = new ShadowMapMasterRenderer();
@@ -146,6 +149,7 @@ public class MasterRenderer {
 		terrainRenderer.render(scene, clipPlane, shadowMapRenderer.getToShadowMapSpaceMatrix());
 		entityRenderer.render(scene, clipPlane);
 		normalMappingRenderer.render(scene, clipPlane);
+		animatedModelRenderer.render(((Scene) scene).getAnimatedModel(), scene.getCamera(), ((Scene) scene).getLightDirection());
 		skyboxRenderer.render(scene, clipPlane);
 	}
 
@@ -192,6 +196,7 @@ public class MasterRenderer {
 		terrainRenderer.cleanUp();
 		entityRenderer.cleanUp();
 		normalMappingRenderer.cleanUp();
+		animatedModelRenderer.cleanUp();
 		skyboxRenderer.cleanUp();
 		waterRenderer.cleanUp();
 		shadowMapRenderer.cleanUp();

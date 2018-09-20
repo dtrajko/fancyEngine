@@ -14,6 +14,14 @@ import engine.IScene;
 import engine.Window;
 import engine.graph.ICamera;
 import engine.graph.Input;
+import engine.tm.animation.animatedModel.AnimatedModel;
+import engine.tm.animation.animatedModel.Joint;
+import engine.tm.animation.animation.Animation;
+import engine.tm.animation.loaders.AnimatedModelLoader;
+import engine.tm.animation.loaders.AnimationLoader;
+import engine.tm.colladaParser.colladaLoader.ColladaLoader;
+import engine.tm.colladaParser.dataStructures.AnimatedModelData;
+import engine.tm.colladaParser.dataStructures.SkeletonData;
 import engine.tm.entities.Camera;
 import engine.tm.entities.Entity;
 import engine.tm.entities.Light;
@@ -27,6 +35,7 @@ import engine.tm.loaders.OBJLoader;
 import engine.tm.models.RawModel;
 import engine.tm.models.TexturedModel;
 import engine.tm.normalMapping.NormalMappedObjLoader;
+import engine.tm.openglObjects.Vao;
 import engine.tm.particles.FireMaster;
 import engine.tm.particles.ParticleMaster;
 import engine.tm.particles.ParticleSystemShoot;
@@ -40,9 +49,11 @@ import engine.tm.terrains.TerrainProcedural;
 import engine.tm.textures.ModelTexture;
 import engine.tm.textures.TerrainTexture;
 import engine.tm.textures.TerrainTexturePack;
+import engine.tm.textures.Texture;
 import engine.tm.water.Water;
 import engine.tm.water.WaterTile;
 import engine.utils.Maths;
+import engine.utils.MyFile;
 
 public class Scene implements IScene {
 
@@ -67,6 +78,8 @@ public class Scene implements IScene {
 	private ParticleSystemShoot particleSystemShoot;
 	private boolean fireMode = true;
 	private FireMaster fireManager;
+	private AnimatedModel animatedModel;
+	private Vector3f lightDirection = new Vector3f(0, -1, 0);
 
 	public Scene() {
 		camera = new Camera();
@@ -82,6 +95,7 @@ public class Scene implements IScene {
 		generateForestModels();
 		generateNormalMapEntities();
 		setupPlayer();
+		setupAnimatedPlayer();
 		setupWater();
 		setupLights();
 		setupParticles();
@@ -96,6 +110,17 @@ public class Scene implements IScene {
 		TexturedModel steveModel = new TexturedModel(steveModelRaw, new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/steve.png")));
 		player = new Player(steveModel, new Vector3f(0, 0, 0), 0, 180, 0, 4);
 		processEntity(player);
+	}
+
+	private void setupAnimatedPlayer() {
+		AnimatedModelData entityData = ColladaLoader.loadColladaModel(new MyFile(WorldSettings.MODELS_DIR + "/cowboy.dae"), WorldSettings.MAX_WEIGHTS);
+		Vao model = AnimatedModelLoader.createVao(entityData.getMeshData());
+		Texture texture = AnimatedModelLoader.loadTexture(new MyFile(WorldSettings.TEXTURES_DIR + "/cowboy.png"));
+		SkeletonData skeletonData = entityData.getJointsData();
+		Joint headJoint = AnimatedModelLoader.createJoints(skeletonData.headJoint);
+		animatedModel = new AnimatedModel(model, texture, headJoint, skeletonData.jointCount);
+		Animation animation = AnimationLoader.loadAnimation(new MyFile(WorldSettings.MODELS_DIR + "/cowboy.dae"));
+		animatedModel.doAnimation(animation);
 	}
 
 	public void processEntity(Entity entity) {
@@ -143,6 +168,7 @@ public class Scene implements IScene {
 
 	@Override
 	public void update(float interval, Input input) {
+		animatedModel.update();
 		updateParticles(input);
 		updateText();
 		fireManager.update();
@@ -400,6 +426,10 @@ public class Scene implements IScene {
 		return water;
 	}
 
+	public AnimatedModel getAnimatedModel() {
+		return animatedModel;
+	}
+
 	public void processTerrain(ITerrain terrain) {
 		terrains.add(terrain);
 	}
@@ -483,5 +513,9 @@ public class Scene implements IScene {
 	public void cleanUp() {		
 		clearLists();
 		loader.cleanUp();
+	}
+
+	public Vector3f getLightDirection() {
+		return lightDirection;
 	}
 }

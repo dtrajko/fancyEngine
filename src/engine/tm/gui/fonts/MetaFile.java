@@ -137,7 +137,6 @@ public class MetaFile {
 	 *            - the font file.
 	 */
 	private boolean openFile(String filePath) {
-
 		try {
 			InputStream is = new FileInputStream(filePath);
 			InputStreamReader isr = new InputStreamReader(is);

@@ -1,6 +1,7 @@
 package engine.utils;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
@@ -19,7 +20,7 @@ public class MyFile {
 	private String name;
 
 	public MyFile(String path) {
-		this.path = FILE_SEPARATOR + path;
+		this.path = path;
 		String[] dirs = path.split(FILE_SEPARATOR);
 		this.name = dirs[dirs.length - 1];
 	}
@@ -62,7 +63,8 @@ public class MyFile {
 
 	public BufferedReader getReader() throws Exception {
 		try {
-			InputStreamReader isr = new InputStreamReader(getInputStream());
+			InputStream is = new FileInputStream(path);
+			InputStreamReader isr = new InputStreamReader(is);
 			BufferedReader reader = new BufferedReader(isr);
 			return reader;
 		} catch (Exception e) {
