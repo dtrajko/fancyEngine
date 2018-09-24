@@ -3,7 +3,6 @@ package engine.tm.animation.animation;
 import java.util.HashMap;
 import java.util.Map;
 import org.joml.Matrix4f;
-
 import engine.GameEngine;
 import engine.tm.animation.animatedModel.AnimatedModel;
 import engine.tm.animation.animatedModel.Joint;

@@ -30,6 +30,8 @@ import engine.tm.gui.GuiTexture;
 import engine.tm.gui.fonts.FontType;
 import engine.tm.gui.fonts.GUIText;
 import engine.tm.gui.fonts.TextMaster;
+import engine.tm.lensFlare.FlareManager;
+import engine.tm.lensFlare.FlareTexture;
 import engine.tm.loaders.Loader;
 import engine.tm.loaders.OBJLoader;
 import engine.tm.models.RawModel;
@@ -43,6 +45,8 @@ import engine.tm.particles.ParticleTexture;
 import engine.tm.render.MasterRenderer;
 import engine.tm.settings.WorldSettings;
 import engine.tm.skybox.Skybox;
+import engine.tm.sunRenderer.Sun;
+import engine.tm.sunRenderer.SunRenderer;
 import engine.tm.terrains.ITerrain;
 import engine.tm.terrains.Terrain;
 import engine.tm.terrains.TerrainProcedural;
@@ -63,6 +67,7 @@ public class Scene implements IScene {
 	private Player player;
 	private Skybox skybox;
 	private Water water;
+	private Sun sun;
 
 	private List<Light> lights = new ArrayList<Light>();
 	// contains both regular and normal map entities
@@ -78,15 +83,15 @@ public class Scene implements IScene {
 	private ParticleSystemShoot particleSystemShoot;
 	private boolean fireMode = true;
 	private FireMaster fireManager;
+	private FlareManager flareManager;
 	private AnimatedModel animatedModel;
-	private Vector3f lightDirection = new Vector3f(0, -1, 0);
+	private Vector3f lightDirection = WorldSettings.LIGHT_DIR;
 
 	public Scene() {
 		camera = new Camera();
 		loader = new Loader();
 		skybox = new Skybox(loader);
 		masterRenderer = new MasterRenderer();
-		// ((Camera) camera).setPosition(new Vector3f(0, 20, 40));
 		fireManager = new FireMaster(loader);
 	}
 
@@ -98,10 +103,48 @@ public class Scene implements IScene {
 		setupAnimatedPlayer();
 		setupWater();
 		setupLights();
+		setupLensFlare();
 		setupParticles();
 		setupGui();
 		setupText();
 		masterRenderer.init(this); // should be called after entities list is populated
+	}
+
+	private void setupLensFlare() {
+		// loading textures for lens flare
+		Texture texture1 = Texture.newTexture(new MyFile(WorldSettings.LENS_FLARE_DIR + "/tex1.png")).normalMipMap().create();
+		Texture texture2 = Texture.newTexture(new MyFile(WorldSettings.LENS_FLARE_DIR + "/tex2.png")).normalMipMap().create();
+		Texture texture3 = Texture.newTexture(new MyFile(WorldSettings.LENS_FLARE_DIR + "/tex3.png")).normalMipMap().create();
+		Texture texture4 = Texture.newTexture(new MyFile(WorldSettings.LENS_FLARE_DIR + "/tex4.png")).normalMipMap().create();
+		Texture texture5 = Texture.newTexture(new MyFile(WorldSettings.LENS_FLARE_DIR + "/tex5.png")).normalMipMap().create();
+		Texture texture6 = Texture.newTexture(new MyFile(WorldSettings.LENS_FLARE_DIR + "/tex6.png")).normalMipMap().create();
+		Texture texture7 = Texture.newTexture(new MyFile(WorldSettings.LENS_FLARE_DIR + "/tex7.png")).normalMipMap().create();
+		Texture texture8 = Texture.newTexture(new MyFile(WorldSettings.LENS_FLARE_DIR + "/tex8.png")).normalMipMap().create();
+		Texture texture9 = Texture.newTexture(new MyFile(WorldSettings.LENS_FLARE_DIR + "/tex9.png")).normalMipMap().create();
+		Texture textureSun = Texture.newTexture(new MyFile(WorldSettings.LENS_FLARE_DIR + "/sun.png")).normalMipMap().create();
+
+		// set up lens flare
+		flareManager = new FlareManager(0.16f, 
+			new FlareTexture(texture6, 1f),
+			new FlareTexture(texture4, 0.46f),
+			new FlareTexture(texture2, 0.2f),
+			new FlareTexture(texture7, 0.1f),
+			new FlareTexture(texture1, 0.04f),
+			new FlareTexture(texture3, 0.12f),
+			new FlareTexture(texture9, 0.24f),
+			new FlareTexture(texture5, 0.14f),
+			new FlareTexture(texture1, 0.024f),
+			new FlareTexture(texture7, 0.4f),
+			new FlareTexture(texture9, 0.2f),
+			new FlareTexture(texture3, 0.14f),
+			new FlareTexture(texture5, 0.6f),
+			new FlareTexture(texture4, 0.8f),
+			new FlareTexture(texture8, 1.2f)
+		);
+
+		//init sun and set sun direction
+		sun = new Sun(textureSun, 40);
+		sun.setDirection(WorldSettings.LIGHT_DIR);
 	}
 
 	private void setupPlayer() {
@@ -118,7 +161,7 @@ public class Scene implements IScene {
 		Texture texture = AnimatedModelLoader.loadTexture(new MyFile(WorldSettings.TEXTURES_DIR + "/cowboy.png"));
 		SkeletonData skeletonData = entityData.getJointsData();
 		Joint headJoint = AnimatedModelLoader.createJoints(skeletonData.headJoint);
-		animatedModel = new AnimatedModel(model, texture, headJoint, skeletonData.jointCount);
+		animatedModel = new AnimatedModel(model, texture, headJoint, skeletonData.jointCount, new Vector3f(0, 50, 0), 0, 0, 0, 1f);
 		Animation animation = AnimationLoader.loadAnimation(new MyFile(WorldSettings.MODELS_DIR + "/cowboy.dae"));
 		animatedModel.doAnimation(animation);
 	}
@@ -180,6 +223,14 @@ public class Scene implements IScene {
 
 	public FireMaster getFireManager() {
 		return fireManager;
+	}
+
+	public FlareManager getFlareManager() {
+		return flareManager;
+	}
+
+	public Sun getSun() {
+		return sun;
 	}
 
 	private void setupParticles() {

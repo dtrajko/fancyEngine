@@ -25,6 +25,7 @@ import engine.tm.particles.ParticleMaster;
 import engine.tm.scene.Scene;
 import engine.tm.shadows.ShadowMapMasterRenderer;
 import engine.tm.skybox.SkyboxRenderer;
+import engine.tm.sunRenderer.SunRenderer;
 import engine.tm.terrains.TerrainRenderer;
 import engine.tm.water.Water;
 import engine.tm.water.WaterRenderer;
@@ -49,6 +50,7 @@ public class MasterRenderer {
 	private static WaterRenderer waterRenderer;
 	private static ShadowMapMasterRenderer shadowMapRenderer;
 	private static GuiRenderer guiRenderer;
+	private static SunRenderer sunRenderer;
 
 	public MasterRenderer() {
 		createProjectionMatrix();
@@ -59,6 +61,7 @@ public class MasterRenderer {
 		skyboxRenderer = new SkyboxRenderer(projectionMatrix);
 		waterRenderer = new WaterRenderer(projectionMatrix);
 		shadowMapRenderer = new ShadowMapMasterRenderer();
+		sunRenderer = new SunRenderer();
 		guiRenderer = new GuiRenderer();
 	}
 
@@ -102,6 +105,9 @@ public class MasterRenderer {
 		waterRenderer.getFBOs().unbindCurrentFrameBuffer();
 		renderScene(scene, new Vector4f(0, 0, 0, 0));
 		waterRenderer.render(scene);
+		
+		sunRenderer.render(scene);
+		((Scene) scene).getFlareManager().render(scene);
 
 		// after the 3D stuff and before the 2D stuff
 		ParticleMaster.renderParticles(camera);
@@ -110,6 +116,15 @@ public class MasterRenderer {
 		TextMaster.render();
 
 		GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
+	}
+
+	public void renderScene(IScene scene, Vector4f clipPlane) {
+		prepare();
+		terrainRenderer.render(scene, clipPlane, shadowMapRenderer.getToShadowMapSpaceMatrix());
+		entityRenderer.render(scene, clipPlane);
+		normalMappingRenderer.render(scene, clipPlane);
+		animatedModelRenderer.render(((Scene) scene).getAnimatedModel(), scene.getCamera(), ((Scene) scene).getLightDirection());
+		skyboxRenderer.render(scene, clipPlane);
 	}
 
 	public void renderShadowMap(IScene scene) {
@@ -144,15 +159,6 @@ public class MasterRenderer {
 		camera.setYaw(currentYaw);
 	}
 
-	public void renderScene(IScene scene, Vector4f clipPlane) {
-		prepare();
-		terrainRenderer.render(scene, clipPlane, shadowMapRenderer.getToShadowMapSpaceMatrix());
-		entityRenderer.render(scene, clipPlane);
-		normalMappingRenderer.render(scene, clipPlane);
-		animatedModelRenderer.render(((Scene) scene).getAnimatedModel(), scene.getCamera(), ((Scene) scene).getLightDirection());
-		skyboxRenderer.render(scene, clipPlane);
-	}
-
 	public void prepare() {
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
@@ -161,7 +167,7 @@ public class MasterRenderer {
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, getShadowMapTexture());
 	}
 
-	private Matrix4f createProjectionMatrix() {
+	private static Matrix4f createProjectionMatrix() {
 		projectionMatrix = new Matrix4f();
 		float aspectRatio = (float) Window.width / (float) Window.height;
 		float y_scale = (float) ((1f / Math.tan(Math.toRadians(FOV / 2f))) * aspectRatio);
@@ -187,7 +193,10 @@ public class MasterRenderer {
 		GL11.glDisable(GL11.GL_CULL_FACE);
 	}
 
-	public Matrix4f getProjectionMatrix() {
+	public static Matrix4f getProjectionMatrix() {
+		if (projectionMatrix == null) {
+			createProjectionMatrix();
+		}
 		return projectionMatrix;
 	}
 

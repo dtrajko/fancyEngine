@@ -80,5 +80,4 @@ public class AnimatedModelLoader {
 		vao.unbind();
 		return vao;
 	}
-
 }

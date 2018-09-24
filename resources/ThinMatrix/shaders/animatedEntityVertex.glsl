@@ -1,4 +1,4 @@
-#version 150
+#version 400
 
 const int MAX_JOINTS = 50; //max joints allowed in a skeleton
 const int MAX_WEIGHTS = 3; //max number of joints that can affect a vertex
@@ -14,6 +14,7 @@ out vec3 pass_normal;
 
 uniform mat4 jointTransforms[MAX_JOINTS];
 uniform mat4 projectionViewMatrix;
+uniform mat4 transformationMatrix;
 
 void main(void){
 
@@ -24,12 +25,12 @@ void main(void){
 		mat4 jointTransform = jointTransforms[in_jointIndices[i]];
 		vec4 posePosition = jointTransform * vec4(in_position, 1.0);
 		totalLocalPos += posePosition * in_weights[i];
-		
+
 		vec4 worldNormal = jointTransform * vec4(in_normal, 0.0);
 		totalNormal += worldNormal * in_weights[i];
 	}
 
-	gl_Position = projectionViewMatrix * totalLocalPos;
+	gl_Position = projectionViewMatrix * transformationMatrix * totalLocalPos;
 	pass_normal = totalNormal.xyz;
 	pass_textureCoords = in_textureCoords;
 

@@ -35,8 +35,8 @@ public abstract class ShaderProgram {
 	}
 
 	public ShaderProgram(String vertexFile, String fragmentFile, String[] inVariables) {
-		int vertexShaderID = loadShader(vertexFile, GL20.GL_VERTEX_SHADER);
-		int fragmentShaderID = loadShader(fragmentFile, GL20.GL_FRAGMENT_SHADER);
+		vertexShaderID = loadShader(vertexFile, GL20.GL_VERTEX_SHADER);
+		fragmentShaderID = loadShader(fragmentFile, GL20.GL_FRAGMENT_SHADER);
 		programID = GL20.glCreateProgram();
 		GL20.glAttachShader(programID, vertexShaderID);
 		GL20.glAttachShader(programID, fragmentShaderID);
@@ -110,7 +110,7 @@ public abstract class ShaderProgram {
 	}
 
 	private void bindAttributes(String[] inVariables){
-		for(int i=0;i<inVariables.length;i++){
+		for(int i = 0; i < inVariables.length; i++) {
 			GL20.glBindAttribLocation(programID, i, inVariables[i]);
 		}
 	}

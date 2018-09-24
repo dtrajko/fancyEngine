@@ -1,5 +1,7 @@
 package engine.tm.settings;
 
+import org.joml.Vector3f;
+
 import config.Config;
 
 public class WorldSettings {
@@ -10,5 +12,8 @@ public class WorldSettings {
 	public static final String TEXTURES_DIR = RESOURCES_SUBDIR + "/textures";
 	public static final String MODELS_DIR = RESOURCES_SUBDIR + "/models";
 	public static final String FONTS_DIR = RESOURCES_SUBDIR + "/fonts";
+	public static final String LENS_FLARE_DIR = RESOURCES_SUBDIR + "/textures/lensFlare";
+
+	public static final Vector3f LIGHT_DIR = new Vector3f(-0.55f, -0.25f, -0.1f);
 
 }

@@ -1,8 +1,11 @@
 package engine.tm.animation.animatedModel;
 
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
+
 import engine.tm.animation.animation.Animation;
 import engine.tm.animation.animation.Animator;
+import engine.tm.entities.Entity;
 import engine.tm.openglObjects.Vao;
 import engine.tm.textures.Texture;
 
@@ -18,7 +21,7 @@ import engine.tm.textures.Texture;
  * @author Karl
  *
  */
-public class AnimatedModel {
+public class AnimatedModel extends Entity {
 
 	// skin
 	private final Vao model;
@@ -27,7 +30,6 @@ public class AnimatedModel {
 	// skeleton
 	private final Joint rootJoint;
 	private final int jointCount;
-
 	private final Animator animator;
 
 	/**
@@ -53,6 +55,18 @@ public class AnimatedModel {
 	 * 
 	 */
 	public AnimatedModel(Vao model, Texture texture, Joint rootJoint, int jointCount) {
+		super(texture.textureId, new Vector3f(0, 0, 0), 0, 0, 0, 1);
+		this.model = model;
+		this.texture = texture;
+		this.rootJoint = rootJoint;
+		this.jointCount = jointCount;
+		this.animator = new Animator(this);
+		rootJoint.calcInverseBindTransform(new Matrix4f());
+	}
+
+	public AnimatedModel(Vao model, Texture texture, Joint rootJoint, int jointCount, 
+			Vector3f position, float rotX, float rotY, float rotZ, float scale) {
+		super(texture.textureId, position, rotX, rotY, rotZ, scale);
 		this.model = model;
 		this.texture = texture;
 		this.rootJoint = rootJoint;

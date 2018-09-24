@@ -7,6 +7,7 @@ import engine.tm.shaders.UniformMatrix;
 import engine.tm.shaders.UniformSampler;
 import engine.tm.shaders.UniformVec3;
 import engine.utils.MyFile;
+import engine.utils.Util;
 
 public class AnimatedModelShader extends ShaderProgram {
 
@@ -16,8 +17,8 @@ public class AnimatedModelShader extends ShaderProgram {
 	private static final String VERTEX_FILE = WorldSettings.RESOURCES_SUBDIR + "/shaders/animatedEntityVertex.glsl";
 	private static final String FRAGMENT_FILE = WorldSettings.RESOURCES_SUBDIR + "/shaders/animatedEntityFragment.glsl";
 
-
 	protected UniformMatrix projectionViewMatrix = new UniformMatrix("projectionViewMatrix");
+	protected UniformMatrix transformationMatrix = new UniformMatrix("transformationMatrix");
 	protected UniformVec3 lightDirection = new UniformVec3("lightDirection");
 	protected UniformMat4Array jointTransforms = new UniformMat4Array("jointTransforms", MAX_JOINTS);
 	private UniformSampler diffuseMap = new UniformSampler("diffuseMap");
@@ -30,7 +31,7 @@ public class AnimatedModelShader extends ShaderProgram {
 	 */
 	public AnimatedModelShader() {
 		super(VERTEX_FILE, FRAGMENT_FILE, new String[]{ "in_position", "in_textureCoords", "in_normal", "in_jointIndices", "in_weights" });
-		super.storeAllUniformLocations(projectionViewMatrix, diffuseMap, lightDirection, jointTransforms);
+		super.storeAllUniformLocations(projectionViewMatrix, diffuseMap, lightDirection, jointTransforms, transformationMatrix);		
 		connectTextureUnits();
 	}
 
@@ -46,12 +47,10 @@ public class AnimatedModelShader extends ShaderProgram {
 	@Override
 	protected void getAllUniformLocations() {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	protected void bindAttributes() {
 		// TODO Auto-generated method stub
-		
 	}
 }

@@ -4,12 +4,9 @@ import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import engine.IScene;
 import engine.graph.Input;
-import engine.tm.animation.animatedModel.Joint;
 import engine.tm.models.TexturedModel;
-import engine.tm.openglObjects.Vbo;
 import engine.tm.scene.Scene;
 import engine.tm.terrains.ITerrain;
-import engine.tm.textures.Texture;
 
 public class Player extends Entity {
 	

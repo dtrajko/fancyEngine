@@ -12,25 +12,22 @@ import engine.tm.render.MasterRenderer;
 import engine.tm.scene.Scene;
 import engine.tm.terrains.ITerrain;
 import engine.tm.toolbox.Maths;
+import engine.utils.Util;
 
 public class Camera implements ICamera {
 
 	private final float OFFSET_Y = 32; // point to player's head, not feet
-	
 	private Vector3f position = new Vector3f(0, 0, 0);
 	private float pitch = 10;
 	private float yaw = 0;
 	private float roll = 0;
-	
 	private float distanceFromPlayer = 65;
 	private float angleAroundPlayer = 0;
-
 	private float speed;
 	private float gravity;
 	private float y_min;	
 	private Vector3f cameraInc;
 	private Vector2f displVec;
-
 	private Matrix4f projectionMatrix;
 	private Matrix4f viewMatrix = new Matrix4f();
 
@@ -55,6 +52,7 @@ public class Camera implements ICamera {
 		projectionMatrix.m23(-1);
 		projectionMatrix.m32(-((2 * MasterRenderer.NEAR_PLANE * MasterRenderer.FAR_PLANE) / frustum_length));
 		projectionMatrix.m33(0);
+
 		return projectionMatrix;
 	}
 
@@ -62,6 +60,17 @@ public class Camera implements ICamera {
 	public Matrix4f updateViewMatrix() {
 		viewMatrix = Maths.createViewMatrix(this);
 		return viewMatrix;
+	}
+
+	@Override
+	public Matrix4f getProjectionViewMatrix() {
+		Matrix4f projectionViewMatrix = new Matrix4f();
+		projectionMatrix.mul(viewMatrix, projectionViewMatrix);
+		return projectionViewMatrix;
+	}
+
+	public Matrix4f getProjectionMatrix() {
+		return projectionMatrix;
 	}
 
 	public void moveWithPlayer(IScene scene, Input input) {
@@ -242,10 +251,5 @@ public class Camera implements ICamera {
 	@Override
 	public Vector3f getRotation() {
 		return new Vector3f(pitch, yaw, roll);
-	}
-
-	@Override
-	public Matrix4f getProjectionViewMatrix() {
-		return projectionMatrix.mul(viewMatrix);
 	}
 }
