@@ -1,7 +1,7 @@
 #version 400
 
-const int MAX_JOINTS = 50; //max joints allowed in a skeleton
-const int MAX_WEIGHTS = 3; //max number of joints that can affect a vertex
+const int MAX_JOINTS = 50; // max joints allowed in a skeleton
+const int MAX_WEIGHTS = 3; // max number of joints that can affect a vertex
 
 in vec3 in_position;
 in vec2 in_textureCoords;
