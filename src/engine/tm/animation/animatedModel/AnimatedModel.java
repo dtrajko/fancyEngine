@@ -159,5 +159,4 @@ public class AnimatedModel extends Entity {
 			addJointsToArray(childJoint, jointMatrices);
 		}
 	}
-
 }

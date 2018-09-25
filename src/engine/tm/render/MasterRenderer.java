@@ -76,6 +76,8 @@ public class MasterRenderer {
 	}
 
 	public void render(Window window, IScene scene) {
+		
+		Vector4f clipPlane;
 
 		GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
 
@@ -89,7 +91,14 @@ public class MasterRenderer {
 		camera.getPosition().y -= distance;
 		camera.invertPitch();
 		camera.invertRoll();
-		renderScene(scene, new Vector4f(0, 1, 0, -Water.HEIGHT));
+
+		clipPlane = new Vector4f(0, 1, 0, -Water.HEIGHT);
+		prepare();
+		skyboxRenderer.render(scene, clipPlane);
+		terrainRenderer.render(scene, clipPlane, shadowMapRenderer.getToShadowMapSpaceMatrix());
+		entityRenderer.render(scene, clipPlane);
+		normalMappingRenderer.render(scene, clipPlane);
+		
 		camera.getPosition().y += distance;
 		camera.invertPitch();
 		camera.invertRoll();
@@ -97,14 +106,29 @@ public class MasterRenderer {
 		// render refraction texture
 		waterRenderer.getFBOs().bindRefractionFrameBuffer();
 
-		renderScene(scene, new Vector4f(0, -1, 0, Water.HEIGHT));
+		clipPlane = new Vector4f(0, -1, 0, Water.HEIGHT);
+		prepare();
+		skyboxRenderer.render(scene, clipPlane);
+		terrainRenderer.render(scene, clipPlane, shadowMapRenderer.getToShadowMapSpaceMatrix());
+		entityRenderer.render(scene, clipPlane);
+		normalMappingRenderer.render(scene, clipPlane);
 
 		renderMinimap(scene);
 
 		// render to screen
 		GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
 		waterRenderer.getFBOs().unbindCurrentFrameBuffer();
-		renderScene(scene, new Vector4f(0, 0, 0, 0));
+		
+		clipPlane = new Vector4f(0, 0, 0, 0);
+		prepare();
+		skyboxRenderer.render(scene, clipPlane);
+		sunRenderer.render(scene);
+		terrainRenderer.render(scene, clipPlane, shadowMapRenderer.getToShadowMapSpaceMatrix());
+		entityRenderer.render(scene, clipPlane);
+		normalMappingRenderer.render(scene, clipPlane);
+		animatedModelRenderer.render(((Scene) scene).getAnimatedModel(), scene.getCamera(), ((Scene) scene).getLightDirection());
+		((Scene) scene).getFlareManager().render(scene);
+		
 		waterRenderer.render(scene);
 
 		// after the 3D stuff and before the 2D stuff
@@ -117,14 +141,6 @@ public class MasterRenderer {
 	}
 
 	public void renderScene(IScene scene, Vector4f clipPlane) {
-		prepare();
-		skyboxRenderer.render(scene, clipPlane);
-		sunRenderer.render(scene);
-		terrainRenderer.render(scene, clipPlane, shadowMapRenderer.getToShadowMapSpaceMatrix());
-		entityRenderer.render(scene, clipPlane);
-		normalMappingRenderer.render(scene, clipPlane);
-		animatedModelRenderer.render(((Scene) scene).getAnimatedModel(), scene.getCamera(), ((Scene) scene).getLightDirection());
-		((Scene) scene).getFlareManager().render(scene);
 	}
 
 	public void renderShadowMap(IScene scene) {

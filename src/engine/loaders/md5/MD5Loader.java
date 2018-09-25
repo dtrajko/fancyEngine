@@ -177,7 +177,8 @@ public class MD5Loader {
             // Calculate translation and rotation matrices for this joint
             Matrix4f translateMat = new Matrix4f().translate(position);
             Matrix4f rotationMat = new Matrix4f().rotate(orientation);
-            Matrix4f jointMat = translateMat.mul(rotationMat);
+            Matrix4f jointMat = new Matrix4f();
+            translateMat.mul(rotationMat, jointMat);
 
             // Joint position is relative to joint's parent index position. Use parent matrices
             // to transform it to model space

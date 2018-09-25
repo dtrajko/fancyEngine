@@ -161,7 +161,7 @@ public class Scene implements IScene {
 		Texture texture = AnimatedModelLoader.loadTexture(new MyFile(WorldSettings.TEXTURES_DIR + "/cowboy.png"));
 		SkeletonData skeletonData = entityData.getJointsData();
 		Joint headJoint = AnimatedModelLoader.createJoints(skeletonData.headJoint);
-		animatedModel = new AnimatedModel(model, texture, headJoint, skeletonData.jointCount, new Vector3f(0, 50, 0), 0, 0, 0, 1f);
+		animatedModel = new AnimatedModel(model, texture, headJoint, skeletonData.jointCount, new Vector3f(0, 2, -50), 0, 0, 0, 2f);
 		Animation animation = AnimationLoader.loadAnimation(new MyFile(WorldSettings.MODELS_DIR + "/cowboy.dae"));
 		animatedModel.doAnimation(animation);
 	}

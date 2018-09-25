@@ -142,12 +142,13 @@ public class Animator {
 	 *            the pose.
 	 */
 	private void applyPoseToJoints(Map<String, Matrix4f> currentPose, Joint joint, Matrix4f parentTransform) {
-		Matrix4f currentLocalTransform = currentPose.get(joint.name);		
-		Matrix4f currentTransform = parentTransform.mul(currentLocalTransform);
+		Matrix4f currentLocalTransform = currentPose.get(joint.name);
+		Matrix4f currentTransform = new Matrix4f();
+		parentTransform.mul(currentLocalTransform, currentTransform);
 		for (Joint childJoint : joint.children) {
 			applyPoseToJoints(currentPose, childJoint, currentTransform);
 		}
-		currentTransform = currentTransform.mul(joint.getInverseBindTransform());
+		currentTransform.mul(joint.getInverseBindTransform(), currentTransform);
 		joint.setAnimationTransform(currentTransform);
 	}
 

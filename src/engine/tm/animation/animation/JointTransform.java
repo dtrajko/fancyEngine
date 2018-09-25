@@ -53,7 +53,7 @@ public class JointTransform {
 	protected Matrix4f getLocalTransform() {
 		Matrix4f matrix = new Matrix4f();
 		matrix.translate(position);		
-		matrix = matrix.mul(rotation.toRotationMatrix());
+		matrix.mul(rotation.toRotationMatrix(), matrix);
 		return matrix;
 	}
 
