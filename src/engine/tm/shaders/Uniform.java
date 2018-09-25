@@ -20,7 +20,7 @@ public abstract class Uniform {
 		}
 	}
 	
-	protected int getLocation(){
+	protected int getLocation() {
 		return location;
 	}
 

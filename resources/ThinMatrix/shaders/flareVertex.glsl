@@ -12,7 +12,7 @@ void main(void){
 	pass_textureCoords.y = 1.0 - pass_textureCoords.y;
 
 	vec2 screenPosition = in_position * transform.zw + transform.xy;
-	//no need for conversion here
+	// no need for conversion here
 	gl_Position = vec4(screenPosition, 0.9999, 1.0);
 
 }

@@ -4,15 +4,13 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
-
 import engine.IScene;
-import engine.graph.ICamera;
 import engine.tm.entities.Camera;
 import engine.tm.scene.Scene;
 
 public class FlareManager {
 
-	private static final Vector2f CENTER_SCREEN = new Vector2f(0f, 0f);//center changed
+	private static final Vector2f CENTER_SCREEN = new Vector2f(0f, 0f); // center changed
 
 	private final FlareTexture[] flareTextures;
 	private final float spacing;
@@ -34,15 +32,15 @@ public class FlareManager {
 		}
 		Vector2f sunToCenter = new Vector2f();
 		CENTER_SCREEN.sub(sunCoords, sunToCenter);
-		float brightness = 1 - (sunToCenter.length() / 1.4f);//number doubled
-		if(brightness > 0){
+		float brightness = 1 - (sunToCenter.length() / 1.0f); // number doubled
+		if(brightness > 0) {
 			calcFlarePositions(sunToCenter, sunCoords);
 			renderer.render(sunCoords, flareTextures, brightness);
 		}
 	}
-	
+
 	private void calcFlarePositions(Vector2f sunToCenter, Vector2f sunCoords){
-		for(int i=0;i<flareTextures.length;i++){
+		for(int i = 0; i < flareTextures.length; i++){
 			Vector2f direction = new Vector2f(sunToCenter);
 			direction.normalize(i * spacing);
 			Vector2f flarePos = new Vector2f();
@@ -58,7 +56,7 @@ public class FlareManager {
 		if (coords.w <= 0) {
 			return null;
 		}
-		//no need for conversion below
+		// no need for conversion below
 		return new Vector2f(coords.x / coords.w, coords.y / coords.w);
 	}
 

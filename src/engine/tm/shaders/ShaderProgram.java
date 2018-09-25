@@ -13,6 +13,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import engine.utils.MyFile;
+import engine.utils.Util;
 
 public abstract class ShaderProgram {
 
@@ -34,7 +35,7 @@ public abstract class ShaderProgram {
 		getAllUniformLocations();
 	}
 
-	public ShaderProgram(String vertexFile, String fragmentFile, String[] inVariables) {
+	public ShaderProgram(String vertexFile, String fragmentFile, String... inVariables) {
 		vertexShaderID = loadShader(vertexFile, GL20.GL_VERTEX_SHADER);
 		fragmentShaderID = loadShader(fragmentFile, GL20.GL_FRAGMENT_SHADER);
 		programID = GL20.glCreateProgram();

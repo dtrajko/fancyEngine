@@ -143,7 +143,7 @@ public class Scene implements IScene {
 		);
 
 		//init sun and set sun direction
-		sun = new Sun(textureSun, 40);
+		sun = new Sun(textureSun, 20);
 		sun.setDirection(WorldSettings.LIGHT_DIR);
 	}
 
@@ -564,6 +564,7 @@ public class Scene implements IScene {
 	public void cleanUp() {		
 		clearLists();
 		loader.cleanUp();
+		flareManager.cleanUp();
 	}
 
 	public Vector3f getLightDirection() {

@@ -22,7 +22,7 @@ public class FlareRenderer {
 
 	private static final float TEST_QUAD_WIDTH = 0.07f;
 	private static final float TEST_QUAD_HEIGHT = TEST_QUAD_WIDTH * Window.width / Window.height;
-	private static final float TOTAL_SAMPLES = (float) Math.pow(TEST_QUAD_WIDTH * Window.width * 0.5f, 2) * 4;
+	private static final float TOTAL_SAMPLES = (float) Math.pow(TEST_QUAD_WIDTH * Window.width * 0.5f, 2) * 0.5f;
 	// A VAO containing the quad's positions in attribute 0
 	private final Vao quad;
 	private final FlareShader shader;
@@ -69,7 +69,6 @@ public class FlareRenderer {
 		if (query.isResultReady()) {
 			int visibleSamples = query.getResult();
 			this.coverage = Math.min(visibleSamples / TOTAL_SAMPLES, 1f);
-			// System.out.println("doOcclusionTest visibleSamples = " + visibleSamples);
 		}
 		if (!query.isInUse()) {
 			GL11.glColorMask(false, false, false, false);

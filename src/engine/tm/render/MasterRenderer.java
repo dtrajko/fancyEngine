@@ -96,6 +96,7 @@ public class MasterRenderer {
 
 		// render refraction texture
 		waterRenderer.getFBOs().bindRefractionFrameBuffer();
+
 		renderScene(scene, new Vector4f(0, -1, 0, Water.HEIGHT));
 
 		renderMinimap(scene);
@@ -105,9 +106,6 @@ public class MasterRenderer {
 		waterRenderer.getFBOs().unbindCurrentFrameBuffer();
 		renderScene(scene, new Vector4f(0, 0, 0, 0));
 		waterRenderer.render(scene);
-		
-		sunRenderer.render(scene);
-		((Scene) scene).getFlareManager().render(scene);
 
 		// after the 3D stuff and before the 2D stuff
 		ParticleMaster.renderParticles(camera);
@@ -120,11 +118,13 @@ public class MasterRenderer {
 
 	public void renderScene(IScene scene, Vector4f clipPlane) {
 		prepare();
+		skyboxRenderer.render(scene, clipPlane);
+		sunRenderer.render(scene);
 		terrainRenderer.render(scene, clipPlane, shadowMapRenderer.getToShadowMapSpaceMatrix());
 		entityRenderer.render(scene, clipPlane);
 		normalMappingRenderer.render(scene, clipPlane);
 		animatedModelRenderer.render(((Scene) scene).getAnimatedModel(), scene.getCamera(), ((Scene) scene).getLightDirection());
-		skyboxRenderer.render(scene, clipPlane);
+		((Scene) scene).getFlareManager().render(scene);
 	}
 
 	public void renderShadowMap(IScene scene) {

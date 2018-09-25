@@ -10,6 +10,7 @@ import engine.tm.entities.Camera;
 import engine.tm.openglObjects.Vao;
 import engine.tm.scene.Scene;
 import engine.tm.utils.OpenGlUtils;
+import engine.utils.Util;
 
 public class SunRenderer {
 
@@ -42,7 +43,7 @@ public class SunRenderer {
 		GL11.glDepthMask(false);
 		OpenGlUtils.enableAlphaBlending();
 		shader.start();
-		Matrix4f mvpMat = calculateMvpMatrix(sun, camera);
+		Matrix4f mvpMat = calculateMvpMatrix(sun, camera);		
 		shader.mvpMatrix.loadMatrix(mvpMat);
 		quad.bind(0);
 		sun.getTexture().bindToUnit(0);

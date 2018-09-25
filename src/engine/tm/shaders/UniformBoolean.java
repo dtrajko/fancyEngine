@@ -2,7 +2,7 @@ package engine.tm.shaders;
 
 import org.lwjgl.opengl.GL20;
 
-public class UniformBoolean extends Uniform{
+public class UniformBoolean extends Uniform {
 
 	private boolean currentBool;
 	private boolean used = false;

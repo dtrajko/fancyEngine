@@ -12,5 +12,4 @@ void main(void){
     out_colour = texture(flareTexture, pass_textureCoords);
     out_colour.a *= brightness;
 
-
 }

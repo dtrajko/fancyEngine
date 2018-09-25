@@ -24,7 +24,7 @@ public class FlareShader extends ShaderProgram {
 	private UniformSampler flareTexture = new UniformSampler("flareTexture");
 
 	public FlareShader() {
-		super(VERTEX_FILE, FRAGMENT_FILE, new String[] { "in_position" });
+		super(VERTEX_FILE, FRAGMENT_FILE, "in_position");
 		super.storeAllUniformLocations(brightness, flareTexture, transform);
 		connectTextureUnits();
 	}

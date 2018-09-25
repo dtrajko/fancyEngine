@@ -5,8 +5,6 @@ import org.joml.Matrix4f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL20;
 
-import engine.utils.Util;
-
 public class UniformMatrix extends Uniform {
 
 	private static FloatBuffer matrixBuffer = BufferUtils.createFloatBuffer(16);
@@ -16,8 +14,6 @@ public class UniformMatrix extends Uniform {
 	}
 
 	public void loadMatrix(Matrix4f matrix) {
-		matrix.get(matrixBuffer);
-		matrixBuffer.flip();
-		GL20.glUniformMatrix4fv(super.getLocation(), false, matrixBuffer);
+		GL20.glUniformMatrix4fv(super.getLocation(), false, matrix.get(matrixBuffer)); // For LWJGL 3 / JOML
 	}
 }

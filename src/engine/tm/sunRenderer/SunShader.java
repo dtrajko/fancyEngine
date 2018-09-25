@@ -10,12 +10,11 @@ public class SunShader extends ShaderProgram {
 	private static final String VERTEX_FILE = WorldSettings.RESOURCES_SUBDIR + "/shaders/sunVertex.glsl";
 	private static final String FRAGMENT_FILE = WorldSettings.RESOURCES_SUBDIR + "/shaders/sunFragment.glsl";
 
-	
 	protected UniformSampler sunTexture = new UniformSampler("sunTexture");
 	protected UniformMatrix mvpMatrix = new UniformMatrix("mvpMatrix");
 
 	public SunShader() {
-		super(VERTEX_FILE, FRAGMENT_FILE, new String[] { "in_position" });
+		super(VERTEX_FILE, FRAGMENT_FILE, "in_position");
 		super.storeAllUniformLocations(sunTexture, mvpMatrix);
 		connectTextureUnits();
 	}
