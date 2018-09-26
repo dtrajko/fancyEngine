@@ -27,7 +27,7 @@ import engine.utils.Util;
  */
 public class ShadowMapMasterRenderer {
 
-	public static final int SHADOW_MAP_SIZE = 4098;
+	public static final int SHADOW_MAP_SIZE = 2048;
 
 	private ShadowFrameBuffer shadowFbo;
 	private ShadowShader shader;
