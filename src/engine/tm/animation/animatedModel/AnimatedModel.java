@@ -22,7 +22,7 @@ import engine.tm.textures.Texture;
  *
  */
 public class AnimatedModel extends Entity {
-
+	
 	// skin
 	private final Vao model;
 	private final Texture texture;
@@ -55,7 +55,7 @@ public class AnimatedModel extends Entity {
 	 * 
 	 */
 	public AnimatedModel(Vao model, Texture texture, Joint rootJoint, int jointCount) {
-		super(texture.textureId, new Vector3f(0, 0, 0), 0, 0, 0, 1);
+		super(model, texture, new Vector3f(0, 0, 0), 0, 0, 0, 1);
 		this.model = model;
 		this.texture = texture;
 		this.rootJoint = rootJoint;
@@ -66,7 +66,7 @@ public class AnimatedModel extends Entity {
 
 	public AnimatedModel(Vao model, Texture texture, Joint rootJoint, int jointCount, 
 			Vector3f position, float rotX, float rotY, float rotZ, float scale) {
-		super(texture.textureId, position, rotX, rotY, rotZ, scale);
+		super(model, texture, position, rotX, rotY, rotZ, scale);
 		this.model = model;
 		this.texture = texture;
 		this.rootJoint = rootJoint;

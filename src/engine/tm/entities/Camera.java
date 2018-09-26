@@ -12,7 +12,6 @@ import engine.tm.render.MasterRenderer;
 import engine.tm.scene.Scene;
 import engine.tm.terrains.ITerrain;
 import engine.tm.toolbox.Maths;
-import engine.utils.Util;
 
 public class Camera implements ICamera {
 
@@ -21,7 +20,7 @@ public class Camera implements ICamera {
 	private float pitch = 10;
 	private float yaw = 0;
 	private float roll = 0;
-	private float distanceFromPlayer = 65;
+	private float distanceFromPlayer = 66;
 	private float angleAroundPlayer = 0;
 	private float speed;
 	private float gravity;
@@ -74,7 +73,7 @@ public class Camera implements ICamera {
 	}
 
 	public void moveWithPlayer(IScene scene, Input input) {
-		Player player = ((Scene)scene).getPlayer();
+		IPlayer player = ((Scene)scene).getPlayer();
 		displVec = input.getDisplVec();
 		calculateZoom(input);
 		calculatePitch(input);
@@ -89,7 +88,7 @@ public class Camera implements ICamera {
 	}
 
 	private void calculateCameraPosition(float horizontalDistance, float verticalDistance, IScene scene) {
-		Player player = ((Scene)scene).getPlayer();
+		IPlayer player = ((Scene)scene).getPlayer();
 		float theta = player.getRotY() + angleAroundPlayer;
 		float offsetX = (float) (horizontalDistance * Math.sin(Math.toRadians(theta)));
 		float offsetZ = (float) (horizontalDistance * Math.cos(Math.toRadians(theta)));		

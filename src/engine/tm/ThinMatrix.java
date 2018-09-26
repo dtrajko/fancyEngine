@@ -7,6 +7,7 @@ import engine.Window;
 import engine.graph.Input;
 import engine.sound.SoundManager;
 import engine.tm.entities.Camera;
+import engine.tm.entities.IPlayer;
 import engine.tm.entities.Player;
 import engine.tm.gui.fonts.TextMaster;
 import engine.tm.particles.ParticleMaster;
@@ -39,7 +40,7 @@ public class ThinMatrix implements IGameLogic {
 
 	@Override
 	public void update(float interval, Input input) {
-		Player player = ((Scene) scene).getPlayer();
+		IPlayer player = ((Scene) scene).getPlayer();
 		scene.update(interval, input);
 		player.move(interval, input, scene);
 		((Camera) scene.getCamera()).moveWithPlayer(scene, input);

@@ -2,7 +2,11 @@ package engine.tm.entities;
 
 import org.joml.Vector3f;
 import engine.items.Box3D;
+import engine.tm.models.RawModel;
 import engine.tm.models.TexturedModel;
+import engine.tm.openglObjects.Vao;
+import engine.tm.textures.ModelTexture;
+import engine.tm.textures.Texture;
 
 public class Entity {
 
@@ -30,7 +34,10 @@ public class Entity {
 		this.textureIndex = textureIndex;
 	}
 
-	public Entity(int textureIndex, Vector3f position, float rotX, float rotY, float rotZ, float scale) {
+	public Entity(Vao model, Texture texture, Vector3f position, float rotX, float rotY, float rotZ, float scale) {
+		RawModel rawModel = new RawModel(model.id, model.getIndexCount());
+		ModelTexture modelTexture = new ModelTexture(texture.textureId);
+		this.texturedModel = new TexturedModel(rawModel, modelTexture);
 		this.position = position;
 		this.rotX = rotX;
 		this.rotY = rotY;
@@ -48,6 +55,9 @@ public class Entity {
 	}
 
 	public boolean isUsingNormalMap() {
+		if (texturedModel == null) {
+			return false;
+		}
 		int normalMapID = texturedModel.getTexture().getNormalMap();
 		if (normalMapID != -1) {
 			return true;

@@ -2,10 +2,12 @@ package engine.tm.animation.renderer;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.lwjgl.opengl.GL11;
 import engine.graph.ICamera;
 import engine.tm.animation.animatedModel.AnimatedModel;
 import engine.tm.entities.Entity;
+import engine.tm.render.MasterRenderer;
 import engine.tm.toolbox.Maths;
 import engine.tm.utils.OpenGlUtils;
 
@@ -42,8 +44,8 @@ public class AnimatedModelRenderer {
 	 * @param lightDir
 	 *            - the direction of the light in the scene.
 	 */
-	public void render(AnimatedModel entity, ICamera camera, Vector3f lightDir) {
-		prepare(entity, camera, lightDir);
+	public void render(AnimatedModel entity, ICamera camera, Vector3f lightDir, Vector4f clipPlane) {
+		prepare(entity, camera, lightDir, clipPlane);
 		entity.getTexture().bindToUnit(0);
 		entity.getModel().bind(0, 1, 2, 3, 4);
 		shader.jointTransforms.loadMatrixArray(entity.getJointTransforms());
@@ -62,11 +64,12 @@ public class AnimatedModelRenderer {
 	 * @param lightDir
 	 *            - the direction of the light in the scene.
 	 */
-	private void prepare(AnimatedModel entity, ICamera camera, Vector3f lightDir) {
+	private void prepare(AnimatedModel entity, ICamera camera, Vector3f lightDir, Vector4f clipPlane) {
 		shader.start();
 		shader.projectionViewMatrix.loadMatrix(camera.getProjectionViewMatrix());
-		shader.transformationMatrix.loadMatrix(getTransformationMatrix(entity));		
+		shader.transformationMatrix.loadMatrix(getTransformationMatrix(entity));
 		shader.lightDirection.loadVec3(lightDir);
+		shader.clipPlane.loadVec4(clipPlane);
 		OpenGlUtils.antialias(true);
 		OpenGlUtils.disableBlending();
 		OpenGlUtils.enableDepthTesting(true);

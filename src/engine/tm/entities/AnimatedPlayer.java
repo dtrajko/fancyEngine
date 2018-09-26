@@ -4,11 +4,14 @@ import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import engine.IScene;
 import engine.graph.Input;
-import engine.tm.models.TexturedModel;
+import engine.tm.animation.animatedModel.AnimatedModel;
+import engine.tm.animation.animatedModel.Joint;
+import engine.tm.openglObjects.Vao;
 import engine.tm.scene.Scene;
 import engine.tm.terrains.ITerrain;
+import engine.tm.textures.Texture;
 
-public class Player extends Entity implements IPlayer {
+public class AnimatedPlayer extends AnimatedModel implements IPlayer {
 	
 	private static final float RUN_SPEED = 40;
 	private static final float TURN_SPEED = 10;
@@ -23,8 +26,9 @@ public class Player extends Entity implements IPlayer {
 	private boolean isInAir = false;
 	private boolean gravityEnabled = true;
 
-	public Player(TexturedModel model, Vector3f position, float rotX, float rotY, float rotZ, float scale) {
-		super(model, position, rotX, rotY, rotZ, scale);
+	public AnimatedPlayer(Vao model, Texture texture, Joint rootJoint, int jointCount, 
+			Vector3f position, float rotX, float rotY, float rotZ, float scale) {
+		super(model, texture, rootJoint, jointCount, position, rotX, rotY, rotZ, scale);		
 	}
 
 	public void move(float interval, Input input, IScene scene) {
@@ -61,11 +65,6 @@ public class Player extends Entity implements IPlayer {
 			isInAir = false;
 			super.getPosition().y = terrainHeight;
 		}
-	}
-
-	@Override
-	public void update() {
-		// TODO Auto-generated method stub		
 	}
 
 	private void jump() {

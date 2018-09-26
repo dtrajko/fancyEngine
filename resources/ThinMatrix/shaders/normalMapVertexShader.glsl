@@ -21,12 +21,12 @@ uniform vec2 textureAtlasOffset;
 const float density = 0;
 const float gradient = 5.0;
 
-uniform vec4 plane;
+uniform vec4 clipPlane;
 
 void main(void){
 
 	vec4 worldPosition = transformationMatrix * vec4(position, 1.0);
-	gl_ClipDistance[0] = dot(worldPosition, plane);
+	gl_ClipDistance[0] = dot(worldPosition, clipPlane);
 	mat4 modelViewMatrix = viewMatrix * transformationMatrix;
 	vec4 positionRelativeToCam = modelViewMatrix * vec4(position, 1.0);
 	gl_Position = projectionMatrix * positionRelativeToCam;

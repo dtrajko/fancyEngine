@@ -15,8 +15,12 @@ out vec3 pass_normal;
 uniform mat4 jointTransforms[MAX_JOINTS];
 uniform mat4 projectionViewMatrix;
 uniform mat4 transformationMatrix;
+uniform vec4 clipPlane;
 
 void main(void){
+
+	vec4 worldPosition = transformationMatrix * vec4(in_position, 1.0);
+	gl_ClipDistance[0] = dot(worldPosition, clipPlane);
 
 	vec4 totalLocalPos = vec4(0.0);
 	vec4 totalNormal = vec4(0.0);

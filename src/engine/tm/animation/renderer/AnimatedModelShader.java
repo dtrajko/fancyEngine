@@ -6,6 +6,7 @@ import engine.tm.shaders.UniformMat4Array;
 import engine.tm.shaders.UniformMatrix;
 import engine.tm.shaders.UniformSampler;
 import engine.tm.shaders.UniformVec3;
+import engine.tm.shaders.UniformVec4;
 import engine.utils.MyFile;
 import engine.utils.Util;
 
@@ -22,6 +23,7 @@ public class AnimatedModelShader extends ShaderProgram {
 	protected UniformVec3 lightDirection = new UniformVec3("lightDirection");
 	protected UniformMat4Array jointTransforms = new UniformMat4Array("jointTransforms", MAX_JOINTS);
 	private UniformSampler diffuseMap = new UniformSampler("diffuseMap");
+	protected UniformVec4 clipPlane = new UniformVec4("clipPlane");
 
 	/**
 	 * Creates the shader program for the {@link AnimatedModelRenderer} by
@@ -31,7 +33,7 @@ public class AnimatedModelShader extends ShaderProgram {
 	 */
 	public AnimatedModelShader() {
 		super(VERTEX_FILE, FRAGMENT_FILE, "in_position", "in_textureCoords", "in_normal", "in_jointIndices", "in_weights");
-		super.storeAllUniformLocations(projectionViewMatrix, diffuseMap, lightDirection, jointTransforms, transformationMatrix);		
+		super.storeAllUniformLocations(projectionViewMatrix, diffuseMap, lightDirection, clipPlane, jointTransforms, transformationMatrix);		
 		connectTextureUnits();
 	}
 

@@ -30,7 +30,7 @@ public class NormalMappingShader extends ShaderProgram {
 	private int location_skyColor;
 	private int location_textureAtlasNumRows;
 	private int location_textureAtlasOffset;
-	private int location_plane;
+	private int location_clipPlane;
 	private int location_modelTexture;
 	private int location_normalMap;
 
@@ -57,10 +57,10 @@ public class NormalMappingShader extends ShaderProgram {
 		location_skyColor = super.getUniformLocation("skyColor");
 		location_textureAtlasNumRows = super.getUniformLocation("textureAtlasNumRows");
 		location_textureAtlasOffset = super.getUniformLocation("textureAtlasOffset");
-		location_plane = super.getUniformLocation("plane");
+		location_clipPlane = super.getUniformLocation("clipPlane");
 		location_modelTexture = super.getUniformLocation("modelTexture");
 		location_normalMap = super.getUniformLocation("normalMap");
-		
+
 		location_lightPositionEyeSpace = new int[MAX_LIGHTS];
 		location_lightColor = new int[MAX_LIGHTS];
 		location_attenuation = new int[MAX_LIGHTS];
@@ -76,8 +76,8 @@ public class NormalMappingShader extends ShaderProgram {
 		super.loadInt(location_normalMap, 1);
 	}
 
-	public void loadClipPlane(Vector4f plane){
-		super.load4DVector(location_plane, plane);
+	public void loadClipPlane(Vector4f clipPlane){
+		super.load4DVector(location_clipPlane, clipPlane);
 	}
 
 	public void loadTextureAtlasNumRows(int numberOfRows) {

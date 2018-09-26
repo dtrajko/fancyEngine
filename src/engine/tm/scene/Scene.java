@@ -22,8 +22,10 @@ import engine.tm.animation.loaders.AnimationLoader;
 import engine.tm.colladaParser.colladaLoader.ColladaLoader;
 import engine.tm.colladaParser.dataStructures.AnimatedModelData;
 import engine.tm.colladaParser.dataStructures.SkeletonData;
+import engine.tm.entities.AnimatedPlayer;
 import engine.tm.entities.Camera;
 import engine.tm.entities.Entity;
+import engine.tm.entities.IPlayer;
 import engine.tm.entities.Light;
 import engine.tm.entities.Player;
 import engine.tm.gui.GuiTexture;
@@ -64,7 +66,7 @@ public class Scene implements IScene {
 	private Loader loader;
 	private MasterRenderer masterRenderer;
 	private ICamera camera;
-	private Player player;
+	private IPlayer player;
 	private Skybox skybox;
 	private Water water;
 	private Sun sun;
@@ -84,7 +86,6 @@ public class Scene implements IScene {
 	private boolean fireMode = true;
 	private FireMaster fireManager;
 	private FlareManager flareManager;
-	private AnimatedModel animatedModel;
 	private Vector3f lightDirection = WorldSettings.LIGHT_DIR;
 
 	public Scene() {
@@ -99,7 +100,7 @@ public class Scene implements IScene {
 		setupTerrains(); // setupTerrainsProcedural();
 		generateForestModels();
 		generateNormalMapEntities();
-		setupPlayer();
+		// setupPlayer();
 		setupAnimatedPlayer();
 		setupWater();
 		setupLights();
@@ -152,7 +153,7 @@ public class Scene implements IScene {
 		RawModel steveModelRaw = OBJLoader.loadOBJModel("steve", loader);
 		TexturedModel steveModel = new TexturedModel(steveModelRaw, new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/steve.png")));
 		player = new Player(steveModel, new Vector3f(0, 0, 0), 0, 180, 0, 4);
-		processEntity(player);
+		processEntity((Entity) player);
 	}
 
 	private void setupAnimatedPlayer() {
@@ -161,9 +162,10 @@ public class Scene implements IScene {
 		Texture texture = AnimatedModelLoader.loadTexture(new MyFile(WorldSettings.TEXTURES_DIR + "/cowboy.png"));
 		SkeletonData skeletonData = entityData.getJointsData();
 		Joint headJoint = AnimatedModelLoader.createJoints(skeletonData.headJoint);
-		animatedModel = new AnimatedModel(model, texture, headJoint, skeletonData.jointCount, new Vector3f(0, 2, -50), 0, 0, 0, 2f);
+		player = new AnimatedPlayer(model, texture, headJoint, skeletonData.jointCount, new Vector3f(0, 2, -50), 0, 180, 0, 1.5f);
 		Animation animation = AnimationLoader.loadAnimation(new MyFile(WorldSettings.MODELS_DIR + "/cowboy.dae"));
-		animatedModel.doAnimation(animation);
+		((AnimatedModel) player).doAnimation(animation);
+		// processEntity((Entity) player);
 	}
 
 	public void processEntity(Entity entity) {
@@ -211,7 +213,7 @@ public class Scene implements IScene {
 
 	@Override
 	public void update(float interval, Input input) {
-		animatedModel.update();
+		player.update();
 		updateParticles(input);
 		updateText();
 		fireManager.update();
@@ -456,7 +458,7 @@ public class Scene implements IScene {
 		return waterTiles;
 	}
 
-	public Player getPlayer() {
+	public IPlayer getPlayer() {
 		return player;
 	}
 
@@ -475,10 +477,6 @@ public class Scene implements IScene {
 
 	public Water getWater() {
 		return water;
-	}
-
-	public AnimatedModel getAnimatedModel() {
-		return animatedModel;
 	}
 
 	public void processTerrain(ITerrain terrain) {

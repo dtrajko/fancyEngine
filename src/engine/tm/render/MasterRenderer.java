@@ -11,10 +11,12 @@ import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL30;
 import engine.IScene;
 import engine.Window;
+import engine.tm.animation.animatedModel.AnimatedModel;
 import engine.tm.animation.renderer.AnimatedModelRenderer;
 import engine.tm.entities.Camera;
 import engine.tm.entities.Entity;
 import engine.tm.entities.EntityRenderer;
+import engine.tm.entities.IPlayer;
 import engine.tm.entities.Light;
 import engine.tm.entities.Player;
 import engine.tm.gui.GuiRenderer;
@@ -78,10 +80,11 @@ public class MasterRenderer {
 	public void render(Window window, IScene scene) {
 		
 		Vector4f clipPlane;
+		Camera camera = (Camera) ((Scene) scene).getCamera();
+		IPlayer player = ((Scene) scene).getPlayer();
+		Vector3f lightDirection = ((Scene) scene).getLightDirection();
 
 		GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
-
-		Camera camera = (Camera) ((Scene) scene).getCamera();
 
 		renderShadowMap(scene);
 
@@ -98,10 +101,14 @@ public class MasterRenderer {
 		terrainRenderer.render(scene, clipPlane, shadowMapRenderer.getToShadowMapSpaceMatrix());
 		entityRenderer.render(scene, clipPlane);
 		normalMappingRenderer.render(scene, clipPlane);
-		
+		if (player instanceof AnimatedModel) {
+			animatedModelRenderer.render((AnimatedModel) player, camera, lightDirection, clipPlane);
+		}
+
 		camera.getPosition().y += distance;
 		camera.invertPitch();
 		camera.invertRoll();
+
 
 		// render refraction texture
 		waterRenderer.getFBOs().bindRefractionFrameBuffer();
@@ -112,13 +119,17 @@ public class MasterRenderer {
 		terrainRenderer.render(scene, clipPlane, shadowMapRenderer.getToShadowMapSpaceMatrix());
 		entityRenderer.render(scene, clipPlane);
 		normalMappingRenderer.render(scene, clipPlane);
+		if (player instanceof AnimatedModel) {
+			animatedModelRenderer.render((AnimatedModel) player, camera, lightDirection, clipPlane);
+		}
+		((Scene) scene).getFlareManager().render(scene);
 
 		renderMinimap(scene);
 
 		// render to screen
 		GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
 		waterRenderer.getFBOs().unbindCurrentFrameBuffer();
-		
+
 		clipPlane = new Vector4f(0, 0, 0, 0);
 		prepare();
 		skyboxRenderer.render(scene, clipPlane);
@@ -126,7 +137,9 @@ public class MasterRenderer {
 		terrainRenderer.render(scene, clipPlane, shadowMapRenderer.getToShadowMapSpaceMatrix());
 		entityRenderer.render(scene, clipPlane);
 		normalMappingRenderer.render(scene, clipPlane);
-		animatedModelRenderer.render(((Scene) scene).getAnimatedModel(), scene.getCamera(), ((Scene) scene).getLightDirection());
+		if (player instanceof AnimatedModel) {
+			animatedModelRenderer.render((AnimatedModel) player, camera, lightDirection, clipPlane);
+		}
 		((Scene) scene).getFlareManager().render(scene);
 		
 		waterRenderer.render(scene);
@@ -156,7 +169,7 @@ public class MasterRenderer {
 	public void renderMinimap(IScene scene) {
 
 		Camera camera = (Camera) ((Scene) scene).getCamera();
-		Player player = ((Scene) scene).getPlayer();
+		IPlayer player = ((Scene) scene).getPlayer();
 
 		// render minimap
 		waterRenderer.getFBOs().bindMinimapFrameBuffer();
