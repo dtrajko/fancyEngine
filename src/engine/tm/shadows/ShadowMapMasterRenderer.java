@@ -10,6 +10,7 @@ import org.lwjgl.opengl.GL11;
 import engine.IScene;
 import engine.graph.ICamera;
 import engine.tm.entities.Entity;
+import engine.tm.entities.IPlayer;
 import engine.tm.entities.Light;
 import engine.tm.models.TexturedModel;
 import engine.tm.scene.Scene;
@@ -26,7 +27,7 @@ import engine.utils.Util;
  */
 public class ShadowMapMasterRenderer {
 
-	public static final int SHADOW_MAP_SIZE = 2048;
+	public static final int SHADOW_MAP_SIZE = 4098;
 
 	private ShadowFrameBuffer shadowFbo;
 	private ShadowShader shader;
@@ -36,7 +37,7 @@ public class ShadowMapMasterRenderer {
 	private Matrix4f projectionViewMatrix = new Matrix4f();
 	private Matrix4f offset = createOffset();
 
-	private ShadowMapEntityRenderer entityRenderer;
+	private ShadowMapEntityRenderer shadowMapEntityRenderer;
 
 	/**
 	 * Creates instances of the important objects needed for rendering the scene
@@ -52,7 +53,7 @@ public class ShadowMapMasterRenderer {
 	public ShadowMapMasterRenderer() {
 		shader = new ShadowShader();
 		shadowFbo = new ShadowFrameBuffer(SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
-		entityRenderer = new ShadowMapEntityRenderer(shader, projectionViewMatrix);
+		shadowMapEntityRenderer = new ShadowMapEntityRenderer(shader, projectionViewMatrix);
 	}
 
 	public void init(IScene scene) {
@@ -74,12 +75,13 @@ public class ShadowMapMasterRenderer {
 	 * @param sun
 	 *            - the light acting as the sun in the scene.
 	 */
-	public void render(Map<TexturedModel, List<Entity>> entities, Light sun) {
+	public void render(IPlayer player, Map<TexturedModel, List<Entity>> entities, Light sun) {
 		shadowBox.update();
 		Vector3f sunPosition = sun.getPosition();
 		Vector3f lightDirection = new Vector3f(-sunPosition.x, -sunPosition.y, -sunPosition.z);
 		prepare(lightDirection, shadowBox);
-		entityRenderer.render(entities);
+		shadowMapEntityRenderer.render(entities);
+		shadowMapEntityRenderer.renderAnimatedPlayer(player);
 		finish();
 	}
 

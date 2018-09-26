@@ -59,7 +59,7 @@ public class MasterRenderer {
 		terrainRenderer = new TerrainRenderer(projectionMatrix);
 		entityRenderer = new EntityRenderer(projectionMatrix);
 		normalMappingRenderer = new NormalMappingRenderer(projectionMatrix);
-		animatedModelRenderer = new AnimatedModelRenderer();
+		animatedModelRenderer = new AnimatedModelRenderer(projectionMatrix);
 		skyboxRenderer = new SkyboxRenderer(projectionMatrix);
 		waterRenderer = new WaterRenderer(projectionMatrix);
 		shadowMapRenderer = new ShadowMapMasterRenderer();
@@ -159,7 +159,7 @@ public class MasterRenderer {
 	public void renderShadowMap(IScene scene) {
 		Map<TexturedModel, List<Entity>> entities = ((Scene) scene).getEntityList();
 		Light sun = ((Scene) scene).getLights().get(0);
-		shadowMapRenderer.render(entities, sun);
+		shadowMapRenderer.render(((Scene) scene).getPlayer(), entities, sun);
 	}
 
 	public static int getShadowMapTexture() {

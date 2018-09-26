@@ -7,7 +7,6 @@ import org.lwjgl.opengl.GL11;
 import engine.graph.ICamera;
 import engine.tm.animation.animatedModel.AnimatedModel;
 import engine.tm.entities.Entity;
-import engine.tm.render.MasterRenderer;
 import engine.tm.toolbox.Maths;
 import engine.tm.utils.OpenGlUtils;
 
@@ -26,9 +25,13 @@ public class AnimatedModelRenderer {
 
 	/**
 	 * Initializes the shader program used for rendering animated models.
+	 * @param projectionMatrix 
 	 */
-	public AnimatedModelRenderer() {
-		this.shader = new AnimatedModelShader();
+	public AnimatedModelRenderer(Matrix4f projectionMatrix) {
+		this.shader = new AnimatedModelShader();		
+		shader.start();
+		shader.projectionMatrix.loadMatrix(projectionMatrix);
+		shader.stop();
 	}
 
 	/**
@@ -66,7 +69,7 @@ public class AnimatedModelRenderer {
 	 */
 	private void prepare(AnimatedModel entity, ICamera camera, Vector3f lightDir, Vector4f clipPlane) {
 		shader.start();
-		shader.projectionViewMatrix.loadMatrix(camera.getProjectionViewMatrix());
+		shader.viewMatrix.loadMatrix(Maths.createViewMatrix(camera));
 		shader.transformationMatrix.loadMatrix(getTransformationMatrix(entity));
 		shader.lightDirection.loadVec3(lightDir);
 		shader.clipPlane.loadVec4(clipPlane);

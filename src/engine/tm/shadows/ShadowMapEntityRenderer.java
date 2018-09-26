@@ -7,11 +7,15 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
+
+import engine.tm.animation.animatedModel.AnimatedModel;
 import engine.tm.entities.Entity;
+import engine.tm.entities.IPlayer;
 import engine.tm.models.RawModel;
 import engine.tm.models.TexturedModel;
 import engine.tm.render.MasterRenderer;
 import engine.tm.toolbox.Maths;
+import engine.tm.utils.OpenGlUtils;
 
 public class ShadowMapEntityRenderer {
 
@@ -32,7 +36,7 @@ public class ShadowMapEntityRenderer {
 	}
 
 	/**
-	 * Renders entieis to the shadow map. Each model is first bound and then all
+	 * Renders entities to the shadow map. Each model is first bound and then all
 	 * of the entities using that model are rendered to the shadow map.
 	 * 
 	 * @param entities
@@ -59,6 +63,15 @@ public class ShadowMapEntityRenderer {
 		GL20.glDisableVertexAttribArray(0);
 		GL20.glDisableVertexAttribArray(1);
 		GL30.glBindVertexArray(0);
+	}
+
+	protected void renderAnimatedPlayer(IPlayer player) {
+		prepareInstance((Entity) player);
+		((AnimatedModel) player).getTexture().bindToUnit(0);
+		((AnimatedModel) player).getModel().bind(0, 1, 2, 3, 4);
+		// shader.jointTransforms.loadMatrixArray(((AnimatedModel) player).getJointTransforms());
+		GL11.glDrawElements(GL11.GL_TRIANGLES, ((AnimatedModel) player).getModel().getIndexCount(), GL11.GL_UNSIGNED_INT, 0);
+		((AnimatedModel) player).getModel().unbind(0, 1, 2, 3, 4);
 	}
 
 	/**
