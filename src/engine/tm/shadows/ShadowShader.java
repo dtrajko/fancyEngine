@@ -35,7 +35,7 @@ public class ShadowShader extends ShaderProgram {
 		super.bindAttribute(1, "in_textureCoords");
 		super.bindAttribute(2, "in_normal");
 		super.bindAttribute(3, "in_jointIndices");
-		super.bindAttribute(4, "in_weights");		
+		super.bindAttribute(4, "in_weights");
 	}
 
 }

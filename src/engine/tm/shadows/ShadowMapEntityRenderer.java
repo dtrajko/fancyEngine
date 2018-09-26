@@ -14,6 +14,7 @@ import engine.tm.models.RawModel;
 import engine.tm.models.TexturedModel;
 import engine.tm.render.MasterRenderer;
 import engine.tm.toolbox.Maths;
+import engine.tm.utils.OpenGlUtils;
 
 public class ShadowMapEntityRenderer {
 
@@ -105,6 +106,7 @@ public class ShadowMapEntityRenderer {
 		Matrix4f mvpMatrix = new Matrix4f();
 		projectionViewMatrix.mul(modelMatrix, mvpMatrix);
 		shader.loadMvpMatrix(mvpMatrix);
+		shader.bindAttributes();
 	}
 
 	public Matrix4f getTransformationMatrix(Entity entity) {
