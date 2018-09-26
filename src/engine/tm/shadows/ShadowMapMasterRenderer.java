@@ -6,15 +6,11 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
-
 import engine.IScene;
-import engine.graph.ICamera;
 import engine.tm.entities.Entity;
 import engine.tm.entities.IPlayer;
 import engine.tm.entities.Light;
 import engine.tm.models.TexturedModel;
-import engine.tm.scene.Scene;
-import engine.utils.Util;
 
 /**
  * This class is in charge of using all of the classes in the shadows package to

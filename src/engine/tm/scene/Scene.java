@@ -165,7 +165,6 @@ public class Scene implements IScene {
 		player = new AnimatedPlayer(model, texture, headJoint, skeletonData.jointCount, new Vector3f(0, 2, -50), 0, 180, 0, 1.5f);
 		Animation animation = AnimationLoader.loadAnimation(new MyFile(WorldSettings.MODELS_DIR + "/cowboy.dae"));
 		((AnimatedModel) player).doAnimation(animation);
-		// processEntity((Entity) player);
 	}
 
 	public void processEntity(Entity entity) {

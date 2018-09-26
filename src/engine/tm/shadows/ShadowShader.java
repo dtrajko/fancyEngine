@@ -7,10 +7,11 @@ import engine.tm.shaders.UniformMat4Array;
 
 public class ShadowShader extends ShaderProgram {
 
+	private static final int MAX_JOINTS = 50; // max number of joints in a skeleton
+
 	private static final String VERTEX_FILE = WorldSettings.RESOURCES_SUBDIR + "/shaders/shadowVertexShader.glsl";
 	private static final String FRAGMENT_FILE = WorldSettings.RESOURCES_SUBDIR + "/shaders/shadowFragmentShader.glsl";
 
-	private static final int MAX_JOINTS = 50; // max number of joints in a skeleton
 
 	private int location_mvpMatrix;
 	protected UniformMat4Array jointTransforms = new UniformMat4Array("jointTransforms", MAX_JOINTS);
@@ -22,9 +23,8 @@ public class ShadowShader extends ShaderProgram {
 	@Override
 	protected void getAllUniformLocations() {
 		location_mvpMatrix = super.getUniformLocation("mvpMatrix");
-		
 	}
-	
+
 	protected void loadMvpMatrix(Matrix4f mvpMatrix) {
 		super.loadMatrix(location_mvpMatrix, mvpMatrix);
 	}

@@ -78,7 +78,7 @@ public class MasterRenderer {
 	}
 
 	public void render(Window window, IScene scene) {
-		
+
 		Vector4f clipPlane;
 		Camera camera = (Camera) ((Scene) scene).getCamera();
 		IPlayer player = ((Scene) scene).getPlayer();
@@ -108,7 +108,6 @@ public class MasterRenderer {
 		camera.getPosition().y += distance;
 		camera.invertPitch();
 		camera.invertRoll();
-
 
 		// render refraction texture
 		waterRenderer.getFBOs().bindRefractionFrameBuffer();

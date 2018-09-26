@@ -7,7 +7,6 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
-
 import engine.tm.animation.animatedModel.AnimatedModel;
 import engine.tm.entities.Entity;
 import engine.tm.entities.IPlayer;
@@ -15,7 +14,6 @@ import engine.tm.models.RawModel;
 import engine.tm.models.TexturedModel;
 import engine.tm.render.MasterRenderer;
 import engine.tm.toolbox.Maths;
-import engine.tm.utils.OpenGlUtils;
 
 public class ShadowMapEntityRenderer {
 
@@ -98,10 +96,21 @@ public class ShadowMapEntityRenderer {
 	 *            - the entity to be prepared for rendering.
 	 */
 	private void prepareInstance(Entity entity) {
+		float scale = entity.getScale();
+		if (entity instanceof AnimatedModel) {
+			// scale *= 10;
+		}
 		Matrix4f modelMatrix = Maths.createTransformationMatrix(entity.getPosition(),
-				entity.getRotX(), entity.getRotY(), entity.getRotZ(), entity.getScale());
+				entity.getRotX(), entity.getRotY(), entity.getRotZ(), scale);
 		Matrix4f mvpMatrix = new Matrix4f();
 		projectionViewMatrix.mul(modelMatrix, mvpMatrix);
 		shader.loadMvpMatrix(mvpMatrix);
 	}
+
+	public Matrix4f getTransformationMatrix(Entity entity) {
+		Matrix4f transformationMatrix = Maths.createTransformationMatrix(
+			entity.getPosition(), entity.getRotX(), entity.getRotY(), entity.getRotZ(), entity.getScale());
+		return transformationMatrix;
+	}
+
 }

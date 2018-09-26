@@ -12,7 +12,7 @@ public class AnimatedModelShader extends ShaderProgram {
 
 	private static final int MAX_JOINTS = 50; // max number of joints in a skeleton
 	private static final int DIFFUSE_TEX_UNIT = 0;
-	
+
 	private static final String VERTEX_FILE = WorldSettings.RESOURCES_SUBDIR + "/shaders/animatedEntityVertex.glsl";
 	private static final String FRAGMENT_FILE = WorldSettings.RESOURCES_SUBDIR + "/shaders/animatedEntityFragment.glsl";
 
