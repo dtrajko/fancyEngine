@@ -97,6 +97,7 @@ public class Scene implements IScene {
 	private Vector3f lightDirection = WorldSettings.LIGHT_DIR;
 	
 	private TerrainLowPoly terrainLowPoly;
+	private WaterTileLowPoly waterLowPoly;
 	private LightDirectional lightDirectional;
 
 	public Scene() {
@@ -130,7 +131,7 @@ public class Scene implements IScene {
 		ColorGenerator colorGen = new ColorGenerator(WorldSettings.TERRAIN_COLS, WorldSettings.COLOR_SPREAD);
 		TerrainGenerator terrainGenerator = new HybridTerrainGenerator(noise, colorGen);
 		terrainLowPoly = terrainGenerator.generateTerrain(WorldSettings.WORLD_SIZE);
-		WaterTileLowPoly water = WaterGenerator.generate(WorldSettings.WORLD_SIZE, WorldSettings.WATER_HEIGHT);
+		waterLowPoly = WaterGenerator.generate(WorldSettings.WORLD_SIZE, WorldSettings.WATER_HEIGHT);
 	}
 
 	private void setupLensFlare() {
@@ -474,6 +475,10 @@ public class Scene implements IScene {
 	
 	public TerrainLowPoly getTerrainLowPoly() {
 		return terrainLowPoly;
+	}
+
+	public WaterTileLowPoly getWaterLowPoly() {
+		return waterLowPoly;
 	}
 
 	public List<GuiTexture> getGuiElements() {

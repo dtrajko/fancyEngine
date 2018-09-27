@@ -16,7 +16,7 @@ import engine.tm.utils.OpenGlUtils;
  * @author Karl
  *
  */
-public class WaterRenderer {
+public class WaterRendererLowPoly {
 
 	private static final float WAVE_SPEED = 0.002f;
 
@@ -27,7 +27,7 @@ public class WaterRenderer {
 	/**
 	 * Initialises the shader program that will be used to render the water.
 	 */
-	public WaterRenderer() {
+	public WaterRendererLowPoly() {
 		this.shader = new WaterShader();
 	}
 

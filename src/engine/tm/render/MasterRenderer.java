@@ -2,12 +2,12 @@ package engine.tm.render;
 
 import java.util.List;
 import java.util.Map;
-
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
+import org.lwjgl.opengl.GL14;
 import org.lwjgl.opengl.GL30;
 import engine.IScene;
 import engine.Window;
@@ -18,10 +18,14 @@ import engine.tm.entities.Entity;
 import engine.tm.entities.EntityRenderer;
 import engine.tm.entities.IPlayer;
 import engine.tm.entities.Light;
-import engine.tm.entities.Player;
+import engine.tm.fbos.Attachment;
+import engine.tm.fbos.Fbo;
+import engine.tm.fbos.RenderBufferAttachment;
+import engine.tm.fbos.TextureAttachment;
 import engine.tm.gui.GuiRenderer;
 import engine.tm.gui.fonts.TextMaster;
 import engine.tm.lowPoly.TerrainRendererLowPoly;
+import engine.tm.lowPoly.WaterRendererLowPoly;
 import engine.tm.models.TexturedModel;
 import engine.tm.normalMapping.NormalMappingRenderer;
 import engine.tm.particles.ParticleMaster;
@@ -46,7 +50,6 @@ public class MasterRenderer {
 	private static Matrix4f projectionMatrix;
 
 	private static TerrainRenderer terrainRenderer;
-	private static TerrainRendererLowPoly terrainRendererLowPoly;
 	private static EntityRenderer entityRenderer;
 	private static NormalMappingRenderer normalMappingRenderer;
 	private static AnimatedModelRenderer animatedModelRenderer;
@@ -56,10 +59,14 @@ public class MasterRenderer {
 	private static GuiRenderer guiRenderer;
 	private static SunRenderer sunRenderer;
 
+	private static TerrainRendererLowPoly terrainRendererLowPoly;
+	private static WaterRendererLowPoly waterRendererLowPoly;
+	private static Fbo reflectionFbo;
+	private static Fbo refractionFbo;
+
 	public MasterRenderer() {
 		createProjectionMatrix();
 		terrainRenderer = new TerrainRenderer(projectionMatrix);
-		terrainRendererLowPoly = new TerrainRendererLowPoly(true);
 		entityRenderer = new EntityRenderer(projectionMatrix);
 		normalMappingRenderer = new NormalMappingRenderer(projectionMatrix);
 		animatedModelRenderer = new AnimatedModelRenderer(projectionMatrix);
@@ -68,6 +75,11 @@ public class MasterRenderer {
 		shadowMapRenderer = new ShadowMapMasterRenderer();
 		sunRenderer = new SunRenderer();
 		guiRenderer = new GuiRenderer();
+		// low poly stuff
+		terrainRendererLowPoly = new TerrainRendererLowPoly(true);
+		waterRendererLowPoly = new WaterRendererLowPoly();
+		reflectionFbo = createWaterFbo(Window.width, Window.height, false);
+		refractionFbo = createWaterFbo(Window.width / 2, Window.height / 2, true);
 	}
 
 	public void init(IScene scene) {
@@ -137,9 +149,13 @@ public class MasterRenderer {
 		skyboxRenderer.render(scene, clipPlane);
 		sunRenderer.render(scene);
 		terrainRenderer.render(scene, clipPlane, shadowMapRenderer.getToShadowMapSpaceMatrix());
-		terrainRendererLowPoly.render(((Scene) scene).getTerrainLowPoly(), camera, ((Scene) scene).getLightDirectional(), clipPlane);
 		entityRenderer.render(scene, clipPlane);
 		normalMappingRenderer.render(scene, clipPlane);
+
+		terrainRendererLowPoly.render(((Scene) scene).getTerrainLowPoly(), camera, ((Scene) scene).getLightDirectional(), clipPlane);
+		waterRendererLowPoly.render(((Scene) scene).getWaterLowPoly(), camera, ((Scene) scene).getLightDirectional(), 
+			reflectionFbo.getColourBuffer(0), refractionFbo.getColourBuffer(0), refractionFbo.getDepthBuffer());
+
 		if (player instanceof AnimatedModel) {
 			animatedModelRenderer.render((AnimatedModel) player, camera, lightDirection, clipPlane);
 		}
@@ -154,6 +170,31 @@ public class MasterRenderer {
 		TextMaster.render();
 
 		GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
+	}
+
+	/**
+	 * Sets up an FBO for one of the extra render passes. The FBO is initialized
+	 * with a texture color attachment, and can be initialized with either a
+	 * render buffer or texture attachment for the depth buffer.
+	 * 
+	 * @param width
+	 *            - The width of the FBO in pixels.
+	 * @param height
+	 *            - The height of the FBO in pixels.
+	 * @param useTextureForDepth
+	 *            - Whether the depth buffer attachment should be a texture or a
+	 *            render buffer.
+	 * @return The completed FBO.
+	 */
+	private static Fbo createWaterFbo(int width, int height, boolean useTextureForDepth) {
+		Attachment colourAttach = new TextureAttachment(GL11.GL_RGBA8);
+		Attachment depthAttach;
+		if (useTextureForDepth) {
+			depthAttach = new TextureAttachment(GL14.GL_DEPTH_COMPONENT24);
+		} else {
+			depthAttach = new RenderBufferAttachment(GL14.GL_DEPTH_COMPONENT24);
+		}
+		return Fbo.newFbo(width, height).addColourAttachment(0, colourAttach).addDepthAttachment(depthAttach).init();
 	}
 
 	public void renderScene(IScene scene, Vector4f clipPlane) {
@@ -236,7 +277,6 @@ public class MasterRenderer {
 	public void cleanUp(IScene scene) {
 		scene.cleanUp();
 		terrainRenderer.cleanUp();
-		terrainRendererLowPoly.cleanUp();
 		entityRenderer.cleanUp();
 		normalMappingRenderer.cleanUp();
 		animatedModelRenderer.cleanUp();
@@ -244,5 +284,7 @@ public class MasterRenderer {
 		waterRenderer.cleanUp();
 		shadowMapRenderer.cleanUp();
 		guiRenderer.cleanUp();
+		terrainRendererLowPoly.cleanUp();
+		waterRendererLowPoly.cleanUp();
 	}
 }
