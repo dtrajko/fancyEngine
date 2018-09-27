@@ -1,5 +1,6 @@
 package engine.tm.entities;
 
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 public class Light {
@@ -38,5 +39,15 @@ public class Light {
 
 	public void setColor(Vector3f color) {
 		this.color = color;
+	}
+
+	public Vector2f getLightBias() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Vector3f getDirection() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

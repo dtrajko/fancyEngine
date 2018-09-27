@@ -47,4 +47,8 @@ public class Maths {
 		float l3 = 1.0f - l1 - l2;
 		return l1 * p1.y + l2 * p2.y + l3 * p3.y;
 	}
+
+	public static float clamp(float value, float min, float max){
+		return Math.max(Math.min(value, max), min);
+	}
 }

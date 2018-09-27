@@ -14,5 +14,6 @@ public class WorldSettings {
 	public static final String FONTS_DIR = RESOURCES_SUBDIR + "/fonts";
 	public static final String LENS_FLARE_DIR = RESOURCES_SUBDIR + "/textures/lensFlare";
 	public static final Vector3f LIGHT_DIR = new Vector3f(0.55f, -0.15f, 0.54f);
+	public static final float WATER_HEIGHT = -0.2f;
 
 }
