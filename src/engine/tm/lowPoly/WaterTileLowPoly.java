@@ -10,13 +10,13 @@ import engine.tm.openglObjects.Vao;
  * @author Karl
  *
  */
-public class WaterTile {
+public class WaterTileLowPoly {
 
 	private final Vao vao;
 	private final int vertexCount;
 	private final float height;
 
-	protected WaterTile(Vao vao, int vertexCount, float height) {
+	protected WaterTileLowPoly(Vao vao, int vertexCount, float height) {
 		this.vao = vao;
 		this.height = height;
 		this.vertexCount = vertexCount;

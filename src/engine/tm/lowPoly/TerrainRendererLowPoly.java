@@ -12,7 +12,7 @@ import engine.tm.settings.WorldSettings;
  * @author Karl
  *
  */
-public class TerrainRenderer {
+public class TerrainRendererLowPoly {
 	
 	private static final String VERTEX_FILE = WorldSettings.RESOURCES_SUBDIR + "/shaders/flatTerrainVertex.glsl";
 	private static final String FRAGMENT_FILE = WorldSettings.RESOURCES_SUBDIR + "/shaders/flatTerrainFragment.glsl";
@@ -27,7 +27,7 @@ public class TerrainRenderer {
 	 *            - Indicates whether the terrain will be rendered with an index
 	 *            buffer or not.
 	 */
-	public TerrainRenderer(boolean usesIndices) {
+	public TerrainRendererLowPoly(boolean usesIndices) {
 		this.shader = new TerrainShader(VERTEX_FILE, FRAGMENT_FILE);
 		this.hasIndices = usesIndices;
 	}
@@ -48,7 +48,7 @@ public class TerrainRenderer {
 	 *            the terrain. The clipping planes cut off anything in the scene
 	 *            that is rendered outside of the plane.
 	 */
-	public void render(Terrain terrain, ICamera camera, LightDirectional light, Vector4f clipPlane) {
+	public void render(TerrainLowPoly terrain, ICamera camera, LightDirectional light, Vector4f clipPlane) {
 		prepare(terrain, camera, light, clipPlane);
 		if (hasIndices) {
 			GL11.glDrawElements(GL11.GL_TRIANGLES, terrain.getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
@@ -79,7 +79,7 @@ public class TerrainRenderer {
 	 *            the terrain. The clipping planes cut off anything in the scene
 	 *            that is rendered outside of the plane.
 	 */
-	private void prepare(Terrain terrain, ICamera camera, LightDirectional light, Vector4f clipPlane) {
+	private void prepare(TerrainLowPoly terrain, ICamera camera, LightDirectional light, Vector4f clipPlane) {
 		terrain.getVao().bind();
 		shader.start();
 		shader.plane.loadVec4(clipPlane);
@@ -95,7 +95,7 @@ public class TerrainRenderer {
 	 * 
 	 * @param terrain
 	 */
-	private void finish(Terrain terrain) {
+	private void finish(TerrainLowPoly terrain) {
 		terrain.getVao().unbind();
 		shader.stop();
 	}

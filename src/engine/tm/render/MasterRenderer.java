@@ -21,6 +21,7 @@ import engine.tm.entities.Light;
 import engine.tm.entities.Player;
 import engine.tm.gui.GuiRenderer;
 import engine.tm.gui.fonts.TextMaster;
+import engine.tm.lowPoly.TerrainRendererLowPoly;
 import engine.tm.models.TexturedModel;
 import engine.tm.normalMapping.NormalMappingRenderer;
 import engine.tm.particles.ParticleMaster;
@@ -45,6 +46,7 @@ public class MasterRenderer {
 	private static Matrix4f projectionMatrix;
 
 	private static TerrainRenderer terrainRenderer;
+	private static TerrainRendererLowPoly terrainRendererLowPoly;
 	private static EntityRenderer entityRenderer;
 	private static NormalMappingRenderer normalMappingRenderer;
 	private static AnimatedModelRenderer animatedModelRenderer;
@@ -57,6 +59,7 @@ public class MasterRenderer {
 	public MasterRenderer() {
 		createProjectionMatrix();
 		terrainRenderer = new TerrainRenderer(projectionMatrix);
+		terrainRendererLowPoly = new TerrainRendererLowPoly(true);
 		entityRenderer = new EntityRenderer(projectionMatrix);
 		normalMappingRenderer = new NormalMappingRenderer(projectionMatrix);
 		animatedModelRenderer = new AnimatedModelRenderer(projectionMatrix);
@@ -134,6 +137,7 @@ public class MasterRenderer {
 		skyboxRenderer.render(scene, clipPlane);
 		sunRenderer.render(scene);
 		terrainRenderer.render(scene, clipPlane, shadowMapRenderer.getToShadowMapSpaceMatrix());
+		terrainRendererLowPoly.render(((Scene) scene).getTerrainLowPoly(), camera, ((Scene) scene).getLightDirectional(), clipPlane);
 		entityRenderer.render(scene, clipPlane);
 		normalMappingRenderer.render(scene, clipPlane);
 		if (player instanceof AnimatedModel) {
@@ -168,7 +172,8 @@ public class MasterRenderer {
 	public void renderMinimap(IScene scene) {
 
 		Camera camera = (Camera) ((Scene) scene).getCamera();
-		IPlayer player = ((Scene) scene).getPlayer();
+		IPlayer player = ((Scene) scene).getPlayer();		
+		Vector4f clipPlane = new Vector4f(0, 1, 0, -Water.HEIGHT);
 
 		// render minimap
 		waterRenderer.getFBOs().bindMinimapFrameBuffer();
@@ -179,7 +184,7 @@ public class MasterRenderer {
 		camera.setPitch(90);
 		camera.setYaw(currentYaw - 180);
 		prepare();
-		terrainRenderer.render(scene, new Vector4f(0, 1, 0, -Water.HEIGHT));
+		terrainRenderer.render(scene, clipPlane);
 		entityRenderer.render(scene);
 		normalMappingRenderer.render(scene);
 		camera.setPosition(cameraPosition);
@@ -231,6 +236,7 @@ public class MasterRenderer {
 	public void cleanUp(IScene scene) {
 		scene.cleanUp();
 		terrainRenderer.cleanUp();
+		terrainRendererLowPoly.cleanUp();
 		entityRenderer.cleanUp();
 		normalMappingRenderer.cleanUp();
 		animatedModelRenderer.cleanUp();

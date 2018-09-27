@@ -27,15 +27,23 @@ import engine.tm.entities.Camera;
 import engine.tm.entities.Entity;
 import engine.tm.entities.IPlayer;
 import engine.tm.entities.Light;
+import engine.tm.entities.LightDirectional;
 import engine.tm.entities.Player;
 import engine.tm.gui.GuiTexture;
 import engine.tm.gui.fonts.FontType;
 import engine.tm.gui.fonts.GUIText;
 import engine.tm.gui.fonts.TextMaster;
+import engine.tm.hybridTerrain.HybridTerrainGenerator;
 import engine.tm.lensFlare.FlareManager;
 import engine.tm.lensFlare.FlareTexture;
 import engine.tm.loaders.Loader;
 import engine.tm.loaders.OBJLoader;
+import engine.tm.lowPoly.ColorGenerator;
+import engine.tm.lowPoly.PerlinNoise;
+import engine.tm.lowPoly.TerrainGenerator;
+import engine.tm.lowPoly.TerrainLowPoly;
+import engine.tm.lowPoly.WaterGenerator;
+import engine.tm.lowPoly.WaterTileLowPoly;
 import engine.tm.models.RawModel;
 import engine.tm.models.TexturedModel;
 import engine.tm.normalMapping.NormalMappedObjLoader;
@@ -48,7 +56,6 @@ import engine.tm.render.MasterRenderer;
 import engine.tm.settings.WorldSettings;
 import engine.tm.skybox.Skybox;
 import engine.tm.sunRenderer.Sun;
-import engine.tm.sunRenderer.SunRenderer;
 import engine.tm.terrains.ITerrain;
 import engine.tm.terrains.Terrain;
 import engine.tm.terrains.TerrainProcedural;
@@ -56,6 +63,7 @@ import engine.tm.textures.ModelTexture;
 import engine.tm.textures.TerrainTexture;
 import engine.tm.textures.TerrainTexturePack;
 import engine.tm.textures.Texture;
+import engine.tm.utils.Color;
 import engine.tm.water.Water;
 import engine.tm.water.WaterTile;
 import engine.utils.Maths;
@@ -87,6 +95,9 @@ public class Scene implements IScene {
 	private FireMaster fireManager;
 	private FlareManager flareManager;
 	private Vector3f lightDirection = WorldSettings.LIGHT_DIR;
+	
+	private TerrainLowPoly terrainLowPoly;
+	private LightDirectional lightDirectional;
 
 	public Scene() {
 		camera = new Camera();
@@ -97,7 +108,9 @@ public class Scene implements IScene {
 	}
 
 	public void init() {
-		setupTerrains(); // setupTerrainsProcedural();
+		setupTerrain();
+		// setupTerrainProcedural();
+		setupLowPolyTerrain();
 		generateForestModels();
 		generateNormalMapEntities();
 		// setupPlayer();
@@ -109,6 +122,15 @@ public class Scene implements IScene {
 		setupGui();
 		setupText();
 		masterRenderer.init(this); // should be called after entities list is populated
+	}
+
+	private void setupLowPolyTerrain() {
+		// initialize terrain
+		PerlinNoise noise = new PerlinNoise(WorldSettings.OCTAVES, WorldSettings.AMPLITUDE, WorldSettings.ROUGHNESS);
+		ColorGenerator colorGen = new ColorGenerator(WorldSettings.TERRAIN_COLS, WorldSettings.COLOR_SPREAD);
+		TerrainGenerator terrainGenerator = new HybridTerrainGenerator(noise, colorGen);
+		terrainLowPoly = terrainGenerator.generateTerrain(WorldSettings.WORLD_SIZE);
+		WaterTileLowPoly water = WaterGenerator.generate(WorldSettings.WORLD_SIZE, WorldSettings.WATER_HEIGHT);
 	}
 
 	private void setupLensFlare() {
@@ -146,6 +168,7 @@ public class Scene implements IScene {
 		//init sun and set sun direction
 		sun = new Sun(textureSun, 20);
 		sun.setDirection(WorldSettings.LIGHT_DIR);
+		lightDirectional = new LightDirectional(WorldSettings.LIGHT_DIR, WorldSettings.LIGHT_COL, WorldSettings.LIGHT_BIAS);
 	}
 
 	private void setupPlayer() {
@@ -233,6 +256,10 @@ public class Scene implements IScene {
 	public Sun getSun() {
 		return sun;
 	}
+	
+	public LightDirectional getLightDirectional() {
+		return lightDirectional;
+	}
 
 	private void setupParticles() {
 		fireMode = true;
@@ -269,7 +296,7 @@ public class Scene implements IScene {
 		processWaterTile(waterTile_2);
 	}
 
-	private void setupTerrains() {
+	private void setupTerrain() {
 		TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/terrain_1/bg.png"));
 		TerrainTexture rTexture = new TerrainTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/terrain_1/1.png"));
 		TerrainTexture gTexture = new TerrainTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/terrain_1/2.png"));
@@ -283,7 +310,7 @@ public class Scene implements IScene {
 		processTerrain(terrain_2);
 	}
 
-	private void setupTerrainsProcedural() {
+	private void setupTerrainProcedural() {
 		TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/terrain_1/bg.png"));
 		TerrainTexture rTexture = new TerrainTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/terrain_1/1.png"));
 		TerrainTexture gTexture = new TerrainTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/terrain_1/2.png"));
@@ -443,6 +470,10 @@ public class Scene implements IScene {
 
 	public List<ITerrain> getTerrains() {
 		return terrains;
+	}
+	
+	public TerrainLowPoly getTerrainLowPoly() {
+		return terrainLowPoly;
 	}
 
 	public List<GuiTexture> getGuiElements() {

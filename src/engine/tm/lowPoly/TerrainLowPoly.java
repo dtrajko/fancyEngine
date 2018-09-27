@@ -6,15 +6,15 @@ import engine.tm.entities.LightDirectional;
 import engine.tm.openglObjects.Vao;
 import engine.tm.settings.WorldSettings;
 
-public class Terrain {
+public class TerrainLowPoly {
 
 	private final Vao vao;
 	private final int vertexCount;
-	private final TerrainRenderer renderer;
+	private final TerrainRendererLowPoly renderer;
 	private final float[][] heights;
 	private final float WATER_HEIGHT = WorldSettings.WATER_HEIGHT;
 
-	public Terrain(Vao vao, int vertexCount, TerrainRenderer renderer, float[][] heights){
+	public TerrainLowPoly(Vao vao, int vertexCount, TerrainRendererLowPoly renderer, float[][] heights){
 		this.vao = vao;
 		this.vertexCount = vertexCount;
 		this.renderer = renderer;

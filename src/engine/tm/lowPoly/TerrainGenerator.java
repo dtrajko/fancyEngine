@@ -30,7 +30,7 @@ public abstract class TerrainGenerator {
 	 *            - The number of grid squares along one side of the terrain.
 	 * @return The generated terrain.
 	 */
-	public Terrain generateTerrain(int gridSize) {
+	public TerrainLowPoly generateTerrain(int gridSize) {
 		float[][] heights = generateHeights(gridSize, perlinNoise);
 		Color[][] colors = colorGen.generateColors(heights, perlinNoise.getAmplitude());
 		return createTerrain(heights, colors);
@@ -51,7 +51,7 @@ public abstract class TerrainGenerator {
 	 *            - The colors of all the vertices.
 	 * @return The new terrain.
 	 */
-	protected abstract Terrain createTerrain(float[][] heights, Color[][] colors);
+	protected abstract TerrainLowPoly createTerrain(float[][] heights, Color[][] colors);
 
 	/**
 	 * Uses the perlin noise generator (which might actually not be using the

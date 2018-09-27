@@ -56,7 +56,7 @@ public class WaterRenderer {
 	 *            - An image of the depth buffer for the scene. This is used to
 	 *            apply depth effects to the water.
 	 */
-	public void render(WaterTile water, ICamera camera, LightDirectional light, int reflectionTexture, int refractionTexture,
+	public void render(WaterTileLowPoly water, ICamera camera, LightDirectional light, int reflectionTexture, int refractionTexture,
 			int depthTexture) {
 		prepare(water, camera, light);
 		bindTextures(reflectionTexture, refractionTexture, depthTexture);
@@ -82,7 +82,7 @@ public class WaterRenderer {
 	 * @param light
 	 *            - The scene's light.
 	 */
-	private void prepare(WaterTile water, ICamera camera, LightDirectional light) {
+	private void prepare(WaterTileLowPoly water, ICamera camera, LightDirectional light) {
 		water.getVao().bind();
 		OpenGlUtils.enableAlphaBlending();
 		prepareShader(water, camera, light);
@@ -125,7 +125,7 @@ public class WaterRenderer {
 	 * @param water
 	 *            - The water that was being rendered.
 	 */
-	private void finish(WaterTile water) {
+	private void finish(WaterTileLowPoly water) {
 		water.getVao().unbind();
 		shader.stop();
 		OpenGlUtils.disableBlending();
@@ -144,7 +144,7 @@ public class WaterRenderer {
 	 * @param light
 	 *            - The light in the scene.
 	 */
-	private void prepareShader(WaterTile water, ICamera camera, LightDirectional light) {
+	private void prepareShader(WaterTileLowPoly water, ICamera camera, LightDirectional light) {
 		shader.start();
 		updateTime();
 		loadCameraVariables(camera);
