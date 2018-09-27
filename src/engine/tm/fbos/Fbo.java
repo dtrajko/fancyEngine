@@ -78,7 +78,7 @@ public class Fbo {
 	 *            - The index of the colour attachment.
 	 * @return The ID of the buffer.
 	 */
-	public int getColourBuffer(int colourIndex) {
+	public int getColorBuffer(int colourIndex) {
 		return colourAttachments.get(colourIndex).getBufferId();
 	}
 
