@@ -96,8 +96,8 @@ public class MasterRenderer {
 	}
 
 	public void render(Window window, IScene scene) {
-		// renderClassic(window, scene);
-		renderLowPoly(window, scene);
+		renderClassic(window, scene);
+		// renderLowPoly(window, scene);
 	}
 
 	public void renderClassic(Window window, IScene scene) {
