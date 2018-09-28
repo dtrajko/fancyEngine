@@ -1,6 +1,11 @@
 package engine.tm.entities;
 
+import java.util.List;
+import java.util.Map;
+
 import org.joml.Vector3f;
+
+import engine.IScene;
 import engine.items.Box3D;
 import engine.tm.models.RawModel;
 import engine.tm.models.TexturedModel;
@@ -94,6 +99,34 @@ public class Entity {
 		this.rotX += dx;
 		this.rotY += dy;
 		this.rotZ += dz;
+	}
+
+	public static Entity getEntityInCollisionWith(IScene scene, float x, float y, float z, float range) {
+		Entity entityInCollisionWith = null;
+		Map<TexturedModel, List<Entity>> entities = scene.getEntityList();
+		for(TexturedModel model: entities.keySet()) {
+			List<Entity> batch = entities.get(model);
+			for(Entity entity : batch) {
+				if (inCollisionWithEntity(entity, x, y, z, range)) {
+					entityInCollisionWith = entity;
+					break;
+				}
+			}
+		}
+		return entityInCollisionWith;
+	}
+
+	public boolean inCollision(IScene scene, float x, float y, float z) {
+		Entity entity = getEntityInCollisionWith(scene, x, y, z, 0.0f);
+		return entity != null;
+	}
+
+	public static boolean inCollisionWithEntity(Entity entity, float x, float y, float z, float range) {
+		if (entity instanceof Player) return false;
+		if (entity.getBoundingBox().contains(x, y, z, range)) {
+			return true;
+		}
+		return false;
 	}
 
 	public TexturedModel getTexturedModel() {

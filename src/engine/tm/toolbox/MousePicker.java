@@ -41,7 +41,7 @@ public class MousePicker {
 	}
 
 	private ITerrain getTerrain(float worldX, float worldZ) {
-		return ((Scene) scene).getCurrentTerrain();
+		return scene.getCurrentTerrain(worldX, worldZ);
 	}
 
 	public boolean isDragEnabled(Input input) {

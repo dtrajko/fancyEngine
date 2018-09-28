@@ -4,7 +4,7 @@ import org.joml.Vector3f;
 
 import engine.tm.textures.Texture;
 
-public class Sun {
+public class Sun implements ISun {
 
 	private static final float SUN_DIS = 50; // fairly arbitrary - but make sure it doesn't go behind skybox
 	private final Texture texture;

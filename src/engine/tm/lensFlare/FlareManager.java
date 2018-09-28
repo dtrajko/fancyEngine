@@ -5,8 +5,10 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import engine.IScene;
+import engine.graph.ICamera;
 import engine.tm.entities.Camera;
 import engine.tm.scene.Scene;
+import engine.tm.sunRenderer.Sun;
 
 public class FlareManager {
 
@@ -24,8 +26,9 @@ public class FlareManager {
 	}
 
 	public void render(IScene scene) {
-		Camera camera = (Camera) ((Scene) scene).getCamera();
-		Vector3f sunWorldPos = ((Scene) scene).getSun().getWorldPosition(camera.getPosition());		
+		ICamera camera = scene.getCamera();
+		Sun sun = (Sun) scene.getSun();
+		Vector3f sunWorldPos = sun.getWorldPosition(camera.getPosition());
 		Vector2f sunCoords = convertToScreenSpace(sunWorldPos, camera.getViewMatrix(), ((Camera) camera).getProjectionMatrix());
 		if(sunCoords == null){
 			return;

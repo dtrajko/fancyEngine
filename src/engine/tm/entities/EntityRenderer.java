@@ -15,6 +15,7 @@ import engine.Window;
 import engine.graph.ICamera;
 import engine.tm.models.RawModel;
 import engine.tm.models.TexturedModel;
+import engine.tm.render.IMasterRenderer;
 import engine.tm.render.MasterRenderer;
 import engine.tm.scene.Scene;
 import engine.tm.textures.ModelTexture;
@@ -36,7 +37,7 @@ public class EntityRenderer {
 
 	public void init(IScene scene) {
 		entities.clear();
-		Map<TexturedModel, List<Entity>> entitiesTmp = ((Scene) scene).getEntityList();
+		Map<TexturedModel, List<Entity>> entitiesTmp = scene.getEntityList();
 		for (TexturedModel model : entitiesTmp.keySet()) {
 			List<Entity> batchTmp = entitiesTmp.get(model);
 			for (Entity entity : batchTmp) {
@@ -73,7 +74,7 @@ public class EntityRenderer {
 	private void prepare(Vector4f clipPlane, List<Light> lights, ICamera camera) {
 		Matrix4f viewMatrix = Maths.createViewMatrix(camera);
 		shader.loadClipPlane(clipPlane);
-		shader.loadSkyColor(MasterRenderer.RED, MasterRenderer.GREEN, MasterRenderer.BLUE);
+		shader.loadSkyColor(IMasterRenderer.RED, IMasterRenderer.GREEN, IMasterRenderer.BLUE);
 		shader.loadLights(lights);
 		shader.loadViewMatrix(viewMatrix);
 	}
@@ -108,7 +109,7 @@ public class EntityRenderer {
 		}
 
 		shader.loadTextureAtlasNumRows(texture.getNumberOfRows());
-		shader.loadSkyColor(MasterRenderer.RED, MasterRenderer.GREEN, MasterRenderer.BLUE);
+		shader.loadSkyColor(IMasterRenderer.RED, IMasterRenderer.GREEN, IMasterRenderer.BLUE);
 		shader.loadFakeLightingVariable(texture.useFakeLighting());
 		shader.loadShineVariables(texture.getShineDamper(), texture.getReflectivity());
 

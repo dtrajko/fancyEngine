@@ -49,12 +49,12 @@ public class AnimatedPlayer extends AnimatedModel implements IPlayer {
 
 		Vector3f currentPos = this.getPosition();
 
-		Entity entity = ((Scene) scene).getEntityInCollisionWith(currentPos.x, currentPos.y, currentPos.z, 0.0f);
+		Entity entity = Entity.getEntityInCollisionWith(scene, currentPos.x, currentPos.y, currentPos.z, 0.0f);
 		if (entity instanceof Entity && entity.isSolid()) {
 			super.decreasePosition(dx, upwardsSpeed, dz);
 		}
 
-		ITerrain currentTerrain = ((Scene) scene).getCurrentTerrain(super.getPosition().x, super.getPosition().z);
+		ITerrain currentTerrain = scene.getCurrentTerrain(super.getPosition().x, super.getPosition().z);
 		float terrainHeight = TERRAIN_HEIGHT;
 		if (currentTerrain != null) {
 			terrainHeight = currentTerrain.getHeightOfTerrain(super.getPosition().x, super.getPosition().z);

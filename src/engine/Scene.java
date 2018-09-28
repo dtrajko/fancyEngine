@@ -41,6 +41,16 @@ import engine.sound.SoundBuffer;
 import engine.sound.SoundListener;
 import engine.sound.SoundManager;
 import engine.sound.SoundSource;
+import engine.tm.entities.Entity;
+import engine.tm.entities.IPlayer;
+import engine.tm.gui.GuiTexture;
+import engine.tm.lensFlare.FlareManager;
+import engine.tm.loaders.Loader;
+import engine.tm.models.TexturedModel;
+import engine.tm.particles.FireMaster;
+import engine.tm.skybox.Skybox;
+import engine.tm.sunRenderer.ISun;
+import engine.tm.terrains.ITerrain;
 import game.Game3D;
 
 public class Scene implements IScene {
@@ -652,5 +662,59 @@ public class Scene implements IScene {
 
 	public void generateBlockParticles(GameItem selectedGameItem, Camera camera) {
 		setupBlockParticles(selectedGameItem, camera);
+	}
+
+	@Override
+	public Vector3f getLightDirection() {
+		return sceneLight.getDirectionalLight().getDirection();
+	}
+
+	@Override
+	public Map<TexturedModel, List<Entity>> getEntityList() {
+		return null;
+	}
+
+	@Override
+	public Loader getLoader() {
+		return null;
+	}
+
+	@Override
+	public ITerrain getCurrentTerrain(float x, float z) {
+		return null;
+	}
+
+	@Override
+	public IPlayer getPlayer() {
+		return null;
+	}
+
+	@Override
+	public Skybox getSkybox() {
+		return null;
+	}
+
+	@Override
+	public ISun getSun() {
+		return null;
+	}
+
+	@Override
+	public List<GuiTexture> getGuiElements() {
+		return null;
+	}
+
+	@Override
+	public FlareManager getFlareManager() {
+		return null;
+	}
+
+	@Override
+	public FireMaster getFireMaster() {
+		return null;
+	}
+
+	@Override
+	public void removeEntity(Entity entity) {
 	}
 }

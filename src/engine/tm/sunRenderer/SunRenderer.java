@@ -27,8 +27,8 @@ public class SunRenderer {
 	}
 
 	public void render(IScene scene) {
-		Sun sun = ((Scene) scene).getSun();
-		Camera camera = (Camera) ((Scene) scene).getCamera();
+		ISun sun = scene.getSun();
+		ICamera camera = scene.getCamera();
 		prepare(sun, camera);
 		GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, 4);
 		endRendering();
@@ -38,7 +38,7 @@ public class SunRenderer {
 		shader.cleanUp();
 	}
 
-	private void prepare(Sun sun, ICamera camera) {
+	private void prepare(ISun sun, ICamera camera) {
 		OpenGlUtils.antialias(false);
 		GL11.glDepthMask(false);
 		OpenGlUtils.enableAlphaBlending();
@@ -46,16 +46,17 @@ public class SunRenderer {
 		Matrix4f mvpMat = calculateMvpMatrix(sun, camera);		
 		shader.mvpMatrix.loadMatrix(mvpMat);
 		quad.bind(0);
-		sun.getTexture().bindToUnit(0);
+		 ((Sun) sun).getTexture().bindToUnit(0);
 	}
 
-	private Matrix4f calculateMvpMatrix(Sun sun, ICamera camera) {
+	private Matrix4f calculateMvpMatrix(ISun sun, ICamera camera) {
 		Matrix4f mvpMatrix = new Matrix4f();
 		Matrix4f modelMatrix = new Matrix4f();
-		Vector3f sunPos = sun.getWorldPosition(camera.getPosition());
+		Vector3f sunPos = ((Sun) sun).getWorldPosition(camera.getPosition());
 		modelMatrix.translate(sunPos, modelMatrix);
 		Matrix4f modelViewMat = applyViewMatrix(modelMatrix, camera.getViewMatrix());
-		modelViewMat.scale(new Vector3f(sun.getScale(), sun.getScale(), sun.getScale()), modelViewMat);
+		float sunScale = ((Sun) sun).getScale();
+		modelViewMat.scale(new Vector3f(sunScale, sunScale, sunScale), modelViewMat);
 		((Camera) camera).getProjectionMatrix().mul(modelViewMat, mvpMatrix);
 		return mvpMatrix;
 	}

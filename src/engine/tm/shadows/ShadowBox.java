@@ -7,8 +7,7 @@ import engine.IScene;
 import engine.Window;
 import engine.graph.ICamera;
 import engine.tm.entities.Camera;
-import engine.tm.render.MasterRenderer;
-import engine.tm.scene.Scene;
+import engine.tm.render.IMasterRenderer;
 
 /**
  * Represents the 3D cuboidal area of the world in which objects will cast
@@ -53,7 +52,7 @@ public class ShadowBox {
 	 */
 	protected ShadowBox(Matrix4f lightViewMatrix, IScene scene) {
 		this.lightViewMatrix = lightViewMatrix;
-		this.camera = ((Scene) scene).getCamera();
+		this.camera = scene.getCamera();
 		calculateWidthsAndHeights();
 	}
 
@@ -71,10 +70,10 @@ public class ShadowBox {
 		Vector3f toFar = new Vector3f(forwardVector3f);
 		toFar.normalize(SHADOW_DISTANCE);
 		Vector3f toNear = new Vector3f(forwardVector3f);
-		toNear.normalize(MasterRenderer.NEAR_PLANE);		
+		toNear.normalize(IMasterRenderer.NEAR_PLANE);
 		Vector3f camPos = camera.getPosition();
 		Vector3f centerNear = toNear.add(camPos);
-		Vector3f centerFar = toFar.add(camPos);		
+		Vector3f centerFar = toFar.add(camPos);
 		Vector4f[] points = calculateFrustumVertices(rotation, forwardVector3f, centerNear, centerFar);
 
 		boolean first = true;
@@ -228,8 +227,8 @@ public class ShadowBox {
 	 * but means that distant objects wouldn't cast shadows.
 	 */
 	private void calculateWidthsAndHeights() {
-		farWidth = (float) (SHADOW_DISTANCE * Math.tan(Math.toRadians(MasterRenderer.FOV)));
-		nearWidth = (float) (MasterRenderer.NEAR_PLANE * Math.tan(Math.toRadians(MasterRenderer.FOV)));
+		farWidth = (float) (SHADOW_DISTANCE * Math.tan(Math.toRadians(IMasterRenderer.FOV)));
+		nearWidth = (float) (IMasterRenderer.NEAR_PLANE * Math.tan(Math.toRadians(IMasterRenderer.FOV)));
 		farHeight = farWidth / getAspectRatio();
 		nearHeight = nearWidth / getAspectRatio();
 	}

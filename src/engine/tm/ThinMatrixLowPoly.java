@@ -8,13 +8,13 @@ import engine.graph.Input;
 import engine.sound.SoundManager;
 import engine.tm.entities.Camera;
 import engine.tm.entities.IPlayer;
-import engine.tm.entities.Player;
 import engine.tm.gui.fonts.TextMaster;
 import engine.tm.particles.ParticleMaster;
 import engine.tm.scene.Scene;
+import engine.tm.scene.SceneLowPoly;
 import engine.tm.toolbox.MousePicker;
 
-public class ThinMatrix implements IGameLogic {
+public class ThinMatrixLowPoly implements IGameLogic {
 
 	private Window window;
 	private IScene scene;
@@ -23,11 +23,11 @@ public class ThinMatrix implements IGameLogic {
 
 	@Override
 	public void init(Window window) throws Exception {
-		scene = new Scene();
-		((Scene) scene).init();
+		scene = new SceneLowPoly();
+		((SceneLowPoly) scene).init();
 		TextMaster.init();
-		ParticleMaster.init(scene, ((Scene) scene).getMasterRenderer().getProjectionMatrix());
-		mousePicker = new MousePicker(scene, ((Scene) scene).getMasterRenderer().getProjectionMatrix());
+		ParticleMaster.init(scene, ((SceneLowPoly) scene).getMasterRenderer().getProjectionMatrix());
+		mousePicker = new MousePicker(scene, ((SceneLowPoly) scene).getMasterRenderer().getProjectionMatrix());
 	}
 
 	@Override
@@ -40,7 +40,7 @@ public class ThinMatrix implements IGameLogic {
 
 	@Override
 	public void update(float interval, Input input) {
-		IPlayer player = ((Scene) scene).getPlayer();
+		IPlayer player = ((SceneLowPoly) scene).getPlayer();
 		scene.update(interval, input);
 		player.move(interval, input, scene);
 		((Camera) scene.getCamera()).moveWithPlayer(scene, input);
@@ -50,7 +50,7 @@ public class ThinMatrix implements IGameLogic {
 
 	@Override
 	public void render(Window window) {
-		((Scene) scene).getMasterRenderer().render(window, scene);
+		((SceneLowPoly) scene).getMasterRenderer().render(window, scene);
 	}
 
 	@Override
@@ -77,6 +77,6 @@ public class ThinMatrix implements IGameLogic {
 	public void cleanUp() {
 		TextMaster.cleanUp();
 		ParticleMaster.cleanUp();
-		((Scene) scene).getMasterRenderer().cleanUp(scene);
+		((SceneLowPoly) scene).getMasterRenderer().cleanUp(scene);
 	}
 }

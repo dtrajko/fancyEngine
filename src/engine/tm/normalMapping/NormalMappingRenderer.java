@@ -16,6 +16,7 @@ import engine.tm.entities.Entity;
 import engine.tm.entities.Light;
 import engine.tm.models.RawModel;
 import engine.tm.models.TexturedModel;
+import engine.tm.render.IMasterRenderer;
 import engine.tm.render.MasterRenderer;
 import engine.tm.scene.Scene;
 import engine.tm.textures.ModelTexture;
@@ -38,7 +39,7 @@ public class NormalMappingRenderer {
 
 	public void init(IScene scene) {
 		entities.clear();
-		Map<TexturedModel, List<Entity>> entitiesTmp = ((Scene) scene).getEntityList();
+		Map<TexturedModel, List<Entity>> entitiesTmp = scene.getEntityList();
 		for (TexturedModel model : entitiesTmp.keySet()) {
 			List<Entity> batchTmp = entitiesTmp.get(model);
 			for (Entity entity : batchTmp) {
@@ -75,7 +76,7 @@ public class NormalMappingRenderer {
 	private void prepare(Vector4f clipPlane, List<Light> lights, ICamera camera) {
 		shader.loadClipPlane(clipPlane);
 		// need to be public variables in MasterRenderer
-		shader.loadSkyColor(MasterRenderer.RED, MasterRenderer.GREEN, MasterRenderer.BLUE);
+		shader.loadSkyColor(IMasterRenderer.RED, IMasterRenderer.GREEN, IMasterRenderer.BLUE);
 		Matrix4f viewMatrix = Maths.createViewMatrix(camera);
 		shader.loadLights(lights, viewMatrix);
 		shader.loadViewMatrix(viewMatrix);

@@ -45,7 +45,7 @@ public class Player extends Entity implements IPlayer {
 
 		Vector3f currentPos = this.getPosition();
 
-		Entity entity = ((Scene) scene).getEntityInCollisionWith(currentPos.x, currentPos.y, currentPos.z, 0.0f);
+		Entity entity = Entity.getEntityInCollisionWith(scene, currentPos.x, currentPos.y, currentPos.z, 0.0f);
 		if (entity instanceof Entity && entity.isSolid()) {
 			super.decreasePosition(dx, upwardsSpeed, dz);
 		}

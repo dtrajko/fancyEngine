@@ -33,6 +33,7 @@ import engine.tm.models.TexturedModel;
 import engine.tm.normalMapping.NormalMappingRenderer;
 import engine.tm.particles.ParticleMaster;
 import engine.tm.scene.Scene;
+import engine.tm.scene.SceneLowPoly;
 import engine.tm.shadows.ShadowMapMasterRenderer;
 import engine.tm.skybox.SkyboxRenderer;
 import engine.tm.sunRenderer.SunRenderer;
@@ -40,41 +41,33 @@ import engine.tm.terrains.TerrainRenderer;
 import engine.tm.water.Water;
 import engine.tm.water.WaterRenderer;
 
-public class MasterRenderer implements IMasterRenderer {
+public class MasterRendererLowPoly implements IMasterRenderer {
 
 	private static Matrix4f projectionMatrix;
-
-	private static TerrainRenderer terrainRenderer;
-	private static EntityRenderer entityRenderer;
-	private static NormalMappingRenderer normalMappingRenderer;
-	private static AnimatedModelRenderer animatedModelRenderer;
-	private static SkyboxRenderer skyboxRenderer;
-	private static WaterRenderer waterRenderer;
-	private static ShadowMapMasterRenderer shadowMapRenderer;
-	private static GuiRenderer guiRenderer;
-	private static SunRenderer sunRenderer;
 
 	private static TerrainRendererLowPoly terrainRendererLowPoly;
 	private static WaterRendererLowPoly waterRendererLowPoly;
 	private static Fbo reflectionFbo;
 	private static Fbo refractionFbo;
 
-	public MasterRenderer() {
+	private static AnimatedModelRenderer animatedModelRenderer;
+	private static SkyboxRenderer skyboxRenderer;
+	private static SunRenderer sunRenderer;
+	private static GuiRenderer guiRenderer;
+
+	public MasterRendererLowPoly() {
 		createProjectionMatrix();
-		terrainRenderer = new TerrainRenderer(projectionMatrix);
-		entityRenderer = new EntityRenderer(projectionMatrix);
-		normalMappingRenderer = new NormalMappingRenderer(projectionMatrix);
-		animatedModelRenderer = new AnimatedModelRenderer(projectionMatrix);
-		skyboxRenderer = new SkyboxRenderer(projectionMatrix);
-		waterRenderer = new WaterRenderer(projectionMatrix);
-		shadowMapRenderer = new ShadowMapMasterRenderer();
-		sunRenderer = new SunRenderer();
-		guiRenderer = new GuiRenderer();
 
 		terrainRendererLowPoly = new TerrainRendererLowPoly(true);
 		waterRendererLowPoly = new WaterRendererLowPoly();
 		reflectionFbo = createWaterFbo(Window.width, Window.height, false);
 		refractionFbo = createWaterFbo(Window.width / 2, Window.height / 2, true);
+
+		animatedModelRenderer = new AnimatedModelRenderer(projectionMatrix);
+		skyboxRenderer = new SkyboxRenderer(projectionMatrix);
+		sunRenderer = new SunRenderer();
+		guiRenderer = new GuiRenderer();
+
 	}
 
 	/* (non-Javadoc)
@@ -82,13 +75,10 @@ public class MasterRenderer implements IMasterRenderer {
 	 */
 	@Override
 	public void init(IScene scene) {
-		entityRenderer.init(scene);
-		normalMappingRenderer.init(scene);
-		shadowMapRenderer.init(scene);
 	}
 
-	public static WaterRenderer getWaterRenderer() {
-		return waterRenderer;
+	public static WaterRendererLowPoly getWaterRenderer() {
+		return waterRendererLowPoly;
 	}
 
 	/* (non-Javadoc)
@@ -96,94 +86,14 @@ public class MasterRenderer implements IMasterRenderer {
 	 */
 	@Override
 	public void render(Window window, IScene scene) {
-		renderClassic(window, scene);
-		// renderLowPoly(window, scene);
-	}
-
-	public void renderClassic(Window window, IScene scene) {
 
 		Vector4f clipPlane;
-		Camera camera = (Camera) ((Scene) scene).getCamera();
-		IPlayer player = ((Scene) scene).getPlayer();
-		Vector3f lightDirection = ((Scene) scene).getLightDirection();
-
-		GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
-
-		renderShadowMap(scene);
-
-		// render reflection texture
-		waterRenderer.getFBOs().bindReflectionFrameBuffer();
-		float distance = 2 * (camera.getPosition().y - Water.HEIGHT);
-		camera.getPosition().y -= distance;
-		camera.invertPitch();
-		camera.invertRoll();
-
-		clipPlane = new Vector4f(0, 1, 0, -Water.HEIGHT);
-		prepare();
-		skyboxRenderer.render(scene, clipPlane);
-		terrainRenderer.render(scene, clipPlane, shadowMapRenderer.getToShadowMapSpaceMatrix());
-		entityRenderer.render(scene, clipPlane);
-		normalMappingRenderer.render(scene, clipPlane);
-		if (player instanceof AnimatedModel) {
-			animatedModelRenderer.render((AnimatedModel) player, camera, lightDirection, clipPlane);
-		}
-
-		camera.getPosition().y += distance;
-		camera.invertPitch();
-		camera.invertRoll();
-
-		// render refraction texture
-		waterRenderer.getFBOs().bindRefractionFrameBuffer();
-
-		clipPlane = new Vector4f(0, -1, 0, Water.HEIGHT);
-		prepare();
-		skyboxRenderer.render(scene, clipPlane);
-		terrainRenderer.render(scene, clipPlane, shadowMapRenderer.getToShadowMapSpaceMatrix());
-		entityRenderer.render(scene, clipPlane);
-		normalMappingRenderer.render(scene, clipPlane);
-		if (player instanceof AnimatedModel) {
-			animatedModelRenderer.render((AnimatedModel) player, camera, lightDirection, clipPlane);
-		}
-		((Scene) scene).getFlareManager().render(scene);
-
-		renderMinimap(scene);
-
-		// render to screen
-		GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
-		waterRenderer.getFBOs().unbindCurrentFrameBuffer();
-
-		clipPlane = new Vector4f(0, 0, 0, 0);
-		prepare();
-		skyboxRenderer.render(scene, clipPlane);
-		sunRenderer.render(scene);
-		terrainRenderer.render(scene, clipPlane, shadowMapRenderer.getToShadowMapSpaceMatrix());
-		entityRenderer.render(scene, clipPlane);
-		normalMappingRenderer.render(scene, clipPlane);
-		if (player instanceof AnimatedModel) {
-			animatedModelRenderer.render((AnimatedModel) player, camera, lightDirection, clipPlane);
-		}
-		((Scene) scene).getFlareManager().render(scene);
-
-		waterRenderer.render(scene);
-
-		// after the 3D stuff and before the 2D stuff
-		ParticleMaster.renderParticles(camera);
-
-		guiRenderer.render(scene);
-		TextMaster.render();
-
-		GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
-	}
-
-	public void renderLowPoly(Window window, IScene scene) {
-
-		Vector4f clipPlane;
-		Camera camera = (Camera) ((Scene) scene).getCamera();
-		IPlayer player = ((Scene) scene).getPlayer();
-		Vector3f lightDirection = ((Scene) scene).getLightDirection();
-		LightDirectional lightDirectional = ((Scene) scene).getLightDirectional();
-		TerrainLowPoly terrainLowPoly = ((Scene) scene).getTerrainLowPoly();
-		WaterTileLowPoly waterLowPoly = ((Scene) scene).getWaterLowPoly();
+		Camera camera = (Camera) scene.getCamera();
+		IPlayer player = scene.getPlayer();
+		Vector3f lightDirection = scene.getLightDirection();
+		LightDirectional lightDirectional = ((SceneLowPoly) scene).getLightDirectional();
+		TerrainLowPoly terrainLowPoly = ((SceneLowPoly) scene).getTerrainLowPoly();
+		WaterTileLowPoly waterLowPoly = ((SceneLowPoly) scene).getWaterLowPoly();
 
 		GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
 
@@ -224,7 +134,7 @@ public class MasterRenderer implements IMasterRenderer {
 			animatedModelRenderer.render((AnimatedModel) player, camera, lightDirection, clipPlane);
 		}
 
-		((Scene) scene).getFlareManager().render(scene);
+		scene.getFlareManager().render(scene);
 
 		// after the 3D stuff and before the 2D stuff
 		ParticleMaster.renderParticles(camera);
@@ -263,39 +173,6 @@ public class MasterRenderer implements IMasterRenderer {
 	public void renderScene(IScene scene, Vector4f clipPlane) {
 	}
 
-	public void renderShadowMap(IScene scene) {
-		Map<TexturedModel, List<Entity>> entities = ((Scene) scene).getEntityList();
-		Light sun = ((Scene) scene).getLights().get(0);
-		shadowMapRenderer.render(((Scene) scene).getPlayer(), entities, sun);
-	}
-
-	public static int getShadowMapTexture() {
-		return shadowMapRenderer.getShadowMap();
-	}
-
-	public void renderMinimap(IScene scene) {
-
-		Camera camera = (Camera) ((Scene) scene).getCamera();
-		IPlayer player = ((Scene) scene).getPlayer();
-		Vector4f clipPlane = new Vector4f(0, 1, 0, -Water.HEIGHT);
-
-		// render minimap
-		waterRenderer.getFBOs().bindMinimapFrameBuffer();
-		Vector3f cameraPosition = camera.getPosition();
-		float currentPitch = camera.getPitch();
-		float currentYaw = camera.getYaw();
-		camera.setPosition(new Vector3f(player.getPosition().x, 620, player.getPosition().z));
-		camera.setPitch(90);
-		camera.setYaw(currentYaw - 180);
-		prepare();
-		terrainRenderer.render(scene, clipPlane);
-		entityRenderer.render(scene);
-		normalMappingRenderer.render(scene);
-		camera.setPosition(cameraPosition);
-		camera.setPitch(currentPitch);
-		camera.setYaw(currentYaw);
-	}
-
 	/* (non-Javadoc)
 	 * @see engine.tm.render.IMasterRenderer#prepare()
 	 */
@@ -305,7 +182,6 @@ public class MasterRenderer implements IMasterRenderer {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 		GL11.glClearColor(RED, GREEN, BLUE, 1.0f);
 		GL13.glActiveTexture(GL13.GL_TEXTURE5);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, getShadowMapTexture());
 	}
 
 	private static Matrix4f createProjectionMatrix() {
@@ -350,18 +226,12 @@ public class MasterRenderer implements IMasterRenderer {
 	@Override
 	public void cleanUp(IScene scene) {
 		scene.cleanUp();
-		terrainRenderer.cleanUp();
-		entityRenderer.cleanUp();
-		normalMappingRenderer.cleanUp();
-		animatedModelRenderer.cleanUp();
-		skyboxRenderer.cleanUp();
-		waterRenderer.cleanUp();
-		shadowMapRenderer.cleanUp();
-		guiRenderer.cleanUp();
-
 		terrainRendererLowPoly.cleanUp();
 		waterRendererLowPoly.cleanUp();
 		refractionFbo.delete();
 		reflectionFbo.delete();
+		animatedModelRenderer.cleanUp();
+		skyboxRenderer.cleanUp();
+		guiRenderer.cleanUp();
 	}
 }

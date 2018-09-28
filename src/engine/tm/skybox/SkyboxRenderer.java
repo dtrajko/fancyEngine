@@ -6,12 +6,10 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
-
 import engine.GameEngine;
 import engine.IScene;
-import engine.tm.entities.Camera;
-import engine.tm.render.MasterRenderer;
-import engine.tm.scene.Scene;
+import engine.graph.ICamera;
+import engine.tm.render.IMasterRenderer;
 
 public class SkyboxRenderer {
 
@@ -24,13 +22,13 @@ public class SkyboxRenderer {
 		shader.start();
 		shader.loadProjectionMatrix(projectionMatrix);
 		shader.connectTextureUnits();
-		shader.loadFogColor(MasterRenderer.RED, MasterRenderer.GREEN, MasterRenderer.BLUE);
+		shader.loadFogColor(IMasterRenderer.RED, IMasterRenderer.GREEN, IMasterRenderer.BLUE);
 		shader.stop();
 	}
 
 	public void render(IScene scene, Vector4f clipPlane) {
-		Camera camera = (Camera) ((Scene) scene).getCamera();
-		Skybox skybox = ((Scene) scene).getSkybox();
+		ICamera camera = scene.getCamera();
+		Skybox skybox = (Skybox) scene.getSkybox();
 		shader.start();
 		shader.loadClipPlane(clipPlane);
 		shader.loadViewMatrix(camera);
@@ -45,7 +43,7 @@ public class SkyboxRenderer {
 
 	private void bindTextures(IScene scene) {
 		
-		Skybox skybox = ((Scene) scene).getSkybox();
+		Skybox skybox = (Skybox) scene.getSkybox();
 
 		int texture1;
 		int texture2;

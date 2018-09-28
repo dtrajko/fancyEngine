@@ -3,7 +3,7 @@ package engine.tm.skybox;
 import engine.tm.loaders.Loader;
 import engine.tm.models.RawModel;
 
-public class Skybox {
+public class Skybox implements ISkyBox {
 
 	public static final float SIZE = 1600f;
 

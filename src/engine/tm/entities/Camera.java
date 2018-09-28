@@ -8,7 +8,7 @@ import engine.IScene;
 import engine.Window;
 import engine.graph.ICamera;
 import engine.graph.Input;
-import engine.tm.render.MasterRenderer;
+import engine.tm.render.IMasterRenderer;
 import engine.tm.scene.Scene;
 import engine.tm.terrains.ITerrain;
 import engine.tm.toolbox.Maths;
@@ -41,15 +41,15 @@ public class Camera implements ICamera {
 	private static Matrix4f createProjectionMatrix() {
 		Matrix4f projectionMatrix = new Matrix4f();
 		float aspectRatio = (float) Window.width / (float) Window.height;
-		float y_scale = (float) ((1f / Math.tan(Math.toRadians(MasterRenderer.FOV / 2f))) * aspectRatio);
+		float y_scale = (float) ((1f / Math.tan(Math.toRadians(IMasterRenderer.FOV / 2f))) * aspectRatio);
 		float x_scale = y_scale / aspectRatio;
-		float frustum_length = MasterRenderer.FAR_PLANE - MasterRenderer.NEAR_PLANE;
+		float frustum_length = IMasterRenderer.FAR_PLANE - IMasterRenderer.NEAR_PLANE;
 
 		projectionMatrix.m00(x_scale);
 		projectionMatrix.m11(y_scale);
-		projectionMatrix.m22(-((MasterRenderer.FAR_PLANE + MasterRenderer.NEAR_PLANE) / frustum_length));
+		projectionMatrix.m22(-((IMasterRenderer.FAR_PLANE + IMasterRenderer.NEAR_PLANE) / frustum_length));
 		projectionMatrix.m23(-1);
-		projectionMatrix.m32(-((2 * MasterRenderer.NEAR_PLANE * MasterRenderer.FAR_PLANE) / frustum_length));
+		projectionMatrix.m32(-((2 * IMasterRenderer.NEAR_PLANE * IMasterRenderer.FAR_PLANE) / frustum_length));
 		projectionMatrix.m33(0);
 
 		return projectionMatrix;
@@ -73,7 +73,7 @@ public class Camera implements ICamera {
 	}
 
 	public void moveWithPlayer(IScene scene, Input input) {
-		IPlayer player = ((Scene)scene).getPlayer();
+		IPlayer player = scene.getPlayer();
 		displVec = input.getDisplVec();
 		calculateZoom(input);
 		calculatePitch(input);
@@ -88,7 +88,7 @@ public class Camera implements ICamera {
 	}
 
 	private void calculateCameraPosition(float horizontalDistance, float verticalDistance, IScene scene) {
-		IPlayer player = ((Scene)scene).getPlayer();
+		IPlayer player = scene.getPlayer();
 		float theta = player.getRotY() + angleAroundPlayer;
 		float offsetX = (float) (horizontalDistance * Math.sin(Math.toRadians(theta)));
 		float offsetZ = (float) (horizontalDistance * Math.cos(Math.toRadians(theta)));		
@@ -96,7 +96,7 @@ public class Camera implements ICamera {
 		position.y = player.getPosition().y + verticalDistance + OFFSET_Y;
 		position.z = player.getPosition().z - offsetZ;
 		
-		ITerrain terrain = ((Scene)scene).getCurrentTerrain(position.x, position.z);		
+		ITerrain terrain = scene.getCurrentTerrain(position.x, position.z);
 		if (terrain instanceof ITerrain && terrain.getHeightOfTerrain(position.x, position.z) > position.y) {
 			position.y = terrain.getHeightOfTerrain(position.x, position.z) + 5;
 		}

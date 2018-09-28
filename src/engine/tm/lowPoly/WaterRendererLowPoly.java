@@ -4,7 +4,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import engine.graph.ICamera;
 import engine.tm.entities.LightDirectional;
-import engine.tm.render.MasterRenderer;
+import engine.tm.render.IMasterRenderer;
 import engine.tm.utils.OpenGlUtils;
 
 /**
@@ -174,7 +174,7 @@ public class WaterRendererLowPoly {
 	private void loadCameraVariables(ICamera camera) {
 		shader.projectionViewMatrix.loadMatrix(camera.getProjectionViewMatrix());
 		shader.cameraPos.loadVec3(camera.getPosition());
-		shader.nearFarPlanes.loadVec2(MasterRenderer.NEAR_PLANE, MasterRenderer.FAR_PLANE);
+		shader.nearFarPlanes.loadVec2(IMasterRenderer.NEAR_PLANE, IMasterRenderer.FAR_PLANE);
 	}
 
 	/**

@@ -19,7 +19,7 @@ public class ParticleMaster {
 	private static ParticleRenderer renderer;
 
 	public static void init(IScene scene, Matrix4f projectionMatrix) {
-		Loader loader = ((Scene) scene).getLoader();
+		Loader loader = scene.getLoader();
 		renderer = new ParticleRenderer(loader, projectionMatrix);
 	}
 

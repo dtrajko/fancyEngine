@@ -12,7 +12,7 @@ import engine.IScene;
 import engine.graph.ICamera;
 import engine.tm.entities.Light;
 import engine.tm.models.RawModel;
-import engine.tm.render.MasterRenderer;
+import engine.tm.render.IMasterRenderer;
 import engine.tm.scene.Scene;
 import engine.tm.shadows.ShadowBox;
 import engine.tm.shadows.ShadowMapMasterRenderer;
@@ -46,7 +46,7 @@ public class TerrainRenderer {
 
 		shader.start();
 		shader.loadClipPlane(clipPlane);
-		shader.loadSkyColor(MasterRenderer.RED, MasterRenderer.GREEN, MasterRenderer.BLUE);
+		shader.loadSkyColor(IMasterRenderer.RED, IMasterRenderer.GREEN, IMasterRenderer.BLUE);
 		shader.loadLights(lights);
 		shader.loadShineVariables(1, 0);
 		shader.loadViewMatrix(camera);

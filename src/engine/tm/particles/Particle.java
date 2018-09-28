@@ -7,7 +7,6 @@ import engine.IScene;
 import engine.tm.entities.Camera;
 import engine.tm.entities.Entity;
 import engine.tm.entities.Player;
-import engine.tm.scene.Scene;
 
 public class Particle {
 
@@ -57,7 +56,7 @@ public class Particle {
 	}
 
 	protected boolean update(IScene scene) {
-		Camera camera = (Camera) ((Scene) scene).getCamera();
+		Camera camera = (Camera) scene.getCamera();
 		boolean stillAlive = true;
 		float frameTimeSeconds = 1.0f / GameEngine.TARGET_UPS;
 		velocity.y += Player.getGravity() * this.gravityEffect * frameTimeSeconds;
@@ -70,12 +69,12 @@ public class Particle {
 		this.elapsedTime += frameTimeSeconds;		
 		stillAlive = this.elapsedTime < this.lifeLength;
 		if (stillAlive && checkCollision) {
-			Entity entity = ((Scene) scene).getEntityInCollisionWith(position.x, position.y, position.z, 5.0f);
+			Entity entity = Entity.getEntityInCollisionWith(scene, position.x, position.y, position.z, 5.0f);
 			if (entity instanceof Entity) {
 				Vector3f entPos = entity.getPosition();
-				((Scene) scene).getFireManager().startFire(new Vector3f(entPos.x, entPos.y, entPos.z));
+				scene.getFireMaster().startFire(new Vector3f(entPos.x, entPos.y, entPos.z));
 				checkCollision = false;
-				((Scene) scene).removeEntity(entity);
+				scene.removeEntity(entity);
 				stillAlive = false;
 			}
 		}

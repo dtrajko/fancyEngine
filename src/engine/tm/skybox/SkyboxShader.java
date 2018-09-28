@@ -5,6 +5,7 @@ import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 import engine.GameEngine;
+import engine.graph.ICamera;
 import engine.tm.entities.Camera;
 import engine.tm.settings.WorldSettings;
 import engine.tm.shaders.ShaderProgram;
@@ -51,7 +52,7 @@ public class SkyboxShader extends ShaderProgram {
 		super.loadMatrix(location_projectionMatrix, matrix);
 	}
 
-	public void loadViewMatrix(Camera camera) {
+	public void loadViewMatrix(ICamera camera) {
 		Matrix4f matrix = Maths.createViewMatrix(camera);
 		matrix.m30(0);
 		matrix.m31(0);
