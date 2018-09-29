@@ -96,11 +96,6 @@ public class MasterRenderer implements IMasterRenderer {
 	 */
 	@Override
 	public void render(Window window, IScene scene) {
-		renderClassic(window, scene);
-		// renderLowPoly(window, scene);
-	}
-
-	public void renderClassic(Window window, IScene scene) {
 
 		Vector4f clipPlane;
 		Camera camera = (Camera) ((Scene) scene).getCamera();
@@ -175,66 +170,6 @@ public class MasterRenderer implements IMasterRenderer {
 		GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
 	}
 
-	public void renderLowPoly(Window window, IScene scene) {
-
-		Vector4f clipPlane;
-		Camera camera = (Camera) ((Scene) scene).getCamera();
-		IPlayer player = ((Scene) scene).getPlayer();
-		Vector3f lightDirection = ((Scene) scene).getLightDirection();
-		LightDirectional lightDirectional = ((Scene) scene).getLightDirectional();
-		TerrainLowPoly terrainLowPoly = ((Scene) scene).getTerrainLowPoly();
-		WaterTileLowPoly waterLowPoly = ((Scene) scene).getWaterLowPoly();
-
-		GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
-
-		// render reflection texture
-		prepare();
-		clipPlane = new Vector4f(0, 1, 0, -Water.HEIGHT);
-		float distance = 2 * (camera.getPosition().y - Water.HEIGHT);
-		camera.getPosition().y -= distance;
-		camera.invertPitch();
-		camera.invertRoll();
-		reflectionFbo.bindForRender(1);
-		skyboxRenderer.render(scene, clipPlane);
-		terrainRendererLowPoly.render(terrainLowPoly, camera, lightDirectional, clipPlane);
-		reflectionFbo.unbindAfterRender();
-		camera.getPosition().y += distance;
-		camera.invertPitch();
-		camera.invertRoll();
-
-		// render refraction texture
-		prepare();
-		clipPlane = new Vector4f(0, -1, 0, Water.HEIGHT);
-		refractionFbo.bindForRender(1);
-		skyboxRenderer.render(scene, clipPlane);
-		terrainRendererLowPoly.render(terrainLowPoly, camera, lightDirectional, clipPlane);
-		refractionFbo.unbindAfterRender();
-
-		// render to screen
-		GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
-
-		prepare();
-		clipPlane = new Vector4f(0, 0, 0, 0);
-		skyboxRenderer.render(scene, clipPlane);
-		sunRenderer.render(scene);
-		terrainRendererLowPoly.render(terrainLowPoly, camera, lightDirectional, clipPlane);
-		waterRendererLowPoly.render(waterLowPoly, camera, lightDirectional,
-			reflectionFbo.getColorBuffer(0), refractionFbo.getColorBuffer(0), refractionFbo.getDepthBuffer());
-		if (player instanceof AnimatedModel) {
-			animatedModelRenderer.render((AnimatedModel) player, camera, lightDirection, clipPlane);
-		}
-
-		((Scene) scene).getFlareManager().render(scene);
-
-		// after the 3D stuff and before the 2D stuff
-		ParticleMaster.renderParticles(camera);
-
-		guiRenderer.render(scene);
-		TextMaster.render();
-
-		GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
-	}
-
 	/**
 	 * Sets up an FBO for one of the extra render passes. The FBO is initialized
 	 * with a texture color attachment, and can be initialized with either a
@@ -257,7 +192,7 @@ public class MasterRenderer implements IMasterRenderer {
 		} else {
 			depthAttach = new RenderBufferAttachment(GL14.GL_DEPTH_COMPONENT24);
 		}
-		return Fbo.newFbo(width, height).addColourAttachment(0, colourAttach).addDepthAttachment(depthAttach).init();
+		return Fbo.newFbo(width, height).addColorAttachment(0, colourAttach).addDepthAttachment(depthAttach).init();
 	}
 
 	public void renderScene(IScene scene, Vector4f clipPlane) {

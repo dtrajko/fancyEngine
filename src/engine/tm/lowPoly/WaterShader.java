@@ -20,8 +20,8 @@ public class WaterShader extends ShaderProgram {
 	protected static final int REFRACT_TEX_UNIT = 1;
 	protected static final int DEPTH_TEX_UNIT = 2;
 	
-    private final static String VERTEX_FILE = WorldSettings.RESOURCES_SUBDIR + "/shaders/waterLowPolyVertex.glsl";
-    private final static String FRAGMENT_FILE = WorldSettings.RESOURCES_SUBDIR + "/shaders/waterLowPolyFragment.glsl";
+    private final static String VERTEX_FILE = WorldSettings.RESOURCES_SUBDIR + "/shaders/lowPolyWaterVertex.glsl";
+    private final static String FRAGMENT_FILE = WorldSettings.RESOURCES_SUBDIR + "/shaders/lowPolyWaterFragment.glsl";
 
 	protected UniformMatrix projectionViewMatrix = new UniformMatrix("projectionViewMatrix");
 	protected UniformFloat height = new UniformFloat("height");

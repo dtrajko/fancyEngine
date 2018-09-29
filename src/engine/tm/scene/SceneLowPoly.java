@@ -4,9 +4,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.opengl.GL11;
+
 import engine.GameEngine;
 import engine.IGameLogic;
 import engine.IScene;
@@ -27,7 +31,6 @@ import engine.tm.entities.Entity;
 import engine.tm.entities.IPlayer;
 import engine.tm.entities.Light;
 import engine.tm.entities.LightDirectional;
-import engine.tm.entities.Player;
 import engine.tm.gui.GuiTexture;
 import engine.tm.gui.fonts.FontType;
 import engine.tm.gui.fonts.GUIText;
@@ -36,6 +39,7 @@ import engine.tm.hybridTerrain.HybridTerrainGenerator;
 import engine.tm.lensFlare.FlareManager;
 import engine.tm.lensFlare.FlareTexture;
 import engine.tm.loaders.Loader;
+import engine.tm.loaders.OBJLoader;
 import engine.tm.lowPoly.ColorGenerator;
 import engine.tm.lowPoly.PerlinNoise;
 import engine.tm.lowPoly.TerrainGenerator;
@@ -49,6 +53,7 @@ import engine.tm.particles.ParticleMaster;
 import engine.tm.particles.ParticleSystemShoot;
 import engine.tm.particles.ParticleTexture;
 import engine.tm.render.IMasterRenderer;
+import engine.tm.render.MasterRenderer;
 import engine.tm.render.MasterRendererLowPoly;
 import engine.tm.settings.WorldSettings;
 import engine.tm.skybox.Skybox;
@@ -56,6 +61,7 @@ import engine.tm.sunRenderer.ISun;
 import engine.tm.sunRenderer.Sun;
 import engine.tm.terrains.ITerrain;
 import engine.tm.terrains.Terrain;
+import engine.tm.textures.ModelTexture;
 import engine.tm.textures.Texture;
 import engine.tm.water.Water;
 import engine.tm.water.WaterTile;
@@ -82,31 +88,30 @@ public class SceneLowPoly implements IScene {
 	private FontType font_1;
 	private GUIText[] text;
 
-	private ParticleTexture particleTexture;
-	private ParticleSystemShoot particleSystemShoot;
-	private boolean fireMode = true;
-	private FireMaster fireManager;
 	private FlareManager flareManager;
 	private Vector3f lightDirection = WorldSettings.LIGHT_DIR;
 
 	private TerrainLowPoly terrainLowPoly;
 	private WaterTileLowPoly waterLowPoly;
 	private LightDirectional lightDirectional;
+	
+	private boolean wireframeEnabled = false;
 
 	public SceneLowPoly() {
 		camera = new Camera();
 		loader = new Loader();
 		skybox = new Skybox(loader);
 		masterRenderer = new MasterRendererLowPoly();
-		fireManager = new FireMaster(loader);
 	}
 
 	public void init() {
 		setupLowPolyTerrain();
+		setupLowPolyWater();
+		generateForestModels();
 		setupAnimatedPlayer();
+		setupCamera();
 		setupLights();
 		setupLensFlare();
-		setupParticles();
 		setupGui();
 		setupText();
 		masterRenderer.init(this); // should be called after entities list is populated
@@ -118,7 +123,69 @@ public class SceneLowPoly implements IScene {
 		ColorGenerator colorGen = new ColorGenerator(WorldSettings.TERRAIN_COLS, WorldSettings.COLOR_SPREAD);
 		TerrainGenerator terrainGenerator = new HybridTerrainGenerator(noise, colorGen);
 		terrainLowPoly = terrainGenerator.generateTerrain(WorldSettings.WORLD_SIZE);
+	}
+
+	private void setupLowPolyWater() {
 		waterLowPoly = WaterGenerator.generate(WorldSettings.WORLD_SIZE, WorldSettings.WATER_HEIGHT);
+	}
+
+	private void generateForestModels() {
+		Random rand = new Random();
+		Entity entity = null;
+		ModelTexture grassTexture = new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/grassTexture.png"));
+		grassTexture.setTransparent(true).setUseFakeLighting(true);
+		TexturedModel grassModel = new TexturedModel(OBJLoader.loadOBJModel("grassModel", loader), grassTexture);		
+		ModelTexture fernTextureAtlas = new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/fern_atlas.png"));
+		fernTextureAtlas.setNumberOfRows(2);
+		fernTextureAtlas.setTransparent(true).setUseFakeLighting(true);
+		TexturedModel fernModel = new TexturedModel(OBJLoader.loadOBJModel("fern", loader), fernTextureAtlas);
+		TexturedModel pineModel = new TexturedModel(OBJLoader.loadOBJModel("pine", loader), new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/pine.png")));
+
+		int modelsSpawned = 0;
+		while (modelsSpawned < 100) {
+			entity = null;
+
+			float coordX = rand.nextInt(WorldSettings.WORLD_SIZE);
+			float coordZ = rand.nextInt(WorldSettings.WORLD_SIZE);
+			float coordY = terrainLowPoly.getHeightOfTerrain(coordX, coordZ);
+			if (coordY < 5) {
+				continue;
+			}
+
+			int modelIndex = rand.nextInt(2);
+			int modelSize = rand.nextInt(3) / 2;
+			int fernTxIndex = rand.nextInt(4);
+
+			switch (modelIndex) {
+			case 0:
+				entity = new Entity(fernModel, fernTxIndex, new Vector3f(coordX, coordY, coordZ), 0, 0, 0, modelSize);
+				entity.setSolid(false);
+				break;
+			case 1:
+				entity = new Entity(pineModel, 0, new Vector3f(coordX, coordY, coordZ), 0, 0, 0, modelSize);
+				entity.setSolid(true);
+				break;
+			}
+			if (entity != null) {
+				processEntity(entity);
+			}
+			modelsSpawned++;
+		}
+	}
+
+	private void setupAnimatedPlayer() {
+		AnimatedModelData entityData = ColladaLoader.loadColladaModel(new MyFile(WorldSettings.MODELS_DIR + "/cowboy.dae"), WorldSettings.MAX_WEIGHTS);
+		Vao model = AnimatedModelLoader.createVao(entityData.getMeshData());
+		Texture texture = AnimatedModelLoader.loadTexture(new MyFile(WorldSettings.TEXTURES_DIR + "/cowboy.png"));
+		SkeletonData skeletonData = entityData.getJointsData();
+		Joint headJoint = AnimatedModelLoader.createJoints(skeletonData.headJoint);
+		player = new AnimatedPlayer(model, texture, headJoint, skeletonData.jointCount, new Vector3f(0, 0, 0), 0, 45, 0, 0.3f);
+		Animation animation = AnimationLoader.loadAnimation(new MyFile(WorldSettings.MODELS_DIR + "/cowboy.dae"));
+		((AnimatedModel) player).doAnimation(animation);
+	}
+
+	private void setupCamera() {
+		((Camera) camera).setDistanceFromPlayer(10).setOffsetY(4.8f).setPitch(0);
 	}
 
 	private void setupLensFlare() {
@@ -159,17 +226,6 @@ public class SceneLowPoly implements IScene {
 		lightDirectional = new LightDirectional(WorldSettings.LIGHT_DIR, WorldSettings.LIGHT_COL, WorldSettings.LIGHT_BIAS);
 	}
 
-	private void setupAnimatedPlayer() {
-		AnimatedModelData entityData = ColladaLoader.loadColladaModel(new MyFile(WorldSettings.MODELS_DIR + "/cowboy.dae"), WorldSettings.MAX_WEIGHTS);
-		Vao model = AnimatedModelLoader.createVao(entityData.getMeshData());
-		Texture texture = AnimatedModelLoader.loadTexture(new MyFile(WorldSettings.TEXTURES_DIR + "/cowboy.png"));
-		SkeletonData skeletonData = entityData.getJointsData();
-		Joint headJoint = AnimatedModelLoader.createJoints(skeletonData.headJoint);
-		player = new AnimatedPlayer(model, texture, headJoint, skeletonData.jointCount, new Vector3f(0, 0, 0), 0, 45, 0, 1f);
-		Animation animation = AnimationLoader.loadAnimation(new MyFile(WorldSettings.MODELS_DIR + "/cowboy.dae"));
-		((AnimatedModel) player).doAnimation(animation);
-	}
-
 	public void processEntity(Entity entity) {
 
 		// set the bounding box
@@ -199,23 +255,34 @@ public class SceneLowPoly implements IScene {
 	}
 
 	private void setupGui() {
-
+		GuiTexture reflection  = new GuiTexture(MasterRendererLowPoly.reflectionFbo.getColorBuffer(0), new Vector2f(-0.78f,  0.76f), new Vector2f(0.2f, 0.2f));
+		GuiTexture refraction  = new GuiTexture(MasterRendererLowPoly.refractionFbo.getColorBuffer(0), new Vector2f(-0.78f,  0.32f), new Vector2f(0.2f, 0.2f));
+		GuiTexture depth       = new GuiTexture(MasterRendererLowPoly.refractionFbo.getDepthBuffer(),  new Vector2f(-0.78f, -0.12f), new Vector2f(0.2f, 0.2f));
+		processGui(reflection);
+		processGui(refraction);
+		processGui(depth);
 	}
 
 	@Override
 	public void update(float interval, Input input) {
 		player.update();
-		updateParticles(input);
 		updateText();
-		fireManager.update();
+		toggleWireframeMode(input);
+	}
+
+	private void toggleWireframeMode(Input input) {
+		if (input.isKeyReleased(GLFW.GLFW_KEY_M)) {
+			wireframeEnabled = !wireframeEnabled;
+		}
+		if (wireframeEnabled) {
+			GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);			
+		} else {
+			GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
+		}
 	}
 
 	public IMasterRenderer getMasterRenderer() {
 		return masterRenderer;
-	}
-
-	public FireMaster getFireMaster() {
-		return fireManager;
 	}
 
 	public FlareManager getFlareManager() {
@@ -230,33 +297,6 @@ public class SceneLowPoly implements IScene {
 		return lightDirectional;
 	}
 
-	private void setupParticles() {
-		fireMode = true;
-		particleTexture = new ParticleTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/particles/particleAtlas.png"), 4, true);
-		particleSystemShoot = new ParticleSystemShoot(particleTexture, 400f, 10f, 0.0f, 2f);
-	}
-
-	private void updateParticles(Input input) {
-		if (input.isKeyReleased(GLFW.GLFW_KEY_F)) {
-			fireMode = !fireMode;
-			if (fireMode) {
-				particleSystemShoot = new ParticleSystemShoot(particleTexture, 200f, 60f, 0.0f, 1f);
-			} else {
-				particleSystemShoot = new ParticleSystemShoot(particleTexture, 20f, 50f, -0.25f, 5f); // magic circle around the player
-			}
-		}
-		if (input.isMouseButtonDown(GLFW.GLFW_MOUSE_BUTTON_3)) {
-			float coordX = player.getPosition().x;
-			float coordY = player.getPosition().y + 6;
-			float coordZ = player.getPosition().z;
-			float playerDX = (float) (Math.sin(Math.toRadians(player.getRotY())));
-			float playerDY = 0;
-			float playerDZ = (float) (Math.cos(Math.toRadians(player.getRotY())));
-			Vector3f playerDirection = new Vector3f(playerDX, playerDY, playerDZ);
-			particleSystemShoot.generateParticles(new Vector3f(coordX, coordY, coordZ), playerDirection);
-		}
-	}
-
 	private void setupText() {
 		font_1 = new FontType(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/arial.png"), WorldSettings.FONTS_DIR + "/arial.fnt");
 		text = new GUIText[10];
@@ -266,16 +306,15 @@ public class SceneLowPoly implements IScene {
 		Camera camera = (Camera) this.camera;
 		TextMaster.emptyTextMap();
 		float offsetX = 0.01f;
-		float offsetY = 0.74f;
+		float offsetY = 0.77f;
 		Vector3f color = new Vector3f(1, 1, 1);
 		String line_0 = "FPS: " + GameEngine.getFPS() + " / " + GameEngine.TARGET_FPS;
-		String line_1 = "Player role: " + (fireMode ? "Warrior" : "Wizard");
-		String line_2 = "Player position:  " + (int) player.getPosition().x + "  " + (int) player.getPosition().y + "  " + (int) player.getPosition().z;
-		String line_3 = "Player rotation:  " + (int) player.getRotX() + "  " + Maths.angleTo360Range((int) player.getRotY()) + "  " + (int) player.getRotZ();
-		String line_4 = "Camera position:  " + (int) camera.getPosition().x + "  " + (int) camera.getPosition().y + "  " + (int) camera.getPosition().z;
-		String line_5 = "Camera rotation  [ pitch: " + (int) camera.getRotation().x + "  yaw: " + Maths.angleTo360Range((int) camera.getRotation().y) + "  roll: " + (int) camera.getRotation().z + " ]";
-		String line_6 = "Entities spawned:  " + getEntitiesCount();
-		String line_7 = "Particles active:  " + ParticleMaster.getParticlesCount();
+		String line_1 = "Player position:  " + (int) player.getPosition().x + "  " + (int) player.getPosition().y + "  " + (int) player.getPosition().z;
+		String line_2 = "Player rotation:  " + (int) player.getRotX() + "  " + Maths.angleTo360Range((int) player.getRotY()) + "  " + (int) player.getRotZ();
+		String line_3 = "Camera position:  " + (int) camera.getPosition().x + "  " + (int) camera.getPosition().y + "  " + (int) camera.getPosition().z;
+		String line_4 = "Camera rotation  [ pitch: " + (int) camera.getRotation().x + "  yaw: " + Maths.angleTo360Range((int) camera.getRotation().y) + "  roll: " + (int) camera.getRotation().z + " ]";
+		String line_5 = "Entities spawned:  " + getEntitiesCount();
+		String line_6 = "Particles active:  " + ParticleMaster.getParticlesCount();
 		text[0] = new GUIText(line_0, 1, font_1, new Vector2f(offsetX, offsetY), 1f, false).setColor(color);
 		text[1] = new GUIText(line_1, 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
 		text[2] = new GUIText(line_2, 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
@@ -283,7 +322,6 @@ public class SceneLowPoly implements IScene {
 		text[4] = new GUIText(line_4, 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
 		text[5] = new GUIText(line_5, 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
 		text[6] = new GUIText(line_6, 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
-		text[7] = new GUIText(line_7, 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
 		TextMaster.loadText(text[0]);
 		TextMaster.loadText(text[1]);
 		TextMaster.loadText(text[2]);
@@ -291,7 +329,6 @@ public class SceneLowPoly implements IScene {
 		TextMaster.loadText(text[4]);
 		TextMaster.loadText(text[5]);
 		TextMaster.loadText(text[6]);
-		TextMaster.loadText(text[7]);
 	}
 
 	public int getEntitiesCount() {
@@ -355,33 +392,6 @@ public class SceneLowPoly implements IScene {
 		terrains.add(terrain);
 	}
 
-	public Entity getEntityInCollisionWith(float x, float y, float z, float range) {
-		Entity entityInCollisionWith = null;
-		for(TexturedModel model: entities.keySet()) {
-			List<Entity> batch = entities.get(model);
-			for(Entity entity : batch) {
-				if (inCollisionWithEntity(entity, x, y, z, range)) {
-					entityInCollisionWith = entity;
-					break;
-				}
-			}
-		}
-		return entityInCollisionWith;
-	}
-
-	public boolean inCollision(float x, float y, float z) {
-		Entity entity = getEntityInCollisionWith(x, y, z, 0.0f);
-		return entity != null;
-	}
-
-	public boolean inCollisionWithEntity(Entity entity, float x, float y, float z, float range) {
-		if (entity instanceof Player) return false;
-		if (entity.getBoundingBox().contains(x, y, z, range)) {
-			return true;
-		}
-		return false;
-	}
-
 	public void processWaterTile(WaterTile waterTile) {
 		waterTiles.add(waterTile);
 	}
@@ -391,25 +401,11 @@ public class SceneLowPoly implements IScene {
 	}
 
 	public ITerrain getCurrentTerrain() {
-		ITerrain currentTerrain = null;
-		try {
-			currentTerrain = getCurrentTerrain(player.getPosition().x, player.getPosition().z);
-		} catch (Exception e) {
-			System.out.println("Failed to retrieve the current terrain object.");
-			e.printStackTrace();
-		}
-		return currentTerrain;
+		return (ITerrain) terrainLowPoly;
 	}
 
 	public ITerrain getCurrentTerrain(float x, float z) {
-		ITerrain currentTerrain = null;
-		for (ITerrain terrain : terrains) {
-			if (x >= terrain.getX() && x < (terrain.getX() + Terrain.SIZE) &&
-				z >= terrain.getZ() && z < (terrain.getZ() + Terrain.SIZE)) {
-				currentTerrain = terrain;
-			}
-		}
-		return currentTerrain;
+		return (ITerrain) terrainLowPoly;
 	}
 
 	@Override
@@ -439,5 +435,10 @@ public class SceneLowPoly implements IScene {
 
 	public Vector3f getLightDirection() {
 		return lightDirection;
+	}
+
+	@Override
+	public FireMaster getFireMaster() {
+		return null;
 	}
 }

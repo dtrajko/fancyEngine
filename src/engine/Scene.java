@@ -43,6 +43,7 @@ import engine.sound.SoundManager;
 import engine.sound.SoundSource;
 import engine.tm.entities.Entity;
 import engine.tm.entities.IPlayer;
+import engine.tm.entities.Light;
 import engine.tm.gui.GuiTexture;
 import engine.tm.lensFlare.FlareManager;
 import engine.tm.loaders.Loader;
@@ -716,5 +717,10 @@ public class Scene implements IScene {
 
 	@Override
 	public void removeEntity(Entity entity) {
+	}
+
+	@Override
+	public List<Light> getLights() {
+		return null;
 	}
 }

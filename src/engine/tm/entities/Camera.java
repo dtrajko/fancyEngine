@@ -9,13 +9,13 @@ import engine.Window;
 import engine.graph.ICamera;
 import engine.graph.Input;
 import engine.tm.render.IMasterRenderer;
-import engine.tm.scene.Scene;
+import engine.tm.settings.WorldSettings;
 import engine.tm.terrains.ITerrain;
 import engine.tm.toolbox.Maths;
 
 public class Camera implements ICamera {
 
-	private final float OFFSET_Y = 32; // point to player's head, not feet
+	private float offsetY = 32; // point to player's head, not feet
 	private Vector3f position = new Vector3f(0, 0, 0);
 	private float pitch = 10;
 	private float yaw = 0;
@@ -29,6 +29,8 @@ public class Camera implements ICamera {
 	private Vector2f displVec;
 	private Matrix4f projectionMatrix;
 	private Matrix4f viewMatrix = new Matrix4f();
+	private Matrix4f reflectedMatrix = new Matrix4f();
+	private boolean reflected = false;
 
 	public Camera() {
 		speed = 2.0f;
@@ -36,6 +38,23 @@ public class Camera implements ICamera {
 		y_min = 0;
 		cameraInc = new Vector3f(0.0f, 0.0f, 0.0f);
 		projectionMatrix = createProjectionMatrix();
+	}
+
+	public Camera setOffsetY(float offsetY) {
+		this.offsetY = offsetY;
+		return this;
+	}
+
+	public Camera setDistanceFromPlayer(float distance) {
+		this.distanceFromPlayer = distance;
+		return this;
+	}
+
+	private void updateViewMatrices() {
+		Maths.updateViewMatrix(viewMatrix, position.x, position.y, position.z, pitch, yaw);
+		float posY = position.y - (2 * (position.y - WorldSettings.WATER_HEIGHT));
+		float pitchReflect = -pitch;
+		Maths.updateViewMatrix(reflectedMatrix, position.x, posY, position.z, pitchReflect, yaw);
 	}
 
 	private static Matrix4f createProjectionMatrix() {
@@ -61,15 +80,30 @@ public class Camera implements ICamera {
 		return viewMatrix;
 	}
 
+	public void reflect(float height){
+		invertPitch();
+		this.position.y = position.y - 2 * (position.y - height);
+		// updateViewMatrix();
+		updateViewMatrices();
+	}
+
 	@Override
 	public Matrix4f getProjectionViewMatrix() {
-		Matrix4f projectionViewMatrix = new Matrix4f();
-		projectionMatrix.mul(viewMatrix, projectionViewMatrix);
+		Matrix4f projectionViewMatrix = new Matrix4f();		
+		if(reflected){
+			projectionMatrix.mul(reflectedMatrix, projectionViewMatrix);
+		} else {
+			projectionMatrix.mul(viewMatrix, projectionViewMatrix);
+		}		
 		return projectionViewMatrix;
 	}
 
 	public Matrix4f getProjectionMatrix() {
 		return projectionMatrix;
+	}
+
+	public void reflect() {
+		this.reflected = !reflected;
 	}
 
 	public void moveWithPlayer(IScene scene, Input input) {
@@ -84,7 +118,8 @@ public class Camera implements ICamera {
 		calculateCameraPosition(horizontalDistance, verticalDistance, scene);
 		float theta = player.getRotY() + angleAroundPlayer;
 		this.yaw = 180 - theta;
-		updateViewMatrix();
+		// updateViewMatrix();
+		updateViewMatrices();
 	}
 
 	private void calculateCameraPosition(float horizontalDistance, float verticalDistance, IScene scene) {
@@ -93,7 +128,7 @@ public class Camera implements ICamera {
 		float offsetX = (float) (horizontalDistance * Math.sin(Math.toRadians(theta)));
 		float offsetZ = (float) (horizontalDistance * Math.cos(Math.toRadians(theta)));		
 		position.x = player.getPosition().x - offsetX;
-		position.y = player.getPosition().y + verticalDistance + OFFSET_Y;
+		position.y = player.getPosition().y + verticalDistance + offsetY;
 		position.z = player.getPosition().z - offsetZ;
 		
 		ITerrain terrain = scene.getCurrentTerrain(position.x, position.z);
@@ -184,7 +219,8 @@ public class Camera implements ICamera {
 		position.y = newPos.y;
 		position.z = newPos.z;
 
-		updateViewMatrix();
+		// updateViewMatrix();
+		updateViewMatrices();
 	}
 
 	public Vector3f calculateNewPosition(float offsetX, float offsetY, float offsetZ) {

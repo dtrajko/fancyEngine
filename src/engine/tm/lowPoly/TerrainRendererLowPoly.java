@@ -14,8 +14,8 @@ import engine.tm.settings.WorldSettings;
  */
 public class TerrainRendererLowPoly {
 	
-	private static final String VERTEX_FILE = WorldSettings.RESOURCES_SUBDIR + "/shaders/flatTerrainVertex.glsl";
-	private static final String FRAGMENT_FILE = WorldSettings.RESOURCES_SUBDIR + "/shaders/flatTerrainFragment.glsl";
+	private static final String VERTEX_FILE = WorldSettings.RESOURCES_SUBDIR + "/shaders/lowPolyTerrainVertex.glsl";
+	private static final String FRAGMENT_FILE = WorldSettings.RESOURCES_SUBDIR + "/shaders/lowPolyTerrainFragment.glsl";
 
 	private final TerrainShader shader;
 	private final boolean hasIndices;

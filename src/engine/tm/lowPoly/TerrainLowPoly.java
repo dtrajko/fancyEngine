@@ -3,10 +3,14 @@ package engine.tm.lowPoly;
 import org.joml.Vector4f;
 import engine.graph.ICamera;
 import engine.tm.entities.LightDirectional;
+import engine.tm.models.RawModel;
 import engine.tm.openglObjects.Vao;
 import engine.tm.settings.WorldSettings;
+import engine.tm.terrains.ITerrain;
+import engine.tm.textures.TerrainTexture;
+import engine.tm.textures.TerrainTexturePack;
 
-public class TerrainLowPoly {
+public class TerrainLowPoly implements ITerrain {
 
 	private final Vao vao;
 	private final int vertexCount;
@@ -51,5 +55,30 @@ public class TerrainLowPoly {
 			worldY = WATER_HEIGHT;
 		}
 		return worldY;
+	}
+
+	@Override
+	public float getX() {
+		return 0;
+	}
+
+	@Override
+	public float getZ() {
+		return 0;
+	}
+
+	@Override
+	public RawModel getModel() {
+		return null;
+	}
+
+	@Override
+	public TerrainTexturePack getTexturePack() {
+		return null;
+	}
+
+	@Override
+	public TerrainTexture getBlendMap() {
+		return null;
 	}
 }

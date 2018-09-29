@@ -4,7 +4,7 @@ layout(location = 0) in vec3 in_position;
 layout(location = 1) in vec4 in_normal;
 layout(location = 2) in vec4 in_color;
 
-flat out vec3 pass_color;//The "flat" qualifier stops the color from being interpolated over the triangles.
+flat out vec3 pass_color; //The "flat" qualifier stops the color from being interpolated over the triangles.
 
 uniform vec3 lightDirection;
 uniform vec3 lightColor;

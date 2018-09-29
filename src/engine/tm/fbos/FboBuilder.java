@@ -37,7 +37,7 @@ public class FboBuilder {
 	 * @param attachment - The colour attachment.
 	 * @return
 	 */
-	public FboBuilder addColourAttachment(int index, Attachment attachment) {
+	public FboBuilder addColorAttachment(int index, Attachment attachment) {
 		colourAttachments.put(index, attachment);
 		return this;
 	}

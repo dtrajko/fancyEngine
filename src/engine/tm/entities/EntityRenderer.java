@@ -55,8 +55,8 @@ public class EntityRenderer {
 	}
 
 	public void render(IScene scene, Vector4f clipPlane) {
-		List<Light> lights = ((Scene) scene).getLights();
-		ICamera camera = ((Scene) scene).getCamera();
+		List<Light> lights = scene.getLights();
+		ICamera camera = scene.getCamera();
 		shader.start();
 		prepare(clipPlane, lights, camera);
 		for (TexturedModel model : entities.keySet()) {

@@ -9,6 +9,7 @@ import engine.graph.ICamera;
 import engine.graph.Input;
 import engine.tm.entities.Entity;
 import engine.tm.entities.IPlayer;
+import engine.tm.entities.Light;
 import engine.tm.gui.GuiTexture;
 import engine.tm.lensFlare.FlareManager;
 import engine.tm.loaders.Loader;
@@ -36,4 +37,5 @@ public interface IScene {
 	List<GuiTexture> getGuiElements();
 	FireMaster getFireMaster();
 	void removeEntity(Entity entity);
+	List<Light> getLights();
 }

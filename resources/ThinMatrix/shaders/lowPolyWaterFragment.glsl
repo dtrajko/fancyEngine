@@ -1,11 +1,11 @@
 #version 330
 
 const vec3 waterColor = vec3(0.604, 0.867, 0.851);
-const float fresnelReflective = 0.5;
+const float fresnelReflective = 0.2;
 const float edgeSoftness = 1;
 const float minBlueness = 0.4;
 const float maxBlueness = 0.8;
-const float murkyDepth = 14;
+const float murkyDepth = 20;
 
 out vec4 out_color;
 

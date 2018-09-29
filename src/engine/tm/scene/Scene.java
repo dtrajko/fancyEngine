@@ -8,6 +8,7 @@ import java.util.Random;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.opengl.GL11;
 import engine.GameEngine;
 import engine.IGameLogic;
 import engine.IScene;
@@ -28,23 +29,16 @@ import engine.tm.entities.Entity;
 import engine.tm.entities.IPlayer;
 import engine.tm.entities.Light;
 import engine.tm.entities.LightDirectional;
-import engine.tm.entities.Player;
 import engine.tm.gui.GuiTexture;
 import engine.tm.gui.fonts.FontType;
 import engine.tm.gui.fonts.GUIText;
 import engine.tm.gui.fonts.TextMaster;
-import engine.tm.hybridTerrain.HybridTerrainGenerator;
 import engine.tm.lensFlare.FlareManager;
 import engine.tm.lensFlare.FlareTexture;
 import engine.tm.loaders.Loader;
 import engine.tm.loaders.OBJLoader;
-import engine.tm.lowPoly.ColorGenerator;
-import engine.tm.lowPoly.PerlinNoise;
-import engine.tm.lowPoly.TerrainGenerator;
 import engine.tm.lowPoly.TerrainLowPoly;
-import engine.tm.lowPoly.WaterGenerator;
 import engine.tm.lowPoly.WaterTileLowPoly;
-import engine.tm.models.RawModel;
 import engine.tm.models.TexturedModel;
 import engine.tm.normalMapping.NormalMappedObjLoader;
 import engine.tm.openglObjects.Vao;
@@ -60,12 +54,10 @@ import engine.tm.sunRenderer.ISun;
 import engine.tm.sunRenderer.Sun;
 import engine.tm.terrains.ITerrain;
 import engine.tm.terrains.Terrain;
-import engine.tm.terrains.TerrainProcedural;
 import engine.tm.textures.ModelTexture;
 import engine.tm.textures.TerrainTexture;
 import engine.tm.textures.TerrainTexturePack;
 import engine.tm.textures.Texture;
-import engine.tm.utils.Color;
 import engine.tm.water.Water;
 import engine.tm.water.WaterTile;
 import engine.utils.Maths;
@@ -101,6 +93,7 @@ public class Scene implements IScene {
 	private TerrainLowPoly terrainLowPoly;
 	private WaterTileLowPoly waterLowPoly;
 	private LightDirectional lightDirectional;
+	private boolean wireframeEnabled;
 
 	public Scene() {
 		camera = new Camera();
@@ -108,15 +101,13 @@ public class Scene implements IScene {
 		skybox = new Skybox(loader);
 		masterRenderer = new MasterRenderer();
 		fireManager = new FireMaster(loader);
+		wireframeEnabled = false;
 	}
 
 	public void init() {
 		setupTerrain();
-		// setupTerrainProcedural();
-		setupLowPolyTerrain();
 		generateForestModels();
 		generateNormalMapEntities();
-		// setupPlayer();
 		setupAnimatedPlayer();
 		setupWater();
 		setupLights();
@@ -125,15 +116,6 @@ public class Scene implements IScene {
 		setupGui();
 		setupText();
 		masterRenderer.init(this); // should be called after entities list is populated
-	}
-
-	private void setupLowPolyTerrain() {
-		// initialize terrain
-		PerlinNoise noise = new PerlinNoise(WorldSettings.OCTAVES, WorldSettings.AMPLITUDE, WorldSettings.ROUGHNESS);
-		ColorGenerator colorGen = new ColorGenerator(WorldSettings.TERRAIN_COLS, WorldSettings.COLOR_SPREAD);
-		TerrainGenerator terrainGenerator = new HybridTerrainGenerator(noise, colorGen);
-		terrainLowPoly = terrainGenerator.generateTerrain(WorldSettings.WORLD_SIZE);
-		waterLowPoly = WaterGenerator.generate(WorldSettings.WORLD_SIZE, WorldSettings.WATER_HEIGHT);
 	}
 
 	private void setupLensFlare() {
@@ -172,14 +154,6 @@ public class Scene implements IScene {
 		sun = new Sun(textureSun, 20);
 		sun.setDirection(WorldSettings.LIGHT_DIR);
 		lightDirectional = new LightDirectional(WorldSettings.LIGHT_DIR, WorldSettings.LIGHT_COL, WorldSettings.LIGHT_BIAS);
-	}
-
-	private void setupPlayer() {
-		// player
-		RawModel steveModelRaw = OBJLoader.loadOBJModel("steve", loader);
-		TexturedModel steveModel = new TexturedModel(steveModelRaw, new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/steve.png")));
-		player = new Player(steveModel, new Vector3f(0, 0, 0), 0, 180, 0, 4);
-		processEntity((Entity) player);
 	}
 
 	private void setupAnimatedPlayer() {
@@ -242,6 +216,18 @@ public class Scene implements IScene {
 		updateParticles(input);
 		updateText();
 		fireManager.update();
+		toggleWireframeMode(input);
+	}
+
+	private void toggleWireframeMode(Input input) {
+		if (input.isKeyReleased(GLFW.GLFW_KEY_M)) {
+			wireframeEnabled  = !wireframeEnabled;
+		}
+		if (wireframeEnabled) {
+			GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);			
+		} else {
+			GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
+		}
 	}
 
 	public IMasterRenderer getMasterRenderer() {
@@ -310,20 +296,6 @@ public class Scene implements IScene {
 		processTerrain(terrain_1);
 		TerrainTexture blendMap_2 = new TerrainTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/terrain_2/blendMap.png"));
 		Terrain terrain_2 = new Terrain(-0.5f, -1.5f, loader, texturePack, blendMap_2, "terrain_2/heightmap");
-		processTerrain(terrain_2);
-	}
-
-	private void setupTerrainProcedural() {
-		TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/terrain_1/bg.png"));
-		TerrainTexture rTexture = new TerrainTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/terrain_1/1.png"));
-		TerrainTexture gTexture = new TerrainTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/terrain_1/2.png"));
-		TerrainTexture bTexture = new TerrainTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/terrain_1/3.png"));
-		TerrainTexturePack texturePack = new TerrainTexturePack(backgroundTexture, rTexture, gTexture, bTexture);
-		TerrainTexture blendMap = new TerrainTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/terrain_1/blendMap.png"));
-		TerrainProcedural terrain_1 = new TerrainProcedural(-0.5f, -0.5f, loader, texturePack, blendMap, "terrain_1/heightmap");
-		processTerrain(terrain_1);
-		TerrainTexture blendMap_2 = new TerrainTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/terrain_2/blendMap.png"));
-		TerrainProcedural terrain_2 = new TerrainProcedural(-0.5f, -1.5f, loader, texturePack, blendMap_2, "terrain_2/heightmap");
 		processTerrain(terrain_2);
 	}
 
@@ -552,12 +524,10 @@ public class Scene implements IScene {
 
 	@Override
 	public void resetScene(Window window, ICamera camera, IGameLogic game) {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
 	public void save() {
-		// TODO Auto-generated method stub
 	}
 
 	public void clearLists() {

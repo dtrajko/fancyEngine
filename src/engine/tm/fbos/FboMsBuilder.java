@@ -25,7 +25,7 @@ public class FboMsBuilder {
 	 * @return
 	 */
 	public FboMsBuilder addColourAttachment(int index, RenderBufferAttachment attachment) {
-		fboBuilder.addColourAttachment(index, attachment);
+		fboBuilder.addColorAttachment(index, attachment);
 		return this;
 	}
 
