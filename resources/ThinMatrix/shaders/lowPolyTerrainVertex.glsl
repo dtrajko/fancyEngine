@@ -10,9 +10,10 @@ uniform vec3 lightDirection;
 uniform vec3 lightColor;
 uniform vec2 lightBias;
 
-uniform mat4 projectionViewMatrix;
-
-uniform vec4 plane;
+uniform mat4 transformationMatrix;
+uniform mat4 projectionMatrix;
+uniform mat4 viewMatrix;
+uniform vec4 clipPlane;
 
 //simple diffuse lighting
 vec3 calculateLighting(){
@@ -23,10 +24,10 @@ vec3 calculateLighting(){
 
 void main(void){
 
-	vec4 worldPosition = vec4(in_position, 1.0);
-	gl_ClipDistance[0] = dot(worldPosition, plane);
-	gl_Position = projectionViewMatrix * worldPosition;
-	
+	vec4 worldPosition = transformationMatrix * vec4(in_position, 1.0);
+	gl_ClipDistance[0] = dot(worldPosition, clipPlane);
+	vec4 positionRelativeToCamera = viewMatrix * worldPosition;
+	gl_Position = projectionMatrix * positionRelativeToCamera;
 	vec3 lighting = calculateLighting();
 	pass_color = in_color.rgb * lighting;
 

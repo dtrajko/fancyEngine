@@ -1,10 +1,14 @@
 package engine.tm.lowPoly;
 
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.opengl.GL11;
 import engine.graph.ICamera;
 import engine.tm.entities.LightDirectional;
 import engine.tm.settings.WorldSettings;
+import engine.tm.terrains.ITerrain;
+import engine.tm.toolbox.Maths;
 
 /**
  * A simple renderer that renders terrains.
@@ -27,9 +31,12 @@ public class TerrainRendererLowPoly {
 	 *            - Indicates whether the terrain will be rendered with an index
 	 *            buffer or not.
 	 */
-	public TerrainRendererLowPoly(boolean usesIndices) {
-		this.shader = new TerrainShader(VERTEX_FILE, FRAGMENT_FILE);
-		this.hasIndices = usesIndices;
+	public TerrainRendererLowPoly(Matrix4f projectionMatrix, boolean usesIndices) {
+		shader = new TerrainShader(VERTEX_FILE, FRAGMENT_FILE);
+		shader.start();
+		shader.projectionMatrix.loadMatrix(projectionMatrix);
+		shader.stop();
+		hasIndices = usesIndices;
 	}
 
 	/**
@@ -82,11 +89,18 @@ public class TerrainRendererLowPoly {
 	private void prepare(TerrainLowPoly terrain, ICamera camera, LightDirectional light, Vector4f clipPlane) {
 		terrain.getVao().bind();
 		shader.start();
-		shader.plane.loadVec4(clipPlane);
+		shader.clipPlane.loadVec4(clipPlane);
 		shader.lightBias.loadVec2(light.getLightBias());
 		shader.lightDirection.loadVec3(light.getDirection());
 		shader.lightColor.loadVec3(light.getColor().getVector());
-		shader.projectionViewMatrix.loadMatrix(camera.getProjectionViewMatrix());
+		loadModelMatrix(terrain);
+		shader.viewMatrix.loadMatrix(camera.getViewMatrix());
+	}
+
+	private void loadModelMatrix(ITerrain terrain) {
+		Matrix4f transformationMatrix = Maths.createTransformationMatrix(
+			new Vector3f(terrain.getX(), 0, terrain.getZ()), 0, 0, 0, 1);
+		shader.transformationMatrix.loadMatrix(transformationMatrix);
 	}
 
 	/**

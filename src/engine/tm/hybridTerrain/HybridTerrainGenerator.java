@@ -2,6 +2,9 @@ package engine.tm.hybridTerrain;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+
+import org.joml.Matrix4f;
+
 import engine.tm.lowPoly.ColorGenerator;
 import engine.tm.lowPoly.PerlinNoise;
 import engine.tm.lowPoly.TerrainLowPoly;
@@ -31,9 +34,9 @@ public class HybridTerrainGenerator extends TerrainGenerator {
 
 	private final TerrainRendererLowPoly renderer;
 
-	public HybridTerrainGenerator(PerlinNoise perlinNoise, ColorGenerator colorGen) {
+	public HybridTerrainGenerator(Matrix4f projectionMatrix, PerlinNoise perlinNoise, ColorGenerator colorGen) {
 		super(perlinNoise, colorGen);
-		this.renderer = new TerrainRendererLowPoly(true);
+		this.renderer = new TerrainRendererLowPoly(projectionMatrix, true);
 	}
 
 	@Override

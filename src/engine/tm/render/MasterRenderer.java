@@ -18,17 +18,14 @@ import engine.tm.entities.Entity;
 import engine.tm.entities.EntityRenderer;
 import engine.tm.entities.IPlayer;
 import engine.tm.entities.Light;
-import engine.tm.entities.LightDirectional;
 import engine.tm.fbos.Attachment;
 import engine.tm.fbos.Fbo;
 import engine.tm.fbos.RenderBufferAttachment;
 import engine.tm.fbos.TextureAttachment;
 import engine.tm.gui.GuiRenderer;
 import engine.tm.gui.fonts.TextMaster;
-import engine.tm.lowPoly.TerrainLowPoly;
 import engine.tm.lowPoly.TerrainRendererLowPoly;
 import engine.tm.lowPoly.WaterRendererLowPoly;
-import engine.tm.lowPoly.WaterTileLowPoly;
 import engine.tm.models.TexturedModel;
 import engine.tm.normalMapping.NormalMappingRenderer;
 import engine.tm.particles.ParticleMaster;
@@ -71,7 +68,7 @@ public class MasterRenderer implements IMasterRenderer {
 		sunRenderer = new SunRenderer();
 		guiRenderer = new GuiRenderer();
 
-		terrainRendererLowPoly = new TerrainRendererLowPoly(true);
+		terrainRendererLowPoly = new TerrainRendererLowPoly(projectionMatrix, true);
 		waterRendererLowPoly = new WaterRendererLowPoly();
 		reflectionFbo = createWaterFbo(Window.width, Window.height, false);
 		refractionFbo = createWaterFbo(Window.width / 2, Window.height / 2, true);

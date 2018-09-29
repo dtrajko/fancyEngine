@@ -29,8 +29,6 @@ public class Camera implements ICamera {
 	private Vector2f displVec;
 	private Matrix4f projectionMatrix;
 	private Matrix4f viewMatrix = new Matrix4f();
-	private Matrix4f reflectedMatrix = new Matrix4f();
-	private boolean reflected = false;
 
 	public Camera() {
 		speed = 2.0f;
@@ -48,13 +46,6 @@ public class Camera implements ICamera {
 	public Camera setDistanceFromPlayer(float distance) {
 		this.distanceFromPlayer = distance;
 		return this;
-	}
-
-	private void updateViewMatrices() {
-		Maths.updateViewMatrix(viewMatrix, position.x, position.y, position.z, pitch, yaw);
-		float posY = position.y - (2 * (position.y - WorldSettings.WATER_HEIGHT));
-		float pitchReflect = -pitch;
-		Maths.updateViewMatrix(reflectedMatrix, position.x, posY, position.z, pitchReflect, yaw);
 	}
 
 	private static Matrix4f createProjectionMatrix() {
@@ -83,27 +74,18 @@ public class Camera implements ICamera {
 	public void reflect(float height){
 		invertPitch();
 		this.position.y = position.y - 2 * (position.y - height);
-		// updateViewMatrix();
-		updateViewMatrices();
+		updateViewMatrix();
 	}
 
 	@Override
 	public Matrix4f getProjectionViewMatrix() {
 		Matrix4f projectionViewMatrix = new Matrix4f();		
-		if(reflected){
-			projectionMatrix.mul(reflectedMatrix, projectionViewMatrix);
-		} else {
-			projectionMatrix.mul(viewMatrix, projectionViewMatrix);
-		}		
+		projectionMatrix.mul(viewMatrix, projectionViewMatrix);
 		return projectionViewMatrix;
 	}
 
 	public Matrix4f getProjectionMatrix() {
 		return projectionMatrix;
-	}
-
-	public void reflect() {
-		this.reflected = !reflected;
 	}
 
 	public void moveWithPlayer(IScene scene, Input input) {
@@ -118,8 +100,7 @@ public class Camera implements ICamera {
 		calculateCameraPosition(horizontalDistance, verticalDistance, scene);
 		float theta = player.getRotY() + angleAroundPlayer;
 		this.yaw = 180 - theta;
-		// updateViewMatrix();
-		updateViewMatrices();
+		updateViewMatrix();
 	}
 
 	private void calculateCameraPosition(float horizontalDistance, float verticalDistance, IScene scene) {
@@ -190,7 +171,7 @@ public class Camera implements ICamera {
 		// gravity
 		cameraInc.y += gravity;
 		if (cameraInc.y <= y_min) position.y = y_min;
-		
+
 		if (input.isKeyDown(GLFW.GLFW_KEY_SPACE)) {
 			cameraInc.y += +speed / 4;
 		}
@@ -219,8 +200,7 @@ public class Camera implements ICamera {
 		position.y = newPos.y;
 		position.z = newPos.z;
 
-		// updateViewMatrix();
-		updateViewMatrices();
+		updateViewMatrix();
 	}
 
 	public Vector3f calculateNewPosition(float offsetX, float offsetY, float offsetZ) {

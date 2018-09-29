@@ -4,11 +4,9 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL14;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL32;
-
 import engine.IScene;
 import engine.Window;
 import engine.tm.animation.animatedModel.AnimatedModel;
@@ -27,7 +25,6 @@ import engine.tm.lowPoly.TerrainLowPoly;
 import engine.tm.lowPoly.TerrainRendererLowPoly;
 import engine.tm.lowPoly.WaterRendererLowPoly;
 import engine.tm.lowPoly.WaterTileLowPoly;
-import engine.tm.scene.Scene;
 import engine.tm.scene.SceneLowPoly;
 import engine.tm.settings.WorldSettings;
 import engine.tm.skybox.SkyboxRenderer;
@@ -36,8 +33,8 @@ import engine.tm.utils.OpenGlUtils;
 
 public class MasterRendererLowPoly implements IMasterRenderer {
 
-	private static final float REFLECT_OFFSET = 1.0f;
-	private static final float REFRACT_OFFSET = 1.0f;
+	private static final float REFLECT_OFFSET = 0.2f;
+	private static final float REFRACT_OFFSET = 0.2f;
 
 	private static Matrix4f projectionMatrix;
 
@@ -54,7 +51,7 @@ public class MasterRendererLowPoly implements IMasterRenderer {
 
 	public MasterRendererLowPoly() {
 		createProjectionMatrix();
-		terrainRendererLowPoly = new TerrainRendererLowPoly(true);
+		terrainRendererLowPoly = new TerrainRendererLowPoly(projectionMatrix, true);
 		waterRendererLowPoly = new WaterRendererLowPoly();
 		refractionFbo = createWaterFbo(Window.width / 2, Window.height / 2, true);
 		reflectionFbo = createWaterFbo(Window.width, Window.height, false);
@@ -93,16 +90,28 @@ public class MasterRendererLowPoly implements IMasterRenderer {
 	}
 
 	private void renderWaterReflectionPass(IScene scene) {		
-		Vector4f clipPlane = new Vector4f(0, 1, 0, -WorldSettings.WATER_HEIGHT + REFLECT_OFFSET);
 		Camera camera = (Camera) scene.getCamera();
+		IPlayer player = scene.getPlayer();
+		Vector3f lightDirection = scene.getLightDirection();
 		TerrainLowPoly terrainLowPoly = ((SceneLowPoly) scene).getTerrainLowPoly();
 		LightDirectional lightDirectional = ((SceneLowPoly) scene).getLightDirectional();
 		reflectionFbo.bindForRender(0);
-		camera.reflect();
+
+		float distance = 2 * (camera.getPosition().y - WorldSettings.WATER_HEIGHT + REFLECT_OFFSET);
+		camera.getPosition().y -= distance;
+		camera.invertPitch();
+		camera.invertRoll();
+
+		Vector4f clipPlane = new Vector4f(0, 1, 0, -WorldSettings.WATER_HEIGHT + REFLECT_OFFSET);
 		prepare();
 		terrainRendererLowPoly.render(terrainLowPoly, camera, lightDirectional, clipPlane);
 		entityRenderer.render(scene, clipPlane);
-		camera.reflect();
+		animatedModelRenderer.render((AnimatedModel) player, camera, lightDirection, clipPlane);
+
+		camera.getPosition().y += distance;
+		camera.invertPitch();
+		camera.invertRoll();
+
 		reflectionFbo.unbindAfterRender();
 	}
 
@@ -176,7 +185,7 @@ public class MasterRendererLowPoly implements IMasterRenderer {
 		OpenGlUtils.antialias(true);
 	}
 
-	private static Matrix4f createProjectionMatrix() {
+	public static Matrix4f createProjectionMatrix() {
 		projectionMatrix = new Matrix4f();
 		float aspectRatio = (float) Window.width / (float) Window.height;
 		float y_scale = (float) ((1f / Math.tan(Math.toRadians(FOV / 2f))) * aspectRatio);

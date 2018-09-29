@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
@@ -121,7 +122,8 @@ public class SceneLowPoly implements IScene {
 		// initialize terrain
 		PerlinNoise noise = new PerlinNoise(WorldSettings.OCTAVES, WorldSettings.AMPLITUDE, WorldSettings.ROUGHNESS);
 		ColorGenerator colorGen = new ColorGenerator(WorldSettings.TERRAIN_COLS, WorldSettings.COLOR_SPREAD);
-		TerrainGenerator terrainGenerator = new HybridTerrainGenerator(noise, colorGen);
+		Matrix4f projectionMatrix = MasterRendererLowPoly.createProjectionMatrix();
+		TerrainGenerator terrainGenerator = new HybridTerrainGenerator(projectionMatrix, noise, colorGen);
 		terrainLowPoly = terrainGenerator.generateTerrain(WorldSettings.WORLD_SIZE);
 	}
 
