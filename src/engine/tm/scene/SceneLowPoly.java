@@ -134,7 +134,6 @@ public class SceneLowPoly implements IScene {
 		Entity entity = null;
 		ModelTexture grassTexture = new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/grassTexture.png"));
 		grassTexture.setTransparent(true).setUseFakeLighting(true);
-		TexturedModel grassModel = new TexturedModel(OBJLoader.loadOBJModel("grassModel", loader), grassTexture);		
 		ModelTexture fernTextureAtlas = new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/fern_atlas.png"));
 		fernTextureAtlas.setNumberOfRows(2);
 		fernTextureAtlas.setTransparent(true).setUseFakeLighting(true);

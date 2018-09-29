@@ -100,8 +100,8 @@ public class MasterRendererLowPoly implements IMasterRenderer {
 		reflectionFbo.bindForRender(0);
 		camera.reflect();
 		prepare();
-		entityRenderer.render(scene, clipPlane);
 		terrainRendererLowPoly.render(terrainLowPoly, camera, lightDirectional, clipPlane);
+		entityRenderer.render(scene, clipPlane);
 		camera.reflect();
 		reflectionFbo.unbindAfterRender();
 	}
