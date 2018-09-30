@@ -7,11 +7,11 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
-import engine.IScene;
 import engine.Scene;
 import engine.graph.Camera;
 import engine.graph.InstancedMesh;
 import engine.graph.Mesh;
+import engine.interfaces.IScene;
 import engine.graph.Input;
 import engine.items.GameItem;
 

@@ -6,10 +6,9 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
-import engine.IScene;
+import engine.interfaces.IScene;
 import engine.tm.loaders.Loader;
 import engine.tm.models.RawModel;
-import engine.tm.scene.Scene;
 import engine.tm.toolbox.Maths;
 
 public class GuiRenderer {

@@ -1,8 +1,8 @@
 package game;
 
 import engine.GameEngine;
-import engine.IGameLogic;
 import engine.Window;
+import engine.interfaces.IGameLogic;
 import engine.tm.ThinMatrix;
 import engine.tm.ThinMatrixLowPoly;
 import game2D.frogger.Frogger;
@@ -11,7 +11,7 @@ public class Main {
 
 	private static int width = 0;
 	private static int height = 0;
-	private static String app = "ThinMatrixLowPoly"; // ThinMatrixLowPoly, ThinMatrix, Game3D, Game2D, Frogger
+	private static String app = "Game3D"; // ThinMatrixLowPoly, ThinMatrix, Game3D, Game2D, Frogger
 
     public static void main(String[] args) {
         try {

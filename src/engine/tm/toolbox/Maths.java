@@ -3,7 +3,8 @@ package engine.tm.toolbox;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
-import engine.graph.ICamera;
+
+import engine.interfaces.ICamera;
 import engine.tm.entities.Camera;
 
 public class Maths {

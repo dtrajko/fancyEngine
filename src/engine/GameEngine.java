@@ -1,6 +1,7 @@
 package engine;
 
 import engine.graph.Input;
+import engine.interfaces.IGameLogic;
 
 public class GameEngine implements Runnable {
 

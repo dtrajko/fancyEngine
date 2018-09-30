@@ -21,7 +21,6 @@ import config.Config;
 import de.matthiasmann.twl.utils.PNGDecoder;
 import engine.graph.Camera;
 import engine.graph.HeightMapMesh;
-import engine.graph.ICamera;
 import engine.graph.Input;
 import engine.graph.InstancedMesh;
 import engine.graph.Material;
@@ -29,11 +28,17 @@ import engine.graph.Mesh;
 import engine.graph.Texture;
 import engine.graph.lights.DirectionalLight;
 import engine.graph.particles.ExplosionParticleEmitter;
-import engine.graph.particles.IParticleEmitter;
 import engine.graph.particles.Particle;
 import engine.graph.weather.Fog;
 import engine.gui.GuiElement;
 import engine.gui.GuiManager;
+import engine.interfaces.ICamera;
+import engine.interfaces.IGameLogic;
+import engine.interfaces.IParticleEmitter;
+import engine.interfaces.IPlayer;
+import engine.interfaces.IScene;
+import engine.interfaces.ISun;
+import engine.interfaces.ITerrain;
 import engine.items.GameItem;
 import engine.items.SkyBox;
 import engine.loaders.obj.OBJLoader;
@@ -42,7 +47,6 @@ import engine.sound.SoundListener;
 import engine.sound.SoundManager;
 import engine.sound.SoundSource;
 import engine.tm.entities.Entity;
-import engine.tm.entities.IPlayer;
 import engine.tm.entities.Light;
 import engine.tm.gui.GuiTexture;
 import engine.tm.lensFlare.FlareManager;
@@ -50,8 +54,6 @@ import engine.tm.loaders.Loader;
 import engine.tm.models.TexturedModel;
 import engine.tm.particles.FireMaster;
 import engine.tm.skybox.Skybox;
-import engine.tm.sunRenderer.ISun;
-import engine.tm.terrains.ITerrain;
 import game.Game3D;
 
 public class Scene implements IScene {
@@ -81,7 +83,6 @@ public class Scene implements IScene {
 
 	@Override
 	public void resetScene(Window window, ICamera camera, IGameLogic game) {
-		
 	}
 
 	@Override

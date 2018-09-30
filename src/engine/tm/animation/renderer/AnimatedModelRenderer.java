@@ -4,7 +4,8 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.opengl.GL11;
-import engine.graph.ICamera;
+
+import engine.interfaces.ICamera;
 import engine.tm.animation.animatedModel.AnimatedModel;
 import engine.tm.entities.Entity;
 import engine.tm.toolbox.Maths;

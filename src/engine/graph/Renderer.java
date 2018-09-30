@@ -13,8 +13,6 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL30;
 import config.Config;
-import engine.IHud;
-import engine.IScene;
 import engine.Scene;
 import engine.SceneLight;
 import engine.Utils;
@@ -24,15 +22,15 @@ import engine.graph.anim.AnimatedFrame;
 import engine.graph.lights.DirectionalLight;
 import engine.graph.lights.PointLight;
 import engine.graph.lights.SpotLight;
-import engine.graph.particles.IParticleEmitter;
 import engine.graph.shadow.ShadowCascade;
 import engine.graph.shadow.ShadowRenderer;
 import engine.gui.GuiManager;
 import engine.gui.GuiRenderer;
-import engine.gui.fonts.FontRenderer;
+import engine.interfaces.ICamera;
+import engine.interfaces.IParticleEmitter;
+import engine.interfaces.IScene;
 import engine.items.GameItem;
 import engine.items.SkyBox;
-import game.Hud;
 
 public class Renderer {
 
@@ -54,10 +52,7 @@ public class Renderer {
     private ShaderProgram skyBoxShaderProgram;
     private ShaderProgram particlesShaderProgram;
     private ShaderProgram fontShaderProgram;
-
     private GuiRenderer guiRenderer;
-    private FontRenderer textRenderer;
-
 	private final float specularPower;
 	private ShadowMap shadowMap;
 	private final FrustumCullingFilter frustumFilter;
@@ -82,7 +77,6 @@ public class Renderer {
         setupHudShader();
         setupFontShader();
         guiRenderer = new GuiRenderer();
-        textRenderer = new FontRenderer();
     }
 
     private void setupParticlesShader() throws Exception {
@@ -217,7 +211,7 @@ public class Renderer {
     	fontShaderProgram.createUniform("translation");
     }
 
-	public void render(Window window, Camera camera, List<GameItem> gameItems, Hud hud) {
+	public void render(Window window, Camera camera, List<GameItem> gameItems) {
         clear();
         if ( window.isResized() ) {
             GL11.glViewport(0, 0, window.getWidth(), window.getHeight());
@@ -248,7 +242,6 @@ public class Renderer {
             mesh.render();
         }
 
-        renderHud(window, hud);
         shaderProgram.unbind();
 	}
 
@@ -501,25 +494,6 @@ public class Renderer {
         currDirLight.setDirection(new Vector3f(dir.x, dir.y, dir.z));
         // System.out.println("Renderer directionalLight: " + currDirLight);
         sceneShaderProgram.setUniform("directionalLight", currDirLight);
-    }
-
-    private void renderHud(Window window, IHud hud) {
-        if (hud != null) {
-            hudShaderProgram.bind();
-            Matrix4f ortho = transformation.getOrtho2DProjectionMatrix(0, window.getWidth(), window.getHeight(), 0);
-            for (GameItem gameItem : hud.getGameItems()) {
-                Mesh mesh = gameItem.getMesh();
-                // Set ortohtaphic and model matrix for this HUD item
-                Matrix4f projModelMatrix = transformation.buildOrthoProjModelMatrix(gameItem, ortho);
-                hudShaderProgram.setUniform("projModelMatrix", projModelMatrix);
-                hudShaderProgram.setUniform("color", gameItem.getMesh().getMaterial().getAmbientColor());
-                hudShaderProgram.setUniform("hasTexture", gameItem.getMesh().getMaterial().isTextured() ? 1 : 0);                
-
-                // Render the mesh for this HUD item
-                mesh.render();
-            }
-            hudShaderProgram.unbind();
-        }
     }
     
     public void renderGui(GuiManager guiManager, Window window) {

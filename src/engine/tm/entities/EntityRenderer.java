@@ -10,14 +10,13 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
-import engine.IScene;
 import engine.Window;
-import engine.graph.ICamera;
+import engine.interfaces.ICamera;
+import engine.interfaces.IMasterRenderer;
+import engine.interfaces.IScene;
 import engine.tm.models.RawModel;
 import engine.tm.models.TexturedModel;
-import engine.tm.render.IMasterRenderer;
 import engine.tm.render.MasterRenderer;
-import engine.tm.scene.Scene;
 import engine.tm.textures.ModelTexture;
 import engine.tm.toolbox.Maths;
 

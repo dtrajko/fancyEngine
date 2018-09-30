@@ -6,7 +6,6 @@ import engine.Window;
 import engine.graph.Camera;
 import game2D.assets.Assets;
 import game2D.entities.Transform;
-import game2D.render.Camera2D;
 import game2D.render.TileSheet;
 import game2D.shaders.Shader;
 

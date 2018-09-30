@@ -6,9 +6,10 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
-import engine.IScene;
+
+import engine.interfaces.IPlayer;
+import engine.interfaces.IScene;
 import engine.tm.entities.Entity;
-import engine.tm.entities.IPlayer;
 import engine.tm.entities.Light;
 import engine.tm.models.TexturedModel;
 

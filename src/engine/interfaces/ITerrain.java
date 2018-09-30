@@ -1,4 +1,4 @@
-package engine.tm.terrains;
+package engine.interfaces;
 
 import engine.tm.models.RawModel;
 import engine.tm.textures.TerrainTexture;

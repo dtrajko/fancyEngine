@@ -1,9 +1,9 @@
 package engine.tm.terrains;
 
 import java.awt.image.BufferedImage;
-import java.util.Random;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import engine.interfaces.ITerrain;
 import engine.tm.loaders.Loader;
 import engine.tm.models.RawModel;
 import engine.tm.textures.TerrainTexture;
@@ -16,7 +16,6 @@ public class TerrainProcedural implements ITerrain {
 	private static final float MAX_HEIGHT = 100;
 	private static final float MAX_PIXEL_COLOR = 256 * 256 * 256;
 	private static final int VERTEX_COUNT = 256;
-	private static final int SEED = new Random().nextInt(1000000000);
 	
 	private float x;
 	private float z;
@@ -24,7 +23,6 @@ public class TerrainProcedural implements ITerrain {
 	private RawModel model;
 	private TerrainTexturePack texturePack;
 	private TerrainTexture blendMap;
-	private String heightMap;
 
 	private float[][] heights;
 
@@ -34,7 +32,6 @@ public class TerrainProcedural implements ITerrain {
 			TerrainTexture blendMap, String heightMap) {
 		this.texturePack = texturePack;
 		this.blendMap = blendMap;
-		this.heightMap = heightMap;
 		this.x = gridX * SIZE;
 		this.z = gridZ * SIZE;
 		generator = new HeightsGenerator();
@@ -156,9 +153,9 @@ public class TerrainProcedural implements ITerrain {
 			return 0;
 		}
 		float height = image.getRGB(x, z);
-		height += this.MAX_PIXEL_COLOR / 2f;
-		height /= this.MAX_PIXEL_COLOR / 2f;
-		height *= this.MAX_HEIGHT;
+		height += MAX_PIXEL_COLOR / 2f;
+		height /= MAX_PIXEL_COLOR / 2f;
+		height *= MAX_HEIGHT;
 		return height;
 	}
 

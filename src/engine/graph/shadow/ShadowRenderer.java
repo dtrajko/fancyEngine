@@ -9,13 +9,11 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE2;
 import static org.lwjgl.opengl.GL30.*;
 
-import engine.IScene;
 import engine.Scene;
 import engine.SceneLight;
 import engine.Utils;
 import engine.Window;
 import engine.graph.Camera;
-import engine.graph.ICamera;
 import engine.graph.InstancedMesh;
 import engine.graph.Mesh;
 import engine.graph.Renderer;
@@ -24,6 +22,8 @@ import engine.graph.Transformation;
 import engine.graph.anim.AnimGameItem;
 import engine.graph.anim.AnimatedFrame;
 import engine.graph.lights.DirectionalLight;
+import engine.interfaces.ICamera;
+import engine.interfaces.IScene;
 import engine.items.GameItem;
 
 public class ShadowRenderer {

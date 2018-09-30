@@ -6,6 +6,8 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+
+import engine.interfaces.ITerrain;
 import engine.tm.loaders.Loader;
 import engine.tm.models.RawModel;
 import engine.tm.settings.WorldSettings;

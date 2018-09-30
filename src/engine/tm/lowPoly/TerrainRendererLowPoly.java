@@ -4,10 +4,11 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.opengl.GL11;
-import engine.graph.ICamera;
+
+import engine.interfaces.ICamera;
+import engine.interfaces.ITerrain;
 import engine.tm.entities.LightDirectional;
 import engine.tm.settings.WorldSettings;
-import engine.tm.terrains.ITerrain;
 import engine.tm.toolbox.Maths;
 
 /**

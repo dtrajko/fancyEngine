@@ -3,14 +3,12 @@ package engine.tm.sunRenderer;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
-
-import engine.IScene;
-import engine.graph.ICamera;
+import engine.interfaces.ICamera;
+import engine.interfaces.IScene;
+import engine.interfaces.ISun;
 import engine.tm.entities.Camera;
 import engine.tm.openglObjects.Vao;
-import engine.tm.scene.Scene;
 import engine.tm.utils.OpenGlUtils;
-import engine.utils.Util;
 
 public class SunRenderer {
 

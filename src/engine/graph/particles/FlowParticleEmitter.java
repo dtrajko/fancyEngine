@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.joml.Vector3f;
 
+import engine.interfaces.IParticleEmitter;
 import engine.items.GameItem;
 
 public class FlowParticleEmitter implements IParticleEmitter {

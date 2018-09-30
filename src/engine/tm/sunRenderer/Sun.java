@@ -2,6 +2,7 @@ package engine.tm.sunRenderer;
 
 import org.joml.Vector3f;
 
+import engine.interfaces.ISun;
 import engine.tm.textures.Texture;
 
 public class Sun implements ISun {

@@ -1,12 +1,13 @@
 package engine.tm.lowPoly;
 
 import org.joml.Vector4f;
-import engine.graph.ICamera;
+
+import engine.interfaces.ICamera;
+import engine.interfaces.ITerrain;
 import engine.tm.entities.LightDirectional;
 import engine.tm.models.RawModel;
 import engine.tm.openglObjects.Vao;
 import engine.tm.settings.WorldSettings;
-import engine.tm.terrains.ITerrain;
 import engine.tm.textures.TerrainTexture;
 import engine.tm.textures.TerrainTexturePack;
 

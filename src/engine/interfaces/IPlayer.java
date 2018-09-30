@@ -1,8 +1,7 @@
-package engine.tm.entities;
+package engine.interfaces;
 
 import org.joml.Vector3f;
 
-import engine.IScene;
 import engine.graph.Input;
 
 public interface IPlayer {

@@ -6,11 +6,10 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.glfw.GLFW;
-import engine.IScene;
-import engine.graph.ICamera;
 import engine.graph.Input;
-import engine.tm.scene.Scene;
-import engine.tm.terrains.ITerrain;
+import engine.interfaces.ICamera;
+import engine.interfaces.IScene;
+import engine.interfaces.ITerrain;
 
 public class MousePicker {
 

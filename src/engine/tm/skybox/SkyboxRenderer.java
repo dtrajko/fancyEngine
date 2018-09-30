@@ -7,9 +7,9 @@ import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import engine.GameEngine;
-import engine.IScene;
-import engine.graph.ICamera;
-import engine.tm.render.IMasterRenderer;
+import engine.interfaces.ICamera;
+import engine.interfaces.IMasterRenderer;
+import engine.interfaces.IScene;
 
 public class SkyboxRenderer {
 

@@ -3,7 +3,6 @@ package engine.items;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import engine.graph.Mesh;
-import engine.loaders.md5.MD5Utils;
 
 public class GameItem {
 

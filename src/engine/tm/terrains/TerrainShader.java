@@ -1,16 +1,13 @@
 package engine.tm.terrains;
 
 import java.util.List;
-
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
-
-import engine.graph.ICamera;
+import engine.interfaces.ICamera;
 import engine.tm.entities.Light;
 import engine.tm.settings.WorldSettings;
 import engine.tm.shaders.ShaderProgram;
-import engine.tm.textures.TerrainTexture;
 import engine.tm.toolbox.Maths;
 
 public class TerrainShader extends ShaderProgram {

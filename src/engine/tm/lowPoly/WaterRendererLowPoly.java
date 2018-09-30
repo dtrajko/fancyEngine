@@ -2,9 +2,10 @@ package engine.tm.lowPoly;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
-import engine.graph.ICamera;
+
+import engine.interfaces.ICamera;
+import engine.interfaces.IMasterRenderer;
 import engine.tm.entities.LightDirectional;
-import engine.tm.render.IMasterRenderer;
 import engine.tm.utils.OpenGlUtils;
 
 /**

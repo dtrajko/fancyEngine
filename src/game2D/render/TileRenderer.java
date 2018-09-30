@@ -4,13 +4,13 @@ import java.util.HashMap;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import engine.graph.Camera;
+import engine.interfaces.IScene2D;
+import engine.interfaces.ITileType;
 import game2D.assets.Assets;
 import game2D.assets.Sprite;
 import game2D.entities.Entity;
-import game2D.frogger.ITileType;
 import game2D.shaders.Shader;
 import game2D.textures.Texture;
-import game2D.world.IScene2D;
 import game2D.world.Tile;
 
 public class TileRenderer {

@@ -1,7 +1,5 @@
 package engine.tm.gui.fonts;
 
-import engine.Window;
-
 /**
  * Represents a font. It holds the font's texture atlas as well as having the
  * ability to create the quad vertices for any text using this font.

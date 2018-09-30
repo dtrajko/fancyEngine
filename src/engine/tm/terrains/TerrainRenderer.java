@@ -8,11 +8,13 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
-import engine.IScene;
-import engine.graph.ICamera;
+
+import engine.interfaces.ICamera;
+import engine.interfaces.IMasterRenderer;
+import engine.interfaces.IScene;
+import engine.interfaces.ITerrain;
 import engine.tm.entities.Light;
 import engine.tm.models.RawModel;
-import engine.tm.render.IMasterRenderer;
 import engine.tm.scene.Scene;
 import engine.tm.shadows.ShadowBox;
 import engine.tm.shadows.ShadowMapMasterRenderer;

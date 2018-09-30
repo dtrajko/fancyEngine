@@ -9,14 +9,16 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL14;
 import org.lwjgl.opengl.GL30;
-import engine.IScene;
+
 import engine.Window;
+import engine.interfaces.IMasterRenderer;
+import engine.interfaces.IPlayer;
+import engine.interfaces.IScene;
 import engine.tm.animation.animatedModel.AnimatedModel;
 import engine.tm.animation.renderer.AnimatedModelRenderer;
 import engine.tm.entities.Camera;
 import engine.tm.entities.Entity;
 import engine.tm.entities.EntityRenderer;
-import engine.tm.entities.IPlayer;
 import engine.tm.entities.Light;
 import engine.tm.fbos.Attachment;
 import engine.tm.fbos.Fbo;

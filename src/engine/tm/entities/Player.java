@@ -2,11 +2,12 @@ package engine.tm.entities;
 
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
-import engine.IScene;
 import engine.graph.Input;
+import engine.interfaces.IPlayer;
+import engine.interfaces.IScene;
+import engine.interfaces.ITerrain;
 import engine.tm.models.TexturedModel;
 import engine.tm.scene.Scene;
-import engine.tm.terrains.ITerrain;
 
 public class Player extends Entity implements IPlayer {
 	
@@ -19,8 +20,6 @@ public class Player extends Entity implements IPlayer {
 	private float currentSpeed = 0;
 	private float currentTurnSpeed = 0;
 	private float upwardsSpeed = 0;
-
-	private boolean isInAir = false;
 	private boolean gravityEnabled = true;
 
 	public Player(TexturedModel model, Vector3f position, float rotX, float rotY, float rotZ, float scale) {
@@ -58,7 +57,6 @@ public class Player extends Entity implements IPlayer {
 
 		if (super.getPosition().y < terrainHeight) {
 			upwardsSpeed = 0;
-			isInAir = false;
 			super.getPosition().y = terrainHeight;
 		}
 	}
@@ -69,10 +67,7 @@ public class Player extends Entity implements IPlayer {
 	}
 
 	private void jump() {
-		if (true || !isInAir) {
-			upwardsSpeed = JUMP_POWER;
-			isInAir = true;
-		}
+		upwardsSpeed = JUMP_POWER;
 	}
 
 	private void checkInputs(Input input) {

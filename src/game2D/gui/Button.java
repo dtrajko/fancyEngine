@@ -14,9 +14,7 @@ public class Button {
 	public static final int STATE_IDLE =    0;
 	public static final int STATE_SELECT =  1;
 	public static final int STATE_CLICKED = 2;
-
 	private AABB boundingBox;
-	private int selectedState;
 	private static Matrix4f transform = new Matrix4f();
 	private Vector2f position;
 	private Vector2f scale;

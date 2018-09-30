@@ -4,15 +4,15 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
-import engine.IGameLogic;
 import engine.Window;
 import engine.graph.Camera;
+import engine.interfaces.IGameLogic;
+import engine.interfaces.IScene2D;
 import game2D.assets.Assets;
 import game2D.collision.AABB;
 import game2D.collision.Collision;
 import game2D.render.Model;
 import game2D.shaders.Shader;
-import game2D.world.IScene2D;
 
 public abstract class Entity {
 

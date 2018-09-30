@@ -5,8 +5,6 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import config.Config;
-import engine.IScene;
-import engine.Scene;
 import engine.Window;
 import engine.graph.Mesh;
 import engine.graph.Input;
@@ -14,6 +12,7 @@ import engine.graph.Texture;
 import engine.gui.GuiElement;
 import engine.gui.GuiManager;
 import engine.gui.fonts.TextMaster;
+import engine.interfaces.IScene;
 
 public class InventoryPopup {
 

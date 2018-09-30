@@ -1,14 +1,12 @@
-package engine;
+package engine.interfaces;
 
 import java.util.List;
 import java.util.Map;
 import org.joml.Vector3f;
-import engine.IGameLogic;
+
 import engine.Window;
-import engine.graph.ICamera;
 import engine.graph.Input;
 import engine.tm.entities.Entity;
-import engine.tm.entities.IPlayer;
 import engine.tm.entities.Light;
 import engine.tm.gui.GuiTexture;
 import engine.tm.lensFlare.FlareManager;
@@ -16,8 +14,6 @@ import engine.tm.loaders.Loader;
 import engine.tm.models.TexturedModel;
 import engine.tm.particles.FireMaster;
 import engine.tm.skybox.ISkyBox;
-import engine.tm.sunRenderer.ISun;
-import engine.tm.terrains.ITerrain;
 
 public interface IScene {
 

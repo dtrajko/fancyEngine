@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.joml.Vector3f;
 
-import engine.IScene;
+import engine.interfaces.IScene;
 import engine.items.Box3D;
 import engine.tm.models.RawModel;
 import engine.tm.models.TexturedModel;

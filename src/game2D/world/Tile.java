@@ -1,7 +1,7 @@
 package game2D.world;
 
-import game2D.frogger.ITileType;
-import game2D.frogger.TileTypeFrogger;
+import engine.interfaces.IScene2D;
+import engine.interfaces.ITileType;
 
 public class Tile {
 

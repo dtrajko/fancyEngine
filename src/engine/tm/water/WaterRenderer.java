@@ -7,7 +7,7 @@ import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import engine.GameEngine;
-import engine.IScene;
+import engine.interfaces.IScene;
 import engine.tm.entities.Camera;
 import engine.tm.entities.Light;
 import engine.tm.scene.Scene;

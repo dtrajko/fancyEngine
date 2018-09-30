@@ -7,12 +7,13 @@ import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.openal.AL11;
 import config.Config;
-import engine.IGameLogic;
 import engine.Timer;
 import engine.Window;
 import engine.Scene.Sounds;
 import engine.graph.Camera;
 import engine.graph.Input;
+import engine.interfaces.IGameLogic;
+import engine.interfaces.IScene2D;
 import engine.sound.SoundBuffer;
 import engine.sound.SoundListener;
 import engine.sound.SoundManager;
@@ -22,7 +23,6 @@ import game2D.entities.Entity;
 import game2D.entities.Player;
 import game2D.entities.Transform;
 import game2D.render.Animation;
-import game2D.world.IScene2D;
 import game2D.world.Tile;
 
 public class FroggerPlayer extends Player {

@@ -4,13 +4,14 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
-import engine.IScene;
+
 import engine.Window;
-import engine.graph.ICamera;
 import engine.graph.Input;
-import engine.tm.render.IMasterRenderer;
-import engine.tm.settings.WorldSettings;
-import engine.tm.terrains.ITerrain;
+import engine.interfaces.ICamera;
+import engine.interfaces.IMasterRenderer;
+import engine.interfaces.IPlayer;
+import engine.interfaces.IScene;
+import engine.interfaces.ITerrain;
 import engine.tm.toolbox.Maths;
 
 public class Camera implements ICamera {

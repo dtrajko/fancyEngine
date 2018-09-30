@@ -8,7 +8,6 @@ import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
 import config.Config;
-import engine.IScene;
 import engine.Scene;
 import engine.Window;
 import engine.graph.Input;
@@ -17,6 +16,7 @@ import engine.gui.GuiElement;
 import engine.gui.GuiManager;
 import engine.gui.fonts.FontFactory;
 import engine.gui.fonts.TextMaster;
+import engine.interfaces.IScene;
 import engine.tm.gui.fonts.FontType;
 import engine.tm.gui.fonts.GUIText;
 import engine.utils.FileSystem;

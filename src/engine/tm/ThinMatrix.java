@@ -1,14 +1,14 @@
 package engine.tm;
 
 import org.lwjgl.glfw.GLFW;
-import engine.IGameLogic;
-import engine.IScene;
+
 import engine.Window;
 import engine.graph.Input;
+import engine.interfaces.IGameLogic;
+import engine.interfaces.IPlayer;
+import engine.interfaces.IScene;
 import engine.sound.SoundManager;
 import engine.tm.entities.Camera;
-import engine.tm.entities.IPlayer;
-import engine.tm.entities.Player;
 import engine.tm.gui.fonts.TextMaster;
 import engine.tm.particles.ParticleMaster;
 import engine.tm.scene.Scene;

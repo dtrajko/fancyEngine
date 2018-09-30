@@ -2,13 +2,13 @@ package game2D.frogger;
 
 import org.joml.Vector2f;
 
-import engine.IGameLogic;
 import engine.Window;
 import engine.graph.Camera;
+import engine.interfaces.IGameLogic;
+import engine.interfaces.IScene2D;
 import game2D.entities.Transform;
 import game2D.shaders.Shader;
 import game2D.textures.Texture;
-import game2D.world.IScene2D;
 
 public class Obstacle extends TextureEntity {
 

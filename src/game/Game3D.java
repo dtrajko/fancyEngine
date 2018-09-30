@@ -4,8 +4,7 @@ import java.util.HashMap;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
-import engine.IGameLogic;
-import engine.IScene;
+
 import engine.Scene;
 import engine.Window;
 import engine.graph.Camera;
@@ -14,6 +13,8 @@ import engine.graph.Input;
 import engine.graph.Renderer;
 import engine.gui.GuiElement;
 import engine.gui.GuiManager;
+import engine.interfaces.IGameLogic;
+import engine.interfaces.IScene;
 import engine.sound.SoundManager;
 
 public class Game3D implements IGameLogic {
@@ -165,20 +166,6 @@ public class Game3D implements IGameLogic {
         	sceneChanged = true;
         	cameraInc.y = actualGravity;
         }
-
-        /* crouch mode not working yet
-        if (actualGravity < 0 && input.isKeyReleased(GLFW.GLFW_KEY_LEFT_SHIFT)) {
-        	if (!crouchEnabled) {
-        		camera.setActualHeight(Camera.HEIGHT - blockScale * 2);
-        		crouchEnabled = true;
-        	} else {
-        		camera.setActualHeight(Camera.HEIGHT);
-        		crouchEnabled = false;
-        	}
-        	cameraInc.y = 0;
-        }
-        System.out.println("Camera height = " + camera.getActualHeight() + " crouchEnabled = " + crouchEnabled + " actualGravity = " + actualGravity);
-        */
 
         if (window.isKeyPressed(GLFW.GLFW_KEY_LEFT)) {
         	sceneChanged = true;

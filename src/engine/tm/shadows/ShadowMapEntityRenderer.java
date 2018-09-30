@@ -7,14 +7,13 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
+import engine.interfaces.IPlayer;
 import engine.tm.animation.animatedModel.AnimatedModel;
 import engine.tm.entities.Entity;
-import engine.tm.entities.IPlayer;
 import engine.tm.models.RawModel;
 import engine.tm.models.TexturedModel;
 import engine.tm.render.MasterRenderer;
 import engine.tm.toolbox.Maths;
-import engine.tm.utils.OpenGlUtils;
 
 public class ShadowMapEntityRenderer {
 

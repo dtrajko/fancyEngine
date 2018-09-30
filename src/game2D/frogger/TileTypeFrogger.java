@@ -1,5 +1,7 @@
 package game2D.frogger;
 
+import engine.interfaces.ITileType;
+
 public class TileTypeFrogger implements ITileType {
 
 	public static ITileType tileTypes[] = new TileTypeFrogger[16]; // range of RGB color channels

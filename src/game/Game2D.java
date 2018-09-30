@@ -7,10 +7,10 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
 import engine.GameEngine;
-import engine.IGameLogic;
 import engine.Window;
 import engine.graph.Camera;
 import engine.graph.Input;
+import engine.interfaces.IGameLogic;
 import engine.sound.SoundManager;
 import game2D.assets.Assets;
 import game2D.entities.Player;

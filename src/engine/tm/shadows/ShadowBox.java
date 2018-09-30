@@ -3,11 +3,12 @@ package engine.tm.shadows;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
-import engine.IScene;
+
 import engine.Window;
-import engine.graph.ICamera;
+import engine.interfaces.ICamera;
+import engine.interfaces.IMasterRenderer;
+import engine.interfaces.IScene;
 import engine.tm.entities.Camera;
-import engine.tm.render.IMasterRenderer;
 
 /**
  * Represents the 3D cuboidal area of the world in which objects will cast

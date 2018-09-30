@@ -3,7 +3,7 @@ package engine.tm.particles;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import engine.GameEngine;
-import engine.IScene;
+import engine.interfaces.IScene;
 import engine.tm.entities.Camera;
 import engine.tm.entities.Entity;
 import engine.tm.entities.Player;

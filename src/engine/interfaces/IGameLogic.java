@@ -1,5 +1,6 @@
-package engine;
+package engine.interfaces;
 
+import engine.Window;
 import engine.graph.Input;
 import engine.sound.SoundManager;
 

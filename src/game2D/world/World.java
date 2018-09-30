@@ -10,16 +10,17 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import config.Config;
-import engine.IGameLogic;
 import engine.Window;
 import engine.graph.Camera;
+import engine.interfaces.IGameLogic;
+import engine.interfaces.IScene2D;
+import engine.interfaces.ITileType;
 import game.Game2D;
 import game2D.collision.AABB;
 import game2D.collision.Collision;
 import game2D.entities.Entity;
 import game2D.entities.Player;
 import game2D.entities.Transform;
-import game2D.frogger.ITileType;
 
 public class World implements IScene2D {
 

@@ -1,6 +1,5 @@
-package engine.graph;
+package engine.interfaces;
 
-import engine.IScene;
 import engine.Window;
 
 public interface IRenderer {

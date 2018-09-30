@@ -1,7 +1,5 @@
 package engine.items;
 
-import org.joml.Vector3f;
-
 import engine.graph.Camera;
 
 public class Box3D {

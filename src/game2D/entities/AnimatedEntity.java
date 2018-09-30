@@ -1,10 +1,10 @@
 package game2D.entities;
 
 import engine.graph.Camera;
+import engine.interfaces.IScene2D;
 import game2D.frogger.TextureEntity;
 import game2D.render.Animation;
 import game2D.shaders.Shader;
-import game2D.world.IScene2D;
 
 public abstract class AnimatedEntity extends TextureEntity {
 

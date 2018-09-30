@@ -3,10 +3,8 @@ package engine.tm.skybox;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
-
 import engine.GameEngine;
-import engine.graph.ICamera;
-import engine.tm.entities.Camera;
+import engine.interfaces.ICamera;
 import engine.tm.settings.WorldSettings;
 import engine.tm.shaders.ShaderProgram;
 import engine.tm.toolbox.Maths;

@@ -4,6 +4,7 @@ import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+import engine.interfaces.ICamera;
 import engine.items.GameItem;
 
 public class Transformation {

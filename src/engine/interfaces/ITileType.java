@@ -1,4 +1,4 @@
-package game2D.frogger;
+package engine.interfaces;
 
 public interface ITileType {
 

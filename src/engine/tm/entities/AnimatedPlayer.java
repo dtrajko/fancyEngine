@@ -2,13 +2,14 @@ package engine.tm.entities;
 
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
-import engine.IScene;
+
 import engine.graph.Input;
+import engine.interfaces.IPlayer;
+import engine.interfaces.IScene;
+import engine.interfaces.ITerrain;
 import engine.tm.animation.animatedModel.AnimatedModel;
 import engine.tm.animation.animatedModel.Joint;
 import engine.tm.openglObjects.Vao;
-import engine.tm.scene.Scene;
-import engine.tm.terrains.ITerrain;
 import engine.tm.textures.Texture;
 
 public class AnimatedPlayer extends AnimatedModel implements IPlayer {
@@ -18,12 +19,9 @@ public class AnimatedPlayer extends AnimatedModel implements IPlayer {
 	private static final float GRAVITY = -2.0f; // -2.0f;
 	private static final float JUMP_POWER = 2.0f;
 	private static final float TERRAIN_HEIGHT = 0;
-
 	private float currentSpeed = 0;
 	private float currentTurnSpeed = 0;
 	private float upwardsSpeed = 0;
-
-	private boolean isInAir = false;
 	private boolean gravityEnabled = true;
 
 	public AnimatedPlayer(Vao model, Texture texture, Joint rootJoint, int jointCount, 
@@ -62,16 +60,12 @@ public class AnimatedPlayer extends AnimatedModel implements IPlayer {
 
 		if (super.getPosition().y < terrainHeight) {
 			upwardsSpeed = 0;
-			isInAir = false;
 			super.getPosition().y = terrainHeight;
 		}
 	}
 
 	private void jump() {
-		if (true || !isInAir) {
-			upwardsSpeed = JUMP_POWER;
-			isInAir = true;
-		}
+		upwardsSpeed = JUMP_POWER;
 	}
 
 	private void checkInputs(Input input) {

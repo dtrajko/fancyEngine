@@ -4,14 +4,14 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
-import engine.IGameLogic;
 import engine.Window;
 import engine.graph.Camera;
 import engine.graph.Input;
+import engine.interfaces.IGameLogic;
+import engine.interfaces.IScene2D;
 import game.Game2D;
 import game2D.collision.Collision;
 import game2D.render.Animation;
-import game2D.world.IScene2D;
 import game2D.world.Tile;
 
 public class Player extends AnimatedEntity {

@@ -1,7 +1,7 @@
-package engine.tm.render;
+package engine.interfaces;
 
 import org.joml.Matrix4f;
-import engine.IScene;
+
 import engine.Window;
 
 public interface IMasterRenderer {

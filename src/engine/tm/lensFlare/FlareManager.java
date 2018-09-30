@@ -4,10 +4,9 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
-import engine.IScene;
-import engine.graph.ICamera;
+import engine.interfaces.ICamera;
+import engine.interfaces.IScene;
 import engine.tm.entities.Camera;
-import engine.tm.scene.Scene;
 import engine.tm.sunRenderer.Sun;
 
 public class FlareManager {

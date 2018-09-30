@@ -7,11 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.joml.Matrix4f;
-
-import engine.IScene;
+import engine.interfaces.IScene;
 import engine.tm.entities.Camera;
 import engine.tm.loaders.Loader;
-import engine.tm.scene.Scene;
 
 public class ParticleMaster {
 

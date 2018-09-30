@@ -1,6 +1,6 @@
 package game2D.world;
 
-import game2D.frogger.ITileType;
+import engine.interfaces.ITileType;
 
 public class TileType2D implements ITileType {
 
