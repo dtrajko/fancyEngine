@@ -41,8 +41,8 @@ public class TerrainLowPoly implements ITerrain {
 	}
 
 	public float getHeightOfTerrain(float worldX, float worldZ) {
-		int intX = (int) Math.floor(worldX);
-		int intZ = (int) Math.floor(worldZ);
+		int intX = (int) Math.floor(worldX - x);
+		int intZ = (int) Math.floor(worldZ - z);
 		float worldY = 0;
 		if (intX < 0 || intX >= heights.length - 1 ||
 			intZ < 0 || intZ >= heights.length - 1) {

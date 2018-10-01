@@ -158,6 +158,7 @@ public class SceneLowPoly implements IScene {
 		TerrainGenerator terrainGenerator = new HybridTerrainGenerator(projectionMatrix, noise, colorGen);
 		terrainLowPoly = terrainGenerator.generateTerrain(WorldSettings.WORLD_SIZE);
 		processTerrain(terrainLowPoly);
+
 		/*
 		TerrainLowPoly terrainLowPolyDynamic;
 		for (int x = -1; x <= 1; x++) {
@@ -195,7 +196,7 @@ public class SceneLowPoly implements IScene {
 			}
 
 			int modelIndex = rand.nextInt(2);
-			int modelSize = (rand.nextInt(3) + 2) / 2;
+			float modelSize = rand.nextFloat() + 1;
 			int fernTxIndex = rand.nextInt(4);
 
 			entity = null;
@@ -225,7 +226,7 @@ public class SceneLowPoly implements IScene {
 		Joint headJoint = AnimatedModelLoader.createJoints(skeletonData.headJoint);
 		float coordX = WorldSettings.WORLD_SIZE / 2;
 		float coordZ = WorldSettings.WORLD_SIZE / 2;
-		float coordY = getCurrentTerrain().getHeightOfTerrain(coordX, coordZ);
+		float coordY = getCurrentTerrain(coordX, coordZ).getHeightOfTerrain(coordX, coordZ);
 		player = new AnimatedPlayer(model, texture, headJoint, skeletonData.jointCount, new Vector3f(coordX, coordY, coordZ), 0, 45, 0, 0.3f);
 		Animation animation = AnimationLoader.loadAnimation(new MyFile(WorldSettings.MODELS_DIR + "/cowboy.dae"));
 		((AnimatedModel) player).doAnimation(animation);
@@ -457,22 +458,23 @@ public class SceneLowPoly implements IScene {
 		guis.add(gui);
 	}
 
-	public ITerrain getCurrentTerrain() {
-		return (ITerrain) terrainLowPoly;
-	}
-
 	public ITerrain getCurrentTerrain(float x, float z) {
-		return (ITerrain) terrainLowPoly;
+		ITerrain currentTerrain = null;
+		for (ITerrain terrain : terrains) {
+			if (x >= terrain.getX() && x < (terrain.getX() + WorldSettings.WORLD_SIZE) &&
+				z >= terrain.getZ() && z < (terrain.getZ() + WorldSettings.WORLD_SIZE)) {
+				currentTerrain = terrain;
+			}
+		}
+		return currentTerrain;
 	}
 
 	@Override
 	public void resetScene(Window window, ICamera camera, IGameLogic game) {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
 	public void save() {
-		// TODO Auto-generated method stub
 	}
 
 	public void clearLists() {
