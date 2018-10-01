@@ -157,6 +157,18 @@ public class SceneLowPoly implements IScene {
 		Matrix4f projectionMatrix = MasterRendererLowPoly.createProjectionMatrix();
 		TerrainGenerator terrainGenerator = new HybridTerrainGenerator(projectionMatrix, noise, colorGen);
 		terrainLowPoly = terrainGenerator.generateTerrain(WorldSettings.WORLD_SIZE);
+		processTerrain(terrainLowPoly);
+		/*
+		TerrainLowPoly terrainLowPolyDynamic;
+		for (int x = -1; x <= 1; x++) {
+			for (int z = -1; z <= 1; z++) {
+				terrainLowPolyDynamic = new TerrainLowPoly(terrainLowPoly.getVao(), terrainLowPoly.getVertexCount(), terrainLowPoly.getHeights());
+				terrainLowPolyDynamic.setX(x * WorldSettings.WORLD_SIZE);
+				terrainLowPolyDynamic.setZ(z * WorldSettings.WORLD_SIZE);
+				processTerrain(terrainLowPolyDynamic);
+			}
+		}
+		*/
 	}
 
 	private void setupLowPolyWater() {

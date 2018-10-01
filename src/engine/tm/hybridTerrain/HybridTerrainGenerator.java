@@ -32,16 +32,12 @@ public class HybridTerrainGenerator extends TerrainGenerator {
 
 	private static final int VERTEX_SIZE_BYTES = 12 + 4 + 4;// position + normal + color
 
-	private final TerrainRendererLowPoly renderer;
-
 	public HybridTerrainGenerator(Matrix4f projectionMatrix, PerlinNoise perlinNoise, ColorGenerator colorGen) {
 		super(perlinNoise, colorGen);
-		this.renderer = new TerrainRendererLowPoly(projectionMatrix, true);
 	}
 
 	@Override
 	public void cleanUp() {
-		renderer.cleanUp();
 	}
 
 	@Override
@@ -50,7 +46,7 @@ public class HybridTerrainGenerator extends TerrainGenerator {
 		byte[] terrainData = createMeshData(heights, colors, vertexCount);
 		int[] indices = IndexGenerator.generateIndexBuffer(heights.length);
 		Vao vao = VaoLoader.createVao(terrainData, indices);
-		return new TerrainLowPoly(vao, indices.length, renderer, heights);
+		return new TerrainLowPoly(vao, indices.length, heights);
 	}
 
 	private int calculateVertexCount(int vertexLength) {

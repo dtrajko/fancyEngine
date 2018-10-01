@@ -116,7 +116,7 @@ public class MasterRendererLowPoly implements IMasterRenderer {
 
 		Vector4f clipPlane = new Vector4f(0, 1, 0, -WorldSettings.WATER_HEIGHT + REFLECT_OFFSET);
 		prepare();
-		terrainRendererLowPoly.render(terrainLowPoly, camera, lightDirectional, clipPlane);
+		terrainRendererLowPoly.render(scene, lightDirectional, clipPlane);
 		entityRenderer.render(scene, clipPlane);
 		animatedModelRenderer.render((AnimatedModel) player, camera, lightDirection, clipPlane);
 
@@ -134,7 +134,7 @@ public class MasterRendererLowPoly implements IMasterRenderer {
 		LightDirectional lightDirectional = ((SceneLowPoly) scene).getLightDirectional();		
 		refractionFbo.bindForRender(0);
 		prepare();
-		terrainRendererLowPoly.render(terrainLowPoly, camera, lightDirectional, clipPlane);
+		terrainRendererLowPoly.render(scene, lightDirectional, clipPlane);
 		scene.getFlareManager().render(scene);
 		refractionFbo.unbindAfterRender();
 	}
@@ -150,7 +150,7 @@ public class MasterRendererLowPoly implements IMasterRenderer {
 		prepare();
 		skyboxRenderer.render(scene, clipPlane);
 		sunRenderer.render(scene);
-		terrainRendererLowPoly.render(terrainLowPoly, camera, lightDirectional, clipPlane);
+		terrainRendererLowPoly.render(scene, lightDirectional, clipPlane);
 		waterRendererLowPoly.render(waterLowPoly, camera, lightDirectional,
 			reflectionFbo.getColorBuffer(0), refractionFbo.getColorBuffer(0), refractionFbo.getDepthBuffer());
 		entityRenderer.render(scene, clipPlane);

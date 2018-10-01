@@ -1,10 +1,6 @@
 package engine.tm.lowPoly;
 
-import org.joml.Vector4f;
-
-import engine.interfaces.ICamera;
 import engine.interfaces.ITerrain;
-import engine.tm.entities.LightDirectional;
 import engine.tm.models.RawModel;
 import engine.tm.openglObjects.Vao;
 import engine.tm.settings.WorldSettings;
@@ -15,30 +11,32 @@ public class TerrainLowPoly implements ITerrain {
 
 	private final Vao vao;
 	private final int vertexCount;
-	private final TerrainRendererLowPoly renderer;
 	private final float[][] heights;
 	private final float WATER_HEIGHT = WorldSettings.WATER_HEIGHT;
+	private int x;
+	private int z;
 
-	public TerrainLowPoly(Vao vao, int vertexCount, TerrainRendererLowPoly renderer, float[][] heights){
+	public TerrainLowPoly(Vao vao, int vertexCount, float[][] heights) {
 		this.vao = vao;
 		this.vertexCount = vertexCount;
-		this.renderer = renderer;
 		this.heights = heights;
+		this.x = 0;
+		this.z = 0;
 	}
-	
-	public int getVertexCount(){
-		return vertexCount;
-	}
-	
-	public Vao getVao(){
+
+	public Vao getVao() {
 		return vao;
 	}
-	
-	public void render(ICamera camera, LightDirectional light, Vector4f clipPlane){
-		renderer.render(this, camera, light, clipPlane);
+
+	public int getVertexCount() {
+		return vertexCount;
 	}
-	
-	public void delete(){
+
+	public float[][] getHeights() {
+		return heights;
+	}
+
+	public void delete() {
 		vao.delete();
 	}
 
@@ -58,14 +56,22 @@ public class TerrainLowPoly implements ITerrain {
 		return worldY;
 	}
 
+	public void setX(int x) {
+		this.x = x;
+	}
+
+	public void setZ(int z) {
+		this.z = z;
+	}
+
 	@Override
 	public float getX() {
-		return 0;
+		return x;
 	}
 
 	@Override
 	public float getZ() {
-		return 0;
+		return z;
 	}
 
 	@Override

@@ -1,13 +1,17 @@
 package engine.tm.lowPoly;
 
+import java.util.List;
+
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.opengl.GL11;
 
 import engine.interfaces.ICamera;
+import engine.interfaces.IScene;
 import engine.interfaces.ITerrain;
 import engine.tm.entities.LightDirectional;
+import engine.tm.scene.SceneLowPoly;
 import engine.tm.settings.WorldSettings;
 import engine.tm.toolbox.Maths;
 
@@ -56,14 +60,18 @@ public class TerrainRendererLowPoly {
 	 *            the terrain. The clipping planes cut off anything in the scene
 	 *            that is rendered outside of the plane.
 	 */
-	public void render(TerrainLowPoly terrain, ICamera camera, LightDirectional light, Vector4f clipPlane) {
-		prepare(terrain, camera, light, clipPlane);
-		if (hasIndices) {
-			GL11.glDrawElements(GL11.GL_TRIANGLES, terrain.getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
-		} else {
-			GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, terrain.getVertexCount());
+	public void render(IScene scene, LightDirectional light, Vector4f clipPlane) {
+		List<ITerrain> terrains = ((SceneLowPoly) scene).getTerrains();
+		ICamera camera = scene.getCamera();
+		for (ITerrain terrain : terrains) {
+			prepare(terrain, camera, light, clipPlane);
+			if (hasIndices) {
+				GL11.glDrawElements(GL11.GL_TRIANGLES, ((TerrainLowPoly) terrain).getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
+			} else {
+				GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, ((TerrainLowPoly) terrain).getVertexCount());
+			}
+			finish(terrain);			
 		}
-		finish(terrain);
 	}
 
 	/**
@@ -87,8 +95,8 @@ public class TerrainRendererLowPoly {
 	 *            the terrain. The clipping planes cut off anything in the scene
 	 *            that is rendered outside of the plane.
 	 */
-	private void prepare(TerrainLowPoly terrain, ICamera camera, LightDirectional light, Vector4f clipPlane) {
-		terrain.getVao().bind();
+	private void prepare(ITerrain terrain, ICamera camera, LightDirectional light, Vector4f clipPlane) {
+		((TerrainLowPoly) terrain).getVao().bind();
 		shader.start();
 		shader.clipPlane.loadVec4(clipPlane);
 		shader.lightBias.loadVec2(light.getLightBias());
@@ -110,8 +118,8 @@ public class TerrainRendererLowPoly {
 	 * 
 	 * @param terrain
 	 */
-	private void finish(TerrainLowPoly terrain) {
-		terrain.getVao().unbind();
+	private void finish(ITerrain terrain) {
+		((TerrainLowPoly) terrain).getVao().unbind();
 		shader.stop();
 	}
 
