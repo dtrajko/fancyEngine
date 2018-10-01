@@ -13,8 +13,8 @@ public class EntityShader extends ShaderProgram {
 	
 	private static final int MAX_LIGHTS = WorldSettings.MAX_LIGHTS;
 
-	private static final String VERTEX_FILE = WorldSettings.RESOURCES_SUBDIR + "/shaders/vertexShader.glsl";
-	private static final String FRAGMENT_FILE = WorldSettings.RESOURCES_SUBDIR + "/shaders/fragmentShader.glsl";
+	private static final String VERTEX_FILE = WorldSettings.RESOURCES_SUBDIR + "/shaders/entityVertex.glsl";
+	private static final String FRAGMENT_FILE = WorldSettings.RESOURCES_SUBDIR + "/shaders/entityFragment.glsl";
 
 	private int location_transformationMatrix;
 	private int location_projectionMatrix;

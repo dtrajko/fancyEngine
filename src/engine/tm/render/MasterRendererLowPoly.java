@@ -152,7 +152,7 @@ public class MasterRendererLowPoly implements IMasterRenderer {
 		sunRenderer.render(scene);
 		terrainRendererLowPoly.render(terrainLowPoly, camera, lightDirectional, clipPlane);
 		waterRendererLowPoly.render(waterLowPoly, camera, lightDirectional,
-				reflectionFbo.getColorBuffer(0), refractionFbo.getColorBuffer(0), refractionFbo.getDepthBuffer());
+			reflectionFbo.getColorBuffer(0), refractionFbo.getColorBuffer(0), refractionFbo.getDepthBuffer());
 		entityRenderer.render(scene, clipPlane);
 		animatedModelRenderer.render((AnimatedModel) player, camera, lightDirection, clipPlane);
 		scene.getFlareManager().render(scene);

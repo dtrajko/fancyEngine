@@ -358,7 +358,7 @@ public class Scene implements IScene {
 		TexturedModel pineModel = new TexturedModel(OBJLoader.loadOBJModel("pine", loader), new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/pine.png")));
 
 		int modelsSpawned = 0;
-		while (modelsSpawned < 100) {
+		while (modelsSpawned < 10) {
 			entity = null;
 
 			float coordX = rand.nextInt((int) Terrain.SIZE) - Terrain.SIZE * 1/2;
@@ -393,8 +393,8 @@ public class Scene implements IScene {
 			}
 			if (entity != null) {
 				processEntity(entity);
+				modelsSpawned++;
 			}
-			modelsSpawned++;
 		}
 	}
 

@@ -165,9 +165,7 @@ public class SceneLowPoly implements IScene {
 
 	private void generateForestModels() {
 		Random rand = new Random();
-		Entity entity = null;
-		ModelTexture grassTexture = new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/grassTexture.png"));
-		grassTexture.setTransparent(true).setUseFakeLighting(true);
+		Entity entity;
 		ModelTexture fernTextureAtlas = new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/fern_atlas.png"));
 		fernTextureAtlas.setNumberOfRows(2);
 		fernTextureAtlas.setTransparent(true).setUseFakeLighting(true);
@@ -175,8 +173,7 @@ public class SceneLowPoly implements IScene {
 		TexturedModel pineModel = new TexturedModel(OBJLoader.loadOBJModel("pine", loader), new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/pine.png")));
 
 		int modelsSpawned = 0;
-		while (modelsSpawned < 200) {
-			entity = null;
+		while (modelsSpawned < 10) {
 
 			float coordX = rand.nextInt(WorldSettings.WORLD_SIZE);
 			float coordZ = rand.nextInt(WorldSettings.WORLD_SIZE);
@@ -186,8 +183,10 @@ public class SceneLowPoly implements IScene {
 			}
 
 			int modelIndex = rand.nextInt(2);
-			int modelSize = rand.nextInt(3) / 2;
+			int modelSize = (rand.nextInt(3) + 2) / 2;
 			int fernTxIndex = rand.nextInt(4);
+
+			entity = null;
 
 			switch (modelIndex) {
 			case 0:
@@ -201,8 +200,8 @@ public class SceneLowPoly implements IScene {
 			}
 			if (entity != null) {
 				processEntity(entity);
+				modelsSpawned++;
 			}
-			modelsSpawned++;
 		}
 	}
 
@@ -212,7 +211,10 @@ public class SceneLowPoly implements IScene {
 		Texture texture = AnimatedModelLoader.loadTexture(new MyFile(WorldSettings.TEXTURES_DIR + "/cowboy.png"));
 		SkeletonData skeletonData = entityData.getJointsData();
 		Joint headJoint = AnimatedModelLoader.createJoints(skeletonData.headJoint);
-		player = new AnimatedPlayer(model, texture, headJoint, skeletonData.jointCount, new Vector3f(0, 0, 0), 0, 45, 0, 0.3f);
+		float coordX = WorldSettings.WORLD_SIZE / 2;
+		float coordZ = WorldSettings.WORLD_SIZE / 2;
+		float coordY = getCurrentTerrain().getHeightOfTerrain(coordX, coordZ);
+		player = new AnimatedPlayer(model, texture, headJoint, skeletonData.jointCount, new Vector3f(coordX, coordY, coordZ), 0, 45, 0, 0.3f);
 		Animation animation = AnimationLoader.loadAnimation(new MyFile(WorldSettings.MODELS_DIR + "/cowboy.dae"));
 		((AnimatedModel) player).doAnimation(animation);
 	}
