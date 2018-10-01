@@ -37,4 +37,9 @@ public class FireMaster {
 			}
 		}
 	}
+
+	public void cleanUp() {
+		fires.clear();
+		locations.clear();
+	}
 }

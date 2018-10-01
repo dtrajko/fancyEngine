@@ -85,8 +85,8 @@ public class Scene implements IScene {
 
 	private ParticleTexture particleTexture;
 	private ParticleSystemShoot particleSystemShoot;
-	private boolean fireMode = true;
-	private FireMaster fireManager;
+	private boolean fireMode;
+	private FireMaster fireMaster;
 	private FlareManager flareManager;
 	private Vector3f lightDirection = WorldSettings.LIGHT_DIR;
 
@@ -100,8 +100,9 @@ public class Scene implements IScene {
 		loader = new Loader();
 		skybox = new Skybox(loader);
 		masterRenderer = new MasterRenderer();
-		fireManager = new FireMaster(loader);
 		wireframeEnabled = false;
+		fireMaster = new FireMaster(loader);
+		fireMode = true;
 	}
 
 	public void init() {
@@ -215,7 +216,7 @@ public class Scene implements IScene {
 		player.update();
 		updateParticles(input);
 		updateText();
-		fireManager.update();
+		fireMaster.update();
 		toggleWireframeMode(input);
 	}
 
@@ -235,7 +236,7 @@ public class Scene implements IScene {
 	}
 
 	public FireMaster getFireMaster() {
-		return fireManager;
+		return fireMaster;
 	}
 
 	public FlareManager getFlareManager() {
@@ -543,6 +544,7 @@ public class Scene implements IScene {
 		clearLists();
 		loader.cleanUp();
 		flareManager.cleanUp();
+		fireMaster.cleanUp();
 	}
 
 	public Vector3f getLightDirection() {

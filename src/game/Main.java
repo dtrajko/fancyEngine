@@ -11,7 +11,7 @@ public class Main {
 
 	private static int width = 0;
 	private static int height = 0;
-	private static String app = "Game3D"; // ThinMatrixLowPoly, ThinMatrix, Game3D, Game2D, Frogger
+	private static String app = "ThinMatrixLowPoly"; // ThinMatrixLowPoly, ThinMatrix, Game3D, Game2D, Frogger
 
     public static void main(String[] args) {
         try {

@@ -11,7 +11,7 @@ import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL31;
-import engine.tm.entities.Camera;
+import engine.interfaces.ICamera;
 import engine.tm.loaders.Loader;
 import engine.tm.models.RawModel;
 import engine.tm.toolbox.Maths;
@@ -45,7 +45,7 @@ public class ParticleRenderer {
 		shader.stop();
 	}
 
-	protected void render(Map<ParticleTexture, List<Particle>> particles, Camera camera){
+	protected void render(Map<ParticleTexture, List<Particle>> particles, ICamera camera){
 		Matrix4f viewMatrix = Maths.createViewMatrix(camera);
 		prepare();
 		for (ParticleTexture texture: particles.keySet()) {

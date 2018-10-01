@@ -9,6 +9,7 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL32;
 
 import engine.Window;
+import engine.interfaces.ICamera;
 import engine.interfaces.IMasterRenderer;
 import engine.interfaces.IPlayer;
 import engine.interfaces.IScene;
@@ -27,6 +28,8 @@ import engine.tm.lowPoly.TerrainLowPoly;
 import engine.tm.lowPoly.TerrainRendererLowPoly;
 import engine.tm.lowPoly.WaterRendererLowPoly;
 import engine.tm.lowPoly.WaterTileLowPoly;
+import engine.tm.particles.ParticleMaster;
+import engine.tm.scene.Scene;
 import engine.tm.scene.SceneLowPoly;
 import engine.tm.settings.WorldSettings;
 import engine.tm.skybox.SkyboxRenderer;
@@ -82,11 +85,18 @@ public class MasterRendererLowPoly implements IMasterRenderer {
 	 */
 	@Override
 	public void render(Window window, IScene scene) {
+
+		ICamera camera = scene.getCamera();
+
 		GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
 		renderWaterReflectionPass(scene);
 		renderWaterRefractionPass(scene);
 		GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
 		renderMainPass(scene);
+
+		// after the 3D stuff and before the 2D stuff
+		ParticleMaster.renderParticles(camera);
+
 		guiRenderer.render(scene);
 		TextMaster.render();
 	}

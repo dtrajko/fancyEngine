@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.joml.Matrix4f;
+import engine.interfaces.ICamera;
 import engine.interfaces.IScene;
-import engine.tm.entities.Camera;
 import engine.tm.loaders.Loader;
 
 public class ParticleMaster {
@@ -43,7 +43,7 @@ public class ParticleMaster {
 		}
 	}
 
-	public static void renderParticles(Camera camera) {
+	public static void renderParticles(ICamera camera) {
 		renderer.render(particles, camera);
 	}
 	

@@ -1,5 +1,6 @@
 package engine.tm.entities;
 
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
@@ -64,6 +65,11 @@ public class AnimatedPlayer extends AnimatedModel implements IPlayer {
 		}
 	}
 
+	@Override
+	public void increaseRotation(float dx, float dy, float dz) {
+		super.increaseRotation(dx, dy, dz);
+	}
+
 	private void jump() {
 		upwardsSpeed = JUMP_POWER;
 	}
@@ -100,7 +106,11 @@ public class AnimatedPlayer extends AnimatedModel implements IPlayer {
 		} else {
 			this.currentTurnSpeed = 0;
 		}
-		
+
+		// Update player horizontal rotation based on mouse movement
+		Vector2f rotVec = input.getDisplVec();
+		this.currentTurnSpeed += -TURN_SPEED * rotVec.y;
+
 		if (input.isKeyDown(GLFW.GLFW_KEY_SPACE)) {
 			jump();
 		}

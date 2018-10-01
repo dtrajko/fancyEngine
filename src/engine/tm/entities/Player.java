@@ -66,6 +66,11 @@ public class Player extends Entity implements IPlayer {
 		// TODO Auto-generated method stub		
 	}
 
+	@Override
+	public void increaseRotation(float dx, float dy, float dz) {
+		super.increaseRotation(dx, dy, dz);
+	}
+
 	private void jump() {
 		upwardsSpeed = JUMP_POWER;
 	}

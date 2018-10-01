@@ -4,7 +4,6 @@ import java.util.HashMap;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
-
 import engine.Scene;
 import engine.Window;
 import engine.graph.Camera;

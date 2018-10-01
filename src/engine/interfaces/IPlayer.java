@@ -12,5 +12,6 @@ public interface IPlayer {
 	float getRotY();
 	float getRotZ();
 	void update();
+	void increaseRotation(float dx, float dy, float dz);
 
 }

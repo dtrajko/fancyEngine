@@ -1,7 +1,6 @@
 package engine.tm;
 
 import org.lwjgl.glfw.GLFW;
-
 import engine.Window;
 import engine.graph.Input;
 import engine.interfaces.IGameLogic;

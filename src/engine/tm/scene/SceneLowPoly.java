@@ -52,6 +52,8 @@ import engine.tm.models.TexturedModel;
 import engine.tm.openglObjects.Vao;
 import engine.tm.particles.FireMaster;
 import engine.tm.particles.ParticleMaster;
+import engine.tm.particles.ParticleSystemShoot;
+import engine.tm.particles.ParticleTexture;
 import engine.tm.render.MasterRendererLowPoly;
 import engine.tm.settings.WorldSettings;
 import engine.tm.skybox.Skybox;
@@ -83,6 +85,11 @@ public class SceneLowPoly implements IScene {
 	private FontType font_1;
 	private GUIText[] text;
 
+	private FireMaster fireMaster;
+	private ParticleTexture particleTexture;
+	private ParticleSystemShoot particleSystemShoot;
+	private boolean fireMode;
+
 	private FlareManager flareManager;
 	private Vector3f lightDirection = WorldSettings.LIGHT_DIR;
 
@@ -90,13 +97,16 @@ public class SceneLowPoly implements IScene {
 	private WaterTileLowPoly waterLowPoly;
 	private LightDirectional lightDirectional;
 	
-	private boolean wireframeEnabled = false;
+	private boolean wireframeEnabled;
 
 	public SceneLowPoly() {
 		camera = new Camera();
 		loader = new Loader();
 		skybox = new Skybox(loader);
 		masterRenderer = new MasterRendererLowPoly();
+		wireframeEnabled = false;
+		fireMaster = new FireMaster(loader);
+		fireMode = true;
 	}
 
 	public void init() {
@@ -107,9 +117,37 @@ public class SceneLowPoly implements IScene {
 		setupCamera();
 		setupLights();
 		setupLensFlare();
+		setupParticles();
 		setupGui();
 		setupText();
 		masterRenderer.init(this); // should be called after entities list is populated
+	}
+
+	private void setupParticles() {
+		fireMode = true;
+		particleTexture = new ParticleTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/particles/particleAtlas.png"), 4, true);
+		particleSystemShoot = new ParticleSystemShoot(particleTexture, 400f, 20f, 0.0f, 0.5f);
+	}
+
+	private void updateParticles(Input input) {
+		if (input.isKeyReleased(GLFW.GLFW_KEY_F)) {
+			fireMode = !fireMode;
+			if (fireMode) {
+				particleSystemShoot = new ParticleSystemShoot(particleTexture, 400f, 20f, 0.0f, 0.5f);
+			} else {
+				particleSystemShoot = new ParticleSystemShoot(particleTexture, 20f, 50f, -0.25f, 2f); // magic circle around the player
+			}
+		}
+		if (input.isMouseButtonDown(GLFW.GLFW_MOUSE_BUTTON_3)) {
+			float coordX = player.getPosition().x;
+			float coordY = player.getPosition().y + 6;
+			float coordZ = player.getPosition().z;
+			float playerDX = (float) (Math.sin(Math.toRadians(player.getRotY())));
+			float playerDY = 0;
+			float playerDZ = (float) (Math.cos(Math.toRadians(player.getRotY())));
+			Vector3f playerDirection = new Vector3f(playerDX, playerDY, playerDZ);
+			particleSystemShoot.generateParticles(new Vector3f(coordX, coordY, coordZ), playerDirection);
+		}
 	}
 
 	private void setupLowPolyTerrain() {
@@ -137,13 +175,13 @@ public class SceneLowPoly implements IScene {
 		TexturedModel pineModel = new TexturedModel(OBJLoader.loadOBJModel("pine", loader), new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/pine.png")));
 
 		int modelsSpawned = 0;
-		while (modelsSpawned < 100) {
+		while (modelsSpawned < 200) {
 			entity = null;
 
 			float coordX = rand.nextInt(WorldSettings.WORLD_SIZE);
 			float coordZ = rand.nextInt(WorldSettings.WORLD_SIZE);
 			float coordY = terrainLowPoly.getHeightOfTerrain(coordX, coordZ);
-			if (coordY < 5) {
+			if (coordY < WorldSettings.WATER_HEIGHT + 2) {
 				continue;
 			}
 
@@ -253,16 +291,21 @@ public class SceneLowPoly implements IScene {
 		GuiTexture reflection  = new GuiTexture(MasterRendererLowPoly.reflectionFbo.getColorBuffer(0), new Vector2f(-0.78f,  0.76f), new Vector2f(0.2f, 0.2f));
 		GuiTexture refraction  = new GuiTexture(MasterRendererLowPoly.refractionFbo.getColorBuffer(0), new Vector2f(-0.78f,  0.32f), new Vector2f(0.2f, 0.2f));
 		GuiTexture depth       = new GuiTexture(MasterRendererLowPoly.refractionFbo.getDepthBuffer(),  new Vector2f(-0.78f, -0.12f), new Vector2f(0.2f, 0.2f));
+		GuiTexture aimTarget   = new GuiTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/gui/bullseye.png"), new Vector2f(0.0f, 0.0f), new Vector2f(0.02f, 0.036f));
+
 		processGui(reflection);
 		processGui(refraction);
 		processGui(depth);
+		processGui(aimTarget);
 	}
 
 	@Override
 	public void update(float interval, Input input) {
 		player.update();
-		updateText();
+		updateParticles(input);
+		fireMaster.update();
 		toggleWireframeMode(input);
+		updateText();
 	}
 
 	private void toggleWireframeMode(Input input) {
@@ -278,6 +321,11 @@ public class SceneLowPoly implements IScene {
 
 	public IMasterRenderer getMasterRenderer() {
 		return masterRenderer;
+	}
+
+	@Override
+	public FireMaster getFireMaster() {
+		return fireMaster;
 	}
 
 	public FlareManager getFlareManager() {
@@ -426,14 +474,10 @@ public class SceneLowPoly implements IScene {
 		clearLists();
 		loader.cleanUp();
 		flareManager.cleanUp();
+		fireMaster.cleanUp();
 	}
 
 	public Vector3f getLightDirection() {
 		return lightDirection;
-	}
-
-	@Override
-	public FireMaster getFireMaster() {
-		return null;
 	}
 }

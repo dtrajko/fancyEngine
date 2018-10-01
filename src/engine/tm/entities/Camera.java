@@ -4,7 +4,6 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
-
 import engine.Window;
 import engine.graph.Input;
 import engine.interfaces.ICamera;
@@ -12,6 +11,7 @@ import engine.interfaces.IMasterRenderer;
 import engine.interfaces.IPlayer;
 import engine.interfaces.IScene;
 import engine.interfaces.ITerrain;
+import engine.tm.settings.WorldSettings;
 import engine.tm.toolbox.Maths;
 
 public class Camera implements ICamera {
@@ -92,6 +92,12 @@ public class Camera implements ICamera {
 	public void moveWithPlayer(IScene scene, Input input) {
 		IPlayer player = scene.getPlayer();
 		displVec = input.getDisplVec();
+
+		// update camera pitch based on vertical mouse movement
+		pitch += displVec.x * WorldSettings.MOUSE_SENSITIVITY;
+		// update player rotation based on horizontal mouse movement
+		player.increaseRotation(0, -displVec.y * WorldSettings.MOUSE_SENSITIVITY, 0);
+
 		calculateZoom(input);
 		calculatePitch(input);
 		calculateRoll(input);
