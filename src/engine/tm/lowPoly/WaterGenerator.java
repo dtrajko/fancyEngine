@@ -6,6 +6,7 @@ import java.nio.ByteOrder;
 import org.joml.Vector2f;
 
 import engine.tm.openglObjects.Vao;
+import engine.tm.settings.WorldSettings;
 import engine.tm.vertexDataStoring.DataStoring;
 import engine.tm.vertexDataStoring.VaoLoader;
 
@@ -139,6 +140,10 @@ public class WaterGenerator {
 		vertices[1] = new Vector2f(col, row + 1);
 		vertices[2] = new Vector2f(col + 1, row);
 		vertices[3] = new Vector2f(col + 1, row + 1);
+		vertices[0].sub(WorldSettings.WORLD_SIZE / 2, WorldSettings.WORLD_SIZE / 2);
+		vertices[1].sub(WorldSettings.WORLD_SIZE / 2, WorldSettings.WORLD_SIZE / 2);
+		vertices[2].sub(WorldSettings.WORLD_SIZE / 2, WorldSettings.WORLD_SIZE / 2);
+		vertices[3].sub(WorldSettings.WORLD_SIZE / 2, WorldSettings.WORLD_SIZE / 2);
 		return vertices;
 	}
 

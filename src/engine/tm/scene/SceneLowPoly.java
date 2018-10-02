@@ -154,33 +154,25 @@ public class SceneLowPoly implements IScene {
 		ColorGenerator colorGen = new ColorGenerator(WorldSettings.TERRAIN_COLS, WorldSettings.COLOR_SPREAD);
 		Matrix4f projectionMatrix = MasterRendererLowPoly.createProjectionMatrix();
 		TerrainGenerator terrainGenerator = new HybridTerrainGenerator(projectionMatrix, noise, colorGen);
-		TerrainLowPoly terrainLowPolyTmp = terrainGenerator.generateTerrain(WorldSettings.WORLD_SIZE);
-		processTerrain(terrainLowPolyTmp);
-
-		TerrainLowPoly terrainLowPoly;
-		for (int x = -gridSize / 2; x <= gridSize / 2; x++) {
-			for (int z = -gridSize / 2; z <= gridSize / 2; z++) {
-				terrainLowPoly = new TerrainLowPoly(terrainLowPolyTmp.getVao(), terrainLowPolyTmp.getVertexCount(),
-					terrainLowPolyTmp.getHeights());
-				terrainLowPoly.setX(x * WorldSettings.WORLD_SIZE);
-				terrainLowPoly.setZ(z * WorldSettings.WORLD_SIZE);
-				processTerrain(terrainLowPoly);
-			}
-		}
+		TerrainLowPoly terrainLowPoly = terrainGenerator.generateTerrain(WorldSettings.WORLD_SIZE);
+		processTerrain(terrainLowPoly);
+		TerrainLowPoly terrainLowPolyLeft = new TerrainLowPoly(terrainLowPoly.getVao(), terrainLowPoly.getVertexCount(), terrainLowPoly.getHeights());
+		terrainLowPolyLeft.setX(-WorldSettings.WORLD_SIZE);
+		processTerrain(terrainLowPolyLeft);
+		TerrainLowPoly terrainLowPolyRight = new TerrainLowPoly(terrainLowPoly.getVao(), terrainLowPoly.getVertexCount(), terrainLowPoly.getHeights());
+		terrainLowPolyRight.setX(WorldSettings.WORLD_SIZE);
+		processTerrain(terrainLowPolyRight);
 	}
 
 	private void setupLowPolyWater() {
-		WaterTileLowPoly waterLowPolyTmp = WaterGenerator.generate(WorldSettings.WORLD_SIZE, WorldSettings.WATER_HEIGHT);
-		WaterTileLowPoly waterLowPoly;
-		for (int x = -gridSize / 2; x <= gridSize / 2; x++) {
-			for (int z = -gridSize / 2; z <= gridSize / 2; z++) {
-				waterLowPoly = new WaterTileLowPoly(waterLowPolyTmp.getVao(), waterLowPolyTmp.getVertexCount(),
-					waterLowPolyTmp.getHeight());
-				waterLowPoly.setX(x * WorldSettings.WORLD_SIZE);
-				waterLowPoly.setZ(z * WorldSettings.WORLD_SIZE);
-				this.processWaterTile(waterLowPoly);
-			}
-		}
+		WaterTileLowPoly waterLowPoly = WaterGenerator.generate(WorldSettings.WORLD_SIZE, WorldSettings.WATER_HEIGHT);
+		processWaterTile(waterLowPoly);
+		WaterTileLowPoly waterLowPolyLeft = new WaterTileLowPoly(waterLowPoly.getVao(), waterLowPoly.getVertexCount(), waterLowPoly.getHeight());
+		waterLowPolyLeft.setX(-WorldSettings.WORLD_SIZE);
+		processWaterTile(waterLowPolyLeft);
+		WaterTileLowPoly waterLowPolyRight = new WaterTileLowPoly(waterLowPoly.getVao(), waterLowPoly.getVertexCount(), waterLowPoly.getHeight());
+		waterLowPolyRight.setX(WorldSettings.WORLD_SIZE);
+		processWaterTile(waterLowPolyRight);
 	}
 
 	private void generateForestModels() {
@@ -193,11 +185,11 @@ public class SceneLowPoly implements IScene {
 		TexturedModel pineModel = new TexturedModel(OBJLoader.loadOBJModel("pine", loader), new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/pine.png")));
 
 		int modelsSpawned = 0;
-		while (modelsSpawned < 10) {
+		while (modelsSpawned < 100) {
 
-			float coordX = rand.nextInt(WorldSettings.WORLD_SIZE);
-			float coordZ = rand.nextInt(WorldSettings.WORLD_SIZE);
-			float coordY = this.getCurrentTerrain(coordX, coordZ).getHeightOfTerrain(coordX, coordZ);
+			float coordX = (float) (rand.nextFloat() * WorldSettings.WORLD_SIZE * 3 - WorldSettings.WORLD_SIZE * 1.5);
+			float coordZ = (float) (rand.nextFloat() * WorldSettings.WORLD_SIZE * 1 - WorldSettings.WORLD_SIZE * 0.5);
+			float coordY = getCurrentTerrain(coordX, coordZ).getHeightOfTerrain(coordX, coordZ);
 			if (coordY < WorldSettings.WATER_HEIGHT + 2) {
 				continue;
 			}
@@ -231,10 +223,10 @@ public class SceneLowPoly implements IScene {
 		Texture texture = AnimatedModelLoader.loadTexture(new MyFile(WorldSettings.TEXTURES_DIR + "/cowboy.png"));
 		SkeletonData skeletonData = entityData.getJointsData();
 		Joint headJoint = AnimatedModelLoader.createJoints(skeletonData.headJoint);
-		float coordX = WorldSettings.WORLD_SIZE / 2;
-		float coordZ = WorldSettings.WORLD_SIZE / 2;
+		float coordX = 0;
+		float coordZ = 0;
 		float coordY = getCurrentTerrain(coordX, coordZ).getHeightOfTerrain(coordX, coordZ);
-		player = new AnimatedPlayer(model, texture, headJoint, skeletonData.jointCount, new Vector3f(coordX, coordY, coordZ), 0, 45, 0, 0.3f);
+		player = new AnimatedPlayer(model, texture, headJoint, skeletonData.jointCount, new Vector3f(coordX, coordY, coordZ), 0, 0, 0, 0.3f);
 		Animation animation = AnimationLoader.loadAnimation(new MyFile(WorldSettings.MODELS_DIR + "/cowboy.dae"));
 		((AnimatedModel) player).doAnimation(animation);
 	}
@@ -460,8 +452,8 @@ public class SceneLowPoly implements IScene {
 	public ITerrain getCurrentTerrain(float x, float z) {
 		ITerrain currentTerrain = null;
 		for (ITerrain terrain : terrains) {
-			if (x >= terrain.getX() && x < (terrain.getX() + WorldSettings.WORLD_SIZE) &&
-				z >= terrain.getZ() && z < (terrain.getZ() + WorldSettings.WORLD_SIZE)) {
+			if (x >= terrain.getX() - WorldSettings.WORLD_SIZE / 2 && x < (terrain.getX() + WorldSettings.WORLD_SIZE / 2) &&
+				z >= terrain.getZ() - WorldSettings.WORLD_SIZE / 2 && z < (terrain.getZ() + WorldSettings.WORLD_SIZE / 2)) {
 				currentTerrain = terrain;
 			}
 		}
