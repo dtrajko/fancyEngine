@@ -105,7 +105,6 @@ public class MasterRendererLowPoly implements IMasterRenderer {
 		Camera camera = (Camera) scene.getCamera();
 		IPlayer player = scene.getPlayer();
 		Vector3f lightDirection = scene.getLightDirection();
-		TerrainLowPoly terrainLowPoly = ((SceneLowPoly) scene).getTerrainLowPoly();
 		LightDirectional lightDirectional = ((SceneLowPoly) scene).getLightDirectional();
 		reflectionFbo.bindForRender(0);
 
@@ -129,8 +128,6 @@ public class MasterRendererLowPoly implements IMasterRenderer {
 
 	private void renderWaterRefractionPass(IScene scene) {
 		Vector4f clipPlane = new Vector4f(0, -1, 0, -WorldSettings.WATER_HEIGHT + REFRACT_OFFSET);
-		Camera camera = (Camera) scene.getCamera();
-		TerrainLowPoly terrainLowPoly = ((SceneLowPoly) scene).getTerrainLowPoly();
 		LightDirectional lightDirectional = ((SceneLowPoly) scene).getLightDirectional();		
 		refractionFbo.bindForRender(0);
 		prepare();
@@ -145,13 +142,11 @@ public class MasterRendererLowPoly implements IMasterRenderer {
 		IPlayer player = scene.getPlayer();
 		Vector3f lightDirection = scene.getLightDirection();
 		LightDirectional lightDirectional = ((SceneLowPoly) scene).getLightDirectional();
-		TerrainLowPoly terrainLowPoly = ((SceneLowPoly) scene).getTerrainLowPoly();
-		WaterTileLowPoly waterLowPoly = ((SceneLowPoly) scene).getWaterLowPoly();
 		prepare();
 		skyboxRenderer.render(scene, clipPlane);
 		sunRenderer.render(scene);
 		terrainRendererLowPoly.render(scene, lightDirectional, clipPlane);
-		waterRendererLowPoly.render(waterLowPoly, camera, lightDirectional,
+		waterRendererLowPoly.render(scene, lightDirectional,
 			reflectionFbo.getColorBuffer(0), refractionFbo.getColorBuffer(0), refractionFbo.getDepthBuffer());
 		entityRenderer.render(scene, clipPlane);
 		animatedModelRenderer.render((AnimatedModel) player, camera, lightDirection, clipPlane);

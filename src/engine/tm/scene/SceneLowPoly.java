@@ -61,7 +61,6 @@ import engine.tm.sunRenderer.Sun;
 import engine.tm.textures.ModelTexture;
 import engine.tm.textures.Texture;
 import engine.tm.water.Water;
-import engine.tm.water.WaterTile;
 import engine.utils.Maths;
 import engine.utils.MyFile;
 
@@ -79,7 +78,7 @@ public class SceneLowPoly implements IScene {
 	// contains both regular and normal map entities
 	private static Map<TexturedModel, List<Entity>> entities = new HashMap<TexturedModel, List<Entity>>();
 	private List<ITerrain> terrains = new ArrayList<ITerrain>();
-	private List<WaterTile> waterTiles = new ArrayList<WaterTile>();
+	private List<WaterTileLowPoly> waterTiles = new ArrayList<WaterTileLowPoly>();
 	private List<GuiTexture> guis = new ArrayList<GuiTexture>();
 
 	private FontType font_1;
@@ -92,10 +91,9 @@ public class SceneLowPoly implements IScene {
 
 	private FlareManager flareManager;
 	private Vector3f lightDirection = WorldSettings.LIGHT_DIR;
-
-	private TerrainLowPoly terrainLowPoly;
-	private WaterTileLowPoly waterLowPoly;
 	private LightDirectional lightDirectional;
+	
+	private int gridSize = 1;
 	
 	private boolean wireframeEnabled;
 
@@ -156,24 +154,33 @@ public class SceneLowPoly implements IScene {
 		ColorGenerator colorGen = new ColorGenerator(WorldSettings.TERRAIN_COLS, WorldSettings.COLOR_SPREAD);
 		Matrix4f projectionMatrix = MasterRendererLowPoly.createProjectionMatrix();
 		TerrainGenerator terrainGenerator = new HybridTerrainGenerator(projectionMatrix, noise, colorGen);
-		terrainLowPoly = terrainGenerator.generateTerrain(WorldSettings.WORLD_SIZE);
-		processTerrain(terrainLowPoly);
+		TerrainLowPoly terrainLowPolyTmp = terrainGenerator.generateTerrain(WorldSettings.WORLD_SIZE);
+		processTerrain(terrainLowPolyTmp);
 
-		/*
-		TerrainLowPoly terrainLowPolyDynamic;
-		for (int x = -1; x <= 1; x++) {
-			for (int z = -1; z <= 1; z++) {
-				terrainLowPolyDynamic = new TerrainLowPoly(terrainLowPoly.getVao(), terrainLowPoly.getVertexCount(), terrainLowPoly.getHeights());
-				terrainLowPolyDynamic.setX(x * WorldSettings.WORLD_SIZE);
-				terrainLowPolyDynamic.setZ(z * WorldSettings.WORLD_SIZE);
-				processTerrain(terrainLowPolyDynamic);
+		TerrainLowPoly terrainLowPoly;
+		for (int x = -gridSize / 2; x <= gridSize / 2; x++) {
+			for (int z = -gridSize / 2; z <= gridSize / 2; z++) {
+				terrainLowPoly = new TerrainLowPoly(terrainLowPolyTmp.getVao(), terrainLowPolyTmp.getVertexCount(),
+					terrainLowPolyTmp.getHeights());
+				terrainLowPoly.setX(x * WorldSettings.WORLD_SIZE);
+				terrainLowPoly.setZ(z * WorldSettings.WORLD_SIZE);
+				processTerrain(terrainLowPoly);
 			}
 		}
-		*/
 	}
 
 	private void setupLowPolyWater() {
-		waterLowPoly = WaterGenerator.generate(WorldSettings.WORLD_SIZE, WorldSettings.WATER_HEIGHT);
+		WaterTileLowPoly waterLowPolyTmp = WaterGenerator.generate(WorldSettings.WORLD_SIZE, WorldSettings.WATER_HEIGHT);
+		WaterTileLowPoly waterLowPoly;
+		for (int x = -gridSize / 2; x <= gridSize / 2; x++) {
+			for (int z = -gridSize / 2; z <= gridSize / 2; z++) {
+				waterLowPoly = new WaterTileLowPoly(waterLowPolyTmp.getVao(), waterLowPolyTmp.getVertexCount(),
+					waterLowPolyTmp.getHeight());
+				waterLowPoly.setX(x * WorldSettings.WORLD_SIZE);
+				waterLowPoly.setZ(z * WorldSettings.WORLD_SIZE);
+				this.processWaterTile(waterLowPoly);
+			}
+		}
 	}
 
 	private void generateForestModels() {
@@ -190,7 +197,7 @@ public class SceneLowPoly implements IScene {
 
 			float coordX = rand.nextInt(WorldSettings.WORLD_SIZE);
 			float coordZ = rand.nextInt(WorldSettings.WORLD_SIZE);
-			float coordY = terrainLowPoly.getHeightOfTerrain(coordX, coordZ);
+			float coordY = this.getCurrentTerrain(coordX, coordZ).getHeightOfTerrain(coordX, coordZ);
 			if (coordY < WorldSettings.WATER_HEIGHT + 2) {
 				continue;
 			}
@@ -405,14 +412,6 @@ public class SceneLowPoly implements IScene {
 		return terrains;
 	}
 
-	public TerrainLowPoly getTerrainLowPoly() {
-		return terrainLowPoly;
-	}
-
-	public WaterTileLowPoly getWaterLowPoly() {
-		return waterLowPoly;
-	}
-
 	public List<GuiTexture> getGuiElements() {
 		return guis;
 	}
@@ -421,7 +420,7 @@ public class SceneLowPoly implements IScene {
 		return lights;
 	}
 
-	public List<WaterTile> getWaterTiles() {
+	public List<WaterTileLowPoly> getWaterTiles() {
 		return waterTiles;
 	}
 
@@ -450,7 +449,7 @@ public class SceneLowPoly implements IScene {
 		terrains.add(terrain);
 	}
 
-	public void processWaterTile(WaterTile waterTile) {
+	public void processWaterTile(WaterTileLowPoly waterTile) {
 		waterTiles.add(waterTile);
 	}
 

@@ -24,6 +24,7 @@ public class WaterShader extends ShaderProgram {
     private final static String FRAGMENT_FILE = WorldSettings.RESOURCES_SUBDIR + "/shaders/lowPolyWaterFragment.glsl";
 
 	protected UniformMatrix projectionViewMatrix = new UniformMatrix("projectionViewMatrix");
+	protected UniformMatrix transformationMatrix = new UniformMatrix("transformationMatrix");
 	protected UniformFloat height = new UniformFloat("height");
 	protected UniformVec3 cameraPos = new UniformVec3("cameraPos");
 	protected UniformVec2 nearFarPlanes = new UniformVec2("nearFarPlanes");
@@ -38,7 +39,7 @@ public class WaterShader extends ShaderProgram {
 
 	public WaterShader() {
 		super(VERTEX_FILE, FRAGMENT_FILE);
-		super.storeAllUniformLocations(projectionViewMatrix, height, reflectionTexture, refractionTexture, depthTexture,
+		super.storeAllUniformLocations(projectionViewMatrix, transformationMatrix, height, reflectionTexture, refractionTexture, depthTexture,
 				cameraPos, nearFarPlanes, waveTime, lightDirection, lightColor, lightBias);
 		linkTextureUnits();
 	}

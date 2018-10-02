@@ -15,11 +15,15 @@ public class WaterTileLowPoly {
 	private final Vao vao;
 	private final int vertexCount;
 	private final float height;
+	private int x;
+	private int z;
 
-	protected WaterTileLowPoly(Vao vao, int vertexCount, float height) {
+	public WaterTileLowPoly(Vao vao, int vertexCount, float height) {
 		this.vao = vao;
 		this.height = height;
 		this.vertexCount = vertexCount;
+		this.x = 0;
+		this.z = 0;
 	}
 
 	/**
@@ -48,6 +52,22 @@ public class WaterTileLowPoly {
 	 */
 	public void delete() {
 		vao.delete();
+	}
+
+	public void setX(int x) {
+		this.x = x;
+	}
+
+	public void setZ(int z) {
+		this.z = z;
+	}
+
+	public float getX() {
+		return x;
+	}
+
+	public float getZ() {
+		return z;
 	}
 
 }

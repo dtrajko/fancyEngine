@@ -1,11 +1,19 @@
 package engine.tm.lowPoly;
 
+import java.util.List;
+
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 
 import engine.interfaces.ICamera;
 import engine.interfaces.IMasterRenderer;
+import engine.interfaces.IScene;
+import engine.interfaces.ITerrain;
 import engine.tm.entities.LightDirectional;
+import engine.tm.scene.SceneLowPoly;
+import engine.tm.toolbox.Maths;
 import engine.tm.utils.OpenGlUtils;
 
 /**
@@ -57,12 +65,16 @@ public class WaterRendererLowPoly {
 	 *            - An image of the depth buffer for the scene. This is used to
 	 *            apply depth effects to the water.
 	 */
-	public void render(WaterTileLowPoly water, ICamera camera, LightDirectional light, int reflectionTexture, int refractionTexture,
+	public void render(IScene scene, LightDirectional light, int reflectionTexture, int refractionTexture,
 			int depthTexture) {
-		prepare(water, camera, light);
-		bindTextures(reflectionTexture, refractionTexture, depthTexture);
-		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, water.getVertexCount());
-		finish(water);
+		List<WaterTileLowPoly> waterTiles = ((SceneLowPoly) scene).getWaterTiles();
+		ICamera camera = scene.getCamera();
+		for (WaterTileLowPoly waterTile : waterTiles) {
+			prepare(waterTile, camera, light);
+			bindTextures(reflectionTexture, refractionTexture, depthTexture);
+			GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, waterTile.getVertexCount());
+			finish(waterTile);
+		}
 	}
 
 	/**
@@ -151,6 +163,13 @@ public class WaterRendererLowPoly {
 		loadCameraVariables(camera);
 		loadLightVariables(light);
 		shader.height.loadFloat(water.getHeight());
+		loadModelMatrix(water);
+	}
+
+	private void loadModelMatrix(WaterTileLowPoly water) {
+		Matrix4f transformationMatrix = Maths.createTransformationMatrix(
+			new Vector3f(water.getX(), 0, water.getZ()), 0, 0, 0, 1);
+		shader.transformationMatrix.loadMatrix(transformationMatrix);
 	}
 
 	/**
