@@ -36,8 +36,11 @@ public class WaterRendererLowPoly {
 	/**
 	 * Initialises the shader program that will be used to render the water.
 	 */
-	public WaterRendererLowPoly() {
-		this.shader = new WaterShader();
+	public WaterRendererLowPoly(Matrix4f projectionMatrix) {
+		shader = new WaterShader();
+		shader.start();
+		shader.projectionMatrix.loadMatrix(projectionMatrix);
+		shader.stop();
 	}
 
 	/**
@@ -192,7 +195,7 @@ public class WaterRendererLowPoly {
 	 *            - The scene's camera.
 	 */
 	private void loadCameraVariables(ICamera camera) {
-		shader.projectionViewMatrix.loadMatrix(camera.getProjectionViewMatrix());
+		shader.viewMatrix.loadMatrix(camera.getViewMatrix());
 		shader.cameraPos.loadVec3(camera.getPosition());
 		shader.nearFarPlanes.loadVec2(IMasterRenderer.NEAR_PLANE, IMasterRenderer.FAR_PLANE);
 	}

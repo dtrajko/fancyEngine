@@ -25,7 +25,8 @@ uniform vec3 lightDirection;
 uniform vec3 lightColor;
 uniform vec2 lightBias;
 
-uniform mat4 projectionViewMatrix;
+uniform mat4 projectionMatrix;
+uniform mat4 viewMatrix;
 uniform mat4 transformationMatrix;
 
 vec3 calcSpecularLighting(vec3 toCamVector, vec3 toLightVector, vec3 normal){
@@ -67,7 +68,7 @@ void main(void){
 	vec3 vertex1 = currentVertex + vec3(in_indicators.x, 0.0, in_indicators.y);
 	vec3 vertex2 = currentVertex + vec3(in_indicators.z, 0.0, in_indicators.w);
 	
-	pass_clipSpaceGrid = projectionViewMatrix * transformationMatrix * vec4(currentVertex, 1.0);
+	pass_clipSpaceGrid = projectionMatrix * viewMatrix * transformationMatrix * vec4(currentVertex, 1.0);
 	
 	//apply distortion to all 3 vertices
 	currentVertex = applyDistortion(currentVertex);
@@ -76,7 +77,7 @@ void main(void){
 	
 	pass_normal = calcNormal(currentVertex, vertex1, vertex2);
 	
-	pass_clipSpaceReal = projectionViewMatrix * transformationMatrix * vec4(currentVertex, 1.0);
+	pass_clipSpaceReal = projectionMatrix * viewMatrix * transformationMatrix * vec4(currentVertex, 1.0);
 	gl_Position = pass_clipSpaceReal;
 	
 	pass_toCameraVector = normalize(cameraPos - currentVertex);

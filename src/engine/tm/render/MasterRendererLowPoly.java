@@ -56,7 +56,7 @@ public class MasterRendererLowPoly implements IMasterRenderer {
 	public MasterRendererLowPoly() {
 		createProjectionMatrix();
 		terrainRendererLowPoly = new TerrainRendererLowPoly(projectionMatrix, true);
-		waterRendererLowPoly = new WaterRendererLowPoly();
+		waterRendererLowPoly = new WaterRendererLowPoly(projectionMatrix);
 		refractionFbo = createWaterFbo(Window.width / 2, Window.height / 2, true);
 		reflectionFbo = createWaterFbo(Window.width, Window.height, false);
 		entityRenderer = new EntityRenderer(projectionMatrix);
