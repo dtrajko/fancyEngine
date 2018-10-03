@@ -35,6 +35,6 @@ public class WorldSettings {
 	public static final float AMPLITUDE = 30;
 	public static final float ROUGHNESS = 0.4f;
 	public static final int OCTAVES = 5;
-	public static final float WATER_HEIGHT = -0.2f;
+	public static final float WATER_HEIGHT = -2.0f; // -0.2f;
 
 }
