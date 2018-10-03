@@ -35,7 +35,7 @@ import engine.tm.utils.OpenGlUtils;
 public class MasterRendererLowPoly implements IMasterRenderer {
 
 	private static float FOV = 70; // field of view angle
-	private static float FAR_PLANE = 1000;
+	private static float FAR_PLANE = 800;
 
 	private static final float REFLECT_OFFSET = 0.2f;
 	private static final float REFRACT_OFFSET = 0.2f;
@@ -90,8 +90,8 @@ public class MasterRendererLowPoly implements IMasterRenderer {
 		GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
 		renderWaterReflectionPass(scene);
 		renderWaterRefractionPass(scene);
-		GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
 		renderMainPass(scene);
+		GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
 
 		// after the 3D stuff and before the 2D stuff
 		ParticleMaster.renderParticles(camera);
@@ -136,7 +136,8 @@ public class MasterRendererLowPoly implements IMasterRenderer {
 	}
 
 	private void renderMainPass(IScene scene) {
-		Vector4f clipPlane = new Vector4f(0, 0, 0, 1);
+		// Vector4f clipPlane = new Vector4f(0, 0, 0, 1);
+		Vector4f clipPlane = new Vector4f(0, 1, 0, WorldSettings.WATER_HEIGHT + REFLECT_OFFSET * 6);
 		Camera camera = (Camera) scene.getCamera();
 		IPlayer player = scene.getPlayer();
 		Vector3f lightDirection = scene.getLightDirection();

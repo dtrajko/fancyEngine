@@ -18,9 +18,10 @@ public class GridSquare {
 	private final Color[] colors;
 	private final Vector3f normalLeft;
 	private final Vector3f normalRight;
+	private float scale;
 
-	public GridSquare(int row, int col, float[][] heights, Color[][] colors) {
-		this.positions = calculateCornerPositions(col, row, heights);
+	public GridSquare(int row, int col, float[][] heights, Color[][] colors, float scale) {
+		this.positions = calculateCornerPositions(col, row, heights, scale);
 		this.colors = calculateCornerColors(col, row, colors);
 		this.lastIndex = heights.length - 2;
 		this.row = row;
@@ -28,6 +29,7 @@ public class GridSquare {
 		boolean rightHanded = col % 2 != row % 2;
 		this.normalLeft = Maths.calcNormal(positions[0], positions[1], positions[rightHanded ? 3 : 2]);
 		this.normalRight = Maths.calcNormal(positions[2], positions[rightHanded ? 0 : 1], positions[3]);
+		this.scale = scale;
 	}
 
 	public void storeSquareData(ByteBuffer buffer) {
@@ -53,7 +55,7 @@ public class GridSquare {
 		return cornerCols;
 	}
 
-	private Vector3f[] calculateCornerPositions(int col, int row, float[][] heights) {
+	private Vector3f[] calculateCornerPositions(int col, int row, float[][] heights, float scale) {
 		Vector3f[] vertices = new Vector3f[4];
 		vertices[0] = new Vector3f(col, heights[row][col], row);
 		vertices[1] = new Vector3f(col, heights[row + 1][col], row + 1);
@@ -63,6 +65,10 @@ public class GridSquare {
 		vertices[1].sub(WorldSettings.WORLD_SIZE / 2, 0, WorldSettings.WORLD_SIZE / 2);
 		vertices[2].sub(WorldSettings.WORLD_SIZE / 2, 0, WorldSettings.WORLD_SIZE / 2);
 		vertices[3].sub(WorldSettings.WORLD_SIZE / 2, 0, WorldSettings.WORLD_SIZE / 2);
+		vertices[0].mul(scale);
+		vertices[1].mul(scale);
+		vertices[2].mul(scale);
+		vertices[3].mul(scale);
 		return vertices;
 	}
 

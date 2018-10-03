@@ -94,6 +94,7 @@ public class SceneLowPoly implements IScene {
 	private LightDirectional lightDirectional;
 	
 	private int gridSize = 1;
+	private static float terrainScale = 5;
 	
 	private boolean wireframeEnabled;
 
@@ -154,12 +155,12 @@ public class SceneLowPoly implements IScene {
 		ColorGenerator colorGen = new ColorGenerator(WorldSettings.TERRAIN_COLS, WorldSettings.COLOR_SPREAD);
 		Matrix4f projectionMatrix = MasterRendererLowPoly.createProjectionMatrix();
 		TerrainGenerator terrainGenerator = new HybridTerrainGenerator(projectionMatrix, noise, colorGen);
-		TerrainLowPoly terrainLowPolyTmp = terrainGenerator.generateTerrain(WorldSettings.WORLD_SIZE);
+		TerrainLowPoly terrainLowPolyTmp = terrainGenerator.generateTerrain(WorldSettings.WORLD_SIZE, terrainScale);
 		
 		TerrainLowPoly terrainLowPoly;
 		for (int x = -gridSize / 2; x <= gridSize / 2; x++) {
 			for (int z = -gridSize / 2; z <= gridSize / 2; z++) {
-				terrainLowPoly = new TerrainLowPoly(terrainLowPolyTmp.getVao(), terrainLowPolyTmp.getVertexCount(), terrainLowPolyTmp.getHeights());
+				terrainLowPoly = new TerrainLowPoly(terrainLowPolyTmp.getVao(), terrainLowPolyTmp.getVertexCount(), terrainLowPolyTmp.getHeights(), terrainScale);
 				terrainLowPoly.setX(x * WorldSettings.WORLD_SIZE);
 				terrainLowPoly.setZ(z * WorldSettings.WORLD_SIZE);
 				processTerrain(terrainLowPoly);
@@ -168,13 +169,13 @@ public class SceneLowPoly implements IScene {
 	}
 
 	private void setupLowPolyWater() {
-		WaterTileLowPoly waterLowPolyTmp = WaterGenerator.generate(WorldSettings.WORLD_SIZE, WorldSettings.WATER_HEIGHT);
+		WaterTileLowPoly waterLowPolyTmp = WaterGenerator.generate(WorldSettings.WORLD_SIZE, WorldSettings.WATER_HEIGHT, terrainScale);
 		processWaterTile(waterLowPolyTmp);
 
 		WaterTileLowPoly waterLowPoly;
 		for (int x = -gridSize / 2; x <= gridSize / 2; x++) {
 			for (int z = -gridSize / 2; z <= gridSize / 2; z++) {
-				waterLowPoly = new WaterTileLowPoly(waterLowPolyTmp.getVao(), waterLowPolyTmp.getVertexCount(), waterLowPolyTmp.getHeight());
+				waterLowPoly = new WaterTileLowPoly(waterLowPolyTmp.getVao(), waterLowPolyTmp.getVertexCount(), waterLowPolyTmp.getHeight(), waterLowPolyTmp.getScale());
 				waterLowPoly.setX(x * WorldSettings.WORLD_SIZE);
 				waterLowPoly.setZ(z * WorldSettings.WORLD_SIZE);
 				this.processWaterTile(waterLowPoly);
@@ -191,13 +192,15 @@ public class SceneLowPoly implements IScene {
 		TexturedModel fernModel = new TexturedModel(OBJLoader.loadOBJModel("fern", loader), fernTextureAtlas);
 		TexturedModel pineModel = new TexturedModel(OBJLoader.loadOBJModel("pine", loader), new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/pine.png")));
 		
-		int modelsSpawnedMax = WorldSettings.WORLD_SIZE * gridSize / 10;
+		int modelsSpawnedMax = WorldSettings.WORLD_SIZE * gridSize / 10 * 20;
 
 		int modelsSpawned = 0;
 		while (modelsSpawned < modelsSpawnedMax) {
 
 			float coordX = (float) (rand.nextFloat() * WorldSettings.WORLD_SIZE * gridSize - WorldSettings.WORLD_SIZE * gridSize / 2);
 			float coordZ = (float) (rand.nextFloat() * WorldSettings.WORLD_SIZE * gridSize - WorldSettings.WORLD_SIZE * gridSize / 2);
+			coordX *= terrainScale;
+			coordZ *= terrainScale;
 			float coordY = getCurrentTerrain(coordX, coordZ).getHeightOfTerrain(coordX, coordZ);
 			if (coordY < WorldSettings.WATER_HEIGHT + 2) {
 				continue;
@@ -459,6 +462,8 @@ public class SceneLowPoly implements IScene {
 	}
 
 	public ITerrain getCurrentTerrain(float x, float z) {
+		x /= terrainScale;
+		z /= terrainScale;
 		ITerrain currentTerrain = null;
 		for (ITerrain terrain : terrains) {
 			if (x >= terrain.getX() - WorldSettings.WORLD_SIZE / 2 && x < (terrain.getX() + WorldSettings.WORLD_SIZE / 2) &&

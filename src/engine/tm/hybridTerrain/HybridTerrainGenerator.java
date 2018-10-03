@@ -38,12 +38,12 @@ public class HybridTerrainGenerator extends TerrainGenerator {
 	}
 
 	@Override
-	protected TerrainLowPoly createTerrain(float[][] heights, Color[][] colors) {
+	protected TerrainLowPoly createTerrain(float[][] heights, Color[][] colors, float scale) {
 		int vertexCount = calculateVertexCount(heights.length);
-		byte[] terrainData = createMeshData(heights, colors, vertexCount);
+		byte[] terrainData = createMeshData(heights, colors, vertexCount, scale);
 		int[] indices = IndexGenerator.generateIndexBuffer(heights.length);
 		Vao vao = VaoLoader.createVao(terrainData, indices);
-		return new TerrainLowPoly(vao, indices.length, heights);
+		return new TerrainLowPoly(vao, indices.length, heights, scale);
 	}
 
 	private int calculateVertexCount(int vertexLength) {
@@ -53,13 +53,13 @@ public class HybridTerrainGenerator extends TerrainGenerator {
 		return topCount + bottom2Rows;
 	}
 
-	private byte[] createMeshData(float[][] heights, Color[][] colors, int vertexCount) {
+	private byte[] createMeshData(float[][] heights, Color[][] colors, int vertexCount, float scale) {
 		int byteSize = VERTEX_SIZE_BYTES * vertexCount;
 		ByteBuffer buffer = ByteBuffer.allocate(byteSize).order(ByteOrder.nativeOrder());
 		GridSquare[] lastRow = new GridSquare[heights.length - 1];
 		for (int row = 0; row < heights.length - 1; row++) {
 			for (int col = 0; col < heights[row].length - 1; col++) {
-				GridSquare square = new GridSquare(row, col, heights, colors);
+				GridSquare square = new GridSquare(row, col, heights, colors, scale);
 				square.storeSquareData(buffer);
 				if (row == heights.length - 2) {
 					lastRow[col] = square;

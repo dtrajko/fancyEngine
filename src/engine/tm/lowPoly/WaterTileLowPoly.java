@@ -17,13 +17,15 @@ public class WaterTileLowPoly {
 	private final float height;
 	private int x;
 	private int z;
+	private float scale;
 
-	public WaterTileLowPoly(Vao vao, int vertexCount, float height) {
+	public WaterTileLowPoly(Vao vao, int vertexCount, float height, float scale) {
 		this.vao = vao;
 		this.height = height;
 		this.vertexCount = vertexCount;
 		this.x = 0;
 		this.z = 0;
+		this.scale = scale;
 	}
 
 	/**
@@ -68,6 +70,10 @@ public class WaterTileLowPoly {
 
 	public float getZ() {
 		return z;
+	}
+
+	public float getScale() {
+		return scale;
 	}
 
 }

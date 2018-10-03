@@ -38,11 +38,11 @@ public class WaterGenerator {
 	 *            - The height of the water mesh in the world.
 	 * @return The newly constructed water mesh.
 	 */
-	public static WaterTileLowPoly generate(int gridCount, float height) {
+	public static WaterTileLowPoly generate(int gridCount, float height, float scale) {
 		int totalVertexCount = gridCount * gridCount * VERTICES_PER_SQUARE;
-		byte[] waterMeshData = createMeshData(gridCount, totalVertexCount);
+		byte[] waterMeshData = createMeshData(gridCount, totalVertexCount, scale);
 		Vao vao = VaoLoader.createWaterVao(waterMeshData);
-		return new WaterTileLowPoly(vao, totalVertexCount, height);
+		return new WaterTileLowPoly(vao, totalVertexCount, height, scale);
 	}
 
 	/**
@@ -59,12 +59,12 @@ public class WaterGenerator {
 	 *            - The total number of vertices that will be in the mesh.
 	 * @return The vertex data (stored as bytes) for the entire mesh.
 	 */
-	private static byte[] createMeshData(int gridCount, int totalVertexCount) {
+	private static byte[] createMeshData(int gridCount, int totalVertexCount, float scale) {
 		int byteSize = VERTEX_SIZE_BYTES * totalVertexCount;
 		ByteBuffer buffer = ByteBuffer.allocate(byteSize).order(ByteOrder.nativeOrder());
 		for (int row = 0; row < gridCount; row++) {
 			for (int col = 0; col < gridCount; col++) {
-				storeGridSquare(col, row, buffer);
+				storeGridSquare(col, row, buffer, scale);
 			}
 		}
 		return buffer.array();
@@ -83,8 +83,8 @@ public class WaterGenerator {
 	 * @param buffer
 	 *            - The buffer where all the vertex data is being collected.
 	 */
-	private static void storeGridSquare(int col, int row, ByteBuffer buffer) {
-		Vector2f[] cornerPos = calculateCornerPositions(col, row);
+	private static void storeGridSquare(int col, int row, ByteBuffer buffer, float scale) {
+		Vector2f[] cornerPos = calculateCornerPositions(col, row, scale);
 		storeTriangle(cornerPos, buffer, true);
 		storeTriangle(cornerPos, buffer, false);
 	}
@@ -134,7 +134,7 @@ public class WaterGenerator {
 	 *         following order: 0 = top left, 1 = bottom left, 2 = top right, 3
 	 *         = bottom right
 	 */
-	private static Vector2f[] calculateCornerPositions(int col, int row) {
+	private static Vector2f[] calculateCornerPositions(int col, int row, float scale) {
 		Vector2f[] vertices = new Vector2f[4];
 		vertices[0] = new Vector2f(col, row);
 		vertices[1] = new Vector2f(col, row + 1);
@@ -144,6 +144,10 @@ public class WaterGenerator {
 		vertices[1].sub(WorldSettings.WORLD_SIZE / 2, WorldSettings.WORLD_SIZE / 2);
 		vertices[2].sub(WorldSettings.WORLD_SIZE / 2, WorldSettings.WORLD_SIZE / 2);
 		vertices[3].sub(WorldSettings.WORLD_SIZE / 2, WorldSettings.WORLD_SIZE / 2);
+		vertices[0].mul(scale);
+		vertices[1].mul(scale);
+		vertices[2].mul(scale);
+		vertices[3].mul(scale);
 		return vertices;
 	}
 

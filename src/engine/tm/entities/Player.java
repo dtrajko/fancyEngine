@@ -36,7 +36,7 @@ public class Player extends Entity implements IPlayer {
 		if (gravityEnabled) {
 			upwardsSpeed += GRAVITY * interval;
 		} else {
-			turnCoef = 0.1f;
+			turnCoef = 0.5f;
 		}
 
 		super.increasePosition(dx, upwardsSpeed, dz);

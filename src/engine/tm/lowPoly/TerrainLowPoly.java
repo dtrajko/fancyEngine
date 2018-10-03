@@ -15,13 +15,15 @@ public class TerrainLowPoly implements ITerrain {
 	private final float WATER_HEIGHT = WorldSettings.WATER_HEIGHT;
 	private int x;
 	private int z;
+	private float scale;
 
-	public TerrainLowPoly(Vao vao, int vertexCount, float[][] heights) {
+	public TerrainLowPoly(Vao vao, int vertexCount, float[][] heights, float scale) {
 		this.vao = vao;
 		this.vertexCount = vertexCount;
 		this.heights = heights;
 		this.x = 0;
 		this.z = 0;
+		this.scale = scale;
 	}
 
 	public Vao getVao() {
@@ -41,6 +43,8 @@ public class TerrainLowPoly implements ITerrain {
 	}
 
 	public float getHeightOfTerrain(float worldX, float worldZ) {
+		worldX /= scale;
+		worldZ /= scale;
 		int intX = (int) Math.floor(worldX - x + WorldSettings.WORLD_SIZE / 2);
 		int intZ = (int) Math.floor(worldZ - z + WorldSettings.WORLD_SIZE / 2);
 		float worldY = 0;
@@ -49,6 +53,7 @@ public class TerrainLowPoly implements ITerrain {
 			return worldY;
 		}
 		worldY = this.heights[intZ][intX];
+		worldY *= scale;
 		worldY += 0.2f; // a small adjustment
 		if (worldY < WATER_HEIGHT) {
 			worldY = WATER_HEIGHT;
