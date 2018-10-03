@@ -2,14 +2,11 @@ package engine.tm.hybridTerrain;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-
 import org.joml.Matrix4f;
-
 import engine.tm.lowPoly.ColorGenerator;
 import engine.tm.lowPoly.PerlinNoise;
 import engine.tm.lowPoly.TerrainLowPoly;
 import engine.tm.lowPoly.TerrainGenerator;
-import engine.tm.lowPoly.TerrainRendererLowPoly;
 import engine.tm.openglObjects.Vao;
 import engine.tm.utils.Color;
 import engine.tm.vertexDataStoring.VaoLoader;

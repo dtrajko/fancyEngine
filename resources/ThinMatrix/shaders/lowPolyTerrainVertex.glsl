@@ -9,7 +9,6 @@ flat out vec3 pass_color; //The "flat" qualifier stops the color from being inte
 uniform vec3 lightDirection;
 uniform vec3 lightColor;
 uniform vec2 lightBias;
-
 uniform mat4 transformationMatrix;
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;

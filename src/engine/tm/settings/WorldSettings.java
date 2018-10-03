@@ -31,7 +31,7 @@ public class WorldSettings {
 		new Color(200, 200, 210, true),
 	};
 
-	public static final int WORLD_SIZE = 300;
+	public static final int WORLD_SIZE = 400;
 	public static final float AMPLITUDE = 30;
 	public static final float ROUGHNESS = 0.4f;
 	public static final int OCTAVES = 5;

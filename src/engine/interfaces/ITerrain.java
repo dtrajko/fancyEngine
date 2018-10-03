@@ -12,5 +12,4 @@ public interface ITerrain {
 	RawModel getModel();
 	TerrainTexturePack getTexturePack();
 	TerrainTexture getBlendMap();
-
 }
