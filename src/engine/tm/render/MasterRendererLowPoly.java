@@ -107,12 +107,12 @@ public class MasterRendererLowPoly implements IMasterRenderer {
 		LightDirectional lightDirectional = ((SceneLowPoly) scene).getLightDirectional();
 		reflectionFbo.bindForRender(0);
 
-		float distance = 2 * (camera.getPosition().y - WorldSettings.WATER_HEIGHT + REFLECT_OFFSET);
+		float distance = 2 * (camera.getPosition().y - WorldSettings.WATER_HEIGHT - SceneLowPoly.waterLevelOffset + REFLECT_OFFSET);
 		camera.getPosition().y -= distance;
 		camera.invertPitch();
 		camera.invertRoll();
 
-		Vector4f clipPlane = new Vector4f(0, 1, 0, -WorldSettings.WATER_HEIGHT + REFLECT_OFFSET);
+		Vector4f clipPlane = new Vector4f(0, 1, 0, -WorldSettings.WATER_HEIGHT - SceneLowPoly.waterLevelOffset + REFLECT_OFFSET);
 		prepare();
 		terrainRendererLowPoly.render(scene, lightDirectional, clipPlane);
 		entityRenderer.render(scene, clipPlane);
@@ -126,11 +126,12 @@ public class MasterRendererLowPoly implements IMasterRenderer {
 	}
 
 	private void renderWaterRefractionPass(IScene scene) {
-		Vector4f clipPlane = new Vector4f(0, -1, 0, -WorldSettings.WATER_HEIGHT + REFRACT_OFFSET);
+		Vector4f clipPlane = new Vector4f(0, -1, 0, -WorldSettings.WATER_HEIGHT + SceneLowPoly.waterLevelOffset + REFRACT_OFFSET);
 		LightDirectional lightDirectional = ((SceneLowPoly) scene).getLightDirectional();		
 		refractionFbo.bindForRender(0);
 		prepare();
 		terrainRendererLowPoly.render(scene, lightDirectional, clipPlane);
+		entityRenderer.render(scene, clipPlane);
 		scene.getFlareManager().render(scene);
 		refractionFbo.unbindAfterRender();
 	}
@@ -145,7 +146,7 @@ public class MasterRendererLowPoly implements IMasterRenderer {
 		skyboxRenderer.render(scene, clipPlane);
 		sunRenderer.render(scene);
 
-		Vector4f clipPlaneTerrain = new Vector4f(0, 1, 0, -WorldSettings.WATER_HEIGHT + 1);
+		Vector4f clipPlaneTerrain = new Vector4f(0, 1, 0, -WorldSettings.WATER_HEIGHT - SceneLowPoly.waterLevelOffset + 1);
 		GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
 		terrainRendererLowPoly.render(scene, lightDirectional, clipPlaneTerrain);
 		GL11.glDisable(GL30.GL_CLIP_DISTANCE0);

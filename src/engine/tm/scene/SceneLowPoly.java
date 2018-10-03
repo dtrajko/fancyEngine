@@ -95,6 +95,7 @@ public class SceneLowPoly implements IScene {
 	
 	private int gridSize = 1;
 	private static float terrainScale = 5;
+	public static float waterLevelOffset = 0;
 	
 	private boolean wireframeEnabled;
 
@@ -156,7 +157,7 @@ public class SceneLowPoly implements IScene {
 		Matrix4f projectionMatrix = MasterRendererLowPoly.createProjectionMatrix();
 		TerrainGenerator terrainGenerator = new HybridTerrainGenerator(projectionMatrix, noise, colorGen);
 		TerrainLowPoly terrainLowPolyTmp = terrainGenerator.generateTerrain(WorldSettings.WORLD_SIZE, terrainScale);
-		
+
 		TerrainLowPoly terrainLowPoly;
 		for (int x = -gridSize / 2; x <= gridSize / 2; x++) {
 			for (int z = -gridSize / 2; z <= gridSize / 2; z++) {
@@ -328,10 +329,20 @@ public class SceneLowPoly implements IScene {
 	@Override
 	public void update(float interval, Input input) {
 		player.update();
+		updateWaterLevel(input);
 		updateParticles(input);
 		fireMaster.update();
 		toggleWireframeMode(input);
 		updateText();
+	}
+
+	private void updateWaterLevel(Input input) {
+		if (input.isKeyDown(GLFW.GLFW_KEY_PAGE_UP)) {
+			waterLevelOffset += 0.1f;
+		}
+		if (input.isKeyDown(GLFW.GLFW_KEY_PAGE_DOWN)) {
+			waterLevelOffset -= 0.1f;
+		}
 	}
 
 	private void toggleWireframeMode(Input input) {

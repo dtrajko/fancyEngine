@@ -31,7 +31,7 @@ public abstract class TerrainGenerator {
 	 * @return The generated terrain.
 	 */
 	public TerrainLowPoly generateTerrain(int gridSize, float scale) {
-		float[][] heights = generateHeights(gridSize, perlinNoise);
+		float[][] heights = generateHeightsGaussian(gridSize, perlinNoise);
 		Color[][] colors = colorGen.generateColors(heights, perlinNoise.getAmplitude());
 		return createTerrain(heights, colors, scale);
 	}
@@ -53,6 +53,16 @@ public abstract class TerrainGenerator {
 	 */
 	protected abstract TerrainLowPoly createTerrain(float[][] heights, Color[][] colors, float scale);
 
+	private float[][] generateHeights(int gridSize, PerlinNoise perlinNoise) {
+		float heights[][] = new float[gridSize + 1][gridSize + 1];
+		for (int z = 0; z < heights.length; z++) {
+			for (int x = 0; x < heights[z].length; x++) {
+				heights[z][x] = perlinNoise.getPerlinNoise(x, z);
+			}
+		}
+		return heights;
+	}
+
 	/**
 	 * Uses the perlin noise generator (which might actually not be using the
 	 * Perlin Noise algorithm - I'm not quite sure if it is or isn't) to
@@ -62,7 +72,7 @@ public abstract class TerrainGenerator {
 	 * @param perlinNoise - The heights generator.
 	 * @return All the heights for the vertices.
 	 */
-	private float[][] generateHeights(int gridSize, PerlinNoise perlinNoise) {
+	private float[][] generateHeightsGaussian(int gridSize, PerlinNoise perlinNoise) {
 		float heights[][] = new float[gridSize + 1][gridSize + 1];
 		for (int z = 0; z < heights.length; z++) {
 			for (int x = 0; x < heights[z].length; x++) {

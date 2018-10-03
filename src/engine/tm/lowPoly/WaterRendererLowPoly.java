@@ -165,7 +165,7 @@ public class WaterRendererLowPoly {
 		updateTime();
 		loadCameraVariables(camera);
 		loadLightVariables(light);
-		shader.height.loadFloat(water.getHeight());
+		shader.height.loadFloat(water.getHeight() + SceneLowPoly.waterLevelOffset);
 		loadModelMatrix(water);
 	}
 

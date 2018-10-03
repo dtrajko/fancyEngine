@@ -3,6 +3,7 @@ package engine.tm.lowPoly;
 import engine.interfaces.ITerrain;
 import engine.tm.models.RawModel;
 import engine.tm.openglObjects.Vao;
+import engine.tm.scene.SceneLowPoly;
 import engine.tm.settings.WorldSettings;
 import engine.tm.textures.TerrainTexture;
 import engine.tm.textures.TerrainTexturePack;
@@ -12,7 +13,6 @@ public class TerrainLowPoly implements ITerrain {
 	private final Vao vao;
 	private final int vertexCount;
 	private final float[][] heights;
-	private final float WATER_HEIGHT = WorldSettings.WATER_HEIGHT;
 	private int x;
 	private int z;
 	private float scale;
@@ -55,8 +55,8 @@ public class TerrainLowPoly implements ITerrain {
 		worldY = this.heights[intZ][intX];
 		worldY *= scale;
 		worldY += 0.2f; // a small adjustment
-		if (worldY < WATER_HEIGHT) {
-			worldY = WATER_HEIGHT;
+		if (worldY < WorldSettings.WATER_HEIGHT + SceneLowPoly.waterLevelOffset) {
+			worldY = WorldSettings.WATER_HEIGHT + SceneLowPoly.waterLevelOffset;
 		}
 		return worldY;
 	}
