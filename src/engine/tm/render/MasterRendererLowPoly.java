@@ -7,7 +7,6 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL32;
-
 import engine.Window;
 import engine.interfaces.ICamera;
 import engine.interfaces.IMasterRenderer;
@@ -24,12 +23,9 @@ import engine.tm.fbos.RenderBufferAttachment;
 import engine.tm.fbos.TextureAttachment;
 import engine.tm.gui.GuiRenderer;
 import engine.tm.gui.fonts.TextMaster;
-import engine.tm.lowPoly.TerrainLowPoly;
 import engine.tm.lowPoly.TerrainRendererLowPoly;
 import engine.tm.lowPoly.WaterRendererLowPoly;
-import engine.tm.lowPoly.WaterTileLowPoly;
 import engine.tm.particles.ParticleMaster;
-import engine.tm.scene.Scene;
 import engine.tm.scene.SceneLowPoly;
 import engine.tm.settings.WorldSettings;
 import engine.tm.skybox.SkyboxRenderer;
@@ -37,6 +33,9 @@ import engine.tm.sunRenderer.SunRenderer;
 import engine.tm.utils.OpenGlUtils;
 
 public class MasterRendererLowPoly implements IMasterRenderer {
+
+	private static float FOV = 70; // field of view angle
+	private static float FAR_PLANE = 1000;
 
 	private static final float REFLECT_OFFSET = 0.2f;
 	private static final float REFRACT_OFFSET = 0.2f;

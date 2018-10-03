@@ -93,7 +93,7 @@ public class SceneLowPoly implements IScene {
 	private Vector3f lightDirection = WorldSettings.LIGHT_DIR;
 	private LightDirectional lightDirectional;
 	
-	private int gridSize = 1;
+	private int gridSize = 3;
 	
 	private boolean wireframeEnabled;
 
@@ -154,25 +154,32 @@ public class SceneLowPoly implements IScene {
 		ColorGenerator colorGen = new ColorGenerator(WorldSettings.TERRAIN_COLS, WorldSettings.COLOR_SPREAD);
 		Matrix4f projectionMatrix = MasterRendererLowPoly.createProjectionMatrix();
 		TerrainGenerator terrainGenerator = new HybridTerrainGenerator(projectionMatrix, noise, colorGen);
-		TerrainLowPoly terrainLowPoly = terrainGenerator.generateTerrain(WorldSettings.WORLD_SIZE);
-		processTerrain(terrainLowPoly);
-		TerrainLowPoly terrainLowPolyLeft = new TerrainLowPoly(terrainLowPoly.getVao(), terrainLowPoly.getVertexCount(), terrainLowPoly.getHeights());
-		terrainLowPolyLeft.setX(-WorldSettings.WORLD_SIZE);
-		processTerrain(terrainLowPolyLeft);
-		TerrainLowPoly terrainLowPolyRight = new TerrainLowPoly(terrainLowPoly.getVao(), terrainLowPoly.getVertexCount(), terrainLowPoly.getHeights());
-		terrainLowPolyRight.setX(WorldSettings.WORLD_SIZE);
-		processTerrain(terrainLowPolyRight);
+		TerrainLowPoly terrainLowPolyTmp = terrainGenerator.generateTerrain(WorldSettings.WORLD_SIZE);
+		
+		TerrainLowPoly terrainLowPoly;
+		for (int x = -gridSize / 2; x <= gridSize / 2; x++) {
+			for (int z = -gridSize / 2; z <= gridSize / 2; z++) {
+				terrainLowPoly = new TerrainLowPoly(terrainLowPolyTmp.getVao(), terrainLowPolyTmp.getVertexCount(), terrainLowPolyTmp.getHeights());
+				terrainLowPoly.setX(x * WorldSettings.WORLD_SIZE);
+				terrainLowPoly.setZ(z * WorldSettings.WORLD_SIZE);
+				processTerrain(terrainLowPoly);
+			}
+		}
 	}
 
 	private void setupLowPolyWater() {
-		WaterTileLowPoly waterLowPoly = WaterGenerator.generate(WorldSettings.WORLD_SIZE, WorldSettings.WATER_HEIGHT);
-		processWaterTile(waterLowPoly);
-		WaterTileLowPoly waterLowPolyLeft = new WaterTileLowPoly(waterLowPoly.getVao(), waterLowPoly.getVertexCount(), waterLowPoly.getHeight());
-		waterLowPolyLeft.setX(-WorldSettings.WORLD_SIZE);
-		processWaterTile(waterLowPolyLeft);
-		WaterTileLowPoly waterLowPolyRight = new WaterTileLowPoly(waterLowPoly.getVao(), waterLowPoly.getVertexCount(), waterLowPoly.getHeight());
-		waterLowPolyRight.setX(WorldSettings.WORLD_SIZE);
-		processWaterTile(waterLowPolyRight);
+		WaterTileLowPoly waterLowPolyTmp = WaterGenerator.generate(WorldSettings.WORLD_SIZE, WorldSettings.WATER_HEIGHT);
+		processWaterTile(waterLowPolyTmp);
+
+		WaterTileLowPoly waterLowPoly;
+		for (int x = -gridSize / 2; x <= gridSize / 2; x++) {
+			for (int z = -gridSize / 2; z <= gridSize / 2; z++) {
+				waterLowPoly = new WaterTileLowPoly(waterLowPolyTmp.getVao(), waterLowPolyTmp.getVertexCount(), waterLowPolyTmp.getHeight());
+				waterLowPoly.setX(x * WorldSettings.WORLD_SIZE);
+				waterLowPoly.setZ(z * WorldSettings.WORLD_SIZE);
+				this.processWaterTile(waterLowPoly);
+			}
+		}
 	}
 
 	private void generateForestModels() {
@@ -183,12 +190,14 @@ public class SceneLowPoly implements IScene {
 		fernTextureAtlas.setTransparent(true).setUseFakeLighting(true);
 		TexturedModel fernModel = new TexturedModel(OBJLoader.loadOBJModel("fern", loader), fernTextureAtlas);
 		TexturedModel pineModel = new TexturedModel(OBJLoader.loadOBJModel("pine", loader), new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/pine.png")));
+		
+		int modelsSpawnedMax = WorldSettings.WORLD_SIZE * gridSize / 10;
 
 		int modelsSpawned = 0;
-		while (modelsSpawned < 100) {
+		while (modelsSpawned < modelsSpawnedMax) {
 
-			float coordX = (float) (rand.nextFloat() * WorldSettings.WORLD_SIZE * 3 - WorldSettings.WORLD_SIZE * 1.5);
-			float coordZ = (float) (rand.nextFloat() * WorldSettings.WORLD_SIZE * 1 - WorldSettings.WORLD_SIZE * 0.5);
+			float coordX = (float) (rand.nextFloat() * WorldSettings.WORLD_SIZE * gridSize - WorldSettings.WORLD_SIZE * gridSize / 2);
+			float coordZ = (float) (rand.nextFloat() * WorldSettings.WORLD_SIZE * gridSize - WorldSettings.WORLD_SIZE * gridSize / 2);
 			float coordY = getCurrentTerrain(coordX, coordZ).getHeightOfTerrain(coordX, coordZ);
 			if (coordY < WorldSettings.WATER_HEIGHT + 2) {
 				continue;
