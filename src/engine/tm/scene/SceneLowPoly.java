@@ -126,14 +126,14 @@ public class SceneLowPoly implements IScene {
 	private void setupParticles() {
 		fireMode = true;
 		particleTexture = new ParticleTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/particles/particleAtlas.png"), 4, true);
-		particleSystemShoot = new ParticleSystemShoot(particleTexture, 400f, 20f, 0.0f, 0.5f);
+		particleSystemShoot = new ParticleSystemShoot(particleTexture, 800f, 20f, 0.0f, 0.5f);
 	}
 
 	private void updateParticles(Input input) {
 		if (input.isKeyReleased(GLFW.GLFW_KEY_F)) {
 			fireMode = !fireMode;
 			if (fireMode) {
-				particleSystemShoot = new ParticleSystemShoot(particleTexture, 400f, 20f, 0.0f, 0.5f);
+				particleSystemShoot = new ParticleSystemShoot(particleTexture, 800f, 20f, 0.0f, 0.5f);
 			} else {
 				particleSystemShoot = new ParticleSystemShoot(particleTexture, 20f, 50f, -0.25f, 2f); // magic circle around the player
 			}
@@ -146,7 +146,7 @@ public class SceneLowPoly implements IScene {
 			float playerDY = 0;
 			float playerDZ = (float) (Math.cos(Math.toRadians(player.getRotY())));
 			Vector3f playerDirection = new Vector3f(playerDX, playerDY, playerDZ);
-			particleSystemShoot.generateParticles(new Vector3f(coordX, coordY, coordZ), playerDirection);
+			particleSystemShoot.generateParticles(camera, new Vector3f(coordX, coordY, coordZ), playerDirection);
 		}
 	}
 

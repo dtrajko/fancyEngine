@@ -128,4 +128,9 @@ public class Camera implements ICamera {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public float getPitch() {
+		return rotation.x;
+	}
 }

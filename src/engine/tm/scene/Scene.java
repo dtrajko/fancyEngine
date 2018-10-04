@@ -274,7 +274,7 @@ public class Scene implements IScene {
 			float playerDY = 0;
 			float playerDZ = (float) (Math.cos(Math.toRadians(player.getRotY())));
 			Vector3f playerDirection = new Vector3f(playerDX, playerDY, playerDZ);
-			particleSystemShoot.generateParticles(new Vector3f(coordX, coordY, coordZ), playerDirection);
+			particleSystemShoot.generateParticles(camera, new Vector3f(coordX, coordY, coordZ), playerDirection);
 		}
 	}
 

@@ -57,7 +57,8 @@ public class SkyboxShader extends ShaderProgram {
 		matrix.m32(0);
 		// consider moving it to the transformation matrix
 		rotation += ROTATE_SPEED * (1f / GameEngine.TARGET_FPS);
-		matrix.rotate((float) Math.toRadians(rotation), new Vector3f(0, 1, 0));		
+		matrix.rotate((float) Math.toRadians(rotation), new Vector3f(0, 1, 0));
+		matrix.translate(0, -50.0f, 0); // skybox horizon should be bellow the water level
 		super.loadMatrix(location_viewMatrix, matrix);
 	}
 

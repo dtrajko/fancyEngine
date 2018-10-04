@@ -2,6 +2,7 @@ package engine.tm.particles;
 
 import org.joml.Vector3f;
 import engine.GameEngine;
+import engine.interfaces.ICamera;
 
 public class ParticleSystemShoot {
 
@@ -22,7 +23,7 @@ public class ParticleSystemShoot {
 		this.lifeLength = lifeLength;
 	}
 
-	public void generateParticles(Vector3f systemCenter, Vector3f direction) {
+	public void generateParticles(ICamera camera, Vector3f systemCenter, Vector3f direction) {
 		this.systemCenter = systemCenter;
 		this.direction = new Vector3f(direction.x, direction.y * gravityComplient, direction.z);
 		this.direction.normalize(speed);
@@ -33,6 +34,7 @@ public class ParticleSystemShoot {
 		float scale = 5;
 		for(int i = 0; i < count; i++) {
 			this.systemCenter.add(this.direction);
+			this.systemCenter.y += -camera.getPitch() / 3.1;
 			scale *= 0.9f;
 			emitParticle(this.systemCenter, scale);
 		}
