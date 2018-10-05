@@ -92,7 +92,7 @@ public class SceneLowPoly implements IScene {
 	private FlareManager flareManager;
 	private Vector3f lightDirection = WorldSettings.LIGHT_DIR;
 	private LightDirectional lightDirectional;
-	
+
 	private int gridSize = 1;
 	private static float terrainScale = 5;
 	public static float waterLevelOffset = 0;
@@ -162,8 +162,8 @@ public class SceneLowPoly implements IScene {
 		for (int x = -gridSize / 2; x <= gridSize / 2; x++) {
 			for (int z = -gridSize / 2; z <= gridSize / 2; z++) {
 				terrainLowPoly = new TerrainLowPoly(terrainLowPolyTmp.getVao(), terrainLowPolyTmp.getVertexCount(), terrainLowPolyTmp.getHeights(), terrainScale);
-				terrainLowPoly.setX(x * WorldSettings.WORLD_SIZE);
-				terrainLowPoly.setZ(z * WorldSettings.WORLD_SIZE);
+				terrainLowPoly.setX((int) (x * WorldSettings.WORLD_SIZE * terrainScale));
+				terrainLowPoly.setZ((int) (z * WorldSettings.WORLD_SIZE * terrainScale));
 				processTerrain(terrainLowPoly);
 			}
 		}
@@ -177,8 +177,8 @@ public class SceneLowPoly implements IScene {
 		for (int x = -gridSize / 2; x <= gridSize / 2; x++) {
 			for (int z = -gridSize / 2; z <= gridSize / 2; z++) {
 				waterLowPoly = new WaterTileLowPoly(waterLowPolyTmp.getVao(), waterLowPolyTmp.getVertexCount(), waterLowPolyTmp.getHeight(), waterLowPolyTmp.getScale());
-				waterLowPoly.setX(x * WorldSettings.WORLD_SIZE);
-				waterLowPoly.setZ(z * WorldSettings.WORLD_SIZE);
+				waterLowPoly.setX((int) (x * WorldSettings.WORLD_SIZE * terrainScale));
+				waterLowPoly.setZ((int) (z * WorldSettings.WORLD_SIZE * terrainScale));
 				this.processWaterTile(waterLowPoly);
 			}
 		}
@@ -198,10 +198,10 @@ public class SceneLowPoly implements IScene {
 		int modelsSpawned = 0;
 		while (modelsSpawned < modelsSpawnedMax) {
 
-			float coordX = (float) (rand.nextFloat() * WorldSettings.WORLD_SIZE * gridSize - WorldSettings.WORLD_SIZE * gridSize / 2);
-			float coordZ = (float) (rand.nextFloat() * WorldSettings.WORLD_SIZE * gridSize - WorldSettings.WORLD_SIZE * gridSize / 2);
-			coordX *= terrainScale;
-			coordZ *= terrainScale;
+			float coordX = (float) (rand.nextFloat() * WorldSettings.WORLD_SIZE - WorldSettings.WORLD_SIZE / 2);
+			float coordZ = (float) (rand.nextFloat() * WorldSettings.WORLD_SIZE - WorldSettings.WORLD_SIZE / 2);
+			coordX = coordX * terrainScale * gridSize;
+			coordZ = coordZ * terrainScale * gridSize;
 			float coordY = getCurrentTerrain(coordX, coordZ).getHeightOfTerrain(coordX, coordZ);
 			if (coordY < WorldSettings.WATER_HEIGHT + 2) {
 				continue;
@@ -473,8 +473,8 @@ public class SceneLowPoly implements IScene {
 	}
 
 	public ITerrain getCurrentTerrain(float x, float z) {
-		x /= terrainScale;
-		z /= terrainScale;
+		x = x / (terrainScale * gridSize);
+		z = z / (terrainScale * gridSize);
 		ITerrain currentTerrain = null;
 		for (ITerrain terrain : terrains) {
 			if (x >= terrain.getX() - WorldSettings.WORLD_SIZE / 2 && x < (terrain.getX() + WorldSettings.WORLD_SIZE / 2) &&

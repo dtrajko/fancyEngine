@@ -43,10 +43,14 @@ public class TerrainLowPoly implements ITerrain {
 	}
 
 	public float getHeightOfTerrain(float worldX, float worldZ) {
-		worldX /= scale;
-		worldZ /= scale;
-		int intX = (int) Math.floor(worldX - x + WorldSettings.WORLD_SIZE / 2);
-		int intZ = (int) Math.floor(worldZ - z + WorldSettings.WORLD_SIZE / 2);
+
+		// System.out.println("BEFORE worldX=" + worldX + " worldZ=" + worldZ);
+		worldX %= (WorldSettings.WORLD_SIZE * scale);
+		worldZ %= (WorldSettings.WORLD_SIZE * scale);
+		// System.out.println("AFTER worldX=" + worldX + " worldZ=" + worldZ);
+
+		int intX = (int) Math.floor((worldX - x) / scale + WorldSettings.WORLD_SIZE / 2);
+		int intZ = (int) Math.floor((worldZ - z) / scale + WorldSettings.WORLD_SIZE / 2);
 		float worldY = 0;
 		if (intX < 0 || intX >= heights.length - 1 ||
 			intZ < 0 || intZ >= heights.length - 1) {
