@@ -2,10 +2,10 @@
 
 const float PI = 3.1415926535897932384626433832795;
 
-const float waveLength = 4.0;
-const float waveAmplitude = 0.2;
-const float specularReflectivity = 0.5;
-const float shineDamper = 5.0;
+const float waveLength = 10.0;
+const float waveAmplitude = 0.1;
+const float specularReflectivity = 0.2;
+const float shineDamper = 4.0;
 
 layout(location = 0) in vec2 in_position;
 layout(location = 1) in vec4 in_indicators;

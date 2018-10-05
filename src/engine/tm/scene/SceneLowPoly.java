@@ -159,7 +159,6 @@ public class SceneLowPoly implements IScene {
 		TerrainLowPoly terrainLowPoly;
 		for (int x = -gridSize / 2; x <= gridSize / 2; x++) {
 			for (int z = -gridSize / 2; z <= gridSize / 2; z++) {
-				if (Math.abs(x) < 2 && Math.abs(z) < 2) continue;
 				terrainLowPoly = terrainGenerator.generateTerrain(
 					(x + gridSize / 2) * WorldSettings.WORLD_SIZE,
 					(z + gridSize / 2) * WorldSettings.WORLD_SIZE,
@@ -175,7 +174,6 @@ public class SceneLowPoly implements IScene {
 		WaterTileLowPoly waterLowPoly;
 		for (int x = -gridSize / 2; x <= gridSize / 2; x++) {
 			for (int z = -gridSize / 2; z <= gridSize / 2; z++) {
-				if (Math.abs(x) < 2 && Math.abs(z) < 2) continue;
 				waterLowPoly = WaterGenerator.generate(WorldSettings.WORLD_SIZE, WorldSettings.WATER_HEIGHT, terrainScale);
 				waterLowPoly.setX((int) (x * WorldSettings.WORLD_SIZE * terrainScale));
 				waterLowPoly.setZ((int) (z * WorldSettings.WORLD_SIZE * terrainScale));
@@ -192,7 +190,7 @@ public class SceneLowPoly implements IScene {
 		fernTextureAtlas.setTransparent(true).setUseFakeLighting(true);
 		TexturedModel fernModel = new TexturedModel(OBJLoader.loadOBJModel("fern", loader), fernTextureAtlas);
 		TexturedModel pineModel = new TexturedModel(OBJLoader.loadOBJModel("pine", loader), new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/pine.png")));
-		
+
 		int modelsSpawnedMax = WorldSettings.WORLD_SIZE * gridSize / 10 * 20;
 
 		int modelsSpawned = 0;
@@ -204,7 +202,7 @@ public class SceneLowPoly implements IScene {
 			coordZ = (int) (coordZ * terrainScale * gridSize);
 			ITerrain currentTerrain = getCurrentTerrain(coordX, coordZ);
 			float coordY = currentTerrain != null ? currentTerrain.getHeightOfTerrain(coordX, coordZ) : WorldSettings.WATER_HEIGHT;			
-			if (coordY < WorldSettings.WATER_HEIGHT + 2) {
+			if (coordY < WorldSettings.WATER_HEIGHT + 20) {
 				continue;
 			}
 
