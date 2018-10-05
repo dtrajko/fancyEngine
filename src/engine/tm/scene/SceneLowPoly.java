@@ -93,7 +93,7 @@ public class SceneLowPoly implements IScene {
 	private Vector3f lightDirection = WorldSettings.LIGHT_DIR;
 	private LightDirectional lightDirectional;
 
-	private int gridSize = 1;
+	private int gridSize = 3;
 	private static float terrainScale = 5;
 	public static float waterLevelOffset = 0;
 	
