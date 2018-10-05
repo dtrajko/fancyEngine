@@ -361,10 +361,10 @@ public class Scene implements IScene {
 		while (modelsSpawned < 200) {
 			entity = null;
 
-			float coordX = rand.nextInt((int) Terrain.SIZE) - Terrain.SIZE * 1/2;
-			float coordZ = rand.nextInt((int) Terrain.SIZE * 2) - Terrain.SIZE * 3/2;
+			int coordX = rand.nextInt((int) Terrain.SIZE) - Terrain.SIZE * 1/2;
+			int coordZ = rand.nextInt((int) Terrain.SIZE * 2) - Terrain.SIZE * 3/2;
 			float coordY = getCurrentTerrain(coordX, coordZ).getHeightOfTerrain(coordX, coordZ);
-			
+
 			float clearance = 50;
 			if (coordX < -Terrain.SIZE * 1/2 + clearance || coordX > Terrain.SIZE * 1/2 - clearance ||
 				coordZ < -Terrain.SIZE * 3/2 + clearance || coordZ > Terrain.SIZE * 1/2 - clearance ||
@@ -405,8 +405,8 @@ public class Scene implements IScene {
 		crateTexture.setShineDamper(10);
 		crateTexture.setReflectivity(0.5f);
 		TexturedModel crateTexturedModel = new TexturedModel(NormalMappedObjLoader.loadOBJ("crate", loader), crateTexture);
-		float coordX = -100;
-		float coordZ = -280;
+		int coordX = -100;
+		int coordZ = -280;
 		float coordY = getCurrentTerrain(coordX, coordZ).getHeightOfTerrain(coordX, coordZ);
 		Entity crateModel = new Entity(crateTexturedModel, new Vector3f(coordX, coordY, coordZ), 0, 0, 0, 0.05f);
 		crateModel.setSolid(true);
@@ -504,7 +504,7 @@ public class Scene implements IScene {
 	public ITerrain getCurrentTerrain() {
 		ITerrain currentTerrain = null;
 		try {
-			currentTerrain = getCurrentTerrain(player.getPosition().x, player.getPosition().z);
+			currentTerrain = getCurrentTerrain((int) player.getPosition().x, (int) player.getPosition().z);
 		} catch (Exception e) {
 			System.out.println("Failed to retrieve the current terrain object.");
 			e.printStackTrace();
@@ -512,7 +512,8 @@ public class Scene implements IScene {
 		return currentTerrain;
 	}
 
-	public ITerrain getCurrentTerrain(float x, float z) {
+	@Override
+	public ITerrain getCurrentTerrain(int x, int z) {
 		ITerrain currentTerrain = null;
 		for (ITerrain terrain : terrains) {
 			if (x >= terrain.getX() && x < (terrain.getX() + Terrain.SIZE) &&

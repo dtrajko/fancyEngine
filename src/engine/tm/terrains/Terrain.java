@@ -17,14 +17,14 @@ import engine.tm.toolbox.Maths;
 
 public class Terrain implements ITerrain {
 
-	public static final float SIZE = 800;
+	public static final int SIZE = 800;
 	private static final int MAX_HEIGHT = 30;
 	private static final int MAX_PIXEL_COLOR = 256 * 256 * 256;
 
 	private static int vertexCount = 63;
 
-	private float x;
-	private float z;
+	private int x;
+	private int z;
 	
 	private RawModel model;
 	private TerrainTexturePack texturePack;
@@ -38,8 +38,8 @@ public class Terrain implements ITerrain {
 		this.texturePack = texturePack;
 		this.blendMap = blendMap;
 		this.heightMap = heightMap;
-		this.x = gridX * SIZE;
-		this.z = gridZ * SIZE;
+		this.x = (int) (gridX * SIZE);
+		this.z = (int) (gridZ * SIZE);
 		this.model = generateTerrain(loader, this.heightMap);
 	}
 
@@ -88,6 +88,7 @@ public class Terrain implements ITerrain {
         return loader.loadToVAO(vertices, textureCoords, normals, indices);
     }
 
+	@Override
 	public float getHeightOfTerrain(float worldX, float worldZ) {
 		float terrainX = worldX - this.x;
 		float terrainZ = worldZ - this.z;

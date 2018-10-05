@@ -19,8 +19,8 @@ public class TerrainProcedural implements ITerrain {
 	private static final int VERTEX_COUNT = 256;
 	private static final int SEED = new Random().nextInt(1000000000);
 
-	private float x;
-	private float z;
+	private int x;
+	private int z;
 	
 	private RawModel model;
 	private TerrainTexturePack texturePack;
@@ -36,8 +36,8 @@ public class TerrainProcedural implements ITerrain {
 		this.texturePack = texturePack;
 		this.blendMap = blendMap;
 		this.heightMap = heightMap;
-		this.x = gridX * SIZE;
-		this.z = gridZ * SIZE;
+		this.x = (int) (gridX * SIZE);
+		this.z = (int) (gridZ * SIZE);
 		generator = new HeightsGenerator();
 		// generator = new HeightsGenerator(gridX, gridZ, VERTEX_COUNT, SEED);
 		this.model = generateTerrain(loader);

@@ -39,7 +39,7 @@ public class MousePicker {
 		return currentRay;
 	}
 
-	private ITerrain getTerrain(float worldX, float worldZ) {
+	private ITerrain getTerrain(int worldX, int worldZ) {
 		return scene.getCurrentTerrain(worldX, worldZ);
 	}
 
@@ -100,7 +100,7 @@ public class MousePicker {
 		float half = start + ((finish - start) / 2f);
 		if (count >= RECURSION_COUNT) {
 			Vector3f endPoint = getPointOnRay(ray, half);
-			ITerrain terrain = getTerrain(endPoint.x, endPoint.z);
+			ITerrain terrain = getTerrain((int) endPoint.x, (int) endPoint.z);
 			if (terrain != null) {
 				return endPoint;
 			} else {
@@ -125,10 +125,10 @@ public class MousePicker {
 	}
 
 	private boolean isUnderGround(Vector3f testPoint) {
-		ITerrain terrain = getTerrain(testPoint.x, testPoint.z);
+		ITerrain terrain = getTerrain((int) testPoint.x, (int) testPoint.z);
 		float height = 0;
 		if (terrain != null) {
-			height = terrain.getHeightOfTerrain(testPoint.x, testPoint.z);
+			height = terrain.getHeightOfTerrain((int) testPoint.x, (int) testPoint.z);
 		}
 		if (testPoint.y < height) {
 			return true;

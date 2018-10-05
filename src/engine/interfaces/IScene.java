@@ -24,7 +24,7 @@ public interface IScene {
 	ICamera getCamera();
 	Map<TexturedModel, List<Entity>> getEntityList();
 	Loader getLoader();
-	ITerrain getCurrentTerrain(float x, float z);
+	ITerrain getCurrentTerrain(int x, int z);
 	IPlayer getPlayer();
 	Vector3f getLightDirection();
 	ISkyBox getSkybox();

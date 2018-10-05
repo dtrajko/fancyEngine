@@ -37,24 +37,24 @@ vec3 calcSpecularLighting(vec3 toCamVector, vec3 toLightVector, vec3 normal){
 	return specularFactor * specularReflectivity * lightColor;
 }
 
-vec3 calculateDiffuseLighting(vec3 toLightVector, vec3 normal){
+vec3 calculateDiffuseLighting(vec3 toLightVector, vec3 normal) {
 	float brightness = max(dot(toLightVector, normal), 0.0);
 	return (lightColor * lightBias.x) + (brightness * lightColor * lightBias.y);
 }
 
-vec3 calcNormal(vec3 vertex0, vec3 vertex1, vec3 vertex2){
+vec3 calcNormal(vec3 vertex0, vec3 vertex1, vec3 vertex2) {
 	vec3 tangent = vertex1 - vertex0;
 	vec3 bitangent = vertex2 - vertex0;
 	return normalize(cross(tangent, bitangent));
 }
 
-float generateOffset(float x, float z, float val1, float val2){
+float generateOffset(float x, float z, float val1, float val2) {
 	float radiansX = ((mod(x+z*x*val1, waveLength)/waveLength) + waveTime * mod(x * 0.8 + z, 1.5)) * 2.0 * PI;
 	float radiansZ = ((mod(val2 * (z*x +x*z), waveLength)/waveLength) + waveTime * 2.0 * mod(x , 2.0) ) * 2.0 * PI;
 	return waveAmplitude * 0.5 * (sin(radiansZ) + cos(radiansX));
 }
 
-vec3 applyDistortion(vec3 vertex){
+vec3 applyDistortion(vec3 vertex) {
 	float xDistortion = generateOffset(vertex.x, vertex.z, 0.2, 0.1);
 	float yDistortion = generateOffset(vertex.x, vertex.z, 0.1, 0.3);
 	float zDistortion = generateOffset(vertex.x, vertex.z, 0.15, 0.2);

@@ -11,14 +11,12 @@ import engine.tm.entities.Camera;
 import engine.tm.gui.fonts.TextMaster;
 import engine.tm.particles.ParticleMaster;
 import engine.tm.scene.SceneLowPoly;
-import engine.tm.toolbox.MousePicker;
 
 public class ThinMatrixLowPoly implements IGameLogic {
 
 	private Window window;
 	private IScene scene;
 	private Input input;
-	private MousePicker mousePicker;
 
 	@Override
 	public void init(Window window) throws Exception {
@@ -26,7 +24,6 @@ public class ThinMatrixLowPoly implements IGameLogic {
 		((SceneLowPoly) scene).init();
 		TextMaster.init();
 		ParticleMaster.init(scene, ((SceneLowPoly) scene).getMasterRenderer().getProjectionMatrix());
-		mousePicker = new MousePicker(scene, ((SceneLowPoly) scene).getMasterRenderer().getProjectionMatrix());
 	}
 
 	@Override
@@ -43,7 +40,6 @@ public class ThinMatrixLowPoly implements IGameLogic {
 		scene.update(interval, input);
 		player.move(interval, input, scene);
 		((Camera) scene.getCamera()).moveWithPlayer(scene, input);
-		mousePicker.update(input);
 		ParticleMaster.update(scene);
 	}
 

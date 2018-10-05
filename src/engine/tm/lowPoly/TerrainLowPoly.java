@@ -13,8 +13,8 @@ public class TerrainLowPoly implements ITerrain {
 	private final Vao vao;
 	private final int vertexCount;
 	private final float[][] heights;
-	private int x;
-	private int z;
+	private float x;
+	private float z;
 	private float scale;
 
 	public TerrainLowPoly(Vao vao, int vertexCount, float[][] heights, float scale) {
@@ -43,20 +43,22 @@ public class TerrainLowPoly implements ITerrain {
 	}
 
 	public float getHeightOfTerrain(float worldX, float worldZ) {
-		float terrainX = (float) (worldX - Math.round(worldX / (WorldSettings.WORLD_SIZE * scale)) * (WorldSettings.WORLD_SIZE * scale));
-		float terrainZ = (float) (worldZ - Math.round(worldZ / (WorldSettings.WORLD_SIZE * scale)) * (WorldSettings.WORLD_SIZE * scale));
-		int intX = (int) Math.floor((terrainX - x) / scale + WorldSettings.WORLD_SIZE / 2);
-		int intZ = (int) Math.floor((terrainZ - z) / scale + WorldSettings.WORLD_SIZE / 2);
-		float worldY = 0;
+		float terrainX = worldX - this.x;
+		float terrainZ = worldZ - this.z;
+		int intX = (int) (terrainX / scale);
+		int intZ = (int) (terrainZ / scale);
+		intX += WorldSettings.WORLD_SIZE / 2;
+		intZ += WorldSettings.WORLD_SIZE / 2;
+		int worldY = 0;
 		if (intX < 0 || intX >= heights.length - 1 ||
 			intZ < 0 || intZ >= heights.length - 1) {
 			return worldY;
 		}
-		worldY = this.heights[intZ][intX];
+		worldY = (int) this.heights[intZ][intX];
 		worldY *= scale;
 		worldY += 0.2f; // a small adjustment
 		if (worldY < WorldSettings.WATER_HEIGHT + SceneLowPoly.waterLevelOffset) {
-			worldY = WorldSettings.WATER_HEIGHT + SceneLowPoly.waterLevelOffset;
+			worldY = (int) (WorldSettings.WATER_HEIGHT + SceneLowPoly.waterLevelOffset);
 		}
 		return worldY;
 	}

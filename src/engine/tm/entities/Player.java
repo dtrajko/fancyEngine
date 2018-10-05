@@ -49,10 +49,10 @@ public class Player extends Entity implements IPlayer {
 			super.decreasePosition(dx, upwardsSpeed, dz);
 		}
 
-		ITerrain currentTerrain = ((Scene) scene).getCurrentTerrain(super.getPosition().x, super.getPosition().z);
+		ITerrain currentTerrain = ((Scene) scene).getCurrentTerrain((int) super.getPosition().x, (int) super.getPosition().z);
 		float terrainHeight = TERRAIN_HEIGHT;
 		if (currentTerrain != null) {
-			terrainHeight = currentTerrain.getHeightOfTerrain(super.getPosition().x, super.getPosition().z);
+			terrainHeight = currentTerrain.getHeightOfTerrain((int) super.getPosition().x, (int) super.getPosition().z);
 		}
 
 		if (super.getPosition().y < terrainHeight) {

@@ -93,7 +93,7 @@ public class SceneLowPoly implements IScene {
 	private Vector3f lightDirection = WorldSettings.LIGHT_DIR;
 	private LightDirectional lightDirectional;
 
-	private int gridSize = 3;
+	private int gridSize = WorldSettings.GRID_SIZE;
 	private static float terrainScale = 5;
 	public static float waterLevelOffset = 0;
 	
@@ -156,12 +156,14 @@ public class SceneLowPoly implements IScene {
 		ColorGenerator colorGen = new ColorGenerator(WorldSettings.TERRAIN_COLS, WorldSettings.COLOR_SPREAD);
 		Matrix4f projectionMatrix = MasterRendererLowPoly.createProjectionMatrix();
 		TerrainGenerator terrainGenerator = new HybridTerrainGenerator(projectionMatrix, noise, colorGen);
-		TerrainLowPoly terrainLowPolyTmp = terrainGenerator.generateTerrain(WorldSettings.WORLD_SIZE, terrainScale);
-
 		TerrainLowPoly terrainLowPoly;
 		for (int x = -gridSize / 2; x <= gridSize / 2; x++) {
 			for (int z = -gridSize / 2; z <= gridSize / 2; z++) {
-				terrainLowPoly = new TerrainLowPoly(terrainLowPolyTmp.getVao(), terrainLowPolyTmp.getVertexCount(), terrainLowPolyTmp.getHeights(), terrainScale);
+				if (Math.abs(x) < 2 && Math.abs(z) < 2) continue;
+				terrainLowPoly = terrainGenerator.generateTerrain(
+					(x + gridSize / 2) * WorldSettings.WORLD_SIZE,
+					(z + gridSize / 2) * WorldSettings.WORLD_SIZE,
+					WorldSettings.WORLD_SIZE, terrainScale);
 				terrainLowPoly.setX((int) (x * WorldSettings.WORLD_SIZE * terrainScale));
 				terrainLowPoly.setZ((int) (z * WorldSettings.WORLD_SIZE * terrainScale));
 				processTerrain(terrainLowPoly);
@@ -170,13 +172,11 @@ public class SceneLowPoly implements IScene {
 	}
 
 	private void setupLowPolyWater() {
-		WaterTileLowPoly waterLowPolyTmp = WaterGenerator.generate(WorldSettings.WORLD_SIZE, WorldSettings.WATER_HEIGHT, terrainScale);
-		processWaterTile(waterLowPolyTmp);
-
 		WaterTileLowPoly waterLowPoly;
 		for (int x = -gridSize / 2; x <= gridSize / 2; x++) {
 			for (int z = -gridSize / 2; z <= gridSize / 2; z++) {
-				waterLowPoly = new WaterTileLowPoly(waterLowPolyTmp.getVao(), waterLowPolyTmp.getVertexCount(), waterLowPolyTmp.getHeight(), waterLowPolyTmp.getScale());
+				if (Math.abs(x) < 2 && Math.abs(z) < 2) continue;
+				waterLowPoly = WaterGenerator.generate(WorldSettings.WORLD_SIZE, WorldSettings.WATER_HEIGHT, terrainScale);
 				waterLowPoly.setX((int) (x * WorldSettings.WORLD_SIZE * terrainScale));
 				waterLowPoly.setZ((int) (z * WorldSettings.WORLD_SIZE * terrainScale));
 				this.processWaterTile(waterLowPoly);
@@ -198,11 +198,12 @@ public class SceneLowPoly implements IScene {
 		int modelsSpawned = 0;
 		while (modelsSpawned < modelsSpawnedMax) {
 
-			float coordX = (float) (rand.nextFloat() * WorldSettings.WORLD_SIZE - WorldSettings.WORLD_SIZE / 2);
-			float coordZ = (float) (rand.nextFloat() * WorldSettings.WORLD_SIZE - WorldSettings.WORLD_SIZE / 2);
-			coordX = coordX * terrainScale * gridSize;
-			coordZ = coordZ * terrainScale * gridSize;
-			float coordY = getCurrentTerrain(coordX, coordZ).getHeightOfTerrain(coordX, coordZ);
+			int coordX = (int) (rand.nextFloat() * WorldSettings.WORLD_SIZE - WorldSettings.WORLD_SIZE / 2);
+			int coordZ = (int) (rand.nextFloat() * WorldSettings.WORLD_SIZE - WorldSettings.WORLD_SIZE / 2);
+			coordX = (int) (coordX * terrainScale * gridSize);
+			coordZ = (int) (coordZ * terrainScale * gridSize);
+			ITerrain currentTerrain = getCurrentTerrain(coordX, coordZ);
+			float coordY = currentTerrain != null ? currentTerrain.getHeightOfTerrain(coordX, coordZ) : WorldSettings.WATER_HEIGHT;			
 			if (coordY < WorldSettings.WATER_HEIGHT + 2) {
 				continue;
 			}
@@ -236,16 +237,17 @@ public class SceneLowPoly implements IScene {
 		Texture texture = AnimatedModelLoader.loadTexture(new MyFile(WorldSettings.TEXTURES_DIR + "/cowboy.png"));
 		SkeletonData skeletonData = entityData.getJointsData();
 		Joint headJoint = AnimatedModelLoader.createJoints(skeletonData.headJoint);
-		float coordX = 0;
-		float coordZ = 0;
-		float coordY = getCurrentTerrain(coordX, coordZ).getHeightOfTerrain(coordX, coordZ);
-		player = new AnimatedPlayer(model, texture, headJoint, skeletonData.jointCount, new Vector3f(coordX, coordY, coordZ), 0, 0, 0, 0.3f);
+		int coordX = 0;
+		int coordZ = 0;
+		ITerrain currentTerrain = getCurrentTerrain(coordX, coordZ);
+		float coordY = currentTerrain != null ? currentTerrain.getHeightOfTerrain(coordX, coordZ) : WorldSettings.WATER_HEIGHT;
+		player = new AnimatedPlayer(model, texture, headJoint, skeletonData.jointCount, new Vector3f(coordX, coordY, coordZ), 0, 0, 0, 1.0f);
 		Animation animation = AnimationLoader.loadAnimation(new MyFile(WorldSettings.MODELS_DIR + "/cowboy.dae"));
 		((AnimatedModel) player).doAnimation(animation);
 	}
 
 	private void setupCamera() {
-		((Camera) camera).setDistanceFromPlayer(10).setOffsetY(4.8f).setPitch(0);
+		((Camera) camera).setDistanceFromPlayer(30).setOffsetY(15f).setPitch(0);
 	}
 
 	private void setupLensFlare() {
@@ -472,16 +474,16 @@ public class SceneLowPoly implements IScene {
 		guis.add(gui);
 	}
 
-	public ITerrain getCurrentTerrain(float x, float z) {
-		x = x / (terrainScale * gridSize);
-		z = z / (terrainScale * gridSize);
+	public ITerrain getCurrentTerrain(int worldX, int worldZ) {
 		ITerrain currentTerrain = null;
-		for (ITerrain terrain : terrains) {
-			if (x >= terrain.getX() - WorldSettings.WORLD_SIZE / 2 && x < (terrain.getX() + WorldSettings.WORLD_SIZE / 2) &&
-				z >= terrain.getZ() - WorldSettings.WORLD_SIZE / 2 && z < (terrain.getZ() + WorldSettings.WORLD_SIZE / 2)) {
+		for (ITerrain terrain : terrains) {			
+			if (worldX >= (terrain.getX() - WorldSettings.WORLD_SIZE * terrainScale / 2) && worldX < (terrain.getX() + WorldSettings.WORLD_SIZE * terrainScale / 2) &&
+				worldZ >= (terrain.getZ() - WorldSettings.WORLD_SIZE * terrainScale / 2) && worldZ < (terrain.getZ() + WorldSettings.WORLD_SIZE * terrainScale / 2)) {
 				currentTerrain = terrain;
+				break;
 			}
 		}
+		// System.out.println("worldX=" + worldX + " worldZ=" + worldZ + " currentTerrain: " + currentTerrain.getX() + " " + currentTerrain.getZ());
 		return currentTerrain;
 	}
 
