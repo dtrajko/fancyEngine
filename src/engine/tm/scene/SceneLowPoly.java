@@ -159,8 +159,10 @@ public class SceneLowPoly implements IScene {
 			int prevIndX = previousTerrainIndices.x;
 			int prevIndZ = previousTerrainIndices.y;
 			if (indX != prevIndX || indZ != prevIndZ) { // ignore if no change
-				generateTerrainChunks(indX, indZ);
-				generateWaterChunks(indX, indZ);
+				int nextIndX = indX + (indX - prevIndX);
+				int nextIndZ = indZ + (indZ - prevIndZ);
+				generateTerrainChunks(nextIndX, nextIndZ);
+				generateWaterChunks(nextIndX, nextIndZ);
 				lastTerrainUpdate = GameEngine.getTimer().getLastLoopTime();
 				previousTerrainIndices = new Vector2i(indX, indZ);				
 			}

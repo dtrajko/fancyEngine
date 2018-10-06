@@ -7,7 +7,7 @@ import engine.tm.settings.WorldSettings;
 
 public class InfiniteTerrainManager {
 
-	private double visibleDistance = WorldSettings.GRID_SIZE - 2;
+	private double visibleDistance = WorldSettings.GRID_SIZE - 1;
 
 	private static List<InfiniteTerrainChunk> terrainChunks = new ArrayList<InfiniteTerrainChunk>();
 	private static List<InfiniteWaterChunk> waterChunks = new ArrayList<InfiniteWaterChunk>();

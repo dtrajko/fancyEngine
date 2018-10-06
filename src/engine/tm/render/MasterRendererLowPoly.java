@@ -35,7 +35,7 @@ import engine.tm.utils.OpenGlUtils;
 public class MasterRendererLowPoly implements IMasterRenderer {
 
 	private static float FOV = 70; // field of view angle
-	private static float FAR_PLANE = 3600;
+	private static float FAR_PLANE = 4800;
 
 	private static final float REFLECT_OFFSET = 0.2f;
 	private static final float REFRACT_OFFSET = 0.2f;
