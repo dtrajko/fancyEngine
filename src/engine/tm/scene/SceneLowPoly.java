@@ -2,11 +2,13 @@ package engine.tm.scene;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
+import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
@@ -38,6 +40,9 @@ import engine.tm.gui.fonts.FontType;
 import engine.tm.gui.fonts.GUIText;
 import engine.tm.gui.fonts.TextMaster;
 import engine.tm.hybridTerrain.HybridTerrainGenerator;
+import engine.tm.infiniteTerrain.InfiniteTerrainChunk;
+import engine.tm.infiniteTerrain.InfiniteTerrainManager;
+import engine.tm.infiniteTerrain.InfiniteWaterChunk;
 import engine.tm.lensFlare.FlareManager;
 import engine.tm.lensFlare.FlareTexture;
 import engine.tm.loaders.Loader;
@@ -93,10 +98,14 @@ public class SceneLowPoly implements IScene {
 	private Vector3f lightDirection = WorldSettings.LIGHT_DIR;
 	private LightDirectional lightDirectional;
 
+	public static float waterLevelOffset = 0;
 	private int gridSize = WorldSettings.GRID_SIZE;
 	private static float terrainScale = 5;
-	public static float waterLevelOffset = 0;
-	
+	private static TerrainGenerator terrainGenerator;
+	private double lastTerrainUpdate;
+	private InfiniteTerrainManager infiniteTerrainManager;
+	private Vector2i previousTerrainIndices = new Vector2i(0, 0);
+
 	private boolean wireframeEnabled;
 
 	public SceneLowPoly() {
@@ -107,12 +116,15 @@ public class SceneLowPoly implements IScene {
 		wireframeEnabled = false;
 		fireMaster = new FireMaster(loader);
 		fireMode = true;
+		infiniteTerrainManager = new InfiniteTerrainManager();
 	}
 
 	public void init() {
+		lastTerrainUpdate = GameEngine.getTimer().getLastLoopTime();
+		setupTerrainGenerator();
 		setupLowPolyTerrain();
 		setupLowPolyWater();
-		generateForestModels();
+		// generateForestModels();
 		setupAnimatedPlayer();
 		setupCamera();
 		setupLights();
@@ -123,62 +135,80 @@ public class SceneLowPoly implements IScene {
 		masterRenderer.init(this); // should be called after entities list is populated
 	}
 
-	private void setupParticles() {
-		fireMode = true;
-		particleTexture = new ParticleTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/particles/particleAtlas.png"), 4, true);
-		particleSystemShoot = new ParticleSystemShoot(particleTexture, 800f, 20f, 0.0f, 0.5f);
-	}
-
-	private void updateParticles(Input input) {
-		if (input.isKeyReleased(GLFW.GLFW_KEY_F)) {
-			fireMode = !fireMode;
-			if (fireMode) {
-				particleSystemShoot = new ParticleSystemShoot(particleTexture, 800f, 20f, 0.0f, 0.5f);
-			} else {
-				particleSystemShoot = new ParticleSystemShoot(particleTexture, 20f, 50f, -0.25f, 2f); // magic circle around the player
-			}
-		}
-		if (input.isMouseButtonDown(GLFW.GLFW_MOUSE_BUTTON_3)) {
-			float coordX = player.getPosition().x;
-			float coordY = player.getPosition().y + 6;
-			float coordZ = player.getPosition().z;
-			float playerDX = (float) (Math.sin(Math.toRadians(player.getRotY())));
-			float playerDY = 0;
-			float playerDZ = (float) (Math.cos(Math.toRadians(player.getRotY())));
-			Vector3f playerDirection = new Vector3f(playerDX, playerDY, playerDZ);
-			particleSystemShoot.generateParticles(camera, new Vector3f(coordX, coordY, coordZ), playerDirection);
-		}
-	}
-
-	private void setupLowPolyTerrain() {
-		// initialize terrain
+	private void setupTerrainGenerator() {
 		PerlinNoise noise = new PerlinNoise(WorldSettings.OCTAVES, WorldSettings.AMPLITUDE, WorldSettings.ROUGHNESS);
 		ColorGenerator colorGen = new ColorGenerator(WorldSettings.TERRAIN_COLS, WorldSettings.COLOR_SPREAD);
 		Matrix4f projectionMatrix = MasterRendererLowPoly.createProjectionMatrix();
-		TerrainGenerator terrainGenerator = new HybridTerrainGenerator(projectionMatrix, noise, colorGen);
-		TerrainLowPoly terrainLowPoly;
-		for (int x = -gridSize / 2; x <= gridSize / 2; x++) {
-			for (int z = -gridSize / 2; z <= gridSize / 2; z++) {
-				terrainLowPoly = terrainGenerator.generateTerrain(
-					(x + gridSize / 2) * WorldSettings.WORLD_SIZE,
-					(z + gridSize / 2) * WorldSettings.WORLD_SIZE,
-					WorldSettings.WORLD_SIZE, terrainScale);
-				terrainLowPoly.setX((int) (x * WorldSettings.WORLD_SIZE * terrainScale));
-				terrainLowPoly.setZ((int) (z * WorldSettings.WORLD_SIZE * terrainScale));
-				processTerrain(terrainLowPoly);
+		terrainGenerator = new HybridTerrainGenerator(projectionMatrix, noise, colorGen);		
+	}
+
+	private void setupLowPolyTerrain() {
+		generateTerrainChunks(0, 0);
+	}
+
+	private void setupLowPolyWater() {
+		generateWaterChunks(0, 0);
+	}
+
+	private void updateInfiniteTerrain(Input input) {
+		if (GameEngine.getTimer().getLastLoopTime() - lastTerrainUpdate > 1) {
+			float playerX = player != null ? player.getPosition().x : 0;
+			float playerZ = player != null ? player.getPosition().z : 0;
+			int indX = (int) (playerX / WorldSettings.WORLD_SIZE / terrainScale);
+			int indZ = (int) (playerZ / WorldSettings.WORLD_SIZE / terrainScale);
+			int prevIndX = previousTerrainIndices.x;
+			int prevIndZ = previousTerrainIndices.y;
+			if (indX != prevIndX || indZ != prevIndZ) { // ignore if no change
+				generateTerrainChunks(indX, indZ);
+				generateWaterChunks(indX, indZ);
+				lastTerrainUpdate = GameEngine.getTimer().getLastLoopTime();
+				previousTerrainIndices = new Vector2i(indX, indZ);				
 			}
 		}
 	}
 
-	private void setupLowPolyWater() {
-		WaterTileLowPoly waterLowPoly;
+	private void generateTerrainChunks(int indX, int indZ) {
 		for (int x = -gridSize / 2; x <= gridSize / 2; x++) {
 			for (int z = -gridSize / 2; z <= gridSize / 2; z++) {
-				waterLowPoly = WaterGenerator.generate(WorldSettings.WORLD_SIZE, WorldSettings.WATER_HEIGHT, terrainScale);
-				waterLowPoly.setX((int) (x * WorldSettings.WORLD_SIZE * terrainScale));
-				waterLowPoly.setZ((int) (z * WorldSettings.WORLD_SIZE * terrainScale));
-				this.processWaterTile(waterLowPoly);
+				if (!infiniteTerrainManager.terrainChunkExists(x + indX, z + indZ)) {
+					TerrainLowPoly terrainLowPoly = terrainGenerator.generateTerrain(
+							(x + indX + gridSize / 2) * WorldSettings.WORLD_SIZE,
+							(z + indZ + gridSize / 2) * WorldSettings.WORLD_SIZE,
+							WorldSettings.WORLD_SIZE, terrainScale);
+					terrainLowPoly.setX((int) ((x + indX) * WorldSettings.WORLD_SIZE * terrainScale));
+					terrainLowPoly.setZ((int) ((z + indZ) * WorldSettings.WORLD_SIZE * terrainScale));
+					processTerrain(terrainLowPoly);
+					infiniteTerrainManager.addTerrainChunk(new InfiniteTerrainChunk(terrainLowPoly, x + indX, z + indZ));
+				}
 			}
+		}
+		List<InfiniteTerrainChunk> remoteTerrainChunks = infiniteTerrainManager.getRemoteTerrainChunks(indX, indZ);
+		Iterator<InfiniteTerrainChunk> iterator = remoteTerrainChunks.iterator();
+		while (iterator.hasNext()) {
+			InfiniteTerrainChunk terrainChunk = iterator.next();
+			terrains.remove(terrainChunk.getTerrain());
+			infiniteTerrainManager.removeTerrainChunk(terrainChunk);
+		}
+	}
+
+	private void generateWaterChunks(int indX, int indZ) {
+		for (int x = -gridSize / 2; x <= gridSize / 2; x++) {
+			for (int z = -gridSize / 2; z <= gridSize / 2; z++) {
+				if (!infiniteTerrainManager.waterChunkExists(x + indX, z + indZ)) {
+					WaterTileLowPoly waterLowPoly = WaterGenerator.generate(WorldSettings.WORLD_SIZE, WorldSettings.WATER_HEIGHT, terrainScale);
+					waterLowPoly.setX((int) ((x + indX) * WorldSettings.WORLD_SIZE * terrainScale));
+					waterLowPoly.setZ((int) ((z + indZ) * WorldSettings.WORLD_SIZE * terrainScale));
+					this.processWaterTile(waterLowPoly);
+					infiniteTerrainManager.addWaterChunk(new InfiniteWaterChunk(waterLowPoly, x + indX, z + indZ));
+				}
+			}
+		}
+		List<InfiniteWaterChunk> remoteWaterChunks = infiniteTerrainManager.getRemoteWaterChunks(indX, indZ);
+		Iterator<InfiniteWaterChunk> iterator = remoteWaterChunks.iterator();
+		while (iterator.hasNext()) {
+			InfiniteWaterChunk waterChunk = iterator.next();
+			waterTiles.remove(waterChunk.getWaterTile());
+			infiniteTerrainManager.removeWaterChunk(waterChunk);
 		}
 	}
 
@@ -286,6 +316,33 @@ public class SceneLowPoly implements IScene {
 		lightDirectional = new LightDirectional(WorldSettings.LIGHT_DIR, WorldSettings.LIGHT_COL, WorldSettings.LIGHT_BIAS);
 	}
 
+	private void setupParticles() {
+		fireMode = true;
+		particleTexture = new ParticleTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/particles/particleAtlas.png"), 4, true);
+		particleSystemShoot = new ParticleSystemShoot(particleTexture, 800f, 20f, 0.0f, 0.5f);
+	}
+
+	private void updateParticles(Input input) {
+		if (input.isKeyReleased(GLFW.GLFW_KEY_F)) {
+			fireMode = !fireMode;
+			if (fireMode) {
+				particleSystemShoot = new ParticleSystemShoot(particleTexture, 800f, 20f, 0.0f, 0.5f);
+			} else {
+				particleSystemShoot = new ParticleSystemShoot(particleTexture, 20f, 50f, -0.25f, 2f); // magic circle around the player
+			}
+		}
+		if (input.isMouseButtonDown(GLFW.GLFW_MOUSE_BUTTON_3)) {
+			float coordX = player.getPosition().x;
+			float coordY = player.getPosition().y + 6;
+			float coordZ = player.getPosition().z;
+			float playerDX = (float) (Math.sin(Math.toRadians(player.getRotY())));
+			float playerDY = 0;
+			float playerDZ = (float) (Math.cos(Math.toRadians(player.getRotY())));
+			Vector3f playerDirection = new Vector3f(playerDX, playerDY, playerDZ);
+			particleSystemShoot.generateParticles(camera, new Vector3f(coordX, coordY, coordZ), playerDirection);
+		}
+	}
+
 	public void processEntity(Entity entity) {
 
 		// set the bounding box
@@ -329,11 +386,12 @@ public class SceneLowPoly implements IScene {
 	@Override
 	public void update(float interval, Input input) {
 		player.update();
+		updateInfiniteTerrain(input);
 		updateWaterLevel(input);
 		updateParticles(input);
 		fireMaster.update();
 		toggleWireframeMode(input);
-		updateText();
+		updateText(interval);
 	}
 
 	private void updateWaterLevel(Input input) {
@@ -382,11 +440,11 @@ public class SceneLowPoly implements IScene {
 		text = new GUIText[10];
 	}
 
-	private void updateText() {
+	private void updateText(float interval) {
 		Camera camera = (Camera) this.camera;
 		TextMaster.emptyTextMap();
 		float offsetX = 0.01f;
-		float offsetY = 0.77f;
+		float offsetY = 0.74f;
 		Vector3f color = new Vector3f(1, 1, 1);
 		String line_0 = "FPS: " + GameEngine.getFPS() + " / " + GameEngine.TARGET_FPS;
 		String line_1 = "Player position:  " + (int) player.getPosition().x + "  " + (int) player.getPosition().y + "  " + (int) player.getPosition().z;
@@ -395,6 +453,7 @@ public class SceneLowPoly implements IScene {
 		String line_4 = "Camera rotation  [ pitch: " + (int) camera.getRotation().x + "  yaw: " + Maths.angleTo360Range((int) camera.getRotation().y) + "  roll: " + (int) camera.getRotation().z + " ]";
 		String line_5 = "Entities spawned:  " + getEntitiesCount();
 		String line_6 = "Particles active:  " + ParticleMaster.getParticlesCount();
+		String line_7 = "Visible terrain chunks: " + infiniteTerrainManager.getVisibleTerrainChunks().size();
 		text[0] = new GUIText(line_0, 1, font_1, new Vector2f(offsetX, offsetY), 1f, false).setColor(color);
 		text[1] = new GUIText(line_1, 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
 		text[2] = new GUIText(line_2, 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
@@ -402,6 +461,7 @@ public class SceneLowPoly implements IScene {
 		text[4] = new GUIText(line_4, 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
 		text[5] = new GUIText(line_5, 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
 		text[6] = new GUIText(line_6, 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
+		text[7] = new GUIText(line_7, 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
 		TextMaster.loadText(text[0]);
 		TextMaster.loadText(text[1]);
 		TextMaster.loadText(text[2]);
@@ -409,6 +469,7 @@ public class SceneLowPoly implements IScene {
 		TextMaster.loadText(text[4]);
 		TextMaster.loadText(text[5]);
 		TextMaster.loadText(text[6]);
+		TextMaster.loadText(text[7]);
 	}
 
 	public int getEntitiesCount() {
@@ -481,7 +542,6 @@ public class SceneLowPoly implements IScene {
 				break;
 			}
 		}
-		// System.out.println("worldX=" + worldX + " worldZ=" + worldZ + " currentTerrain: " + currentTerrain.getX() + " " + currentTerrain.getZ());
 		return currentTerrain;
 	}
 

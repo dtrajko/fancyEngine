@@ -1,16 +1,13 @@
 package engine.tm.lowPoly;
 
 import java.util.List;
-
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
-
 import engine.interfaces.ICamera;
 import engine.interfaces.IMasterRenderer;
 import engine.interfaces.IScene;
-import engine.interfaces.ITerrain;
 import engine.tm.entities.LightDirectional;
 import engine.tm.scene.SceneLowPoly;
 import engine.tm.toolbox.Maths;

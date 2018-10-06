@@ -15,6 +15,8 @@ public class PerlinNoise {
 	private final float roughness;
 	private final int octaves;
 	private final float amplitude;
+	private final int offsetX = 10737418; // a half of integer max value
+	private final int offsetY = 10737418; // a half of integer max value
 
 	public PerlinNoise(int seed, int octaves, float amplitude, float roughness) {
 		this.seed = seed;
@@ -40,6 +42,8 @@ public class PerlinNoise {
 	}
 
 	public float getPerlinNoise(int x, int y) {
+		x += offsetX;
+		y += offsetY;
 		float total = 0;
 		float d = (float) Math.pow(2, octaves - 1);
 		for (int i = 0; i < octaves; i++) {

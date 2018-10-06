@@ -9,7 +9,7 @@ public class GameEngine implements Runnable {
     public static final int TARGET_UPS = 30;
     private final Window window;
     private final Thread gameLoopThread;
-    private final Timer timer;
+    private static Timer timer;
     private final IGameLogic gameLogic;
     private final Input input;
     private double lastFps;
@@ -92,10 +92,6 @@ public class GameEngine implements Runnable {
             }
         }
     }
-
-    protected void cleanup() {
-        gameLogic.cleanUp();                
-    }
     
     private void sync() {
         float loopSlot = 1f / TARGET_FPS;
@@ -134,7 +130,11 @@ public class GameEngine implements Runnable {
     	return displayFPS;
     }
 
-    public Timer getTimer() {
+    public static Timer getTimer() {
     	return timer;
+    }
+
+    protected void cleanup() {
+        gameLogic.cleanUp();                
     }
 }

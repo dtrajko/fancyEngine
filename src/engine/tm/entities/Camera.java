@@ -118,7 +118,7 @@ public class Camera implements ICamera {
 		position.x = player.getPosition().x - offsetX;
 		position.y = player.getPosition().y + verticalDistance + offsetY;
 		position.z = player.getPosition().z - offsetZ;
-		
+
 		ITerrain terrain = scene.getCurrentTerrain((int) position.x, (int) position.z);
 		if (terrain instanceof ITerrain && terrain.getHeightOfTerrain((int) position.x, (int) position.z) > position.y) {
 			position.y = terrain.getHeightOfTerrain((int) position.x, (int) position.z) + 5;
