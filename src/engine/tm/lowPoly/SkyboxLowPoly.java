@@ -1,13 +1,13 @@
-package engine.tm.skybox;
+package engine.tm.lowPoly;
 
 import engine.interfaces.ISkybox;
 import engine.tm.loaders.Loader;
 import engine.tm.models.RawModel;
-import engine.tm.render.MasterRenderer;
+import engine.tm.render.MasterRendererLowPoly;
 
-public class Skybox implements ISkybox {
+public class SkyboxLowPoly implements ISkybox {
 
-	public static final float SIZE =  MasterRenderer.FAR_PLANE * 0.5f;
+	public static final float SIZE = MasterRendererLowPoly.FAR_PLANE * 0.5f;
 
 	/**
 	 * GL_TEXTURE_CUBE_MAP_POSITIVE_X = Right Face
@@ -83,7 +83,7 @@ public class Skybox implements ISkybox {
 	private int texture;
 	private int textureNight;
 
-	public Skybox(Loader loader) {
+	public SkyboxLowPoly(Loader loader) {
 		cube = loader.loadToVAO(VERTICES, 3);
 		texture = loader.loadCubeMap(TEXTURE_FILES);
 		textureNight = loader.loadCubeMap(TEXTURE_FILES_NIGHT);

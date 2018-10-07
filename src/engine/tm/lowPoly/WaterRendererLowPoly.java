@@ -9,6 +9,7 @@ import engine.interfaces.ICamera;
 import engine.interfaces.IMasterRenderer;
 import engine.interfaces.IScene;
 import engine.tm.entities.LightDirectional;
+import engine.tm.render.MasterRendererLowPoly;
 import engine.tm.scene.SceneLowPoly;
 import engine.tm.toolbox.Maths;
 import engine.tm.utils.OpenGlUtils;
@@ -69,6 +70,7 @@ public class WaterRendererLowPoly {
 			int depthTexture) {
 		List<WaterTileLowPoly> waterTiles = ((SceneLowPoly) scene).getWaterTiles();
 		ICamera camera = scene.getCamera();
+		MasterRendererLowPoly.enableCulling();
 		for (WaterTileLowPoly waterTile : waterTiles) {
 			prepare(waterTile, camera, light);
 			bindTextures(reflectionTexture, refractionTexture, depthTexture);

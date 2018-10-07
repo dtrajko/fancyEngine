@@ -34,8 +34,8 @@ import engine.tm.utils.OpenGlUtils;
 
 public class MasterRendererLowPoly implements IMasterRenderer {
 
-	private static float FOV = 70; // field of view angle
-	private static float FAR_PLANE = 4800;
+	public static float FOV = 70; // field of view angle
+	public static float FAR_PLANE = 1800;
 
 	private static final float REFLECT_OFFSET = 0.2f;
 	private static final float REFRACT_OFFSET = 0.2f;
@@ -64,7 +64,6 @@ public class MasterRendererLowPoly implements IMasterRenderer {
 		skyboxRenderer = new SkyboxRenderer(projectionMatrix);
 		sunRenderer = new SunRenderer();
 		guiRenderer = new GuiRenderer();
-
 	}
 
 	/* (non-Javadoc)
@@ -73,6 +72,10 @@ public class MasterRendererLowPoly implements IMasterRenderer {
 	@Override
 	public void init(IScene scene) {
 		entityRenderer.init(scene);
+	}
+
+	public void initInfinite(IScene scene) {
+		entityRenderer.populateEntities(scene);
 	}
 
 	public static WaterRendererLowPoly getWaterRenderer() {

@@ -30,6 +30,16 @@ public class AnimatedPlayer extends AnimatedModel implements IPlayer {
 		super(model, texture, rootJoint, jointCount, position, rotX, rotY, rotZ, scale);		
 	}
 
+	public Vector3f getProjectedFuturePosition(float distance) {
+		Vector3f currentPos = this.getPosition();
+		Vector3f futurePosition = new Vector3f(currentPos.x, currentPos.y, currentPos.z);
+		float dx = (float) (distance * Math.sin(Math.toRadians(super.getRotY())));
+		float dz = (float) (distance * Math.cos(Math.toRadians(super.getRotY())));
+		futurePosition.x += dx;
+		futurePosition.z += dz;
+		return futurePosition;
+	}
+
 	public void move(float interval, Input input, IScene scene) {
 		checkInputs(input);
 		float distance = currentSpeed * interval;

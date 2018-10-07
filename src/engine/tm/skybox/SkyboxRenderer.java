@@ -10,6 +10,7 @@ import engine.GameEngine;
 import engine.interfaces.ICamera;
 import engine.interfaces.IMasterRenderer;
 import engine.interfaces.IScene;
+import engine.interfaces.ISkybox;
 
 public class SkyboxRenderer {
 
@@ -28,7 +29,7 @@ public class SkyboxRenderer {
 
 	public void render(IScene scene, Vector4f clipPlane) {
 		ICamera camera = scene.getCamera();
-		Skybox skybox = (Skybox) scene.getSkybox();
+		ISkybox skybox = scene.getSkybox();
 		shader.start();
 		shader.loadClipPlane(clipPlane);
 		shader.loadViewMatrix(camera);
@@ -43,7 +44,7 @@ public class SkyboxRenderer {
 
 	private void bindTextures(IScene scene) {
 		
-		Skybox skybox = (Skybox) scene.getSkybox();
+		ISkybox skybox = scene.getSkybox();
 
 		int texture1;
 		int texture2;

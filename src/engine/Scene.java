@@ -682,7 +682,7 @@ public class Scene implements IScene {
 	}
 
 	@Override
-	public ITerrain getCurrentTerrain(int x, int z) {
+	public ITerrain getCurrentTerrain(float x, float z) {
 		return null;
 	}
 

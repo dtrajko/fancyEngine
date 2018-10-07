@@ -13,7 +13,6 @@ import engine.tm.lensFlare.FlareManager;
 import engine.tm.loaders.Loader;
 import engine.tm.models.TexturedModel;
 import engine.tm.particles.FireMaster;
-import engine.tm.skybox.ISkyBox;
 
 public interface IScene {
 
@@ -24,10 +23,10 @@ public interface IScene {
 	ICamera getCamera();
 	Map<TexturedModel, List<Entity>> getEntityList();
 	Loader getLoader();
-	ITerrain getCurrentTerrain(int x, int z);
+	ITerrain getCurrentTerrain(float x, float z);
 	IPlayer getPlayer();
 	Vector3f getLightDirection();
-	ISkyBox getSkybox();
+	ISkybox getSkybox();
 	ISun getSun();
 	FlareManager getFlareManager();
 	List<GuiTexture> getGuiElements();

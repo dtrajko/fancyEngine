@@ -17,6 +17,7 @@ import engine.interfaces.IGameLogic;
 import engine.interfaces.IMasterRenderer;
 import engine.interfaces.IPlayer;
 import engine.interfaces.IScene;
+import engine.interfaces.ISkybox;
 import engine.interfaces.ISun;
 import engine.interfaces.ITerrain;
 import engine.tm.animation.animatedModel.AnimatedModel;
@@ -69,7 +70,7 @@ public class Scene implements IScene {
 	private IMasterRenderer masterRenderer;
 	private ICamera camera;
 	private IPlayer player;
-	private Skybox skybox;
+	private ISkybox skybox;
 	private Water water;
 	private Sun sun;
 
@@ -119,6 +120,167 @@ public class Scene implements IScene {
 		masterRenderer.init(this); // should be called after entities list is populated
 	}
 
+	private void setupTerrain() {
+		TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/terrain_1/bg.png"));
+		TerrainTexture rTexture = new TerrainTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/terrain_1/1.png"));
+		TerrainTexture gTexture = new TerrainTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/terrain_1/2.png"));
+		TerrainTexture bTexture = new TerrainTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/terrain_1/3.png"));
+		TerrainTexturePack texturePack = new TerrainTexturePack(backgroundTexture, rTexture, gTexture, bTexture);
+		TerrainTexture blendMap = new TerrainTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/terrain_1/blendMap.png"));
+		Terrain terrain_1 = new Terrain(-0.5f, -0.5f, loader, texturePack, blendMap, "terrain_1/heightmap");
+		processTerrain(terrain_1);
+		TerrainTexture blendMap_2 = new TerrainTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/terrain_2/blendMap.png"));
+		Terrain terrain_2 = new Terrain(-0.5f, -1.5f, loader, texturePack, blendMap_2, "terrain_2/heightmap");
+		processTerrain(terrain_2);
+	}
+
+	private void generateForestModels() {
+		Random rand = new Random();
+		Entity entity = null;
+		ModelTexture grassTexture = new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/grassTexture.png"));
+		grassTexture.setTransparent(true).setUseFakeLighting(true);
+		TexturedModel grassModel = new TexturedModel(OBJLoader.loadOBJModel("grassModel", loader), grassTexture);		
+		ModelTexture fernTextureAtlas = new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/fern_atlas.png"));
+		fernTextureAtlas.setNumberOfRows(2);
+		fernTextureAtlas.setTransparent(true).setUseFakeLighting(true);
+		TexturedModel fernModel = new TexturedModel(OBJLoader.loadOBJModel("fern", loader), fernTextureAtlas);
+		TexturedModel pineModel = new TexturedModel(OBJLoader.loadOBJModel("pine", loader), new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/pine.png")));
+
+		int modelsSpawned = 0;
+		while (modelsSpawned < 100) {
+			entity = null;
+
+			int coordX = rand.nextInt((int) Terrain.SIZE) - Terrain.SIZE * 1/2;
+			int coordZ = rand.nextInt((int) Terrain.SIZE * 2) - Terrain.SIZE * 3/2;
+			float coordY = getCurrentTerrain(coordX, coordZ).getHeightOfTerrain(coordX, coordZ);
+
+			float clearance = 50;
+			if (coordX < -Terrain.SIZE * 1/2 + clearance || coordX > Terrain.SIZE * 1/2 - clearance ||
+				coordZ < -Terrain.SIZE * 3/2 + clearance || coordZ > Terrain.SIZE * 1/2 - clearance ||
+				(coordZ < -175 && coordZ > -625) || 
+				coordY < Water.HEIGHT + 5.0f) {
+				continue;
+			}
+
+			int modelIndex = rand.nextInt(3);
+			int modelSize = rand.nextInt(3) + 2;
+			int fernTxIndex = rand.nextInt(4);
+
+			switch (modelIndex) {
+			case 0:
+				entity = new Entity(grassModel, new Vector3f(coordX, coordY, coordZ), 0, 0, 0, modelSize);
+				entity.setSolid(false);
+				break;
+			case 1:				
+				entity = new Entity(fernModel, fernTxIndex, new Vector3f(coordX, coordY, coordZ), 0, 0, 0, modelSize);
+				entity.setSolid(false);
+				break;
+			case 2:
+				entity = new Entity(pineModel, 0, new Vector3f(coordX, coordY, coordZ), 0, 0, 0, modelSize);
+				entity.setSolid(true);
+				break;
+			}
+			if (entity != null) {
+				processEntity(entity);
+				modelsSpawned++;
+			}
+		}
+	}
+
+	private void generateNormalMapEntities() {
+		// normal map entities
+		ModelTexture crateTexture = new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/normalMaps/crate.png"));
+		crateTexture.setNormalMap(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/normalMaps/crateNormal.png"));
+		crateTexture.setShineDamper(10);
+		crateTexture.setReflectivity(0.5f);
+		TexturedModel crateTexturedModel = new TexturedModel(NormalMappedObjLoader.loadOBJ("crate", loader), crateTexture);
+		int coordX = -100;
+		int coordZ = -280;
+		float coordY = getCurrentTerrain(coordX, coordZ).getHeightOfTerrain(coordX, coordZ);
+		Entity crateModel = new Entity(crateTexturedModel, new Vector3f(coordX, coordY, coordZ), 0, 0, 0, 0.05f);
+		crateModel.setSolid(true);
+		processEntity(crateModel);
+
+		ModelTexture barrelTexture = new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/normalMaps/barrel.png"));
+		barrelTexture.setNormalMap(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/normalMaps/barrelNormal.png"));
+		barrelTexture.setShineDamper(10);
+		barrelTexture.setReflectivity(0.5f);
+		TexturedModel barrelTexturedModel = new TexturedModel(NormalMappedObjLoader.loadOBJ("barrel", loader), barrelTexture);
+		coordX = -200;
+		coordZ = -305;
+		coordY = getCurrentTerrain(coordX, coordZ).getHeightOfTerrain(coordX, coordZ);
+		Entity barrelModel = new Entity(barrelTexturedModel, new Vector3f(coordX, coordY, coordZ), 0, 0, 0, 2f);
+		barrelModel.setSolid(true);
+		processEntity(barrelModel);
+
+		ModelTexture boulderTexture = new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/normalMaps/boulder.png"));
+		boulderTexture.setNormalMap(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/normalMaps/boulderNormal.png"));
+		boulderTexture.setShineDamper(10);
+		boulderTexture.setReflectivity(0.5f);
+		TexturedModel boulderTexturedModel = new TexturedModel(NormalMappedObjLoader.loadOBJ("boulder", loader), boulderTexture);
+		coordX = 260;
+		coordZ = -330;
+		coordY = getCurrentTerrain(coordX, coordZ).getHeightOfTerrain(coordX, coordZ);
+		Entity boulderModel = new Entity(boulderTexturedModel, new Vector3f(coordX, coordY, coordZ), 0, 90, 45, 2f);
+		boulderModel.setSolid(true);
+		Entity boulderModel2 = new Entity(boulderTexturedModel, new Vector3f(coordX + 20, coordY, coordZ), -90, 0, 0, 2f);
+		boulderModel2.setSolid(true);
+		processEntity(boulderModel);
+		processEntity(boulderModel2);
+	}
+
+	private void setupAnimatedPlayer() {
+		AnimatedModelData entityData = ColladaLoader.loadColladaModel(new MyFile(WorldSettings.MODELS_DIR + "/cowboy.dae"), WorldSettings.MAX_WEIGHTS);
+		Vao model = AnimatedModelLoader.createVao(entityData.getMeshData());
+		Texture texture = AnimatedModelLoader.loadTexture(new MyFile(WorldSettings.TEXTURES_DIR + "/cowboy.png"));
+		SkeletonData skeletonData = entityData.getJointsData();
+		Joint headJoint = AnimatedModelLoader.createJoints(skeletonData.headJoint);
+		player = new AnimatedPlayer(model, texture, headJoint, skeletonData.jointCount, new Vector3f(0, 2, -50), 0, 180, 0, 1.5f);
+		Animation animation = AnimationLoader.loadAnimation(new MyFile(WorldSettings.MODELS_DIR + "/cowboy.dae"));
+		((AnimatedModel) player).doAnimation(animation);
+	}
+
+	private void setupWater() {
+		water = new Water(loader);
+		WaterTile waterTile = new WaterTile(0, Water.HEIGHT, 0);
+		WaterTile waterTile_2 = new WaterTile(0, Water.HEIGHT, -WaterTile.TILE_SIZE * 2);
+		processWaterTile(waterTile);
+		processWaterTile(waterTile_2);
+	}
+
+	private void setupText() {
+		font_1 = new FontType(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/arial.png"), WorldSettings.FONTS_DIR + "/arial.fnt");
+		text = new GUIText[10];
+	}
+
+	public void processEntity(Entity entity) {
+
+		// set the bounding box
+		entity.setBoundingBox();
+
+		TexturedModel entityModel = entity.getTexturedModel();
+		List<Entity> batch = entities.get(entityModel);
+		if (batch != null) {
+			batch.add(entity);
+		} else {
+			List<Entity> newBatch = new ArrayList<Entity>();
+			newBatch.add(entity);
+			entities.put(entityModel, newBatch);
+		}
+	}
+
+	public void removeEntity(Entity entity) {
+		for (TexturedModel model : entities.keySet()) {
+			entities.get(model).remove(entity);
+		}
+		masterRenderer.init(this);
+	}
+
+	private void setupLights() {
+		Light light_sun = new Light(new Vector3f(-5000, 8000, -5000), new Vector3f(1, 1, 1));
+		lights.add(light_sun);
+	}
+
 	private void setupLensFlare() {
 		// loading textures for lens flare
 		Texture texture1 = Texture.newTexture(new MyFile(WorldSettings.LENS_FLARE_DIR + "/tex1.png")).normalMipMap().create();
@@ -155,45 +317,6 @@ public class Scene implements IScene {
 		sun = new Sun(textureSun, 20);
 		sun.setDirection(WorldSettings.LIGHT_DIR);
 		lightDirectional = new LightDirectional(WorldSettings.LIGHT_DIR, WorldSettings.LIGHT_COL, WorldSettings.LIGHT_BIAS);
-	}
-
-	private void setupAnimatedPlayer() {
-		AnimatedModelData entityData = ColladaLoader.loadColladaModel(new MyFile(WorldSettings.MODELS_DIR + "/cowboy.dae"), WorldSettings.MAX_WEIGHTS);
-		Vao model = AnimatedModelLoader.createVao(entityData.getMeshData());
-		Texture texture = AnimatedModelLoader.loadTexture(new MyFile(WorldSettings.TEXTURES_DIR + "/cowboy.png"));
-		SkeletonData skeletonData = entityData.getJointsData();
-		Joint headJoint = AnimatedModelLoader.createJoints(skeletonData.headJoint);
-		player = new AnimatedPlayer(model, texture, headJoint, skeletonData.jointCount, new Vector3f(0, 2, -50), 0, 180, 0, 1.5f);
-		Animation animation = AnimationLoader.loadAnimation(new MyFile(WorldSettings.MODELS_DIR + "/cowboy.dae"));
-		((AnimatedModel) player).doAnimation(animation);
-	}
-
-	public void processEntity(Entity entity) {
-
-		// set the bounding box
-		entity.setBoundingBox();
-
-		TexturedModel entityModel = entity.getTexturedModel();
-		List<Entity> batch = entities.get(entityModel);
-		if (batch != null) {
-			batch.add(entity);
-		} else {
-			List<Entity> newBatch = new ArrayList<Entity>();
-			newBatch.add(entity);
-			entities.put(entityModel, newBatch);
-		}
-	}
-
-	public void removeEntity(Entity entity) {
-		for (TexturedModel model : entities.keySet()) {
-			entities.get(model).remove(entity);
-		}
-		masterRenderer.init(this);
-	}
-
-	private void setupLights() {
-		Light light_sun = new Light(new Vector3f(-5000, 8000, -5000), new Vector3f(1, 1, 1));
-		lights.add(light_sun);
 	}
 
 	private void setupGui() {
@@ -278,33 +401,6 @@ public class Scene implements IScene {
 		}
 	}
 
-	private void setupWater() {
-		water = new Water(loader);
-		WaterTile waterTile = new WaterTile(0, Water.HEIGHT, 0);
-		WaterTile waterTile_2 = new WaterTile(0, Water.HEIGHT, -WaterTile.TILE_SIZE * 2);
-		processWaterTile(waterTile);
-		processWaterTile(waterTile_2);
-	}
-
-	private void setupTerrain() {
-		TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/terrain_1/bg.png"));
-		TerrainTexture rTexture = new TerrainTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/terrain_1/1.png"));
-		TerrainTexture gTexture = new TerrainTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/terrain_1/2.png"));
-		TerrainTexture bTexture = new TerrainTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/terrain_1/3.png"));
-		TerrainTexturePack texturePack = new TerrainTexturePack(backgroundTexture, rTexture, gTexture, bTexture);
-		TerrainTexture blendMap = new TerrainTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/terrain_1/blendMap.png"));
-		Terrain terrain_1 = new Terrain(-0.5f, -0.5f, loader, texturePack, blendMap, "terrain_1/heightmap");
-		processTerrain(terrain_1);
-		TerrainTexture blendMap_2 = new TerrainTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/terrain_2/blendMap.png"));
-		Terrain terrain_2 = new Terrain(-0.5f, -1.5f, loader, texturePack, blendMap_2, "terrain_2/heightmap");
-		processTerrain(terrain_2);
-	}
-
-	private void setupText() {
-		font_1 = new FontType(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/arial.png"), WorldSettings.FONTS_DIR + "/arial.fnt");
-		text = new GUIText[10];
-	}
-
 	private void updateText() {
 		Camera camera = (Camera) this.camera;
 		TextMaster.emptyTextMap();
@@ -343,101 +439,6 @@ public class Scene implements IScene {
 			count += entities.get(model).size();
 		}
 		return count;
-	}
-
-	private void generateForestModels() {
-		Random rand = new Random();
-		Entity entity = null;
-		ModelTexture grassTexture = new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/grassTexture.png"));
-		grassTexture.setTransparent(true).setUseFakeLighting(true);
-		TexturedModel grassModel = new TexturedModel(OBJLoader.loadOBJModel("grassModel", loader), grassTexture);		
-		ModelTexture fernTextureAtlas = new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/fern_atlas.png"));
-		fernTextureAtlas.setNumberOfRows(2);
-		fernTextureAtlas.setTransparent(true).setUseFakeLighting(true);
-		TexturedModel fernModel = new TexturedModel(OBJLoader.loadOBJModel("fern", loader), fernTextureAtlas);
-		TexturedModel pineModel = new TexturedModel(OBJLoader.loadOBJModel("pine", loader), new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/pine.png")));
-
-		int modelsSpawned = 0;
-		while (modelsSpawned < 200) {
-			entity = null;
-
-			int coordX = rand.nextInt((int) Terrain.SIZE) - Terrain.SIZE * 1/2;
-			int coordZ = rand.nextInt((int) Terrain.SIZE * 2) - Terrain.SIZE * 3/2;
-			float coordY = getCurrentTerrain(coordX, coordZ).getHeightOfTerrain(coordX, coordZ);
-
-			float clearance = 50;
-			if (coordX < -Terrain.SIZE * 1/2 + clearance || coordX > Terrain.SIZE * 1/2 - clearance ||
-				coordZ < -Terrain.SIZE * 3/2 + clearance || coordZ > Terrain.SIZE * 1/2 - clearance ||
-				(coordZ < -175 && coordZ > -625) || 
-				coordY < Water.HEIGHT + 5.0f) {
-				continue;
-			}
-
-			int modelIndex = rand.nextInt(3);
-			int modelSize = rand.nextInt(3) + 2;
-			int fernTxIndex = rand.nextInt(4);
-
-			switch (modelIndex) {
-			case 0:
-				entity = new Entity(grassModel, new Vector3f(coordX, coordY, coordZ), 0, 0, 0, modelSize);
-				entity.setSolid(false);
-				break;
-			case 1:				
-				entity = new Entity(fernModel, fernTxIndex, new Vector3f(coordX, coordY, coordZ), 0, 0, 0, modelSize);
-				entity.setSolid(false);
-				break;
-			case 2:
-				entity = new Entity(pineModel, 0, new Vector3f(coordX, coordY, coordZ), 0, 0, 0, modelSize);
-				entity.setSolid(true);
-				break;
-			}
-			if (entity != null) {
-				processEntity(entity);
-				modelsSpawned++;
-			}
-		}
-	}
-
-	private void generateNormalMapEntities() {
-		// normal map entities
-		ModelTexture crateTexture = new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/normalMaps/crate.png"));
-		crateTexture.setNormalMap(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/normalMaps/crateNormal.png"));
-		crateTexture.setShineDamper(10);
-		crateTexture.setReflectivity(0.5f);
-		TexturedModel crateTexturedModel = new TexturedModel(NormalMappedObjLoader.loadOBJ("crate", loader), crateTexture);
-		int coordX = -100;
-		int coordZ = -280;
-		float coordY = getCurrentTerrain(coordX, coordZ).getHeightOfTerrain(coordX, coordZ);
-		Entity crateModel = new Entity(crateTexturedModel, new Vector3f(coordX, coordY, coordZ), 0, 0, 0, 0.05f);
-		crateModel.setSolid(true);
-		processEntity(crateModel);
-
-		ModelTexture barrelTexture = new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/normalMaps/barrel.png"));
-		barrelTexture.setNormalMap(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/normalMaps/barrelNormal.png"));
-		barrelTexture.setShineDamper(10);
-		barrelTexture.setReflectivity(0.5f);
-		TexturedModel barrelTexturedModel = new TexturedModel(NormalMappedObjLoader.loadOBJ("barrel", loader), barrelTexture);
-		coordX = -200;
-		coordZ = -305;
-		coordY = getCurrentTerrain(coordX, coordZ).getHeightOfTerrain(coordX, coordZ);
-		Entity barrelModel = new Entity(barrelTexturedModel, new Vector3f(coordX, coordY, coordZ), 0, 0, 0, 2f);
-		barrelModel.setSolid(true);
-		processEntity(barrelModel);
-
-		ModelTexture boulderTexture = new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/normalMaps/boulder.png"));
-		boulderTexture.setNormalMap(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/normalMaps/boulderNormal.png"));
-		boulderTexture.setShineDamper(10);
-		boulderTexture.setReflectivity(0.5f);
-		TexturedModel boulderTexturedModel = new TexturedModel(NormalMappedObjLoader.loadOBJ("boulder", loader), boulderTexture);
-		coordX = 260;
-		coordZ = -330;
-		coordY = getCurrentTerrain(coordX, coordZ).getHeightOfTerrain(coordX, coordZ);
-		Entity boulderModel = new Entity(boulderTexturedModel, new Vector3f(coordX, coordY, coordZ), 0, 90, 45, 2f);
-		boulderModel.setSolid(true);
-		Entity boulderModel2 = new Entity(boulderTexturedModel, new Vector3f(coordX + 20, coordY, coordZ), -90, 0, 0, 2f);
-		boulderModel2.setSolid(true);
-		processEntity(boulderModel);
-		processEntity(boulderModel2);
 	}
 
 	public Map<TexturedModel, List<Entity>> getEntityList() {
@@ -481,7 +482,7 @@ public class Scene implements IScene {
 		return loader;
 	}
 
-	public Skybox getSkybox() {
+	public ISkybox getSkybox() {
 		return skybox;
 	}
 
@@ -513,7 +514,7 @@ public class Scene implements IScene {
 	}
 
 	@Override
-	public ITerrain getCurrentTerrain(int x, int z) {
+	public ITerrain getCurrentTerrain(float x, float z) {
 		ITerrain currentTerrain = null;
 		for (ITerrain terrain : terrains) {
 			if (x >= terrain.getX() && x < (terrain.getX() + Terrain.SIZE) &&

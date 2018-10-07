@@ -19,7 +19,6 @@ import engine.tm.models.TexturedModel;
 import engine.tm.render.MasterRenderer;
 import engine.tm.textures.ModelTexture;
 import engine.tm.toolbox.Maths;
-import engine.utils.Util;
 
 public class EntityRenderer {
 
@@ -52,6 +51,10 @@ public class EntityRenderer {
 				}
 			}
 		}
+	}
+
+	public void populateEntities(IScene scene) {
+		entities = scene.getEntityList();
 	}
 
 	public void render(IScene scene, Vector4f clipPlane) {

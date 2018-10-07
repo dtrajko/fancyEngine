@@ -20,6 +20,7 @@ import engine.interfaces.IGameLogic;
 import engine.interfaces.IMasterRenderer;
 import engine.interfaces.IPlayer;
 import engine.interfaces.IScene;
+import engine.interfaces.ISkybox;
 import engine.interfaces.ISun;
 import engine.interfaces.ITerrain;
 import engine.tm.animation.animatedModel.AnimatedModel;
@@ -49,6 +50,7 @@ import engine.tm.loaders.Loader;
 import engine.tm.loaders.OBJLoader;
 import engine.tm.lowPoly.ColorGenerator;
 import engine.tm.lowPoly.PerlinNoise;
+import engine.tm.lowPoly.SkyboxLowPoly;
 import engine.tm.lowPoly.TerrainGenerator;
 import engine.tm.lowPoly.TerrainLowPoly;
 import engine.tm.lowPoly.WaterGenerator;
@@ -75,7 +77,7 @@ public class SceneLowPoly implements IScene {
 	private IMasterRenderer masterRenderer;
 	private ICamera camera;
 	private IPlayer player;
-	private Skybox skybox;
+	private ISkybox skybox;
 	private Water water;
 	private Sun sun;
 
@@ -105,26 +107,30 @@ public class SceneLowPoly implements IScene {
 	private double lastTerrainUpdate;
 	private InfiniteTerrainManager infiniteTerrainManager;
 	private Vector2i previousTerrainIndices = new Vector2i(0, 0);
+	private TexturedModel fernModel;
+	private TexturedModel pineModel;
+	private Random rand;
 
 	private boolean wireframeEnabled;
 
 	public SceneLowPoly() {
 		camera = new Camera();
 		loader = new Loader();
-		skybox = new Skybox(loader);
+		skybox = new SkyboxLowPoly(loader);
 		masterRenderer = new MasterRendererLowPoly();
 		wireframeEnabled = false;
 		fireMaster = new FireMaster(loader);
 		fireMode = true;
 		infiniteTerrainManager = new InfiniteTerrainManager();
+		rand = new Random();
 	}
 
 	public void init() {
 		lastTerrainUpdate = GameEngine.getTimer().getLastLoopTime();
 		setupTerrainGenerator();
+		setupTerrainObjects();
 		setupLowPolyTerrain();
 		setupLowPolyWater();
-		// generateForestModels();
 		setupAnimatedPlayer();
 		setupCamera();
 		setupLights();
@@ -132,7 +138,6 @@ public class SceneLowPoly implements IScene {
 		setupParticles();
 		setupGui();
 		setupText();
-		masterRenderer.init(this); // should be called after entities list is populated
 	}
 
 	private void setupTerrainGenerator() {
@@ -140,6 +145,14 @@ public class SceneLowPoly implements IScene {
 		ColorGenerator colorGen = new ColorGenerator(WorldSettings.TERRAIN_COLS, WorldSettings.COLOR_SPREAD);
 		Matrix4f projectionMatrix = MasterRendererLowPoly.createProjectionMatrix();
 		terrainGenerator = new HybridTerrainGenerator(projectionMatrix, noise, colorGen);		
+	}
+
+	private void setupTerrainObjects() {
+		ModelTexture fernTextureAtlas = new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/fern_atlas.png"));
+		fernTextureAtlas.setNumberOfRows(2);
+		fernTextureAtlas.setTransparent(true).setUseFakeLighting(true);
+		fernModel = new TexturedModel(OBJLoader.loadOBJModel("fern", loader), fernTextureAtlas);
+		pineModel = new TexturedModel(OBJLoader.loadOBJModel("pine", loader), new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/pine.png")));
 	}
 
 	private void setupLowPolyTerrain() {
@@ -152,24 +165,20 @@ public class SceneLowPoly implements IScene {
 
 	private void updateInfiniteTerrain(Input input) {
 		if (GameEngine.getTimer().getLastLoopTime() - lastTerrainUpdate > 1) {
-			float playerX = player != null ? player.getPosition().x : 0;
-			float playerZ = player != null ? player.getPosition().z : 0;
-			int indX = (int) (playerX / WorldSettings.WORLD_SIZE / terrainScale);
-			int indZ = (int) (playerZ / WorldSettings.WORLD_SIZE / terrainScale);
-			int prevIndX = previousTerrainIndices.x;
-			int prevIndZ = previousTerrainIndices.y;
-			if (indX != prevIndX || indZ != prevIndZ) { // ignore if no change
-				int nextIndX = indX + (indX - prevIndX);
-				int nextIndZ = indZ + (indZ - prevIndZ);
-				generateTerrainChunks(nextIndX, nextIndZ);
-				generateWaterChunks(nextIndX, nextIndZ);
-				lastTerrainUpdate = GameEngine.getTimer().getLastLoopTime();
-				previousTerrainIndices = new Vector2i(indX, indZ);				
-			}
+			float projectedDistance = WorldSettings.WORLD_SIZE * 4 * terrainScale;
+			float playerFutureX = player != null ? ((AnimatedPlayer) player).getProjectedFuturePosition(projectedDistance).x : 0;
+			float playerFutureZ = player != null ? ((AnimatedPlayer) player).getProjectedFuturePosition(projectedDistance).z : 0;
+			int indX = (int) (playerFutureX / WorldSettings.WORLD_SIZE / terrainScale);
+			int indZ = (int) (playerFutureZ / WorldSettings.WORLD_SIZE / terrainScale);
+			generateTerrainChunks(indX, indZ);
+			generateWaterChunks(indX, indZ);
+			lastTerrainUpdate = GameEngine.getTimer().getLastLoopTime();
+			previousTerrainIndices = new Vector2i(indX, indZ);
 		}
 	}
 
 	private void generateTerrainChunks(int indX, int indZ) {
+		// add new
 		for (int x = -gridSize / 2; x <= gridSize / 2; x++) {
 			for (int z = -gridSize / 2; z <= gridSize / 2; z++) {
 				if (!infiniteTerrainManager.terrainChunkExists(x + indX, z + indZ)) {
@@ -180,20 +189,67 @@ public class SceneLowPoly implements IScene {
 					terrainLowPoly.setX((int) ((x + indX) * WorldSettings.WORLD_SIZE * terrainScale));
 					terrainLowPoly.setZ((int) ((z + indZ) * WorldSettings.WORLD_SIZE * terrainScale));
 					processTerrain(terrainLowPoly);
-					infiniteTerrainManager.addTerrainChunk(new InfiniteTerrainChunk(terrainLowPoly, x + indX, z + indZ));
+					InfiniteTerrainChunk newTerrainChunk = new InfiniteTerrainChunk(terrainLowPoly, x + indX, z + indZ);
+					populateTerrainChunk(newTerrainChunk);
+					infiniteTerrainManager.addTerrainChunk(newTerrainChunk);
 				}
 			}
 		}
+		// remove old
 		List<InfiniteTerrainChunk> remoteTerrainChunks = infiniteTerrainManager.getRemoteTerrainChunks(indX, indZ);
-		Iterator<InfiniteTerrainChunk> iterator = remoteTerrainChunks.iterator();
-		while (iterator.hasNext()) {
-			InfiniteTerrainChunk terrainChunk = iterator.next();
-			terrains.remove(terrainChunk.getTerrain());
-			infiniteTerrainManager.removeTerrainChunk(terrainChunk);
+		Iterator<InfiniteTerrainChunk> remoteChunkIterator = remoteTerrainChunks.iterator();
+		while (remoteChunkIterator.hasNext()) {
+			InfiniteTerrainChunk remoteTerrainChunk = remoteChunkIterator.next();
+			List<Entity> remoteEntities = remoteTerrainChunk.getEntities();
+			Iterator<Entity> entityIterator = remoteEntities.iterator();			
+			while (entityIterator.hasNext()) {
+				Entity remoteEntity = entityIterator.next();
+				removeEntity(remoteEntity);
+			}
+			terrains.remove(remoteTerrainChunk.getTerrain());
+			remoteTerrainChunk.cleanUp();
+			infiniteTerrainManager.removeTerrainChunk(remoteTerrainChunk);
+		}
+		((MasterRendererLowPoly) masterRenderer).initInfinite(this);
+	}
+
+	private void populateTerrainChunk(InfiniteTerrainChunk terrainChunk) {
+		float terrainX = terrainChunk.getIndexX() * WorldSettings.WORLD_SIZE * terrainScale;
+		float terrainZ = terrainChunk.getIndexZ() * WorldSettings.WORLD_SIZE * terrainScale;
+		int modelsSpawnedMax = WorldSettings.WORLD_SIZE / 2;
+		int modelsSpawned = 0;
+		while (modelsSpawned < modelsSpawnedMax) {
+			float coordX = terrainX + rand.nextFloat() * WorldSettings.WORLD_SIZE * terrainScale - WorldSettings.WORLD_SIZE / 2 * terrainScale;
+			float coordZ = terrainZ + rand.nextFloat() * WorldSettings.WORLD_SIZE * terrainScale - WorldSettings.WORLD_SIZE / 2 * terrainScale;
+			ITerrain currentTerrain = getCurrentTerrain(coordX, coordZ);
+			float coordY = currentTerrain != null ? currentTerrain.getHeightOfTerrain(coordX, coordZ) : WorldSettings.WATER_HEIGHT;
+			if (coordY > WorldSettings.WATER_HEIGHT + 5) {
+				int modelIndex = rand.nextInt(2);
+				float modelSize = rand.nextFloat() + 1;
+				int fernTxIndex = rand.nextInt(4);
+
+				Entity entity = null;
+				switch (modelIndex) {
+				case 0:
+					entity = new Entity(fernModel, fernTxIndex, new Vector3f(coordX, coordY, coordZ), 0, 0, 0, modelSize);
+					entity.setSolid(false);
+					break;
+				case 1:
+					entity = new Entity(pineModel, 0, new Vector3f(coordX, coordY, coordZ), 0, 0, 0, modelSize);
+					entity.setSolid(true);
+					break;
+				}
+				if (entity != null) {
+					processEntity(entity);
+					terrainChunk.addEntity(entity);
+				}
+			}
+			modelsSpawned++;
 		}
 	}
 
 	private void generateWaterChunks(int indX, int indZ) {
+		// add new
 		for (int x = -gridSize / 2; x <= gridSize / 2; x++) {
 			for (int z = -gridSize / 2; z <= gridSize / 2; z++) {
 				if (!infiniteTerrainManager.waterChunkExists(x + indX, z + indZ)) {
@@ -205,59 +261,13 @@ public class SceneLowPoly implements IScene {
 				}
 			}
 		}
+		// remove old
 		List<InfiniteWaterChunk> remoteWaterChunks = infiniteTerrainManager.getRemoteWaterChunks(indX, indZ);
 		Iterator<InfiniteWaterChunk> iterator = remoteWaterChunks.iterator();
 		while (iterator.hasNext()) {
 			InfiniteWaterChunk waterChunk = iterator.next();
 			waterTiles.remove(waterChunk.getWaterTile());
 			infiniteTerrainManager.removeWaterChunk(waterChunk);
-		}
-	}
-
-	private void generateForestModels() {
-		Random rand = new Random();
-		Entity entity;
-		ModelTexture fernTextureAtlas = new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/fern_atlas.png"));
-		fernTextureAtlas.setNumberOfRows(2);
-		fernTextureAtlas.setTransparent(true).setUseFakeLighting(true);
-		TexturedModel fernModel = new TexturedModel(OBJLoader.loadOBJModel("fern", loader), fernTextureAtlas);
-		TexturedModel pineModel = new TexturedModel(OBJLoader.loadOBJModel("pine", loader), new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/pine.png")));
-
-		int modelsSpawnedMax = WorldSettings.WORLD_SIZE * gridSize / 10 * 20;
-
-		int modelsSpawned = 0;
-		while (modelsSpawned < modelsSpawnedMax) {
-
-			int coordX = (int) (rand.nextFloat() * WorldSettings.WORLD_SIZE - WorldSettings.WORLD_SIZE / 2);
-			int coordZ = (int) (rand.nextFloat() * WorldSettings.WORLD_SIZE - WorldSettings.WORLD_SIZE / 2);
-			coordX = (int) (coordX * terrainScale * gridSize);
-			coordZ = (int) (coordZ * terrainScale * gridSize);
-			ITerrain currentTerrain = getCurrentTerrain(coordX, coordZ);
-			float coordY = currentTerrain != null ? currentTerrain.getHeightOfTerrain(coordX, coordZ) : WorldSettings.WATER_HEIGHT;			
-			if (coordY < WorldSettings.WATER_HEIGHT + 20) {
-				continue;
-			}
-
-			int modelIndex = rand.nextInt(2);
-			float modelSize = rand.nextFloat() + 1;
-			int fernTxIndex = rand.nextInt(4);
-
-			entity = null;
-
-			switch (modelIndex) {
-			case 0:
-				entity = new Entity(fernModel, fernTxIndex, new Vector3f(coordX, coordY, coordZ), 0, 0, 0, modelSize);
-				entity.setSolid(false);
-				break;
-			case 1:
-				entity = new Entity(pineModel, 0, new Vector3f(coordX, coordY, coordZ), 0, 0, 0, modelSize);
-				entity.setSolid(true);
-				break;
-			}
-			if (entity != null) {
-				processEntity(entity);
-				modelsSpawned++;
-			}
 		}
 	}
 
@@ -365,7 +375,6 @@ public class SceneLowPoly implements IScene {
 		for (TexturedModel model : entities.keySet()) {
 			entities.get(model).remove(entity);
 		}
-		masterRenderer.init(this);
 	}
 
 	private void setupLights() {
@@ -515,7 +524,7 @@ public class SceneLowPoly implements IScene {
 		return loader;
 	}
 
-	public Skybox getSkybox() {
+	public ISkybox getSkybox() {
 		return skybox;
 	}
 
@@ -535,11 +544,11 @@ public class SceneLowPoly implements IScene {
 		guis.add(gui);
 	}
 
-	public ITerrain getCurrentTerrain(int worldX, int worldZ) {
+	public ITerrain getCurrentTerrain(float worldX, float worldZ) {
 		ITerrain currentTerrain = null;
 		for (ITerrain terrain : terrains) {			
-			if (worldX >= (terrain.getX() - WorldSettings.WORLD_SIZE * terrainScale / 2) && worldX < (terrain.getX() + WorldSettings.WORLD_SIZE * terrainScale / 2) &&
-				worldZ >= (terrain.getZ() - WorldSettings.WORLD_SIZE * terrainScale / 2) && worldZ < (terrain.getZ() + WorldSettings.WORLD_SIZE * terrainScale / 2)) {
+			if (worldX >= (terrain.getX() - WorldSettings.WORLD_SIZE / 2 * terrainScale) && worldX < (terrain.getX() + WorldSettings.WORLD_SIZE / 2 * terrainScale) &&
+				worldZ >= (terrain.getZ() - WorldSettings.WORLD_SIZE / 2 * terrainScale) && worldZ < (terrain.getZ() + WorldSettings.WORLD_SIZE / 2 * terrainScale)) {
 				currentTerrain = terrain;
 				break;
 			}

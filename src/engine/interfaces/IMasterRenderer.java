@@ -3,6 +3,7 @@ package engine.interfaces;
 import org.joml.Matrix4f;
 
 import engine.Window;
+import engine.tm.scene.SceneLowPoly;
 
 public interface IMasterRenderer {
 
