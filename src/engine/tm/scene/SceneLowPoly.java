@@ -63,7 +63,6 @@ import engine.tm.particles.ParticleSystemShoot;
 import engine.tm.particles.ParticleTexture;
 import engine.tm.render.MasterRendererLowPoly;
 import engine.tm.settings.WorldSettings;
-import engine.tm.skybox.Skybox;
 import engine.tm.sunRenderer.Sun;
 import engine.tm.textures.ModelTexture;
 import engine.tm.textures.Texture;
@@ -138,6 +137,7 @@ public class SceneLowPoly implements IScene {
 		setupParticles();
 		setupGui();
 		setupText();
+		masterRenderer.init(this);
 	}
 
 	private void setupTerrainGenerator() {
@@ -222,8 +222,8 @@ public class SceneLowPoly implements IScene {
 			float coordX = terrainX + rand.nextFloat() * WorldSettings.WORLD_SIZE * terrainScale - WorldSettings.WORLD_SIZE / 2 * terrainScale;
 			float coordZ = terrainZ + rand.nextFloat() * WorldSettings.WORLD_SIZE * terrainScale - WorldSettings.WORLD_SIZE / 2 * terrainScale;
 			ITerrain currentTerrain = getCurrentTerrain(coordX, coordZ);
-			float coordY = currentTerrain != null ? currentTerrain.getHeightOfTerrain(coordX, coordZ) : WorldSettings.WATER_HEIGHT;
-			if (coordY > WorldSettings.WATER_HEIGHT + 5) {
+			float coordY = currentTerrain != null ? currentTerrain.getHeightOfTerrain(coordX, coordZ) : 0;
+			if (coordY > 0 && coordY > WorldSettings.WATER_HEIGHT + waterLevelOffset + 5) {
 				int modelIndex = rand.nextInt(2);
 				float modelSize = rand.nextFloat() + 1;
 				int fernTxIndex = rand.nextInt(4);
@@ -383,14 +383,18 @@ public class SceneLowPoly implements IScene {
 	}
 
 	private void setupGui() {
-		GuiTexture reflection  = new GuiTexture(MasterRendererLowPoly.reflectionFbo.getColorBuffer(0), new Vector2f(-0.78f,  0.76f), new Vector2f(0.2f, 0.2f));
-		GuiTexture refraction  = new GuiTexture(MasterRendererLowPoly.refractionFbo.getColorBuffer(0), new Vector2f(-0.78f,  0.32f), new Vector2f(0.2f, 0.2f));
-		GuiTexture depth       = new GuiTexture(MasterRendererLowPoly.refractionFbo.getDepthBuffer(),  new Vector2f(-0.78f, -0.12f), new Vector2f(0.2f, 0.2f));
+		float coordY = 0.88f;
+		float offsetY = -0.22f;
+		GuiTexture reflection  = new GuiTexture(MasterRendererLowPoly.reflectionFbo.getColorBuffer(0), new Vector2f(-0.89f, coordY), new Vector2f(0.1f, 0.1f));
+		GuiTexture refraction  = new GuiTexture(MasterRendererLowPoly.refractionFbo.getColorBuffer(0), new Vector2f(-0.89f, coordY += offsetY), new Vector2f(0.1f, 0.1f));
+		GuiTexture depth       = new GuiTexture(MasterRendererLowPoly.refractionFbo.getDepthBuffer(),  new Vector2f(-0.89f, coordY += offsetY), new Vector2f(0.1f, 0.1f));
+		GuiTexture shadowMap   = new GuiTexture(MasterRendererLowPoly.getShadowMapTexture(),           new Vector2f(-0.89f, coordY += offsetY), new Vector2f(0.1f, 0.1f));
 		GuiTexture aimTarget   = new GuiTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/gui/bullseye.png"), new Vector2f(0.0f, 0.0f), new Vector2f(0.02f, 0.036f));
 
 		processGui(reflection);
 		processGui(refraction);
 		processGui(depth);
+		processGui(shadowMap);
 		processGui(aimTarget);
 	}
 
@@ -454,8 +458,9 @@ public class SceneLowPoly implements IScene {
 	private void updateText(float interval) {
 		Camera camera = (Camera) this.camera;
 		TextMaster.emptyTextMap();
-		float offsetX = 0.01f;
-		float offsetY = 0.74f;
+		float coordX = 0.005f;
+		float coordY = 0.79f;
+		float offsetY = 0.025f;
 		Vector3f color = new Vector3f(1, 1, 1);
 		String line_0 = "FPS: " + GameEngine.getFPS() + " / " + GameEngine.TARGET_FPS;
 		String line_1 = "Player position:  " + (int) player.getPosition().x + "  " + (int) player.getPosition().y + "  " + (int) player.getPosition().z;
@@ -465,14 +470,14 @@ public class SceneLowPoly implements IScene {
 		String line_5 = "Entities spawned:  " + getEntitiesCount();
 		String line_6 = "Particles active:  " + ParticleMaster.getParticlesCount();
 		String line_7 = "Visible terrain chunks: " + infiniteTerrainManager.getVisibleTerrainChunks().size();
-		text[0] = new GUIText(line_0, 1, font_1, new Vector2f(offsetX, offsetY), 1f, false).setColor(color);
-		text[1] = new GUIText(line_1, 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
-		text[2] = new GUIText(line_2, 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
-		text[3] = new GUIText(line_3, 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
-		text[4] = new GUIText(line_4, 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
-		text[5] = new GUIText(line_5, 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
-		text[6] = new GUIText(line_6, 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
-		text[7] = new GUIText(line_7, 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
+		text[0] = new GUIText(line_0, 0.8f, font_1, new Vector2f(coordX, coordY), 1f, false).setColor(color);
+		text[1] = new GUIText(line_1, 0.8f, font_1, new Vector2f(coordX, coordY += offsetY), 1f, false).setColor(color);
+		text[2] = new GUIText(line_2, 0.8f, font_1, new Vector2f(coordX, coordY += offsetY), 1f, false).setColor(color);
+		text[3] = new GUIText(line_3, 0.8f, font_1, new Vector2f(coordX, coordY += offsetY), 1f, false).setColor(color);
+		text[4] = new GUIText(line_4, 0.8f, font_1, new Vector2f(coordX, coordY += offsetY), 1f, false).setColor(color);
+		text[5] = new GUIText(line_5, 0.8f, font_1, new Vector2f(coordX, coordY += offsetY), 1f, false).setColor(color);
+		text[6] = new GUIText(line_6, 0.8f, font_1, new Vector2f(coordX, coordY += offsetY), 1f, false).setColor(color);
+		text[7] = new GUIText(line_7, 0.8f, font_1, new Vector2f(coordX, coordY += offsetY), 1f, false).setColor(color);
 		TextMaster.loadText(text[0]);
 		TextMaster.loadText(text[1]);
 		TextMaster.loadText(text[2]);

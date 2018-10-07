@@ -13,7 +13,10 @@ import engine.interfaces.ITerrain;
 import engine.tm.entities.LightDirectional;
 import engine.tm.scene.SceneLowPoly;
 import engine.tm.settings.WorldSettings;
+import engine.tm.shadows.ShadowBox;
+import engine.tm.shadows.ShadowMapMasterRenderer;
 import engine.tm.toolbox.Maths;
+import engine.utils.Util;
 
 /**
  * A simple renderer that renders terrains.
@@ -26,7 +29,7 @@ public class TerrainRendererLowPoly {
 	private static final String VERTEX_FILE = WorldSettings.RESOURCES_SUBDIR + "/shaders/lowPolyTerrainVertex.glsl";
 	private static final String FRAGMENT_FILE = WorldSettings.RESOURCES_SUBDIR + "/shaders/lowPolyTerrainFragment.glsl";
 
-	private final TerrainShader shader;
+	private final TerrainShaderLowPoly shader;
 	private final boolean hasIndices;
 
 	/**
@@ -37,9 +40,12 @@ public class TerrainRendererLowPoly {
 	 *            buffer or not.
 	 */
 	public TerrainRendererLowPoly(Matrix4f projectionMatrix, boolean usesIndices) {
-		shader = new TerrainShader(VERTEX_FILE, FRAGMENT_FILE);
+		shader = new TerrainShaderLowPoly(VERTEX_FILE, FRAGMENT_FILE);
 		shader.start();
 		shader.projectionMatrix.loadMatrix(projectionMatrix);
+		shader.shadowDistance.loadFloat(ShadowBox.SHADOW_DISTANCE);
+		shader.shadowMapSize.loadFloat(ShadowMapMasterRenderer.SHADOW_MAP_SIZE);
+		shader.connectTextureUnits();
 		shader.stop();
 		hasIndices = usesIndices;
 	}
@@ -60,11 +66,17 @@ public class TerrainRendererLowPoly {
 	 *            the terrain. The clipping planes cut off anything in the scene
 	 *            that is rendered outside of the plane.
 	 */
-	public void render(IScene scene, LightDirectional light, Vector4f clipPlane) {
+	public void render(IScene scene, LightDirectional light, Vector4f clipPlane, Matrix4f toShadowMapSpace) {
+		
+		if (toShadowMapSpace == null) {
+			toShadowMapSpace = new Matrix4f();
+			toShadowMapSpace.identity();
+		}
+
 		List<ITerrain> terrains = ((SceneLowPoly) scene).getTerrains();
 		ICamera camera = scene.getCamera();
 		for (ITerrain terrain : terrains) {
-			prepare(terrain, camera, light, clipPlane);
+			prepare(terrain, camera, light, clipPlane, toShadowMapSpace);
 			if (hasIndices) {
 				GL11.glDrawElements(GL11.GL_TRIANGLES, ((TerrainLowPoly) terrain).getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
 			} else {
@@ -95,7 +107,7 @@ public class TerrainRendererLowPoly {
 	 *            the terrain. The clipping planes cut off anything in the scene
 	 *            that is rendered outside of the plane.
 	 */
-	private void prepare(ITerrain terrain, ICamera camera, LightDirectional light, Vector4f clipPlane) {
+	private void prepare(ITerrain terrain, ICamera camera, LightDirectional light, Vector4f clipPlane, Matrix4f toShadowMapSpace) {
 		((TerrainLowPoly) terrain).getVao().bind();
 		shader.start();
 		shader.clipPlane.loadVec4(clipPlane);
@@ -104,6 +116,7 @@ public class TerrainRendererLowPoly {
 		shader.lightColor.loadVec3(light.getColor().getVector());
 		loadModelMatrix(terrain);
 		shader.viewMatrix.loadMatrix(camera.getViewMatrix());
+		shader.toShadowMapSpace.loadMatrix(toShadowMapSpace);
 	}
 
 	private void loadModelMatrix(ITerrain terrain) {

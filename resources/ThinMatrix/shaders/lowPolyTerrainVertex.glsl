@@ -5,6 +5,7 @@ layout(location = 1) in vec4 in_normal;
 layout(location = 2) in vec4 in_color;
 
 flat out vec3 pass_color; //The "flat" qualifier stops the color from being interpolated over the triangles.
+out vec4 shadowCoords;
 
 uniform vec3 lightDirection;
 uniform vec3 lightColor;
@@ -13,6 +14,10 @@ uniform mat4 transformationMatrix;
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 uniform vec4 clipPlane;
+uniform mat4 toShadowMapSpace;
+uniform float shadowDistance;
+
+const float transitionDistance = 10;
 
 //simple diffuse lighting
 vec3 calculateLighting(){
@@ -24,10 +29,15 @@ vec3 calculateLighting(){
 void main(void){
 
 	vec4 worldPosition = transformationMatrix * vec4(in_position, 1.0);
+	shadowCoords = toShadowMapSpace * worldPosition;
 	gl_ClipDistance[0] = dot(worldPosition, clipPlane);
 	vec4 positionRelativeToCamera = viewMatrix * worldPosition;
 	gl_Position = projectionMatrix * positionRelativeToCamera;
 	vec3 lighting = calculateLighting();
 	pass_color = in_color.rgb * lighting;
 
+	float distance = length(positionRelativeToCamera.xyz);
+	distance = distance - (shadowDistance - transitionDistance);
+	distance = distance / transitionDistance;
+	shadowCoords.w = clamp(1.0 - distance, 0.0, 1.0);
 }
