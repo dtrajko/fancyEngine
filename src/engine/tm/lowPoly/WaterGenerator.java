@@ -2,22 +2,20 @@ package engine.tm.lowPoly;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-
 import org.joml.Vector2f;
-
 import engine.tm.openglObjects.Vao;
-import engine.tm.settings.WorldSettings;
+import engine.tm.settings.WorldSettingsLowPoly;
 import engine.tm.vertexDataStoring.DataStoring;
 import engine.tm.vertexDataStoring.VaoLoader;
 
 /**
- * 
+ *
  * Generates a simple flat grid mesh which will be used as the water. Very
  * similar to how the "split terrain" was generated in tutorial 55. Each
  * triangle of the mesh has its own 3 vertices so that no vertices are shared
  * between triangles. This allows for the flat-shaded look as the
  * normals/lighting values aren't interpolated across multiple triangles.
- * 
+ *
  * @author Karl
  *
  */
@@ -140,10 +138,10 @@ public class WaterGenerator {
 		vertices[1] = new Vector2f(col, row + 1);
 		vertices[2] = new Vector2f(col + 1, row);
 		vertices[3] = new Vector2f(col + 1, row + 1);
-		vertices[0].sub(WorldSettings.WORLD_SIZE / 2, WorldSettings.WORLD_SIZE / 2);
-		vertices[1].sub(WorldSettings.WORLD_SIZE / 2, WorldSettings.WORLD_SIZE / 2);
-		vertices[2].sub(WorldSettings.WORLD_SIZE / 2, WorldSettings.WORLD_SIZE / 2);
-		vertices[3].sub(WorldSettings.WORLD_SIZE / 2, WorldSettings.WORLD_SIZE / 2);
+		vertices[0].sub(WorldSettingsLowPoly.WORLD_SIZE / 2, WorldSettingsLowPoly.WORLD_SIZE / 2);
+		vertices[1].sub(WorldSettingsLowPoly.WORLD_SIZE / 2, WorldSettingsLowPoly.WORLD_SIZE / 2);
+		vertices[2].sub(WorldSettingsLowPoly.WORLD_SIZE / 2, WorldSettingsLowPoly.WORLD_SIZE / 2);
+		vertices[3].sub(WorldSettingsLowPoly.WORLD_SIZE / 2, WorldSettingsLowPoly.WORLD_SIZE / 2);
 		vertices[0].mul(scale);
 		vertices[1].mul(scale);
 		vertices[2].mul(scale);

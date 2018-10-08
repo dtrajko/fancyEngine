@@ -41,7 +41,7 @@ public class TerrainShaderLowPoly extends ShaderProgram {
 	}
 
 	public void connectTextureUnits() {
-		shadowMap.loadInt(5);
+		shadowMap.loadInt(1);
 	}
 
 	@Override

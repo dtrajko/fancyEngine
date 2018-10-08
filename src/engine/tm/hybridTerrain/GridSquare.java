@@ -3,8 +3,7 @@ package engine.tm.hybridTerrain;
 import java.nio.ByteBuffer;
 
 import org.joml.Vector3f;
-
-import engine.tm.settings.WorldSettings;
+import engine.tm.settings.WorldSettingsLowPoly;
 import engine.tm.toolbox.Maths;
 import engine.tm.utils.Color;
 import engine.tm.vertexDataStoring.DataStoring;
@@ -61,10 +60,10 @@ public class GridSquare {
 		vertices[1] = new Vector3f(col, heights[row + 1][col], row + 1);
 		vertices[2] = new Vector3f(col + 1, heights[row][col + 1], row);
 		vertices[3] = new Vector3f(col + 1, heights[row + 1][col + 1], row + 1);
-		vertices[0].sub(WorldSettings.WORLD_SIZE / 2, 0, WorldSettings.WORLD_SIZE / 2);
-		vertices[1].sub(WorldSettings.WORLD_SIZE / 2, 0, WorldSettings.WORLD_SIZE / 2);
-		vertices[2].sub(WorldSettings.WORLD_SIZE / 2, 0, WorldSettings.WORLD_SIZE / 2);
-		vertices[3].sub(WorldSettings.WORLD_SIZE / 2, 0, WorldSettings.WORLD_SIZE / 2);
+		vertices[0].sub(WorldSettingsLowPoly.WORLD_SIZE / 2, 0, WorldSettingsLowPoly.WORLD_SIZE / 2);
+		vertices[1].sub(WorldSettingsLowPoly.WORLD_SIZE / 2, 0, WorldSettingsLowPoly.WORLD_SIZE / 2);
+		vertices[2].sub(WorldSettingsLowPoly.WORLD_SIZE / 2, 0, WorldSettingsLowPoly.WORLD_SIZE / 2);
+		vertices[3].sub(WorldSettingsLowPoly.WORLD_SIZE / 2, 0, WorldSettingsLowPoly.WORLD_SIZE / 2);
 		vertices[0].mul(scale);
 		vertices[1].mul(scale);
 		vertices[2].mul(scale);

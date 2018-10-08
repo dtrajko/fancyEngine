@@ -35,7 +35,7 @@ import engine.tm.models.TexturedModel;
 import engine.tm.particles.ParticleMaster;
 import engine.tm.scene.Scene;
 import engine.tm.scene.SceneLowPoly;
-import engine.tm.settings.WorldSettings;
+import engine.tm.settings.WorldSettingsLowPoly;
 import engine.tm.shadows.ShadowMapMasterRenderer;
 import engine.tm.skybox.SkyboxRenderer;
 import engine.tm.sunRenderer.SunRenderer;
@@ -102,10 +102,10 @@ public class MasterRendererLowPoly implements IMasterRenderer {
 		ICamera camera = scene.getCamera();
 
 		GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
-		renderShadowMap(scene);
 		renderWaterReflectionPass(scene);
 		renderWaterRefractionPass(scene);
 		GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
+		renderShadowMap(scene);
 		renderMainPass(scene);
 
 		// after the 3D stuff and before the 2D stuff
@@ -125,19 +125,19 @@ public class MasterRendererLowPoly implements IMasterRenderer {
 		return shadowMapRenderer.getShadowMap();
 	}
 
-	private void renderWaterReflectionPass(IScene scene) {		
+	private void renderWaterReflectionPass(IScene scene) {
 		Camera camera = (Camera) scene.getCamera();
 		IPlayer player = scene.getPlayer();
 		Vector3f lightDirection = scene.getLightDirection();
 		LightDirectional lightDirectional = ((SceneLowPoly) scene).getLightDirectional();
 		reflectionFbo.bindForRender(0);
 
-		float distance = 2 * (camera.getPosition().y - WorldSettings.WATER_HEIGHT - SceneLowPoly.waterLevelOffset + REFLECT_OFFSET);
+		float distance = 2 * (camera.getPosition().y - WorldSettingsLowPoly.WATER_HEIGHT - SceneLowPoly.waterLevelOffset + REFLECT_OFFSET);
 		camera.getPosition().y -= distance;
 		camera.invertPitch();
 		camera.invertRoll();
 
-		Vector4f clipPlane = new Vector4f(0, 1, 0, -WorldSettings.WATER_HEIGHT - SceneLowPoly.waterLevelOffset + REFLECT_OFFSET);
+		Vector4f clipPlane = new Vector4f(0, 1, 0, -WorldSettingsLowPoly.WATER_HEIGHT - SceneLowPoly.waterLevelOffset + REFLECT_OFFSET);
 		prepare();
 		terrainRendererLowPoly.render(scene, lightDirectional, clipPlane, null);
 		entityRenderer.render(scene, clipPlane);
@@ -151,7 +151,7 @@ public class MasterRendererLowPoly implements IMasterRenderer {
 	}
 
 	private void renderWaterRefractionPass(IScene scene) {
-		Vector4f clipPlane = new Vector4f(0, -1, 0, -WorldSettings.WATER_HEIGHT + SceneLowPoly.waterLevelOffset + REFRACT_OFFSET);
+		Vector4f clipPlane = new Vector4f(0, -1, 0, -WorldSettingsLowPoly.WATER_HEIGHT + SceneLowPoly.waterLevelOffset + REFRACT_OFFSET);
 		LightDirectional lightDirectional = ((SceneLowPoly) scene).getLightDirectional();		
 		refractionFbo.bindForRender(0);
 		prepare();
@@ -171,7 +171,7 @@ public class MasterRendererLowPoly implements IMasterRenderer {
 		skyboxRenderer.render(scene, clipPlane);
 		sunRenderer.render(scene);
 
-		Vector4f clipPlaneTerrain = new Vector4f(0, 1, 0, -WorldSettings.WATER_HEIGHT - SceneLowPoly.waterLevelOffset + 1);
+		Vector4f clipPlaneTerrain = new Vector4f(0, 1, 0, -WorldSettingsLowPoly.WATER_HEIGHT - SceneLowPoly.waterLevelOffset + 1);
 		GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
 		terrainRendererLowPoly.render(scene, lightDirectional, clipPlaneTerrain, shadowMapRenderer.getToShadowMapSpaceMatrix());
 		GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
@@ -216,7 +216,7 @@ public class MasterRendererLowPoly implements IMasterRenderer {
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 		GL11.glClearColor(RED, GREEN, BLUE, 1.0f);
-		GL13.glActiveTexture(GL13.GL_TEXTURE5);
+		GL13.glActiveTexture(GL13.GL_TEXTURE1);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, getShadowMapTexture());
 		GL32.glProvokingVertex(GL32.GL_FIRST_VERTEX_CONVENTION);
 		OpenGlUtils.cullBackFaces(true);

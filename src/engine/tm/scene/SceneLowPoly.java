@@ -62,7 +62,7 @@ import engine.tm.particles.ParticleMaster;
 import engine.tm.particles.ParticleSystemShoot;
 import engine.tm.particles.ParticleTexture;
 import engine.tm.render.MasterRendererLowPoly;
-import engine.tm.settings.WorldSettings;
+import engine.tm.settings.WorldSettingsLowPoly;
 import engine.tm.sunRenderer.Sun;
 import engine.tm.textures.ModelTexture;
 import engine.tm.textures.Texture;
@@ -96,11 +96,11 @@ public class SceneLowPoly implements IScene {
 	private boolean fireMode;
 
 	private FlareManager flareManager;
-	private Vector3f lightDirection = WorldSettings.LIGHT_DIR;
+	private Vector3f lightDirection = WorldSettingsLowPoly.LIGHT_DIR;
 	private LightDirectional lightDirectional;
 
 	public static float waterLevelOffset = 0;
-	private int gridSize = WorldSettings.GRID_SIZE;
+	private int gridSize = WorldSettingsLowPoly.GRID_SIZE;
 	private static float terrainScale = 5;
 	private static TerrainGenerator terrainGenerator;
 	private double lastTerrainUpdate;
@@ -141,18 +141,18 @@ public class SceneLowPoly implements IScene {
 	}
 
 	private void setupTerrainGenerator() {
-		PerlinNoise noise = new PerlinNoise(WorldSettings.OCTAVES, WorldSettings.AMPLITUDE, WorldSettings.ROUGHNESS);
-		ColorGenerator colorGen = new ColorGenerator(WorldSettings.TERRAIN_COLS, WorldSettings.COLOR_SPREAD);
+		PerlinNoise noise = new PerlinNoise(WorldSettingsLowPoly.OCTAVES, WorldSettingsLowPoly.AMPLITUDE, WorldSettingsLowPoly.ROUGHNESS);
+		ColorGenerator colorGen = new ColorGenerator(WorldSettingsLowPoly.TERRAIN_COLS, WorldSettingsLowPoly.COLOR_SPREAD);
 		Matrix4f projectionMatrix = MasterRendererLowPoly.createProjectionMatrix();
 		terrainGenerator = new HybridTerrainGenerator(projectionMatrix, noise, colorGen);		
 	}
 
 	private void setupTerrainObjects() {
-		ModelTexture fernTextureAtlas = new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/fern_atlas.png"));
+		ModelTexture fernTextureAtlas = new ModelTexture(loader.loadTexture(WorldSettingsLowPoly.TEXTURES_DIR + "/fern_atlas.png"));
 		fernTextureAtlas.setNumberOfRows(2);
 		fernTextureAtlas.setTransparent(true).setUseFakeLighting(true);
 		fernModel = new TexturedModel(OBJLoader.loadOBJModel("fern", loader), fernTextureAtlas);
-		pineModel = new TexturedModel(OBJLoader.loadOBJModel("pine", loader), new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/pine.png")));
+		pineModel = new TexturedModel(OBJLoader.loadOBJModel("pine", loader), new ModelTexture(loader.loadTexture(WorldSettingsLowPoly.TEXTURES_DIR + "/pine.png")));
 	}
 
 	private void setupLowPolyTerrain() {
@@ -165,11 +165,11 @@ public class SceneLowPoly implements IScene {
 
 	private void updateInfiniteTerrain(Input input) {
 		if (GameEngine.getTimer().getLastLoopTime() - lastTerrainUpdate > 1) {
-			float projectedDistance = WorldSettings.WORLD_SIZE * 4 * terrainScale;
+			float projectedDistance = WorldSettingsLowPoly.WORLD_SIZE * 4 * terrainScale;
 			float playerFutureX = player != null ? ((AnimatedPlayer) player).getProjectedFuturePosition(projectedDistance).x : 0;
 			float playerFutureZ = player != null ? ((AnimatedPlayer) player).getProjectedFuturePosition(projectedDistance).z : 0;
-			int indX = (int) (playerFutureX / WorldSettings.WORLD_SIZE / terrainScale);
-			int indZ = (int) (playerFutureZ / WorldSettings.WORLD_SIZE / terrainScale);
+			int indX = (int) (playerFutureX / WorldSettingsLowPoly.WORLD_SIZE / terrainScale);
+			int indZ = (int) (playerFutureZ / WorldSettingsLowPoly.WORLD_SIZE / terrainScale);
 			generateTerrainChunks(indX, indZ);
 			generateWaterChunks(indX, indZ);
 			lastTerrainUpdate = GameEngine.getTimer().getLastLoopTime();
@@ -183,11 +183,11 @@ public class SceneLowPoly implements IScene {
 			for (int z = -gridSize / 2; z <= gridSize / 2; z++) {
 				if (!infiniteTerrainManager.terrainChunkExists(x + indX, z + indZ)) {
 					TerrainLowPoly terrainLowPoly = terrainGenerator.generateTerrain(
-							(x + indX + gridSize / 2) * WorldSettings.WORLD_SIZE,
-							(z + indZ + gridSize / 2) * WorldSettings.WORLD_SIZE,
-							WorldSettings.WORLD_SIZE, terrainScale);
-					terrainLowPoly.setX((int) ((x + indX) * WorldSettings.WORLD_SIZE * terrainScale));
-					terrainLowPoly.setZ((int) ((z + indZ) * WorldSettings.WORLD_SIZE * terrainScale));
+							(x + indX + gridSize / 2) * WorldSettingsLowPoly.WORLD_SIZE,
+							(z + indZ + gridSize / 2) * WorldSettingsLowPoly.WORLD_SIZE,
+							WorldSettingsLowPoly.WORLD_SIZE, terrainScale);
+					terrainLowPoly.setX((int) ((x + indX) * WorldSettingsLowPoly.WORLD_SIZE * terrainScale));
+					terrainLowPoly.setZ((int) ((z + indZ) * WorldSettingsLowPoly.WORLD_SIZE * terrainScale));
 					processTerrain(terrainLowPoly);
 					InfiniteTerrainChunk newTerrainChunk = new InfiniteTerrainChunk(terrainLowPoly, x + indX, z + indZ);
 					populateTerrainChunk(newTerrainChunk);
@@ -214,16 +214,16 @@ public class SceneLowPoly implements IScene {
 	}
 
 	private void populateTerrainChunk(InfiniteTerrainChunk terrainChunk) {
-		float terrainX = terrainChunk.getIndexX() * WorldSettings.WORLD_SIZE * terrainScale;
-		float terrainZ = terrainChunk.getIndexZ() * WorldSettings.WORLD_SIZE * terrainScale;
-		int modelsSpawnedMax = WorldSettings.WORLD_SIZE / 2;
+		float terrainX = terrainChunk.getIndexX() * WorldSettingsLowPoly.WORLD_SIZE * terrainScale;
+		float terrainZ = terrainChunk.getIndexZ() * WorldSettingsLowPoly.WORLD_SIZE * terrainScale;
+		int modelsSpawnedMax = WorldSettingsLowPoly.WORLD_SIZE / 2;
 		int modelsSpawned = 0;
 		while (modelsSpawned < modelsSpawnedMax) {
-			float coordX = terrainX + rand.nextFloat() * WorldSettings.WORLD_SIZE * terrainScale - WorldSettings.WORLD_SIZE / 2 * terrainScale;
-			float coordZ = terrainZ + rand.nextFloat() * WorldSettings.WORLD_SIZE * terrainScale - WorldSettings.WORLD_SIZE / 2 * terrainScale;
+			float coordX = terrainX + rand.nextFloat() * WorldSettingsLowPoly.WORLD_SIZE * terrainScale - WorldSettingsLowPoly.WORLD_SIZE / 2 * terrainScale;
+			float coordZ = terrainZ + rand.nextFloat() * WorldSettingsLowPoly.WORLD_SIZE * terrainScale - WorldSettingsLowPoly.WORLD_SIZE / 2 * terrainScale;
 			ITerrain currentTerrain = getCurrentTerrain(coordX, coordZ);
 			float coordY = currentTerrain != null ? currentTerrain.getHeightOfTerrain(coordX, coordZ) : 0;
-			if (coordY > 0 && coordY > WorldSettings.WATER_HEIGHT + waterLevelOffset + 5) {
+			if (coordY > 0 && coordY > WorldSettingsLowPoly.WATER_HEIGHT + waterLevelOffset + 5) {
 				int modelIndex = rand.nextInt(2);
 				float modelSize = rand.nextFloat() + 1;
 				int fernTxIndex = rand.nextInt(4);
@@ -253,9 +253,9 @@ public class SceneLowPoly implements IScene {
 		for (int x = -gridSize / 2; x <= gridSize / 2; x++) {
 			for (int z = -gridSize / 2; z <= gridSize / 2; z++) {
 				if (!infiniteTerrainManager.waterChunkExists(x + indX, z + indZ)) {
-					WaterTileLowPoly waterLowPoly = WaterGenerator.generate(WorldSettings.WORLD_SIZE, WorldSettings.WATER_HEIGHT, terrainScale);
-					waterLowPoly.setX((int) ((x + indX) * WorldSettings.WORLD_SIZE * terrainScale));
-					waterLowPoly.setZ((int) ((z + indZ) * WorldSettings.WORLD_SIZE * terrainScale));
+					WaterTileLowPoly waterLowPoly = WaterGenerator.generate(WorldSettingsLowPoly.WORLD_SIZE, WorldSettingsLowPoly.WATER_HEIGHT, terrainScale);
+					waterLowPoly.setX((int) ((x + indX) * WorldSettingsLowPoly.WORLD_SIZE * terrainScale));
+					waterLowPoly.setZ((int) ((z + indZ) * WorldSettingsLowPoly.WORLD_SIZE * terrainScale));
 					this.processWaterTile(waterLowPoly);
 					infiniteTerrainManager.addWaterChunk(new InfiniteWaterChunk(waterLowPoly, x + indX, z + indZ));
 				}
@@ -272,17 +272,18 @@ public class SceneLowPoly implements IScene {
 	}
 
 	private void setupAnimatedPlayer() {
-		AnimatedModelData entityData = ColladaLoader.loadColladaModel(new MyFile(WorldSettings.MODELS_DIR + "/cowboy.dae"), WorldSettings.MAX_WEIGHTS);
+		AnimatedModelData entityData = ColladaLoader.loadColladaModel(new MyFile(WorldSettingsLowPoly.MODELS_DIR + "/cowboy.dae"),
+			WorldSettingsLowPoly.MAX_WEIGHTS);
 		Vao model = AnimatedModelLoader.createVao(entityData.getMeshData());
-		Texture texture = AnimatedModelLoader.loadTexture(new MyFile(WorldSettings.TEXTURES_DIR + "/cowboy.png"));
+		Texture texture = AnimatedModelLoader.loadTexture(new MyFile(WorldSettingsLowPoly.TEXTURES_DIR + "/cowboy.png"));
 		SkeletonData skeletonData = entityData.getJointsData();
 		Joint headJoint = AnimatedModelLoader.createJoints(skeletonData.headJoint);
 		int coordX = 0;
 		int coordZ = 0;
 		ITerrain currentTerrain = getCurrentTerrain(coordX, coordZ);
-		float coordY = currentTerrain != null ? currentTerrain.getHeightOfTerrain(coordX, coordZ) : WorldSettings.WATER_HEIGHT;
+		float coordY = currentTerrain != null ? currentTerrain.getHeightOfTerrain(coordX, coordZ) : WorldSettingsLowPoly.WATER_HEIGHT;
 		player = new AnimatedPlayer(model, texture, headJoint, skeletonData.jointCount, new Vector3f(coordX, coordY, coordZ), 0, 0, 0, 1.0f);
-		Animation animation = AnimationLoader.loadAnimation(new MyFile(WorldSettings.MODELS_DIR + "/cowboy.dae"));
+		Animation animation = AnimationLoader.loadAnimation(new MyFile(WorldSettingsLowPoly.MODELS_DIR + "/cowboy.dae"));
 		((AnimatedModel) player).doAnimation(animation);
 	}
 
@@ -292,16 +293,16 @@ public class SceneLowPoly implements IScene {
 
 	private void setupLensFlare() {
 		// loading textures for lens flare
-		Texture texture1 = Texture.newTexture(new MyFile(WorldSettings.LENS_FLARE_DIR + "/tex1.png")).normalMipMap().create();
-		Texture texture2 = Texture.newTexture(new MyFile(WorldSettings.LENS_FLARE_DIR + "/tex2.png")).normalMipMap().create();
-		Texture texture3 = Texture.newTexture(new MyFile(WorldSettings.LENS_FLARE_DIR + "/tex3.png")).normalMipMap().create();
-		Texture texture4 = Texture.newTexture(new MyFile(WorldSettings.LENS_FLARE_DIR + "/tex4.png")).normalMipMap().create();
-		Texture texture5 = Texture.newTexture(new MyFile(WorldSettings.LENS_FLARE_DIR + "/tex5.png")).normalMipMap().create();
-		Texture texture6 = Texture.newTexture(new MyFile(WorldSettings.LENS_FLARE_DIR + "/tex6.png")).normalMipMap().create();
-		Texture texture7 = Texture.newTexture(new MyFile(WorldSettings.LENS_FLARE_DIR + "/tex7.png")).normalMipMap().create();
-		Texture texture8 = Texture.newTexture(new MyFile(WorldSettings.LENS_FLARE_DIR + "/tex8.png")).normalMipMap().create();
-		Texture texture9 = Texture.newTexture(new MyFile(WorldSettings.LENS_FLARE_DIR + "/tex9.png")).normalMipMap().create();
-		Texture textureSun = Texture.newTexture(new MyFile(WorldSettings.LENS_FLARE_DIR + "/sun.png")).normalMipMap().create();
+		Texture texture1 = Texture.newTexture(new MyFile(WorldSettingsLowPoly.LENS_FLARE_DIR + "/tex1.png")).normalMipMap().create();
+		Texture texture2 = Texture.newTexture(new MyFile(WorldSettingsLowPoly.LENS_FLARE_DIR + "/tex2.png")).normalMipMap().create();
+		Texture texture3 = Texture.newTexture(new MyFile(WorldSettingsLowPoly.LENS_FLARE_DIR + "/tex3.png")).normalMipMap().create();
+		Texture texture4 = Texture.newTexture(new MyFile(WorldSettingsLowPoly.LENS_FLARE_DIR + "/tex4.png")).normalMipMap().create();
+		Texture texture5 = Texture.newTexture(new MyFile(WorldSettingsLowPoly.LENS_FLARE_DIR + "/tex5.png")).normalMipMap().create();
+		Texture texture6 = Texture.newTexture(new MyFile(WorldSettingsLowPoly.LENS_FLARE_DIR + "/tex6.png")).normalMipMap().create();
+		Texture texture7 = Texture.newTexture(new MyFile(WorldSettingsLowPoly.LENS_FLARE_DIR + "/tex7.png")).normalMipMap().create();
+		Texture texture8 = Texture.newTexture(new MyFile(WorldSettingsLowPoly.LENS_FLARE_DIR + "/tex8.png")).normalMipMap().create();
+		Texture texture9 = Texture.newTexture(new MyFile(WorldSettingsLowPoly.LENS_FLARE_DIR + "/tex9.png")).normalMipMap().create();
+		Texture textureSun = Texture.newTexture(new MyFile(WorldSettingsLowPoly.LENS_FLARE_DIR + "/sun.png")).normalMipMap().create();
 
 		// set up lens flare
 		flareManager = new FlareManager(0.16f,
@@ -324,13 +325,13 @@ public class SceneLowPoly implements IScene {
 
 		//init sun and set sun direction
 		sun = new Sun(textureSun, 20);
-		sun.setDirection(WorldSettings.LIGHT_DIR);
-		lightDirectional = new LightDirectional(WorldSettings.LIGHT_DIR, WorldSettings.LIGHT_COL, WorldSettings.LIGHT_BIAS);
+		sun.setDirection(WorldSettingsLowPoly.LIGHT_DIR);
+		lightDirectional = new LightDirectional(WorldSettingsLowPoly.LIGHT_DIR, WorldSettingsLowPoly.LIGHT_COL, WorldSettingsLowPoly.LIGHT_BIAS);
 	}
 
 	private void setupParticles() {
 		fireMode = true;
-		particleTexture = new ParticleTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/particles/particleAtlas.png"), 4, true);
+		particleTexture = new ParticleTexture(loader.loadTexture(WorldSettingsLowPoly.TEXTURES_DIR + "/particles/particleAtlas.png"), 4, true);
 		particleSystemShoot = new ParticleSystemShoot(particleTexture, 800f, 20f, 0.0f, 0.5f);
 	}
 
@@ -389,7 +390,7 @@ public class SceneLowPoly implements IScene {
 		GuiTexture refraction  = new GuiTexture(MasterRendererLowPoly.refractionFbo.getColorBuffer(0), new Vector2f(-0.89f, coordY += offsetY), new Vector2f(0.1f, 0.1f));
 		GuiTexture depth       = new GuiTexture(MasterRendererLowPoly.refractionFbo.getDepthBuffer(),  new Vector2f(-0.89f, coordY += offsetY), new Vector2f(0.1f, 0.1f));
 		GuiTexture shadowMap   = new GuiTexture(MasterRendererLowPoly.getShadowMapTexture(),           new Vector2f(-0.89f, coordY += offsetY), new Vector2f(0.1f, 0.1f));
-		GuiTexture aimTarget   = new GuiTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/gui/bullseye.png"), new Vector2f(0.0f, 0.0f), new Vector2f(0.02f, 0.036f));
+		GuiTexture aimTarget   = new GuiTexture(loader.loadTexture(WorldSettingsLowPoly.TEXTURES_DIR + "/gui/bullseye.png"), new Vector2f(0.0f, 0.0f), new Vector2f(0.02f, 0.036f));
 
 		processGui(reflection);
 		processGui(refraction);
@@ -451,7 +452,7 @@ public class SceneLowPoly implements IScene {
 	}
 
 	private void setupText() {
-		font_1 = new FontType(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/arial.png"), WorldSettings.FONTS_DIR + "/arial.fnt");
+		font_1 = new FontType(loader.loadTexture(WorldSettingsLowPoly.TEXTURES_DIR + "/arial.png"), WorldSettingsLowPoly.FONTS_DIR + "/arial.fnt");
 		text = new GUIText[10];
 	}
 
@@ -552,8 +553,8 @@ public class SceneLowPoly implements IScene {
 	public ITerrain getCurrentTerrain(float worldX, float worldZ) {
 		ITerrain currentTerrain = null;
 		for (ITerrain terrain : terrains) {			
-			if (worldX >= (terrain.getX() - WorldSettings.WORLD_SIZE / 2 * terrainScale) && worldX < (terrain.getX() + WorldSettings.WORLD_SIZE / 2 * terrainScale) &&
-				worldZ >= (terrain.getZ() - WorldSettings.WORLD_SIZE / 2 * terrainScale) && worldZ < (terrain.getZ() + WorldSettings.WORLD_SIZE / 2 * terrainScale)) {
+			if (worldX >= (terrain.getX() - WorldSettingsLowPoly.WORLD_SIZE / 2 * terrainScale) && worldX < (terrain.getX() + WorldSettingsLowPoly.WORLD_SIZE / 2 * terrainScale) &&
+				worldZ >= (terrain.getZ() - WorldSettingsLowPoly.WORLD_SIZE / 2 * terrainScale) && worldZ < (terrain.getZ() + WorldSettingsLowPoly.WORLD_SIZE / 2 * terrainScale)) {
 				currentTerrain = terrain;
 				break;
 			}

@@ -29,13 +29,13 @@ vec3 calculateLighting(){
 void main(void){
 
 	vec4 worldPosition = transformationMatrix * vec4(in_position, 1.0);
-	shadowCoords = toShadowMapSpace * worldPosition;
 	gl_ClipDistance[0] = dot(worldPosition, clipPlane);
 	vec4 positionRelativeToCamera = viewMatrix * worldPosition;
 	gl_Position = projectionMatrix * positionRelativeToCamera;
 	vec3 lighting = calculateLighting();
 	pass_color = in_color.rgb * lighting;
 
+	shadowCoords = toShadowMapSpace * worldPosition;
 	float distance = length(positionRelativeToCamera.xyz);
 	distance = distance - (shadowDistance - transitionDistance);
 	distance = distance / transitionDistance;

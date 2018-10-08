@@ -3,11 +3,11 @@ package engine.tm.infiniteTerrain;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import engine.tm.settings.WorldSettings;
+import engine.tm.settings.WorldSettingsLowPoly;
 
 public class InfiniteTerrainManager {
 
-	private double visibleDistance = WorldSettings.GRID_SIZE;
+	private double visibleDistance = WorldSettingsLowPoly.GRID_SIZE;
 
 	private static List<InfiniteTerrainChunk> terrainChunks = new ArrayList<InfiniteTerrainChunk>();
 	private static List<InfiniteWaterChunk> waterChunks = new ArrayList<InfiniteWaterChunk>();

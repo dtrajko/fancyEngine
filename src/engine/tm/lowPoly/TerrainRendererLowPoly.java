@@ -16,7 +16,6 @@ import engine.tm.settings.WorldSettings;
 import engine.tm.shadows.ShadowBox;
 import engine.tm.shadows.ShadowMapMasterRenderer;
 import engine.tm.toolbox.Maths;
-import engine.utils.Util;
 
 /**
  * A simple renderer that renders terrains.
@@ -43,9 +42,6 @@ public class TerrainRendererLowPoly {
 		shader = new TerrainShaderLowPoly(VERTEX_FILE, FRAGMENT_FILE);
 		shader.start();
 		shader.projectionMatrix.loadMatrix(projectionMatrix);
-		shader.shadowDistance.loadFloat(ShadowBox.SHADOW_DISTANCE);
-		shader.shadowMapSize.loadFloat(ShadowMapMasterRenderer.SHADOW_MAP_SIZE);
-		shader.connectTextureUnits();
 		shader.stop();
 		hasIndices = usesIndices;
 	}
@@ -67,11 +63,6 @@ public class TerrainRendererLowPoly {
 	 *            that is rendered outside of the plane.
 	 */
 	public void render(IScene scene, LightDirectional light, Vector4f clipPlane, Matrix4f toShadowMapSpace) {
-		
-		if (toShadowMapSpace == null) {
-			toShadowMapSpace = new Matrix4f();
-			toShadowMapSpace.identity();
-		}
 
 		List<ITerrain> terrains = ((SceneLowPoly) scene).getTerrains();
 		ICamera camera = scene.getCamera();
@@ -116,7 +107,12 @@ public class TerrainRendererLowPoly {
 		shader.lightColor.loadVec3(light.getColor().getVector());
 		loadModelMatrix(terrain);
 		shader.viewMatrix.loadMatrix(camera.getViewMatrix());
-		shader.toShadowMapSpace.loadMatrix(toShadowMapSpace);
+		if (toShadowMapSpace != null) {
+			shader.toShadowMapSpace.loadMatrix(toShadowMapSpace);			
+			shader.shadowDistance.loadFloat(ShadowBox.SHADOW_DISTANCE);
+			shader.shadowMapSize.loadFloat(ShadowMapMasterRenderer.SHADOW_MAP_SIZE);
+			shader.connectTextureUnits();
+		}
 	}
 
 	private void loadModelMatrix(ITerrain terrain) {

@@ -4,7 +4,7 @@ import engine.interfaces.ITerrain;
 import engine.tm.models.RawModel;
 import engine.tm.openglObjects.Vao;
 import engine.tm.scene.SceneLowPoly;
-import engine.tm.settings.WorldSettings;
+import engine.tm.settings.WorldSettingsLowPoly;
 import engine.tm.textures.TerrainTexture;
 import engine.tm.textures.TerrainTexturePack;
 
@@ -47,8 +47,8 @@ public class TerrainLowPoly implements ITerrain {
 		float terrainZ = worldZ - this.z;
 		int intX = (int) (terrainX / scale);
 		int intZ = (int) (terrainZ / scale);
-		intX += WorldSettings.WORLD_SIZE / 2;
-		intZ += WorldSettings.WORLD_SIZE / 2;
+		intX += WorldSettingsLowPoly.WORLD_SIZE / 2;
+		intZ += WorldSettingsLowPoly.WORLD_SIZE / 2;
 		int worldY = 0;
 		if (intX < 0 || intX >= heights.length - 1 ||
 			intZ < 0 || intZ >= heights.length - 1) {
@@ -57,8 +57,8 @@ public class TerrainLowPoly implements ITerrain {
 		worldY = (int) this.heights[intZ][intX];
 		worldY *= scale;
 		worldY += 0.2f; // a small adjustment
-		if (worldY < WorldSettings.WATER_HEIGHT + SceneLowPoly.waterLevelOffset) {
-			worldY = (int) (WorldSettings.WATER_HEIGHT + SceneLowPoly.waterLevelOffset);
+		if (worldY < WorldSettingsLowPoly.WATER_HEIGHT + SceneLowPoly.waterLevelOffset) {
+			worldY = (int) (WorldSettingsLowPoly.WATER_HEIGHT + SceneLowPoly.waterLevelOffset);
 		}
 		return worldY;
 	}
