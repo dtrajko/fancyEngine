@@ -105,4 +105,13 @@ public class InfiniteTerrainManager {
 	public List<InfiniteWaterChunk> getVisibleWaterChunks() {
 		return waterChunks;
 	}
+
+	public InfiniteTerrainChunk getTerrainChunk(int indX, int indZ) {
+		for (InfiniteTerrainChunk terrainChunk : terrainChunks) {
+			if (indX == terrainChunk.getIndexX() && indZ == terrainChunk.getIndexZ()) {
+				return terrainChunk;
+			}
+		}
+		return null;
+	}
 }

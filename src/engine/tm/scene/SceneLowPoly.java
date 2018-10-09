@@ -168,12 +168,12 @@ public class SceneLowPoly implements IScene {
 			float projectedDistance = WorldSettingsLowPoly.WORLD_SIZE * 4 * terrainScale;
 			float playerFutureX = player != null ? ((AnimatedPlayer) player).getProjectedFuturePosition(projectedDistance).x : 0;
 			float playerFutureZ = player != null ? ((AnimatedPlayer) player).getProjectedFuturePosition(projectedDistance).z : 0;
-			int indX = (int) (playerFutureX / WorldSettingsLowPoly.WORLD_SIZE / terrainScale);
-			int indZ = (int) (playerFutureZ / WorldSettingsLowPoly.WORLD_SIZE / terrainScale);
-			generateTerrainChunks(indX, indZ);
-			generateWaterChunks(indX, indZ);
+			int futureIndX = (int) (playerFutureX / WorldSettingsLowPoly.WORLD_SIZE / terrainScale);
+			int futureIndZ = (int) (playerFutureZ / WorldSettingsLowPoly.WORLD_SIZE / terrainScale);
+			generateTerrainChunks(futureIndX, futureIndZ);
+			generateWaterChunks(futureIndX, futureIndZ);
 			lastTerrainUpdate = GameEngine.getTimer().getLastLoopTime();
-			prevTerrainIndices = new Vector2i(indX, indZ);
+			prevTerrainIndices = new Vector2i(futureIndX, futureIndZ);
 		}
 	}
 
@@ -183,8 +183,8 @@ public class SceneLowPoly implements IScene {
 			for (int z = -gridSize / 2; z <= gridSize / 2; z++) {
 				if (!infiniteTerrainManager.terrainChunkExists(x + indX, z + indZ)) {
 					TerrainLowPoly terrainLowPoly = terrainGenerator.generateTerrain(
-							(x + indX + gridSize / 2) * WorldSettingsLowPoly.WORLD_SIZE,
-							(z + indZ + gridSize / 2) * WorldSettingsLowPoly.WORLD_SIZE,
+							(x + indX) * WorldSettingsLowPoly.WORLD_SIZE,
+							(z + indZ) * WorldSettingsLowPoly.WORLD_SIZE,
 							WorldSettingsLowPoly.WORLD_SIZE, terrainScale);
 					terrainLowPoly.setX((int) ((x + indX) * WorldSettingsLowPoly.WORLD_SIZE * terrainScale));
 					terrainLowPoly.setZ((int) ((z + indZ) * WorldSettingsLowPoly.WORLD_SIZE * terrainScale));
@@ -211,6 +211,29 @@ public class SceneLowPoly implements IScene {
 			infiniteTerrainManager.removeTerrainChunk(remoteTerrainChunk);
 		}
 		((MasterRendererLowPoly) masterRenderer).initInfinite(this);
+	}
+
+	private void generateWaterChunks(int indX, int indZ) {
+		// add new
+		for (int x = -gridSize / 2; x <= gridSize / 2; x++) {
+			for (int z = -gridSize / 2; z <= gridSize / 2; z++) {
+				if (!infiniteTerrainManager.waterChunkExists(x + indX, z + indZ)) {
+					WaterTileLowPoly waterLowPoly = WaterGenerator.generate(WorldSettingsLowPoly.WORLD_SIZE, WorldSettingsLowPoly.WATER_HEIGHT, terrainScale);
+					waterLowPoly.setX((int) ((x + indX) * WorldSettingsLowPoly.WORLD_SIZE * terrainScale));
+					waterLowPoly.setZ((int) ((z + indZ) * WorldSettingsLowPoly.WORLD_SIZE * terrainScale));
+					this.processWaterTile(waterLowPoly);
+					infiniteTerrainManager.addWaterChunk(new InfiniteWaterChunk(waterLowPoly, x + indX, z + indZ));
+				}
+			}
+		}
+		// remove old
+		List<InfiniteWaterChunk> remoteWaterChunks = infiniteTerrainManager.getRemoteWaterChunks(indX, indZ);
+		Iterator<InfiniteWaterChunk> iterator = remoteWaterChunks.iterator();
+		while (iterator.hasNext()) {
+			InfiniteWaterChunk waterChunk = iterator.next();
+			waterTiles.remove(waterChunk.getWaterTile());
+			infiniteTerrainManager.removeWaterChunk(waterChunk);
+		}
 	}
 
 	private void populateTerrainChunk(InfiniteTerrainChunk terrainChunk) {
@@ -245,29 +268,6 @@ public class SceneLowPoly implements IScene {
 				}
 			}
 			modelsSpawned++;
-		}
-	}
-
-	private void generateWaterChunks(int indX, int indZ) {
-		// add new
-		for (int x = -gridSize / 2; x <= gridSize / 2; x++) {
-			for (int z = -gridSize / 2; z <= gridSize / 2; z++) {
-				if (!infiniteTerrainManager.waterChunkExists(x + indX, z + indZ)) {
-					WaterTileLowPoly waterLowPoly = WaterGenerator.generate(WorldSettingsLowPoly.WORLD_SIZE, WorldSettingsLowPoly.WATER_HEIGHT, terrainScale);
-					waterLowPoly.setX((int) ((x + indX) * WorldSettingsLowPoly.WORLD_SIZE * terrainScale));
-					waterLowPoly.setZ((int) ((z + indZ) * WorldSettingsLowPoly.WORLD_SIZE * terrainScale));
-					this.processWaterTile(waterLowPoly);
-					infiniteTerrainManager.addWaterChunk(new InfiniteWaterChunk(waterLowPoly, x + indX, z + indZ));
-				}
-			}
-		}
-		// remove old
-		List<InfiniteWaterChunk> remoteWaterChunks = infiniteTerrainManager.getRemoteWaterChunks(indX, indZ);
-		Iterator<InfiniteWaterChunk> iterator = remoteWaterChunks.iterator();
-		while (iterator.hasNext()) {
-			InfiniteWaterChunk waterChunk = iterator.next();
-			waterTiles.remove(waterChunk.getWaterTile());
-			infiniteTerrainManager.removeWaterChunk(waterChunk);
 		}
 	}
 
