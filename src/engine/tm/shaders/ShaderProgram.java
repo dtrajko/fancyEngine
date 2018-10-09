@@ -72,7 +72,8 @@ public abstract class ShaderProgram {
 		return shaderID;
 	}
 
-	protected abstract void getAllUniformLocations();
+	protected void getAllUniformLocations() {
+	};
 
 	protected void storeAllUniformLocations(Uniform... uniforms){
 		for(Uniform uniform : uniforms){
@@ -102,7 +103,8 @@ public abstract class ShaderProgram {
 		GL20.glDeleteProgram(programID);
 	}
 
-	protected abstract void bindAttributes();
+	protected void bindAttributes() {		
+	};
 
 	protected void bindAttribute(int attribute, String variableName) {
 		GL20.glBindAttribLocation(programID, attribute, variableName);

@@ -15,17 +15,15 @@ public class GuiShader extends ShaderProgram {
 		super(VERTEX_FILE, FRAGMENT_FILE);
 	}
 
-	public void loadTransformation(Matrix4f matrix){
-		super.loadMatrix(location_transformationMatrix, matrix);
+	protected void bindAttributes() {
+		super.bindAttribute(0, "position");
 	}
 
-	@Override
 	protected void getAllUniformLocations() {
 		location_transformationMatrix = super.getUniformLocation("transformationMatrix");
 	}
 
-	@Override
-	protected void bindAttributes() {
-		super.bindAttribute(0, "position");
+	public void loadTransformation(Matrix4f matrix){
+		super.loadMatrix(location_transformationMatrix, matrix);
 	}
 }

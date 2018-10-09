@@ -33,7 +33,6 @@ import engine.tm.lowPoly.TerrainRendererLowPoly;
 import engine.tm.lowPoly.WaterRendererLowPoly;
 import engine.tm.models.TexturedModel;
 import engine.tm.particles.ParticleMaster;
-import engine.tm.scene.Scene;
 import engine.tm.scene.SceneLowPoly;
 import engine.tm.settings.WorldSettingsLowPoly;
 import engine.tm.shadows.ShadowMapMasterRenderer;
@@ -44,7 +43,7 @@ import engine.tm.utils.OpenGlUtils;
 public class MasterRendererLowPoly implements IMasterRenderer {
 
 	public static float FOV = 70; // field of view angle
-	public static float FAR_PLANE = 1800;
+	public static float FAR_PLANE = 3200;
 
 	private static final float REFLECT_OFFSET = 0.2f;
 	private static final float REFRACT_OFFSET = 0.2f;

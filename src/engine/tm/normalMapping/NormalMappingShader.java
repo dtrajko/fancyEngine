@@ -38,7 +38,6 @@ public class NormalMappingShader extends ShaderProgram {
 		super(VERTEX_FILE, FRAGMENT_FILE);
 	}
 
-	@Override
 	protected void bindAttributes() {
 		super.bindAttribute(0, "position");
 		super.bindAttribute(1, "textureCoords");
@@ -46,7 +45,6 @@ public class NormalMappingShader extends ShaderProgram {
 		super.bindAttribute(3, "tangent");
 	}
 
-	@Override
 	protected void getAllUniformLocations() {
 		location_transformationMatrix = super.getUniformLocation("transformationMatrix");
 		location_projectionMatrix = super.getUniformLocation("projectionMatrix");

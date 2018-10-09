@@ -30,6 +30,8 @@ public class WaterShader extends ShaderProgram {
 	protected UniformVec3 cameraPos = new UniformVec3("cameraPos");
 	protected UniformVec2 nearFarPlanes = new UniformVec2("nearFarPlanes");
 	protected UniformFloat waveTime = new UniformFloat("waveTime");
+	protected UniformFloat waveLength = new UniformFloat("waveLength");
+	protected UniformFloat waveAmplitude = new UniformFloat("waveAmplitude");
 	protected UniformVec3 lightDirection = new UniformVec3("lightDirection");
 	protected UniformVec3 lightColor = new UniformVec3("lightColor");
 	protected UniformVec2 lightBias = new UniformVec2("lightBias");
@@ -40,8 +42,10 @@ public class WaterShader extends ShaderProgram {
 
 	public WaterShader() {
 		super(VERTEX_FILE, FRAGMENT_FILE);
-		super.storeAllUniformLocations(projectionMatrix, viewMatrix, transformationMatrix, height, reflectionTexture, refractionTexture, depthTexture,
-				cameraPos, nearFarPlanes, waveTime, lightDirection, lightColor, lightBias);
+		super.storeAllUniformLocations(projectionMatrix, viewMatrix, transformationMatrix,
+			height, reflectionTexture, refractionTexture, depthTexture, cameraPos, nearFarPlanes,
+			waveTime, waveAmplitude, waveLength,
+			lightDirection, lightColor, lightBias);
 		linkTextureUnits();
 	}
 
@@ -56,17 +60,4 @@ public class WaterShader extends ShaderProgram {
 		depthTexture.loadTexUnit(DEPTH_TEX_UNIT);
 		super.stop();
 	}
-
-	@Override
-	protected void getAllUniformLocations() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	protected void bindAttributes() {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

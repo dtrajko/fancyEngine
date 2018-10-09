@@ -11,6 +11,7 @@ import engine.interfaces.ITerrain;
 import engine.tm.animation.animatedModel.AnimatedModel;
 import engine.tm.animation.animatedModel.Joint;
 import engine.tm.openglObjects.Vao;
+import engine.tm.settings.WorldSettingsLowPoly;
 import engine.tm.textures.Texture;
 
 public class AnimatedPlayer extends AnimatedModel implements IPlayer {
@@ -64,10 +65,9 @@ public class AnimatedPlayer extends AnimatedModel implements IPlayer {
 		}
 
 		ITerrain currentTerrain = scene.getCurrentTerrain((int) super.getPosition().x, (int) super.getPosition().z);
-		float terrainHeight = TERRAIN_HEIGHT;
+		float terrainHeight = WorldSettingsLowPoly.WATER_HEIGHT + scene.getWaterLevelOffset();
 		if (currentTerrain != null) {
 			terrainHeight = currentTerrain.getHeightOfTerrain((int) super.getPosition().x, (int) super.getPosition().z);
-			terrainHeight += 1.0f;
 		}
 
 		if (super.getPosition().y < terrainHeight) {

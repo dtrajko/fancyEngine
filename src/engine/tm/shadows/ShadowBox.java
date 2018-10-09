@@ -28,7 +28,8 @@ public class ShadowBox {
 	private static final float OFFSET = 20;
 	private static final Vector4f UP = new Vector4f(0, 1, 0, 0);
 	private static final Vector4f FORWARD = new Vector4f(0, 0, -1, 0);
-	public static final float SHADOW_DISTANCE = 300;
+	public static final float SHADOW_DISTANCE = 300.0f;
+	public static float TRANSITION_DISTANCE = 10.0f;
 
 	private float minX, maxX;
 	private float minY, maxY;

@@ -552,4 +552,9 @@ public class Scene implements IScene {
 	public Vector3f getLightDirection() {
 		return lightDirection;
 	}
+
+	@Override
+	public float getWaterLevelOffset() {
+		return 0;
+	}
 }

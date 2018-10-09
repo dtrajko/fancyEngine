@@ -25,10 +25,10 @@ import engine.tm.utils.OpenGlUtils;
  */
 public class WaterRendererLowPoly {
 
-	private static final float WAVE_SPEED = 0.0002f;
-
+	private static final float WAVE_SPEED = 0.0001f;
+	private static final float WAVE_AMPLITUDE = 0.3f;
+	private static final float WAVE_LENGTH = 8.0f;
 	private final WaterShader shader;
-
 	private float time = 0;
 
 	/**
@@ -209,6 +209,7 @@ public class WaterRendererLowPoly {
 	private void updateTime() {
 		time += WAVE_SPEED;
 		shader.waveTime.loadFloat(time);
+		shader.waveAmplitude.loadFloat(WAVE_AMPLITUDE);
+		shader.waveLength.loadFloat(WAVE_LENGTH);
 	}
-
 }

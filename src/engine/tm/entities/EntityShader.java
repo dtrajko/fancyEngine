@@ -34,14 +34,12 @@ public class EntityShader extends ShaderProgram {
 		super(VERTEX_FILE, FRAGMENT_FILE);
 	}
 
-	@Override
 	protected void bindAttributes() {
 		super.bindAttribute(0, "position");
 		super.bindAttribute(1, "textureCoords");
 		super.bindAttribute(2, "normal");
 	}
 
-	@Override
 	protected void getAllUniformLocations() {
 		location_transformationMatrix = super.getUniformLocation("transformationMatrix");
 		location_projectionMatrix = super.getUniformLocation("projectionMatrix");

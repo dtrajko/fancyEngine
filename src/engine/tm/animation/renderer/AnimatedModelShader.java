@@ -44,14 +44,4 @@ public class AnimatedModelShader extends ShaderProgram {
 		diffuseMap.loadTexUnit(DIFFUSE_TEX_UNIT);
 		super.stop();
 	}
-
-	@Override
-	protected void getAllUniformLocations() {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	protected void bindAttributes() {
-		// TODO Auto-generated method stub
-	}
 }

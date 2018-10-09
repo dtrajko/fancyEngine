@@ -56,7 +56,7 @@ public class TerrainLowPoly implements ITerrain {
 		}
 		worldY = (int) this.heights[intZ][intX];
 		worldY *= scale;
-		worldY += 0.2f; // a small adjustment
+		worldY += 2.0f; // a small adjustment
 		if (worldY < WorldSettingsLowPoly.WATER_HEIGHT + SceneLowPoly.waterLevelOffset) {
 			worldY = (int) (WorldSettingsLowPoly.WATER_HEIGHT + SceneLowPoly.waterLevelOffset);
 		}

@@ -25,35 +25,24 @@ public class TerrainShaderLowPoly extends ShaderProgram {
 	protected UniformVec4 clipPlane = new UniformVec4("clipPlane");
 	protected UniformMatrix toShadowMapSpace = new UniformMatrix("toShadowMapSpace");
 	protected UniformInt shadowMap = new UniformInt("shadowMap");
-	protected UniformFloat shadowDistance = new UniformFloat("shadowDistance");
 	protected UniformFloat shadowMapSize = new UniformFloat("shadowMapSize");
+	protected UniformFloat shadowDistance = new UniformFloat("shadowDistance");
+	protected UniformFloat transitionDistance = new UniformFloat("transitionDistance");
+	
 
 	public TerrainShaderLowPoly(String vertexFile, String fragmentFile) {
 		super(vertexFile, fragmentFile);
 		super.storeAllUniformLocations(transformationMatrix, projectionMatrix, viewMatrix, lightDirection, lightColor, lightBias, clipPlane,
-			toShadowMapSpace, shadowMap, shadowDistance, shadowMapSize);
+			toShadowMapSpace, shadowMap, shadowDistance, transitionDistance, shadowMapSize);
 	}
 
 	public TerrainShaderLowPoly(String vertexFile, String geometryFile, String fragmentFile) {
 		super(vertexFile, geometryFile, fragmentFile);
 		super.storeAllUniformLocations(transformationMatrix, projectionMatrix, viewMatrix, lightDirection, lightColor, lightBias, clipPlane, 
-			toShadowMapSpace, shadowMap, shadowDistance, shadowMapSize);
+			toShadowMapSpace, shadowMap, shadowDistance, transitionDistance, shadowMapSize);
 	}
 
 	public void connectTextureUnits() {
 		shadowMap.loadInt(1);
 	}
-
-	@Override
-	protected void getAllUniformLocations() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	protected void bindAttributes() {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

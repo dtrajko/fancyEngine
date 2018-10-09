@@ -33,4 +33,5 @@ public interface IScene {
 	FireMaster getFireMaster();
 	void removeEntity(Entity entity);
 	List<Light> getLights();
+	float getWaterLevelOffset();
 }

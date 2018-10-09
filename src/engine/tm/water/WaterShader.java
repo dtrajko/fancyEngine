@@ -30,12 +30,10 @@ public class WaterShader extends ShaderProgram {
         super(VERTEX_FILE, FRAGMENT_FILE);
     }
 
-    @Override
     protected void bindAttributes() {
         bindAttribute(0, "position");
     }
 
-    @Override
     protected void getAllUniformLocations() {
         location_projectionMatrix = getUniformLocation("projectionMatrix");
         location_viewMatrix = getUniformLocation("viewMatrix");

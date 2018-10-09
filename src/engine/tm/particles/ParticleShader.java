@@ -17,18 +17,16 @@ public class ParticleShader extends ShaderProgram {
 		super(VERTEX_FILE, FRAGMENT_FILE);
 	}
 
-	@Override
-	protected void getAllUniformLocations() {
-		location_numberOfRows = super.getUniformLocation("numberOfRows");
-		location_projectionMatrix = super.getUniformLocation("projectionMatrix");
-	}
-
-	@Override
 	protected void bindAttributes() {
 		super.bindAttribute(0, "position");
 		super.bindAttribute(1, "modelViewMatrix");
 		super.bindAttribute(5, "texOffsets");
 		super.bindAttribute(6, "blendFactor");
+	}
+
+	protected void getAllUniformLocations() {
+		location_numberOfRows = super.getUniformLocation("numberOfRows");
+		location_projectionMatrix = super.getUniformLocation("projectionMatrix");
 	}
 
 	protected void loadNumberOfRows(float numberOfRows) {

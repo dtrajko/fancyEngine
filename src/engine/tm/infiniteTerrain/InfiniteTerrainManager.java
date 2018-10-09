@@ -7,7 +7,7 @@ import engine.tm.settings.WorldSettingsLowPoly;
 
 public class InfiniteTerrainManager {
 
-	private double visibleDistance = WorldSettingsLowPoly.GRID_SIZE;
+	private double visibleDistance = WorldSettingsLowPoly.GRID_SIZE + 1;
 
 	private static List<InfiniteTerrainChunk> terrainChunks = new ArrayList<InfiniteTerrainChunk>();
 	private static List<InfiniteWaterChunk> waterChunks = new ArrayList<InfiniteWaterChunk>();

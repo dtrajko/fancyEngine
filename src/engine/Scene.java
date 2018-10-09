@@ -724,4 +724,9 @@ public class Scene implements IScene {
 	public List<Light> getLights() {
 		return null;
 	}
+
+	@Override
+	public float getWaterLevelOffset() {
+		return 0;
+	}
 }

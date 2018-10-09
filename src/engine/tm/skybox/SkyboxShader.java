@@ -30,7 +30,10 @@ public class SkyboxShader extends ShaderProgram {
 		super(VERTEX_FILE, FRAGMENT_FILE);
 	}
 
-	@Override
+	protected void bindAttributes() {
+		super.bindAttribute(0, "position");
+	}
+
 	protected void getAllUniformLocations() {
 		location_projectionMatrix = super.getUniformLocation("projectionMatrix");
 		location_viewMatrix = super.getUniformLocation("viewMatrix");
@@ -79,10 +82,5 @@ public class SkyboxShader extends ShaderProgram {
 
 	public void loadFogColor(float r, float g, float b) {
 		super.loadVector(location_fogColor, new Vector3f(r, g, b));
-	}
-
-	@Override
-	protected void bindAttributes() {
-		super.bindAttribute(0, "position");
 	}
 }

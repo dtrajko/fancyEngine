@@ -2,8 +2,6 @@
 
 const float PI = 3.1415926535897932384626433832795;
 
-const float waveLength = 10.0;
-const float waveAmplitude = 0.1;
 const float specularReflectivity = 0.2;
 const float shineDamper = 4.0;
 
@@ -20,6 +18,8 @@ out vec3 pass_diffuse;
 uniform float height;
 uniform vec3 cameraPos;
 uniform float waveTime;
+uniform float waveAmplitude;
+uniform float waveLength;
 
 uniform vec3 lightDirection;
 uniform vec3 lightColor;

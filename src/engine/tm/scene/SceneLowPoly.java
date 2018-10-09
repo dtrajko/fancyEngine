@@ -101,11 +101,11 @@ public class SceneLowPoly implements IScene {
 
 	public static float waterLevelOffset = 0;
 	private int gridSize = WorldSettingsLowPoly.GRID_SIZE;
-	private static float terrainScale = 5;
+	private static float terrainScale = WorldSettingsLowPoly.TERRAIN_SCALE;
 	private static TerrainGenerator terrainGenerator;
 	private double lastTerrainUpdate;
 	private InfiniteTerrainManager infiniteTerrainManager;
-	private Vector2i previousTerrainIndices = new Vector2i(0, 0);
+	private Vector2i prevTerrainIndices = new Vector2i(0, 0);
 	private TexturedModel fernModel;
 	private TexturedModel pineModel;
 	private Random rand;
@@ -173,7 +173,7 @@ public class SceneLowPoly implements IScene {
 			generateTerrainChunks(indX, indZ);
 			generateWaterChunks(indX, indZ);
 			lastTerrainUpdate = GameEngine.getTimer().getLastLoopTime();
-			previousTerrainIndices = new Vector2i(indX, indZ);
+			prevTerrainIndices = new Vector2i(indX, indZ);
 		}
 	}
 
@@ -417,6 +417,10 @@ public class SceneLowPoly implements IScene {
 		if (input.isKeyDown(GLFW.GLFW_KEY_PAGE_DOWN)) {
 			waterLevelOffset -= 0.1f;
 		}
+	}
+
+	public float getWaterLevelOffset() {
+		return waterLevelOffset;
 	}
 
 	private void toggleWireframeMode(Input input) {

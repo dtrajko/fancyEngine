@@ -110,6 +110,7 @@ public class TerrainRendererLowPoly {
 		if (toShadowMapSpace != null) {
 			shader.toShadowMapSpace.loadMatrix(toShadowMapSpace);			
 			shader.shadowDistance.loadFloat(ShadowBox.SHADOW_DISTANCE);
+			shader.transitionDistance.loadFloat(ShadowBox.TRANSITION_DISTANCE);
 			shader.shadowMapSize.loadFloat(ShadowMapMasterRenderer.SHADOW_MAP_SIZE);
 			shader.connectTextureUnits();
 		}

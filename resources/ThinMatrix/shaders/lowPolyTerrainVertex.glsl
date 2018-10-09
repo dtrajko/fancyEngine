@@ -16,8 +16,7 @@ uniform mat4 viewMatrix;
 uniform vec4 clipPlane;
 uniform mat4 toShadowMapSpace;
 uniform float shadowDistance;
-
-const float transitionDistance = 10;
+uniform float transitionDistance;
 
 //simple diffuse lighting
 vec3 calculateLighting(){
