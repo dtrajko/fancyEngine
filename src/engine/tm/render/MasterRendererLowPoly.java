@@ -2,7 +2,6 @@ package engine.tm.render;
 
 import java.util.List;
 import java.util.Map;
-
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -99,6 +98,7 @@ public class MasterRendererLowPoly implements IMasterRenderer {
 	public void render(Window window, IScene scene) {
 
 		ICamera camera = scene.getCamera();
+		TextMaster textMaster = ((SceneLowPoly) scene).getTextMaster();
 
 		GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
 		renderWaterReflectionPass(scene);
@@ -111,7 +111,7 @@ public class MasterRendererLowPoly implements IMasterRenderer {
 		ParticleMaster.renderParticles(camera);
 
 		guiRenderer.render(scene);
-		TextMaster.render();
+		textMaster.render();
 	}
 
 	public void renderShadowMap(IScene scene) {

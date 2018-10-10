@@ -22,7 +22,6 @@ public class ThinMatrixLowPoly implements IGameLogic {
 	public void init(Window window) throws Exception {
 		scene = new SceneLowPoly();
 		((SceneLowPoly) scene).init();
-		TextMaster.init();
 		ParticleMaster.init(scene, ((SceneLowPoly) scene).getMasterRenderer().getProjectionMatrix());
 	}
 
@@ -70,7 +69,6 @@ public class ThinMatrixLowPoly implements IGameLogic {
 
 	@Override
 	public void cleanUp() {
-		TextMaster.cleanUp();
 		ParticleMaster.cleanUp();
 		((SceneLowPoly) scene).getMasterRenderer().cleanUp(scene);
 	}

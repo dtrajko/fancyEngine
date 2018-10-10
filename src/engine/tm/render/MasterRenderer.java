@@ -32,6 +32,7 @@ import engine.tm.models.TexturedModel;
 import engine.tm.normalMapping.NormalMappingRenderer;
 import engine.tm.particles.ParticleMaster;
 import engine.tm.scene.Scene;
+import engine.tm.scene.SceneLowPoly;
 import engine.tm.shadows.ShadowMapMasterRenderer;
 import engine.tm.skybox.SkyboxRenderer;
 import engine.tm.sunRenderer.SunRenderer;
@@ -92,6 +93,7 @@ public class MasterRenderer implements IMasterRenderer {
 
 		Vector4f clipPlane;
 		Camera camera = (Camera) ((Scene) scene).getCamera();
+		TextMaster textMaster = ((Scene) scene).getTextMaster();
 		IPlayer player = ((Scene) scene).getPlayer();
 		Vector3f lightDirection = ((Scene) scene).getLightDirection();
 
@@ -158,7 +160,7 @@ public class MasterRenderer implements IMasterRenderer {
 		ParticleMaster.renderParticles(camera);
 
 		guiRenderer.render(scene);
-		TextMaster.render();
+		textMaster.render();
 
 		GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
 	}

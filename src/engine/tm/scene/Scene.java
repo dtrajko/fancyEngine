@@ -82,6 +82,7 @@ public class Scene implements IScene {
 	private List<GuiTexture> guis = new ArrayList<GuiTexture>();
 
 	private FontType font_1;
+	private String[] lines;
 	private GUIText[] text;
 
 	private ParticleTexture particleTexture;
@@ -95,6 +96,8 @@ public class Scene implements IScene {
 	private WaterTileLowPoly waterLowPoly;
 	private LightDirectional lightDirectional;
 	private boolean wireframeEnabled;
+	
+	private TextMaster textMaster;
 
 	public Scene() {
 		camera = new Camera();
@@ -104,6 +107,7 @@ public class Scene implements IScene {
 		wireframeEnabled = false;
 		fireMaster = new FireMaster(loader);
 		fireMode = true;
+		textMaster = new TextMaster(loader);
 	}
 
 	public void init() {
@@ -250,6 +254,7 @@ public class Scene implements IScene {
 
 	private void setupText() {
 		font_1 = new FontType(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/arial.png"), WorldSettings.FONTS_DIR + "/arial.fnt");
+		lines = new String[10];
 		text = new GUIText[10];
 	}
 
@@ -403,34 +408,41 @@ public class Scene implements IScene {
 
 	private void updateText() {
 		Camera camera = (Camera) this.camera;
-		TextMaster.emptyTextMap();
+		textMaster.removeText(text[0]);
+		textMaster.removeText(text[1]);
+		textMaster.removeText(text[2]);
+		textMaster.removeText(text[3]);
+		textMaster.removeText(text[4]);
+		textMaster.removeText(text[5]);
+		textMaster.removeText(text[6]);
+		textMaster.removeText(text[7]);
 		float offsetX = 0.01f;
 		float offsetY = 0.74f;
 		Vector3f color = new Vector3f(1, 1, 1);
-		String line_0 = "FPS: " + GameEngine.getFPS() + " / " + GameEngine.TARGET_FPS;
-		String line_1 = "Player role: " + (fireMode ? "Warrior" : "Wizard");
-		String line_2 = "Player position:  " + (int) player.getPosition().x + "  " + (int) player.getPosition().y + "  " + (int) player.getPosition().z;
-		String line_3 = "Player rotation:  " + (int) player.getRotX() + "  " + Maths.angleTo360Range((int) player.getRotY()) + "  " + (int) player.getRotZ();
-		String line_4 = "Camera position:  " + (int) camera.getPosition().x + "  " + (int) camera.getPosition().y + "  " + (int) camera.getPosition().z;
-		String line_5 = "Camera rotation  [ pitch: " + (int) camera.getRotation().x + "  yaw: " + Maths.angleTo360Range((int) camera.getRotation().y) + "  roll: " + (int) camera.getRotation().z + " ]";
-		String line_6 = "Entities spawned:  " + getEntitiesCount();
-		String line_7 = "Particles active:  " + ParticleMaster.getParticlesCount();
-		text[0] = new GUIText(line_0, 1, font_1, new Vector2f(offsetX, offsetY), 1f, false).setColor(color);
-		text[1] = new GUIText(line_1, 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
-		text[2] = new GUIText(line_2, 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
-		text[3] = new GUIText(line_3, 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
-		text[4] = new GUIText(line_4, 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
-		text[5] = new GUIText(line_5, 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
-		text[6] = new GUIText(line_6, 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
-		text[7] = new GUIText(line_7, 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
-		TextMaster.loadText(text[0]);
-		TextMaster.loadText(text[1]);
-		TextMaster.loadText(text[2]);
-		TextMaster.loadText(text[3]);
-		TextMaster.loadText(text[4]);
-		TextMaster.loadText(text[5]);
-		TextMaster.loadText(text[6]);
-		TextMaster.loadText(text[7]);
+		lines[0] = "FPS: " + GameEngine.getFPS() + " / " + GameEngine.TARGET_FPS;
+		lines[1] = "Player role: " + (fireMode ? "Warrior" : "Wizard");
+		lines[2] = "Player position:  " + (int) player.getPosition().x + "  " + (int) player.getPosition().y + "  " + (int) player.getPosition().z;
+		lines[3] = "Player rotation:  " + (int) player.getRotX() + "  " + Maths.angleTo360Range((int) player.getRotY()) + "  " + (int) player.getRotZ();
+		lines[4] = "Camera position:  " + (int) camera.getPosition().x + "  " + (int) camera.getPosition().y + "  " + (int) camera.getPosition().z;
+		lines[5] = "Camera rotation  [ pitch: " + (int) camera.getRotation().x + "  yaw: " + Maths.angleTo360Range((int) camera.getRotation().y) + "  roll: " + (int) camera.getRotation().z + " ]";
+		lines[6] = "Entities spawned:  " + getEntitiesCount();
+		lines[7] = "Particles active:  " + ParticleMaster.getParticlesCount();
+		text[0] = new GUIText(lines[0], 1, font_1, new Vector2f(offsetX, offsetY), 1f, false).setColor(color);
+		text[1] = new GUIText(lines[1], 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
+		text[2] = new GUIText(lines[2], 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
+		text[3] = new GUIText(lines[3], 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
+		text[4] = new GUIText(lines[4], 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
+		text[5] = new GUIText(lines[5], 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
+		text[6] = new GUIText(lines[6], 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
+		text[7] = new GUIText(lines[7], 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
+		textMaster.loadText(text[0]);
+		textMaster.loadText(text[1]);
+		textMaster.loadText(text[2]);
+		textMaster.loadText(text[3]);
+		textMaster.loadText(text[4]);
+		textMaster.loadText(text[5]);
+		textMaster.loadText(text[6]);
+		textMaster.loadText(text[7]);
 	}
 
 	public int getEntitiesCount() {
@@ -490,6 +502,10 @@ public class Scene implements IScene {
 		return water;
 	}
 
+	public TextMaster getTextMaster() {
+		return textMaster;
+	}
+
 	public void processTerrain(ITerrain terrain) {
 		terrains.add(terrain);
 	}
@@ -547,6 +563,7 @@ public class Scene implements IScene {
 		loader.cleanUp();
 		flareManager.cleanUp();
 		fireMaster.cleanUp();
+		textMaster.cleanUp();
 	}
 
 	public Vector3f getLightDirection() {

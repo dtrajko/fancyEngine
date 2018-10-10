@@ -25,7 +25,6 @@ public class ThinMatrix implements IGameLogic {
 	public void init(Window window) throws Exception {
 		scene = new Scene();
 		((Scene) scene).init();
-		TextMaster.init();
 		ParticleMaster.init(scene, ((Scene) scene).getMasterRenderer().getProjectionMatrix());
 		mousePicker = new MousePicker(scene, ((Scene) scene).getMasterRenderer().getProjectionMatrix());
 	}
@@ -75,7 +74,6 @@ public class ThinMatrix implements IGameLogic {
 
 	@Override
 	public void cleanUp() {
-		TextMaster.cleanUp();
 		ParticleMaster.cleanUp();
 		((Scene) scene).getMasterRenderer().cleanUp(scene);
 	}

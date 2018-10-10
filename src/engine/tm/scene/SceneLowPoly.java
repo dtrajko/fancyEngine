@@ -86,8 +86,10 @@ public class SceneLowPoly implements IScene {
 	private List<WaterTileLowPoly> waterTiles = new ArrayList<WaterTileLowPoly>();
 	private List<GuiTexture> guis = new ArrayList<GuiTexture>();
 
+	private TextMaster textMaster;
 	private FontType font_1;
-	private GUIText[] text;
+	private String[] lines;
+	private GUIText[] guiTexts;
 
 	private FireMaster fireMaster;
 	private ParticleTexture particleTexture;
@@ -97,6 +99,8 @@ public class SceneLowPoly implements IScene {
 	private FlareManager flareManager;
 	private Vector3f lightDirection = WorldSettingsLowPoly.LIGHT_DIR;
 	private LightDirectional lightDirectional;
+
+	private boolean wireframeEnabled;
 
 	public static float waterLevelOffset = 0;
 	private int gridSize = WorldSettingsLowPoly.GRID_SIZE;
@@ -108,8 +112,7 @@ public class SceneLowPoly implements IScene {
 	private TexturedModel fernModel;
 	private TexturedModel pineModel;
 	private Random rand;
-
-	private boolean wireframeEnabled;
+	private TerrainLowPoly terrainHiFi;
 
 	public SceneLowPoly() {
 		camera = new Camera();
@@ -120,6 +123,7 @@ public class SceneLowPoly implements IScene {
 		fireMaster = new FireMaster(loader);
 		fireMode = true;
 		infiniteTerrainManager = new InfiniteTerrainManager();
+		textMaster = new TextMaster(loader);
 		rand = new Random();
 	}
 
@@ -137,6 +141,17 @@ public class SceneLowPoly implements IScene {
 		setupGui();
 		setupText();
 		masterRenderer.init(this);
+	}
+
+	@Override
+	public void update(float interval, Input input) {
+		player.update();
+		updateInfiniteTerrain(input);
+		updateWaterLevel(input);
+		updateParticles(input);
+		fireMaster.update();
+		toggleWireframeMode(input);
+		updateText(interval); // memory leak
 	}
 
 	private void setupTerrainGenerator() {
@@ -178,6 +193,15 @@ public class SceneLowPoly implements IScene {
 			int futureIndZ = (int) (playerFutureZ / WorldSettingsLowPoly.WORLD_SIZE / terrainScale);
 			generateTerrainChunks(futureIndX, futureIndZ);
 			generateWaterChunks(futureIndX, futureIndZ);
+			manageLOD(indX, indZ);
+			lastTerrainUpdate = GameEngine.getTimer().getLastLoopTime();
+			// prevTerrainIndices = new Vector2i(futureIndX, futureIndZ);
+			((MasterRendererLowPoly) masterRenderer).initInfinite(this);
+		}
+	}
+
+	private void manageLOD(int indX, int indZ) {
+		if (WorldSettingsLowPoly.LOD_TOTAL > 1) {
 			int LOD_SCOPE = 3;
 			for (int x = -LOD_SCOPE; x <= LOD_SCOPE; x++) {
 				for (int z = -LOD_SCOPE; z <= LOD_SCOPE; z++) {
@@ -185,12 +209,9 @@ public class SceneLowPoly implements IScene {
 					if (Math.abs(x) < LOD_SCOPE && Math.abs(z) < LOD_SCOPE) {
 						LOD = WorldSettingsLowPoly.LOD_TOTAL / 4;
 					}
-					increaseTerrainLOD(x + indX, z + indZ, LOD);					
+					increaseTerrainLOD(x + indX, z + indZ, LOD);
 				}
 			}
-			lastTerrainUpdate = GameEngine.getTimer().getLastLoopTime();
-			// prevTerrainIndices = new Vector2i(futureIndX, futureIndZ);
-			((MasterRendererLowPoly) masterRenderer).initInfinite(this);
 		}
 	}
 
@@ -232,7 +253,7 @@ public class SceneLowPoly implements IScene {
 					terrainLowPoly.setZ((int) ((z + indZ + indexLOD) * WorldSettingsLowPoly.WORLD_SIZE * terrainScale));
 					processTerrain(terrainLowPoly);
 
-					TerrainLowPoly terrainHiFi = terrainGenerator.generateTerrain(
+					terrainHiFi = terrainGenerator.generateTerrain(
 							(x + indX) * WorldSettingsLowPoly.WORLD_SIZE,
 							(z + indZ) * WorldSettingsLowPoly.WORLD_SIZE,
 							WorldSettingsLowPoly.WORLD_SIZE, terrainScale, 1);
@@ -436,23 +457,11 @@ public class SceneLowPoly implements IScene {
 		GuiTexture depth       = new GuiTexture(MasterRendererLowPoly.refractionFbo.getDepthBuffer(),  new Vector2f(-0.89f, coordY += offsetY), new Vector2f(0.1f, 0.1f));
 		GuiTexture shadowMap   = new GuiTexture(MasterRendererLowPoly.getShadowMapTexture(),           new Vector2f(-0.89f, coordY += offsetY), new Vector2f(0.1f, 0.1f));
 		GuiTexture aimTarget   = new GuiTexture(loader.loadTexture(WorldSettingsLowPoly.TEXTURES_DIR + "/gui/bullseye.png"), new Vector2f(0.0f, 0.0f), new Vector2f(0.02f, 0.036f));
-
 		processGui(reflection);
 		processGui(refraction);
 		processGui(depth);
 		processGui(shadowMap);
 		processGui(aimTarget);
-	}
-
-	@Override
-	public void update(float interval, Input input) {
-		player.update();
-		updateInfiniteTerrain(input);
-		updateWaterLevel(input);
-		updateParticles(input);
-		fireMaster.update();
-		toggleWireframeMode(input);
-		updateText(interval);
 	}
 
 	private void updateWaterLevel(Input input) {
@@ -502,40 +511,57 @@ public class SceneLowPoly implements IScene {
 
 	private void setupText() {
 		font_1 = new FontType(loader.loadTexture(WorldSettingsLowPoly.TEXTURES_DIR + "/arial.png"), WorldSettingsLowPoly.FONTS_DIR + "/arial.fnt");
-		text = new GUIText[10];
-	}
-
-	private void updateText(float interval) {
-		Camera camera = (Camera) this.camera;
-		TextMaster.emptyTextMap();
+		lines = new String[10];
+		guiTexts = new GUIText[10];
 		float coordX = 0.005f;
 		float coordY = 0.79f;
 		float offsetY = 0.025f;
 		Vector3f color = new Vector3f(1, 1, 1);
-		String line_0 = "FPS: " + GameEngine.getFPS() + " / " + GameEngine.TARGET_FPS;
-		String line_1 = "Player position:  " + (int) player.getPosition().x + "  " + (int) player.getPosition().y + "  " + (int) player.getPosition().z;
-		String line_2 = "Player rotation:  " + (int) player.getRotX() + "  " + Maths.angleTo360Range((int) player.getRotY()) + "  " + (int) player.getRotZ();
-		String line_3 = "Camera position:  " + (int) camera.getPosition().x + "  " + (int) camera.getPosition().y + "  " + (int) camera.getPosition().z;
-		String line_4 = "Camera rotation  [ pitch: " + (int) camera.getRotation().x + "  yaw: " + Maths.angleTo360Range((int) camera.getRotation().y) + "  roll: " + (int) camera.getRotation().z + " ]";
-		String line_5 = "Entities spawned:  " + getEntitiesCount();
-		String line_6 = "Particles active:  " + ParticleMaster.getParticlesCount();
-		String line_7 = "Visible terrain chunks: " + infiniteTerrainManager.getVisibleTerrainChunks().size();
-		text[0] = new GUIText(line_0, 0.8f, font_1, new Vector2f(coordX, coordY), 1f, false).setColor(color);
-		text[1] = new GUIText(line_1, 0.8f, font_1, new Vector2f(coordX, coordY += offsetY), 1f, false).setColor(color);
-		text[2] = new GUIText(line_2, 0.8f, font_1, new Vector2f(coordX, coordY += offsetY), 1f, false).setColor(color);
-		text[3] = new GUIText(line_3, 0.8f, font_1, new Vector2f(coordX, coordY += offsetY), 1f, false).setColor(color);
-		text[4] = new GUIText(line_4, 0.8f, font_1, new Vector2f(coordX, coordY += offsetY), 1f, false).setColor(color);
-		text[5] = new GUIText(line_5, 0.8f, font_1, new Vector2f(coordX, coordY += offsetY), 1f, false).setColor(color);
-		text[6] = new GUIText(line_6, 0.8f, font_1, new Vector2f(coordX, coordY += offsetY), 1f, false).setColor(color);
-		text[7] = new GUIText(line_7, 0.8f, font_1, new Vector2f(coordX, coordY += offsetY), 1f, false).setColor(color);
-		TextMaster.loadText(text[0]);
-		TextMaster.loadText(text[1]);
-		TextMaster.loadText(text[2]);
-		TextMaster.loadText(text[3]);
-		TextMaster.loadText(text[4]);
-		TextMaster.loadText(text[5]);
-		TextMaster.loadText(text[6]);
-		TextMaster.loadText(text[7]);
+		guiTexts[0] = new GUIText(lines[0], 0.8f, font_1, new Vector2f(coordX, coordY), 1f, false).setColor(color);
+		guiTexts[1] = new GUIText(lines[1], 0.8f, font_1, new Vector2f(coordX, coordY += offsetY), 1f, false).setColor(color);
+		guiTexts[2] = new GUIText(lines[2], 0.8f, font_1, new Vector2f(coordX, coordY += offsetY), 1f, false).setColor(color);
+		guiTexts[3] = new GUIText(lines[3], 0.8f, font_1, new Vector2f(coordX, coordY += offsetY), 1f, false).setColor(color);
+		guiTexts[4] = new GUIText(lines[4], 0.8f, font_1, new Vector2f(coordX, coordY += offsetY), 1f, false).setColor(color);
+		guiTexts[5] = new GUIText(lines[5], 0.8f, font_1, new Vector2f(coordX, coordY += offsetY), 1f, false).setColor(color);
+		guiTexts[6] = new GUIText(lines[6], 0.8f, font_1, new Vector2f(coordX, coordY += offsetY), 1f, false).setColor(color);
+		guiTexts[7] = new GUIText(lines[7], 0.8f, font_1, new Vector2f(coordX, coordY += offsetY), 1f, false).setColor(color);
+	}
+
+	private void updateText(float interval) {
+		Camera camera = (Camera) this.camera;
+		textMaster.removeText(guiTexts[0]);
+		textMaster.removeText(guiTexts[1]);
+		textMaster.removeText(guiTexts[2]);
+		textMaster.removeText(guiTexts[3]);
+		textMaster.removeText(guiTexts[4]);
+		textMaster.removeText(guiTexts[5]);
+		textMaster.removeText(guiTexts[6]);
+		textMaster.removeText(guiTexts[7]);
+		textMaster.clearTextMap();
+		lines[0] = "FPS: " + GameEngine.getFPS() + " / " + GameEngine.TARGET_FPS;
+		lines[1] = "Player position:  " + (int) player.getPosition().x + "  " + (int) player.getPosition().y + "  " + (int) player.getPosition().z;
+		lines[2] = "Player rotation:  " + (int) player.getRotX() + "  " + Maths.angleTo360Range((int) player.getRotY()) + "  " + (int) player.getRotZ();
+		lines[3] = "Camera position:  " + (int) camera.getPosition().x + "  " + (int) camera.getPosition().y + "  " + (int) camera.getPosition().z;
+		lines[4] = "Camera rotation  [ pitch: " + (int) camera.getRotation().x + "  yaw: " + Maths.angleTo360Range((int) camera.getRotation().y) + "  roll: " + (int) camera.getRotation().z + " ]";
+		lines[5] = "Entities spawned:  " + getEntitiesCount();
+		lines[6] = "Particles active:  " + ParticleMaster.getParticlesCount();
+		lines[7] = "Visible terrain chunks: " + infiniteTerrainManager.getVisibleTerrainChunks().size();
+		guiTexts[0].setTextString(lines[0]);
+		guiTexts[1].setTextString(lines[1]);
+		guiTexts[2].setTextString(lines[2]);
+		guiTexts[3].setTextString(lines[3]);
+		guiTexts[4].setTextString(lines[4]);
+		guiTexts[5].setTextString(lines[5]);
+		guiTexts[6].setTextString(lines[6]);
+		guiTexts[7].setTextString(lines[7]);
+		textMaster.loadText(guiTexts[0]);
+		textMaster.loadText(guiTexts[1]);
+		textMaster.loadText(guiTexts[2]);
+		textMaster.loadText(guiTexts[3]);
+		textMaster.loadText(guiTexts[4]);
+		textMaster.loadText(guiTexts[5]);
+		textMaster.loadText(guiTexts[6]);
+		textMaster.loadText(guiTexts[7]);
 	}
 
 	public int getEntitiesCount() {
@@ -587,6 +613,10 @@ public class SceneLowPoly implements IScene {
 		return water;
 	}
 
+	public TextMaster getTextMaster() {
+		return textMaster;
+	}
+
 	public void processTerrain(ITerrain terrain) {
 		terrains.add(terrain);
 	}
@@ -633,6 +663,7 @@ public class SceneLowPoly implements IScene {
 		loader.cleanUp();
 		flareManager.cleanUp();
 		fireMaster.cleanUp();
+		textMaster.cleanUp();
 	}
 
 	public Vector3f getLightDirection() {

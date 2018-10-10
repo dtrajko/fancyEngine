@@ -11,45 +11,60 @@ import engine.tm.loaders.Loader;
 
 public class TextMaster {
 
-	private static Loader loader;
-	private static FontRenderer renderer;
-	private static Map<FontType, List<GUIText>> texts = new HashMap<FontType, List<GUIText>>();
+	private Loader loader;
+	private FontRenderer renderer;
+	private Map<FontType, List<GUIText>> textMap = new HashMap<FontType, List<GUIText>>();
+	private FontType font;
+	private TextMeshData data;
+	private int vao;
+	private List<GUIText> textBatch;
 
-	public static void init() {
+	public TextMaster(Loader loader) {
+		this.loader = loader;
 		renderer = new FontRenderer();
-		loader = new Loader();
 	}
 
-	public static void loadText(GUIText text) {
-		FontType font = text.getFont();
-		TextMeshData data = font.loadText(text);		
-		int vao = loader.loadToVAO(data.getVertexPositions(), data.getTextureCoords());
-		text.setMeshInfo(vao, data.getVertexCount());
-		List<GUIText> textBatch = texts.get(font);
+	public void loadText(GUIText guiText) {
+		font = guiText.getFont();
+		data = font.loadText(guiText);		
+		vao = loader.loadToVAO(data.getVertexPositions(), data.getTextureCoords());
+		guiText.setMeshInfo(vao, data.getVertexCount());
+		textBatch = textMap.get(font);
 		if (textBatch == null) {
 			textBatch = new ArrayList<GUIText>();
-			texts.put(font, textBatch);
+			textMap.put(font, textBatch);
 		}
-		textBatch.add(text);		
+		textBatch.add(guiText);
 	}
 
-	public static void removeText(GUIText text) {
-		List<GUIText> textBatch = texts.get(text.getFont());
-		textBatch.remove(text);
+	public void removeText(GUIText guiText) {
+		if (guiText == null) return;
+		textBatch = textMap.get(guiText.getFont());
+		if (textBatch == null) return;
+		textBatch.remove(guiText);
 		if (textBatch.isEmpty()) {
-			texts.remove(text.getFont());
+			textMap.remove(guiText.getFont());
+			textBatch.clear();
 		}
 	}
 
-	public static void emptyTextMap() {
-		texts.clear();
+	public void clearTextMap() {
+		textMap.clear();
 	}
 
-	public static void render() {
-		renderer.render(texts);
+	public void render() {
+		renderer.render(textMap);
 	}
 
-	public static void cleanUp() {
+	public void cleanUp() {
 		renderer.cleanUp();
+	}
+
+	public int getTextEntriesCount() {
+		int count = 0;
+		for (FontType fontType : textMap.keySet()) {
+			count += textMap.get(fontType).size();
+		}
+		return count;
 	}
 }
