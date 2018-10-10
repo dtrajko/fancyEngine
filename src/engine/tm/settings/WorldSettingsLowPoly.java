@@ -31,9 +31,10 @@ public class WorldSettingsLowPoly {
 		new Color(200, 200, 210, true),
 	};
 
+	public static final int LOD_TOTAL = 4;
 	public static final int GRID_SIZE = 7;
 	public static final int WORLD_SIZE = 24;
-	public static final float TERRAIN_SCALE = 10;
+	public static final float TERRAIN_SCALE = 6;
 	public static final float AMPLITUDE = 30;
 	public static final float ROUGHNESS = 0.4f;
 	public static final int OCTAVES = 5;

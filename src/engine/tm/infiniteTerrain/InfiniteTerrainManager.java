@@ -9,8 +9,8 @@ public class InfiniteTerrainManager {
 
 	private double visibleDistance = WorldSettingsLowPoly.GRID_SIZE + 1;
 
-	private static List<InfiniteTerrainChunk> terrainChunks = new ArrayList<InfiniteTerrainChunk>();
-	private static List<InfiniteWaterChunk> waterChunks = new ArrayList<InfiniteWaterChunk>();
+	private List<InfiniteTerrainChunk> terrainChunks = new ArrayList<InfiniteTerrainChunk>();
+	private List<InfiniteWaterChunk> waterChunks = new ArrayList<InfiniteWaterChunk>();
 
 	public void addTerrainChunk(InfiniteTerrainChunk chunk) {
 		if (!terrainChunkExists(chunk)) {
@@ -73,13 +73,11 @@ public class InfiniteTerrainManager {
 	}
 
 	public List<InfiniteTerrainChunk> getRemoteTerrainChunks(int centerX, int centerZ) {
-		List<InfiniteTerrainChunk> remoteTerrainChunks = new ArrayList<InfiniteTerrainChunk>();
-		Iterator<InfiniteTerrainChunk> iterator = terrainChunks.iterator();
-		while(iterator.hasNext()){
-			InfiniteTerrainChunk chunk = iterator.next();
-			double distance = Math.sqrt(Math.pow(centerX - chunk.getIndexX(), 2) + Math.pow(centerZ - chunk.getIndexZ(), 2));
+		List<InfiniteTerrainChunk> remoteTerrainChunks = new ArrayList<InfiniteTerrainChunk>();		
+		for (InfiniteTerrainChunk terrainChunk : terrainChunks) {
+			double distance = Math.sqrt(Math.pow(centerX - terrainChunk.getIndexX(), 2) + Math.pow(centerZ - terrainChunk.getIndexZ(), 2));
 			if (distance > visibleDistance) {
-				remoteTerrainChunks.add(chunk);
+				remoteTerrainChunks.add(terrainChunk);
 			}
 		}
 		return remoteTerrainChunks;

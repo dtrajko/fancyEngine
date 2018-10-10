@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Random;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
-import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
@@ -105,7 +104,7 @@ public class SceneLowPoly implements IScene {
 	private static TerrainGenerator terrainGenerator;
 	private double lastTerrainUpdate;
 	private InfiniteTerrainManager infiniteTerrainManager;
-	private Vector2i prevTerrainIndices = new Vector2i(0, 0);
+	// private Vector2i prevTerrainIndices = new Vector2i(0, 0);
 	private TexturedModel fernModel;
 	private TexturedModel pineModel;
 	private Random rand;
@@ -165,52 +164,98 @@ public class SceneLowPoly implements IScene {
 
 	private void updateInfiniteTerrain(Input input) {
 		if (GameEngine.getTimer().getLastLoopTime() - lastTerrainUpdate > 1) {
-			float projectedDistance = WorldSettingsLowPoly.WORLD_SIZE * 4 * terrainScale;
-			float playerFutureX = player != null ? ((AnimatedPlayer) player).getProjectedFuturePosition(projectedDistance).x : 0;
-			float playerFutureZ = player != null ? ((AnimatedPlayer) player).getProjectedFuturePosition(projectedDistance).z : 0;
+
+			float projDistance = WorldSettingsLowPoly.WORLD_SIZE / 2 * terrainScale;
+			float playerX = player != null ? ((AnimatedPlayer) player).getProjectedFuturePosition(projDistance).x : 0;
+			float playerZ = player != null ? ((AnimatedPlayer) player).getProjectedFuturePosition(projDistance).z : 0;
+			int indX = (int) (playerX / WorldSettingsLowPoly.WORLD_SIZE / terrainScale);
+			int indZ = (int) (playerZ / WorldSettingsLowPoly.WORLD_SIZE / terrainScale);
+
+			float projDistanceFuture = WorldSettingsLowPoly.WORLD_SIZE * 2 * terrainScale;
+			float playerFutureX = player != null ? ((AnimatedPlayer) player).getProjectedFuturePosition(projDistanceFuture).x : 0;
+			float playerFutureZ = player != null ? ((AnimatedPlayer) player).getProjectedFuturePosition(projDistanceFuture).z : 0;
 			int futureIndX = (int) (playerFutureX / WorldSettingsLowPoly.WORLD_SIZE / terrainScale);
 			int futureIndZ = (int) (playerFutureZ / WorldSettingsLowPoly.WORLD_SIZE / terrainScale);
 			generateTerrainChunks(futureIndX, futureIndZ);
 			generateWaterChunks(futureIndX, futureIndZ);
+			int LOD_SCOPE = 3;
+			for (int x = -LOD_SCOPE; x <= LOD_SCOPE; x++) {
+				for (int z = -LOD_SCOPE; z <= LOD_SCOPE; z++) {
+					int LOD = WorldSettingsLowPoly.LOD_TOTAL / 2;
+					if (Math.abs(x) < LOD_SCOPE && Math.abs(z) < LOD_SCOPE) {
+						LOD = WorldSettingsLowPoly.LOD_TOTAL / 4;
+					}
+					increaseTerrainLOD(x + indX, z + indZ, LOD);					
+				}
+			}
 			lastTerrainUpdate = GameEngine.getTimer().getLastLoopTime();
-			prevTerrainIndices = new Vector2i(futureIndX, futureIndZ);
+			// prevTerrainIndices = new Vector2i(futureIndX, futureIndZ);
+			((MasterRendererLowPoly) masterRenderer).initInfinite(this);
+		}
+	}
+
+	private void increaseTerrainLOD(int indX, int indZ, int LOD) {
+		float indexLOD = (LOD - 1) * 0.5f;
+		if (infiniteTerrainManager.terrainChunkExists(indX, indZ)) {
+			List<Entity> terrainEntities = new ArrayList<Entity>();
+			InfiniteTerrainChunk currentTerrainChunk = infiniteTerrainManager.getTerrainChunk(indX, indZ);
+			if (currentTerrainChunk != null) {
+				terrainEntities = currentTerrainChunk.getEntities();
+				terrains.remove(currentTerrainChunk.getTerrain());
+				infiniteTerrainManager.removeTerrainChunk(currentTerrainChunk);				
+			}
+			TerrainLowPoly terrainLowPoly = terrainGenerator.generateTerrain(
+					indX * WorldSettingsLowPoly.WORLD_SIZE,
+					indZ * WorldSettingsLowPoly.WORLD_SIZE,
+					WorldSettingsLowPoly.WORLD_SIZE, terrainScale, LOD);
+			terrainLowPoly.setX((int) ((indX + indexLOD) * WorldSettingsLowPoly.WORLD_SIZE * terrainScale));
+			terrainLowPoly.setZ((int) ((indZ + indexLOD) * WorldSettingsLowPoly.WORLD_SIZE * terrainScale));
+			processTerrain(terrainLowPoly);
+			InfiniteTerrainChunk newTerrainChunk = new InfiniteTerrainChunk(terrainLowPoly, indX, indZ, terrainEntities);
+			infiniteTerrainManager.addTerrainChunk(newTerrainChunk);			
 		}
 	}
 
 	private void generateTerrainChunks(int indX, int indZ) {
 		// add new
+		int LOD = WorldSettingsLowPoly.LOD_TOTAL;
+		float indexLOD = (LOD - 1) * 0.5f;
 		for (int x = -gridSize / 2; x <= gridSize / 2; x++) {
 			for (int z = -gridSize / 2; z <= gridSize / 2; z++) {
 				if (!infiniteTerrainManager.terrainChunkExists(x + indX, z + indZ)) {
+
 					TerrainLowPoly terrainLowPoly = terrainGenerator.generateTerrain(
 							(x + indX) * WorldSettingsLowPoly.WORLD_SIZE,
 							(z + indZ) * WorldSettingsLowPoly.WORLD_SIZE,
-							WorldSettingsLowPoly.WORLD_SIZE, terrainScale);
-					terrainLowPoly.setX((int) ((x + indX) * WorldSettingsLowPoly.WORLD_SIZE * terrainScale));
-					terrainLowPoly.setZ((int) ((z + indZ) * WorldSettingsLowPoly.WORLD_SIZE * terrainScale));
+							WorldSettingsLowPoly.WORLD_SIZE, terrainScale, LOD);
+					terrainLowPoly.setX((int) ((x + indX + indexLOD) * WorldSettingsLowPoly.WORLD_SIZE * terrainScale));
+					terrainLowPoly.setZ((int) ((z + indZ + indexLOD) * WorldSettingsLowPoly.WORLD_SIZE * terrainScale));
 					processTerrain(terrainLowPoly);
+
+					TerrainLowPoly terrainHiFi = terrainGenerator.generateTerrain(
+							(x + indX) * WorldSettingsLowPoly.WORLD_SIZE,
+							(z + indZ) * WorldSettingsLowPoly.WORLD_SIZE,
+							WorldSettingsLowPoly.WORLD_SIZE, terrainScale, 1);
+					terrainHiFi.setX((int) ((x + indX) * WorldSettingsLowPoly.WORLD_SIZE * terrainScale));
+					terrainHiFi.setZ((int) ((z + indZ) * WorldSettingsLowPoly.WORLD_SIZE * terrainScale));
+
 					InfiniteTerrainChunk newTerrainChunk = new InfiniteTerrainChunk(terrainLowPoly, x + indX, z + indZ);
-					populateTerrainChunk(newTerrainChunk);
+					populateTerrainChunk(newTerrainChunk, terrainHiFi);
 					infiniteTerrainManager.addTerrainChunk(newTerrainChunk);
 				}
 			}
 		}
 		// remove old
-		List<InfiniteTerrainChunk> remoteTerrainChunks = infiniteTerrainManager.getRemoteTerrainChunks(indX, indZ);
-		Iterator<InfiniteTerrainChunk> remoteChunkIterator = remoteTerrainChunks.iterator();
-		while (remoteChunkIterator.hasNext()) {
-			InfiniteTerrainChunk remoteTerrainChunk = remoteChunkIterator.next();
+		List<InfiniteTerrainChunk> remoteTerrainChunks = infiniteTerrainManager.getRemoteTerrainChunks(indX, indZ);		
+		for (InfiniteTerrainChunk remoteTerrainChunk : remoteTerrainChunks) {
 			List<Entity> remoteEntities = remoteTerrainChunk.getEntities();
-			Iterator<Entity> entityIterator = remoteEntities.iterator();			
-			while (entityIterator.hasNext()) {
-				Entity remoteEntity = entityIterator.next();
-				removeEntity(remoteEntity);
+			for (Entity remoteEntity : remoteEntities) {
+				removeEntity(remoteEntity);				
 			}
 			terrains.remove(remoteTerrainChunk.getTerrain());
-			remoteTerrainChunk.cleanUp();
 			infiniteTerrainManager.removeTerrainChunk(remoteTerrainChunk);
+			remoteTerrainChunk.cleanUp();
 		}
-		((MasterRendererLowPoly) masterRenderer).initInfinite(this);
 	}
 
 	private void generateWaterChunks(int indX, int indZ) {
@@ -236,16 +281,16 @@ public class SceneLowPoly implements IScene {
 		}
 	}
 
-	private void populateTerrainChunk(InfiniteTerrainChunk terrainChunk) {
+	private void populateTerrainChunk(InfiniteTerrainChunk terrainChunk, ITerrain terrainHiFi) {
 		float terrainX = terrainChunk.getIndexX() * WorldSettingsLowPoly.WORLD_SIZE * terrainScale;
 		float terrainZ = terrainChunk.getIndexZ() * WorldSettingsLowPoly.WORLD_SIZE * terrainScale;
-		int modelsSpawnedMax = WorldSettingsLowPoly.WORLD_SIZE / 2;
+		int modelsSpawnedMax = WorldSettingsLowPoly.WORLD_SIZE / 4;
 		int modelsSpawned = 0;
+
 		while (modelsSpawned < modelsSpawnedMax) {
 			float coordX = terrainX + rand.nextFloat() * WorldSettingsLowPoly.WORLD_SIZE * terrainScale - WorldSettingsLowPoly.WORLD_SIZE / 2 * terrainScale;
 			float coordZ = terrainZ + rand.nextFloat() * WorldSettingsLowPoly.WORLD_SIZE * terrainScale - WorldSettingsLowPoly.WORLD_SIZE / 2 * terrainScale;
-			ITerrain currentTerrain = getCurrentTerrain(coordX, coordZ);
-			float coordY = currentTerrain != null ? currentTerrain.getHeightOfTerrain(coordX, coordZ) : 0;
+			float coordY = terrainHiFi.getHeightOfTerrain(coordX, coordZ);
 			if (coordY > 0 && coordY > WorldSettingsLowPoly.WATER_HEIGHT + waterLevelOffset + 5) {
 				int modelIndex = rand.nextInt(2);
 				float modelSize = rand.nextFloat() + 1;

@@ -11,18 +11,23 @@ public class InfiniteTerrainChunk {
 	private ITerrain terrain;
 	private int index_x;
 	private int index_z;
-	private List<Entity> terrainEntities = new ArrayList<Entity>();
+	private List<Entity> terrainEntities;
 
-	public InfiniteTerrainChunk(ITerrain terrain, int index_x, int index_z) {
+	public InfiniteTerrainChunk(ITerrain terrain, int index_x, int index_z, List<Entity> terrainEntities) {
 		this.terrain = terrain;
 		this.index_x = index_x;
 		this.index_z = index_z;
+		this.terrainEntities = terrainEntities;
 	}
-	
+
+	public InfiniteTerrainChunk(ITerrain terrain, int index_x, int index_z) {
+		this(terrain, index_x, index_z, new ArrayList<Entity>());
+	}
+
 	public void addEntity(Entity entity) {
 		terrainEntities.add(entity);
 	}
-
+ 
 	public List<Entity> getEntities() {
 		return terrainEntities;
 	}

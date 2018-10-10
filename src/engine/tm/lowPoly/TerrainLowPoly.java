@@ -16,14 +16,16 @@ public class TerrainLowPoly implements ITerrain {
 	private float x;
 	private float z;
 	private float scale;
+	private int LOD;
 
-	public TerrainLowPoly(Vao vao, int vertexCount, float[][] heights, float scale) {
+	public TerrainLowPoly(Vao vao, int vertexCount, float[][] heights, float scale, int LOD) {
 		this.vao = vao;
 		this.vertexCount = vertexCount;
 		this.heights = heights;
 		this.x = 0;
 		this.z = 0;
 		this.scale = scale;
+		this.LOD = LOD;
 	}
 
 	public Vao getVao() {
@@ -57,6 +59,7 @@ public class TerrainLowPoly implements ITerrain {
 		worldY = (int) this.heights[intZ][intX];
 		worldY *= scale;
 		worldY += 2.0f; // a small adjustment
+		
 		if (worldY < WorldSettingsLowPoly.WATER_HEIGHT + SceneLowPoly.waterLevelOffset) {
 			worldY = (int) (WorldSettingsLowPoly.WATER_HEIGHT + SceneLowPoly.waterLevelOffset);
 		}

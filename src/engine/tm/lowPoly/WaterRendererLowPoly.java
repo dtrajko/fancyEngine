@@ -25,9 +25,9 @@ import engine.tm.utils.OpenGlUtils;
  */
 public class WaterRendererLowPoly {
 
-	private static final float WAVE_SPEED = 0.0001f;
-	private static final float WAVE_AMPLITUDE = 0.3f;
-	private static final float WAVE_LENGTH = 8.0f;
+	private static final float WAVE_SPEED = 0.00005f;
+	private static final float WAVE_AMPLITUDE = 0.2f;
+	private static final float WAVE_LENGTH = 2.0f;
 	private final WaterShader shader;
 	private float time = 0;
 

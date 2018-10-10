@@ -57,6 +57,14 @@ public class EntityRenderer {
 		entities = scene.getEntityList();
 	}
 
+	public int getEntitiesCount() {
+		int count = 0;
+		for (TexturedModel model : entities.keySet()) {
+			count += entities.get(model).size();
+		}
+		return count;
+	}
+
 	public void render(IScene scene, Vector4f clipPlane) {
 		List<Light> lights = scene.getLights();
 		ICamera camera = scene.getCamera();

@@ -38,12 +38,12 @@ public class HybridTerrainGenerator extends TerrainGenerator {
 	}
 
 	@Override
-	protected TerrainLowPoly createTerrain(float[][] heights, Color[][] colors, float scale) {
+	protected TerrainLowPoly createTerrain(float[][] heights, Color[][] colors, float scale, int LOD) {
 		int vertexCount = calculateVertexCount(heights.length);
 		byte[] terrainData = createMeshData(heights, colors, vertexCount, scale);
 		int[] indices = IndexGenerator.generateIndexBuffer(heights.length);
 		Vao vao = VaoLoader.createVao(terrainData, indices);
-		return new TerrainLowPoly(vao, indices.length, heights, scale);
+		return new TerrainLowPoly(vao, indices.length, heights, scale, LOD);
 	}
 
 	private int calculateVertexCount(int vertexLength) {

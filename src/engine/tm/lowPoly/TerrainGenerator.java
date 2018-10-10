@@ -30,10 +30,10 @@ public abstract class TerrainGenerator {
 	 *            - The number of grid squares along one side of the terrain.
 	 * @return The generated terrain.
 	 */
-	public TerrainLowPoly generateTerrain(int offsetX, int offsetZ, int gridSize, float scale) {
-		float[][] heights = generateHeights(offsetX, offsetZ, gridSize, perlinNoise);
-		Color[][] colors = colorGen.generateColors(heights, perlinNoise.getAmplitude());
-		return createTerrain(heights, colors, scale);
+	public TerrainLowPoly generateTerrain(int offsetX, int offsetZ, int gridSize, float scale, int LOD) {
+		float[][] heights = generateHeights(offsetX, offsetZ, gridSize, perlinNoise, LOD);
+		Color[][] colors = colorGen.generateColors(heights, perlinNoise.getAmplitude() / LOD);
+		return createTerrain(heights, colors, scale * LOD, LOD);
 	}
 
 	/**
@@ -51,7 +51,7 @@ public abstract class TerrainGenerator {
 	 *            - The colors of all the vertices.
 	 * @return The new terrain.
 	 */
-	protected abstract TerrainLowPoly createTerrain(float[][] heights, Color[][] colors, float scale);
+	protected abstract TerrainLowPoly createTerrain(float[][] heights, Color[][] colors, float scale, int LOD);
 
 	/**
 	 * Uses the perlin noise generator (which might actually not be using the
@@ -62,11 +62,11 @@ public abstract class TerrainGenerator {
 	 * @param perlinNoise - The heights generator.
 	 * @return All the heights for the vertices.
 	 */
-	private float[][] generateHeights(int offsetX, int offsetZ, int gridSize, PerlinNoise perlinNoise) {
-		float heights[][] = new float[gridSize + 1][gridSize + 1];
+	private float[][] generateHeights(int offsetX, int offsetZ, int gridSize, PerlinNoise perlinNoise, int LOD) {
+		float heights[][] = new float[gridSize / LOD + 1][gridSize / LOD + 1];
 		for (int z = 0; z < heights.length; z++) {
 			for (int x = 0; x < heights[z].length; x++) {
-				heights[z][x] = perlinNoise.getPerlinNoise(x + offsetX, z + offsetZ);
+				heights[z][x] = perlinNoise.getPerlinNoise(x * LOD + offsetX, z * LOD + offsetZ) / LOD;
 			}
 		}
 		return heights;
