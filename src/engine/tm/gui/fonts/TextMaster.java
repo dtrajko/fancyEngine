@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import engine.GameEngine;
 import engine.tm.gui.fonts.FontType;
 import engine.tm.gui.fonts.GUIText;
 import engine.tm.gui.fonts.TextMeshData;
@@ -13,28 +15,69 @@ public class TextMaster {
 
 	private Loader loader;
 	private FontRenderer renderer;
-	private Map<FontType, List<GUIText>> textMap = new HashMap<FontType, List<GUIText>>();
+	private Map<FontType, List<GUIText>> textMap;
 	private FontType font;
 	private TextMeshData data;
-	private int vao;
+	private int vaoID;
 	private List<GUIText> textBatch;
+	private Map<GUIText, GUITextVao> cachedTextVaos;
+	private double lastTextUpdate;
+	private static int cache_hits;
+	private static int cache_misses;
 
 	public TextMaster(Loader loader) {
 		this.loader = loader;
 		renderer = new FontRenderer();
+		lastTextUpdate = GameEngine.getTimer().getLastLoopTime();
+		cachedTextVaos = new HashMap<GUIText, GUITextVao>();
+		cache_hits = cache_misses = 0;
+		initMap();
+	}
+
+	public void prepare() {
+		clearTextMap();
+		initMap();
+	}
+
+	public void initMap() {
+		textMap = new HashMap<FontType, List<GUIText>>();
 	}
 
 	public void loadText(GUIText guiText) {
+
 		font = guiText.getFont();
-		data = font.loadText(guiText);		
-		vao = loader.loadToVAO(data.getVertexPositions(), data.getTextureCoords());
-		guiText.setMeshInfo(vao, data.getVertexCount());
+		data = font.loadText(guiText);
+		GUITextVao guiTextVaoCached = cachedTextVaos.get(guiText);
+
+		if (isCacheHit(guiTextVaoCached, data)) {
+			data = guiTextVaoCached.getTextMeshData();
+			vaoID = guiTextVaoCached.getVaoID();
+			cache_hits++;
+		} else {
+			vaoID = loader.loadToVAO(data.getVertexPositions(), data.getTextureCoords()); // memory leak
+			GUITextVao guiTextVaoNew = new GUITextVao(guiText, data, vaoID);
+			cachedTextVaos.put(guiText, guiTextVaoNew);
+			lastTextUpdate = GameEngine.getTimer().getLastLoopTime();
+			cache_misses++;
+		}
+
+		guiText.setMeshInfo(vaoID, data.getVertexCount());
 		textBatch = textMap.get(font);
 		if (textBatch == null) {
 			textBatch = new ArrayList<GUIText>();
 			textMap.put(font, textBatch);
 		}
 		textBatch.add(guiText);
+	}
+
+	private boolean isCacheHit(GUITextVao guiTextVaoCached, TextMeshData data) {
+		if (guiTextVaoCached == null) return false;
+		if (GameEngine.getTimer().getLastLoopTime() - lastTextUpdate > 1) return false;
+		if (data.getVertexPositions().length == guiTextVaoCached.getTextMeshData().getVertexPositions().length ||
+			data.getTextureCoords().length == guiTextVaoCached.getTextMeshData().getTextureCoords().length) {
+			return true;
+		}
+		return false;
 	}
 
 	public void removeText(GUIText guiText) {
@@ -50,6 +93,7 @@ public class TextMaster {
 
 	public void clearTextMap() {
 		textMap.clear();
+		textMap = null;
 	}
 
 	public void render() {

@@ -11,7 +11,7 @@ public class Main {
 
 	private static int width = 0;
 	private static int height = 0;
-	private static String app = "ThinMatrixLowPoly"; // ThinMatrixLowPoly, ThinMatrix, Game3D, Game2D, Frogger
+	private static String app = "ThinMatrixLP"; // ThinMatrixLP, ThinMatrix, Game3D, Game2D, Frogger
 
     public static void main(String[] args) {
         try {
@@ -24,7 +24,7 @@ public class Main {
             opts.compatibleProfile = true;
 
 			switch (app) {
-			case "ThinMatrixLowPoly":
+			case "ThinMatrixLP":
 				gameLogic = new ThinMatrixLowPoly();
 				opts.mode3D = true;
 				opts.cullFace = true;

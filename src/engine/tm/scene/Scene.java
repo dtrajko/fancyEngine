@@ -83,7 +83,7 @@ public class Scene implements IScene {
 
 	private FontType font_1;
 	private String[] lines;
-	private GUIText[] text;
+	private GUIText[] guiTexts;
 
 	private ParticleTexture particleTexture;
 	private ParticleSystemShoot particleSystemShoot;
@@ -255,7 +255,59 @@ public class Scene implements IScene {
 	private void setupText() {
 		font_1 = new FontType(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/arial.png"), WorldSettings.FONTS_DIR + "/arial.fnt");
 		lines = new String[10];
-		text = new GUIText[10];
+		guiTexts = new GUIText[10];
+		float offsetX = 0.01f;
+		float offsetY = 0.74f;
+		Vector3f color = new Vector3f(1, 1, 1);
+		guiTexts[0] = new GUIText(lines[0], 1, font_1, new Vector2f(offsetX, offsetY), 1f, false).setColor(color);
+		guiTexts[1] = new GUIText(lines[1], 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
+		guiTexts[2] = new GUIText(lines[2], 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
+		guiTexts[3] = new GUIText(lines[3], 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
+		guiTexts[4] = new GUIText(lines[4], 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
+		guiTexts[5] = new GUIText(lines[5], 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
+		guiTexts[6] = new GUIText(lines[6], 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
+		guiTexts[7] = new GUIText(lines[7], 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
+	}
+
+	private void updateText() {
+
+		textMaster.removeText(guiTexts[0]);
+		textMaster.removeText(guiTexts[1]);
+		textMaster.removeText(guiTexts[2]);
+		textMaster.removeText(guiTexts[3]);
+		textMaster.removeText(guiTexts[4]);
+		textMaster.removeText(guiTexts[5]);
+		textMaster.removeText(guiTexts[6]);
+		textMaster.removeText(guiTexts[7]);
+		textMaster.prepare();
+
+		Camera camera = (Camera) this.camera;
+		lines[0] = "FPS: " + GameEngine.getFPS() + " / " + GameEngine.TARGET_FPS;
+		lines[1] = "Player role: " + (fireMode ? "Warrior" : "Wizard");
+		lines[2] = "Player position:  " + (int) player.getPosition().x + "  " + (int) player.getPosition().y + "  " + (int) player.getPosition().z;
+		lines[3] = "Player rotation:  " + (int) player.getRotX() + "  " + Maths.angleTo360Range((int) player.getRotY()) + "  " + (int) player.getRotZ();
+		lines[4] = "Camera position:  " + (int) camera.getPosition().x + "  " + (int) camera.getPosition().y + "  " + (int) camera.getPosition().z;
+		lines[5] = "Camera rotation  [ pitch: " + (int) camera.getRotation().x + "  yaw: " + Maths.angleTo360Range((int) camera.getRotation().y) + "  roll: " + (int) camera.getRotation().z + " ]";
+		lines[6] = "Entities spawned:  " + getEntitiesCount();
+		lines[7] = "Particles active:  " + ParticleMaster.getParticlesCount();
+
+		guiTexts[0].setTextString(lines[0]);
+		guiTexts[1].setTextString(lines[1]);
+		guiTexts[2].setTextString(lines[2]);
+		guiTexts[3].setTextString(lines[3]);
+		guiTexts[4].setTextString(lines[4]);
+		guiTexts[5].setTextString(lines[5]);
+		guiTexts[6].setTextString(lines[6]);
+		guiTexts[7].setTextString(lines[7]);
+
+		textMaster.loadText(guiTexts[0]);
+		textMaster.loadText(guiTexts[1]);
+		textMaster.loadText(guiTexts[2]);
+		textMaster.loadText(guiTexts[3]);
+		textMaster.loadText(guiTexts[4]);
+		textMaster.loadText(guiTexts[5]);
+		textMaster.loadText(guiTexts[6]);
+		textMaster.loadText(guiTexts[7]);
 	}
 
 	public void processEntity(Entity entity) {
@@ -404,45 +456,6 @@ public class Scene implements IScene {
 			Vector3f playerDirection = new Vector3f(playerDX, playerDY, playerDZ);
 			particleSystemShoot.generateParticles(camera, new Vector3f(coordX, coordY, coordZ), playerDirection);
 		}
-	}
-
-	private void updateText() {
-		Camera camera = (Camera) this.camera;
-		textMaster.removeText(text[0]);
-		textMaster.removeText(text[1]);
-		textMaster.removeText(text[2]);
-		textMaster.removeText(text[3]);
-		textMaster.removeText(text[4]);
-		textMaster.removeText(text[5]);
-		textMaster.removeText(text[6]);
-		textMaster.removeText(text[7]);
-		float offsetX = 0.01f;
-		float offsetY = 0.74f;
-		Vector3f color = new Vector3f(1, 1, 1);
-		lines[0] = "FPS: " + GameEngine.getFPS() + " / " + GameEngine.TARGET_FPS;
-		lines[1] = "Player role: " + (fireMode ? "Warrior" : "Wizard");
-		lines[2] = "Player position:  " + (int) player.getPosition().x + "  " + (int) player.getPosition().y + "  " + (int) player.getPosition().z;
-		lines[3] = "Player rotation:  " + (int) player.getRotX() + "  " + Maths.angleTo360Range((int) player.getRotY()) + "  " + (int) player.getRotZ();
-		lines[4] = "Camera position:  " + (int) camera.getPosition().x + "  " + (int) camera.getPosition().y + "  " + (int) camera.getPosition().z;
-		lines[5] = "Camera rotation  [ pitch: " + (int) camera.getRotation().x + "  yaw: " + Maths.angleTo360Range((int) camera.getRotation().y) + "  roll: " + (int) camera.getRotation().z + " ]";
-		lines[6] = "Entities spawned:  " + getEntitiesCount();
-		lines[7] = "Particles active:  " + ParticleMaster.getParticlesCount();
-		text[0] = new GUIText(lines[0], 1, font_1, new Vector2f(offsetX, offsetY), 1f, false).setColor(color);
-		text[1] = new GUIText(lines[1], 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
-		text[2] = new GUIText(lines[2], 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
-		text[3] = new GUIText(lines[3], 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
-		text[4] = new GUIText(lines[4], 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
-		text[5] = new GUIText(lines[5], 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
-		text[6] = new GUIText(lines[6], 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
-		text[7] = new GUIText(lines[7], 1, font_1, new Vector2f(offsetX, offsetY += 0.03f), 1f, false).setColor(color);
-		textMaster.loadText(text[0]);
-		textMaster.loadText(text[1]);
-		textMaster.loadText(text[2]);
-		textMaster.loadText(text[3]);
-		textMaster.loadText(text[4]);
-		textMaster.loadText(text[5]);
-		textMaster.loadText(text[6]);
-		textMaster.loadText(text[7]);
 	}
 
 	public int getEntitiesCount() {

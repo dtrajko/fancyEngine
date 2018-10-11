@@ -67,6 +67,13 @@ public class GUIText {
 	}
 
 	/**
+	 * @return The string of text.
+	 */
+	protected String getTextString() {
+		return this.textString;
+	}
+
+	/**
 	 * Remove the text from the screen.
 	 */
 	public void remove(TextMaster textMaster) {
@@ -184,12 +191,4 @@ public class GUIText {
 	protected float getMaxLineSize() {
 		return lineMaxSize;
 	}
-
-	/**
-	 * @return The string of text.
-	 */
-	protected String getTextString() {
-		return textString;
-	}
-
 }

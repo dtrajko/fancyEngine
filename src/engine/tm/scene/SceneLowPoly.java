@@ -151,7 +151,7 @@ public class SceneLowPoly implements IScene {
 		updateParticles(input);
 		fireMaster.update();
 		toggleWireframeMode(input);
-		updateText(interval); // memory leak
+		updateText(interval);
 	}
 
 	private void setupTerrainGenerator() {
@@ -528,7 +528,7 @@ public class SceneLowPoly implements IScene {
 	}
 
 	private void updateText(float interval) {
-		Camera camera = (Camera) this.camera;
+
 		textMaster.removeText(guiTexts[0]);
 		textMaster.removeText(guiTexts[1]);
 		textMaster.removeText(guiTexts[2]);
@@ -537,7 +537,9 @@ public class SceneLowPoly implements IScene {
 		textMaster.removeText(guiTexts[5]);
 		textMaster.removeText(guiTexts[6]);
 		textMaster.removeText(guiTexts[7]);
-		textMaster.clearTextMap();
+		textMaster.prepare();
+
+		Camera camera = (Camera) this.camera;
 		lines[0] = "FPS: " + GameEngine.getFPS() + " / " + GameEngine.TARGET_FPS;
 		lines[1] = "Player position:  " + (int) player.getPosition().x + "  " + (int) player.getPosition().y + "  " + (int) player.getPosition().z;
 		lines[2] = "Player rotation:  " + (int) player.getRotX() + "  " + Maths.angleTo360Range((int) player.getRotY()) + "  " + (int) player.getRotZ();
@@ -546,6 +548,7 @@ public class SceneLowPoly implements IScene {
 		lines[5] = "Entities spawned:  " + getEntitiesCount();
 		lines[6] = "Particles active:  " + ParticleMaster.getParticlesCount();
 		lines[7] = "Visible terrain chunks: " + infiniteTerrainManager.getVisibleTerrainChunks().size();
+
 		guiTexts[0].setTextString(lines[0]);
 		guiTexts[1].setTextString(lines[1]);
 		guiTexts[2].setTextString(lines[2]);
@@ -554,6 +557,7 @@ public class SceneLowPoly implements IScene {
 		guiTexts[5].setTextString(lines[5]);
 		guiTexts[6].setTextString(lines[6]);
 		guiTexts[7].setTextString(lines[7]);
+
 		textMaster.loadText(guiTexts[0]);
 		textMaster.loadText(guiTexts[1]);
 		textMaster.loadText(guiTexts[2]);
