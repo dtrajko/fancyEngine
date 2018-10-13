@@ -1,7 +1,6 @@
 package engine.tm.hybridTerrain;
 
 import java.nio.ByteBuffer;
-
 import org.joml.Vector3f;
 import engine.tm.settings.WorldSettingsLowPoly;
 import engine.tm.toolbox.Maths;
@@ -20,7 +19,8 @@ public class GridSquare {
 	private float scale;
 
 	public GridSquare(int row, int col, float[][] heights, Color[][] colors, float scale) {
-		this.positions = calculateCornerPositions(col, row, heights, scale);
+		this.scale = scale;
+		this.positions = calculateCornerPositions(col, row, heights);
 		this.colors = calculateCornerColors(col, row, colors);
 		this.lastIndex = heights.length - 2;
 		this.row = row;
@@ -28,7 +28,6 @@ public class GridSquare {
 		boolean rightHanded = col % 2 != row % 2;
 		this.normalLeft = Maths.calcNormal(positions[0], positions[1], positions[rightHanded ? 3 : 2]);
 		this.normalRight = Maths.calcNormal(positions[2], positions[rightHanded ? 0 : 1], positions[3]);
-		this.scale = scale;
 	}
 
 	public void storeSquareData(ByteBuffer buffer) {
@@ -54,7 +53,7 @@ public class GridSquare {
 		return cornerCols;
 	}
 
-	private Vector3f[] calculateCornerPositions(int col, int row, float[][] heights, float scale) {
+	private Vector3f[] calculateCornerPositions(int col, int row, float[][] heights) {
 		Vector3f[] vertices = new Vector3f[4];
 		vertices[0] = new Vector3f(col, heights[row][col], row);
 		vertices[1] = new Vector3f(col, heights[row + 1][col], row + 1);

@@ -33,7 +33,7 @@ public class GameEngine implements Runnable {
     public GameEngine() {
         this.window = null;
         this.gameLoopThread = null;
-        this.timer = null;
+        timer = new Timer();
         this.gameLogic = null;
         this.input = null;
     }

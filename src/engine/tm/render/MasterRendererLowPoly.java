@@ -263,8 +263,7 @@ public class MasterRendererLowPoly implements IMasterRenderer {
 	 * @see engine.tm.render.IMasterRenderer#cleanUp(engine.IScene)
 	 */
 	@Override
-	public void cleanUp(IScene scene) {
-		scene.cleanUp();
+	public void cleanUp() {
 		terrainRendererLowPoly.cleanUp();
 		waterRendererLowPoly.cleanUp();
 		refractionFbo.delete();

@@ -53,7 +53,6 @@ public class Game2D implements IGameLogic {
 		// beginLevel();
 	}
 
-	@Override
 	public void initGui() {
 		sheet = new TileSheet("textures/game2D/sheets/lives", 3);
 	}
@@ -163,7 +162,6 @@ public class Game2D implements IGameLogic {
 		level.cleanup();
 	}
 
-	@Override
 	public SoundManager getSoundManager() {
 		return soundMgr;
 	}

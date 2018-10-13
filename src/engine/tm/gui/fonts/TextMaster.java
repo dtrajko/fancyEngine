@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import engine.GameEngine;
 import engine.tm.gui.fonts.FontType;
 import engine.tm.gui.fonts.GUIText;
@@ -20,7 +19,7 @@ public class TextMaster {
 	private TextMeshData data;
 	private int vaoID;
 	private List<GUIText> textBatch;
-	private Map<GUIText, GUITextVao> cachedTextVaos;
+	private Map<GUIText, GUITextVaoCache> cachedTextVaos;
 	private double lastTextUpdate;
 	private static int cache_hits;
 	private static int cache_misses;
@@ -29,7 +28,7 @@ public class TextMaster {
 		this.loader = loader;
 		renderer = new FontRenderer();
 		lastTextUpdate = GameEngine.getTimer().getLastLoopTime();
-		cachedTextVaos = new HashMap<GUIText, GUITextVao>();
+		cachedTextVaos = new HashMap<GUIText, GUITextVaoCache>();
 		cache_hits = cache_misses = 0;
 		initMap();
 	}
@@ -47,16 +46,16 @@ public class TextMaster {
 
 		font = guiText.getFont();
 		data = font.loadText(guiText);
-		GUITextVao guiTextVaoCached = cachedTextVaos.get(guiText);
+		GUITextVaoCache guiTextVaoCache = cachedTextVaos.get(guiText);
 
-		if (isCacheHit(guiTextVaoCached, data)) {
-			data = guiTextVaoCached.getTextMeshData();
-			vaoID = guiTextVaoCached.getVaoID();
+		if (isCacheHit(guiTextVaoCache, data)) {
+			data = guiTextVaoCache.getTextMeshData();
+			vaoID = guiTextVaoCache.getVaoID();
 			cache_hits++;
 		} else {
 			vaoID = loader.loadToVAO(data.getVertexPositions(), data.getTextureCoords()); // memory leak
-			GUITextVao guiTextVaoNew = new GUITextVao(guiText, data, vaoID);
-			cachedTextVaos.put(guiText, guiTextVaoNew);
+			GUITextVaoCache guiTextVaoCacheNew = new GUITextVaoCache(guiText, data, vaoID);
+			cachedTextVaos.put(guiText, guiTextVaoCacheNew);
 			lastTextUpdate = GameEngine.getTimer().getLastLoopTime();
 			cache_misses++;
 		}
@@ -70,7 +69,7 @@ public class TextMaster {
 		textBatch.add(guiText);
 	}
 
-	private boolean isCacheHit(GUITextVao guiTextVaoCached, TextMeshData data) {
+	private boolean isCacheHit(GUITextVaoCache guiTextVaoCached, TextMeshData data) {
 		if (guiTextVaoCached == null) return false;
 		if (GameEngine.getTimer().getLastLoopTime() - lastTextUpdate > 1) return false;
 		if (data.getVertexPositions().length == guiTextVaoCached.getTextMeshData().getVertexPositions().length ||

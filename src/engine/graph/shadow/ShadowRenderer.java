@@ -8,12 +8,10 @@ import config.Config;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE2;
 import static org.lwjgl.opengl.GL30.*;
-
 import engine.Scene;
 import engine.SceneLight;
 import engine.Utils;
 import engine.Window;
-import engine.graph.Camera;
 import engine.graph.InstancedMesh;
 import engine.graph.Mesh;
 import engine.graph.Renderer;

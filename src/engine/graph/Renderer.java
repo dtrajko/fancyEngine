@@ -27,12 +27,13 @@ import engine.graph.shadow.ShadowRenderer;
 import engine.gui.GuiManager;
 import engine.gui.GuiRenderer;
 import engine.interfaces.ICamera;
+import engine.interfaces.IMasterRenderer;
 import engine.interfaces.IParticleEmitter;
 import engine.interfaces.IScene;
 import engine.items.GameItem;
 import engine.items.SkyBox;
 
-public class Renderer {
+public class Renderer implements IMasterRenderer {
 
     /**
      * Field of View in Radians
@@ -43,6 +44,8 @@ public class Renderer {
     private static final int MAX_POINT_LIGHTS = 5;
     private static final int MAX_SPOT_LIGHTS = 5;
 
+    private Matrix4f projectionMatrix;
+    private Window window;
     private final Transformation transformation;
     private final ShadowRenderer shadowRenderer;
 	private ShaderProgram shaderProgram;
@@ -68,6 +71,8 @@ public class Renderer {
     }
 
     public void init(Window window, IScene scene) throws Exception {
+    	this.window = window;
+    	this.projectionMatrix = transformation.getProjectionMatrix(FOV, window.getWidth(), window.getHeight(), Z_NEAR, Z_FAR);
         if (((Scene) scene).isRenderShadows()) {
         	shadowRenderer.init(window);
         }
@@ -220,7 +225,7 @@ public class Renderer {
         shaderProgram.bind();
 
         // Update projection Matrix
-        Matrix4f projectionMatrix = transformation.getProjectionMatrix(FOV, window.getWidth(), window.getHeight(), Z_NEAR, Z_FAR);
+        projectionMatrix = transformation.getProjectionMatrix(FOV, window.getWidth(), window.getHeight(), Z_NEAR, Z_FAR);
         shaderProgram.setUniform("projectionMatrix", projectionMatrix);
 
         // Update view Matrix
@@ -257,7 +262,7 @@ public class Renderer {
         shaderProgram.bind();
         
         // Update projection Matrix
-        Matrix4f projectionMatrix = transformation.getProjectionMatrix(FOV, window.getWidth(), window.getHeight(), Z_NEAR, Z_FAR);
+        projectionMatrix = transformation.getProjectionMatrix(FOV, window.getWidth(), window.getHeight(), Z_NEAR, Z_FAR);
         shaderProgram.setUniform("projectionMatrix", projectionMatrix);
 
         // Update view Matrix
@@ -337,7 +342,7 @@ public class Renderer {
         particlesShaderProgram.bind();
 
         particlesShaderProgram.setUniform("texture_sampler", 0);
-        Matrix4f projectionMatrix = transformation.getProjectionMatrix();
+        projectionMatrix = transformation.getProjectionMatrix();
         particlesShaderProgram.setUniform("projectionMatrix", projectionMatrix);
 
         Matrix4f viewMatrix = transformation.getViewMatrix();
@@ -421,7 +426,7 @@ public class Renderer {
 
             skyBoxShaderProgram.setUniform("texture_sampler", 0);
 
-            Matrix4f projectionMatrix = transformation.getProjectionMatrix();
+            projectionMatrix = transformation.getProjectionMatrix();
             skyBoxShaderProgram.setUniform("projectionMatrix", projectionMatrix);
             Matrix4f viewMatrix = transformation.getViewMatrix();
             float m30 = viewMatrix.m30();
@@ -513,7 +518,7 @@ public class Renderer {
         sceneShaderProgram.bind();
 
         Matrix4f viewMatrix = camera.getViewMatrix();
-        Matrix4f projectionMatrix = window.getProjectionMatrix();
+        projectionMatrix = window.getProjectionMatrix();
         sceneShaderProgram.setUniform("viewMatrix", viewMatrix);
         sceneShaderProgram.setUniform("projectionMatrix", projectionMatrix);
 
@@ -627,12 +632,36 @@ public class Renderer {
         }        
     }
 
-    public void cleanUp() {
+	@Override
+	public void init(IScene scene) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void render(Window window, IScene scene) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void prepare() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void cleanUp() {
         if (shaderProgram != null) {
             shaderProgram.cleanup();
         }
         if (hudShaderProgram != null) {
             hudShaderProgram.cleanup();
         }
-    }
+	}
+
+	@Override
+	public Matrix4f getProjectionMatrix() {
+		return projectionMatrix;
+	}
 }

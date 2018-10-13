@@ -25,6 +25,7 @@ import engine.graph.Input;
 import engine.graph.InstancedMesh;
 import engine.graph.Material;
 import engine.graph.Mesh;
+import engine.graph.Renderer;
 import engine.graph.Texture;
 import engine.graph.lights.DirectionalLight;
 import engine.graph.particles.ExplosionParticleEmitter;
@@ -34,6 +35,7 @@ import engine.gui.GuiElement;
 import engine.gui.GuiManager;
 import engine.interfaces.ICamera;
 import engine.interfaces.IGameLogic;
+import engine.interfaces.IMasterRenderer;
 import engine.interfaces.IParticleEmitter;
 import engine.interfaces.IPlayer;
 import engine.interfaces.IScene;
@@ -58,6 +60,7 @@ import game.Game3D;
 
 public class Scene implements IScene {
 
+	private final Renderer renderer;
     private final Map<Mesh, List<GameItem>> meshMap;
     private final Map<InstancedMesh, List<GameItem>> instancedMeshMap;
     private SkyBox skyBox;
@@ -75,11 +78,16 @@ public class Scene implements IScene {
     };
 
     public Scene() {
+    	renderer = new Renderer();
         meshMap = new HashMap<Mesh, List<GameItem>>();
         instancedMeshMap = new HashMap<InstancedMesh, List<GameItem>>();
         fog = Fog.NOFOG;
         renderShadows = true;
     }
+
+	@Override
+	public void init() {
+	}
 
 	@Override
 	public void resetScene(Window window, ICamera camera, IGameLogic game) {
@@ -91,6 +99,8 @@ public class Scene implements IScene {
 	}
 
     public void init(Window window, Camera camera, HashMap<String, Mesh> meshTypesMap, SoundManager soundMgr, GuiManager guiManager) throws Exception {
+
+    	renderer.init(window, this);
 
         Mesh meshGrass = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
         meshTypesMap.put("GRASS", meshGrass.setLabel("GRASS"));
@@ -280,6 +290,17 @@ public class Scene implements IScene {
     	}
     }
 
+	@Override
+	public IMasterRenderer getMasterRenderer() {
+		return renderer;
+	}
+
+	public void render(Window window, Camera camera, GuiManager guiManager, boolean sceneChanged) {
+        renderer.render(window, camera, this, sceneChanged);
+        renderer.renderGui(guiManager, window);
+        renderer.renderGuiText(guiManager);
+	}
+
 	private void setupLights() {
 
         SceneLight sceneLight = new SceneLight();
@@ -450,6 +471,7 @@ public class Scene implements IScene {
                 particleEmitter.cleanUp();
             }
         }
+        renderer.cleanUp();
     }
 
     public SkyBox getSkyBox() {

@@ -16,16 +16,14 @@ public class TerrainLowPoly implements ITerrain {
 	private float x;
 	private float z;
 	private float scale;
-	private int LOD;
 
-	public TerrainLowPoly(Vao vao, int vertexCount, float[][] heights, float scale, int LOD) {
+	public TerrainLowPoly(Vao vao, int vertexCount, float[][] heights, float scale) {
 		this.vao = vao;
 		this.vertexCount = vertexCount;
 		this.heights = heights;
 		this.x = 0;
 		this.z = 0;
 		this.scale = scale;
-		this.LOD = LOD;
 	}
 
 	public Vao getVao() {

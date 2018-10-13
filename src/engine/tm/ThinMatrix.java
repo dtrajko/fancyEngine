@@ -7,9 +7,7 @@ import engine.graph.Input;
 import engine.interfaces.IGameLogic;
 import engine.interfaces.IPlayer;
 import engine.interfaces.IScene;
-import engine.sound.SoundManager;
 import engine.tm.entities.Camera;
-import engine.tm.gui.fonts.TextMaster;
 import engine.tm.particles.ParticleMaster;
 import engine.tm.scene.Scene;
 import engine.tm.toolbox.MousePicker;
@@ -63,18 +61,9 @@ public class ThinMatrix implements IGameLogic {
 	}
 
 	@Override
-	public SoundManager getSoundManager() {
-		return null;
-	}
-
-	@Override
-	public void initGui() {
-
-	}
-
-	@Override
 	public void cleanUp() {
 		ParticleMaster.cleanUp();
-		((Scene) scene).getMasterRenderer().cleanUp(scene);
+		scene.cleanUp();
+		((Scene) scene).getMasterRenderer().cleanUp();
 	}
 }

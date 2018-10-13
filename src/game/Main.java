@@ -2,6 +2,7 @@ package game;
 
 import engine.GameEngine;
 import engine.Window;
+import engine.helloWorld.HelloWorld;
 import engine.interfaces.IGameLogic;
 import engine.tm.ThinMatrix;
 import engine.tm.ThinMatrixLowPoly;
@@ -11,7 +12,7 @@ public class Main {
 
 	private static int width = 0;
 	private static int height = 0;
-	private static String app = "ThinMatrixLP"; // ThinMatrixLP, ThinMatrix, Game3D, Game2D, Frogger
+	private static String app = "HelloWorld"; // ThinMatrixLP, ThinMatrix, Game3D, Game2D, Frogger, HelloWorld
 
     public static void main(String[] args) {
         try {
@@ -42,6 +43,12 @@ public class Main {
 				break;
 			case "Game3D":
 				gameLogic = new Game3D();
+				opts.mode3D = true;
+				opts.antialiasing = true;
+				width = height = 0;
+				break;
+			case "HelloWorld":
+				gameLogic = new HelloWorld();
 				opts.mode3D = true;
 				opts.antialiasing = true;
 				width = height = 0;

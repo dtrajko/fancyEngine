@@ -1,16 +1,13 @@
-package engine.tm;
+package engine.helloWorld;
 
 import org.lwjgl.glfw.GLFW;
+
 import engine.Window;
 import engine.graph.Input;
 import engine.interfaces.IGameLogic;
-import engine.interfaces.IPlayer;
 import engine.interfaces.IScene;
-import engine.tm.entities.Camera;
-import engine.tm.particles.ParticleMaster;
-import engine.tm.scene.SceneLowPoly;
 
-public class ThinMatrixLowPoly implements IGameLogic {
+public class HelloWorld implements IGameLogic {
 
 	private Window window;
 	private IScene scene;
@@ -18,9 +15,8 @@ public class ThinMatrixLowPoly implements IGameLogic {
 
 	@Override
 	public void init(Window window) throws Exception {
-		scene = new SceneLowPoly();
-		((SceneLowPoly) scene).init();
-		ParticleMaster.init(scene, ((SceneLowPoly) scene).getMasterRenderer().getProjectionMatrix());
+		scene = new SceneHelloWorld();
+		scene.init();
 	}
 
 	@Override
@@ -33,11 +29,7 @@ public class ThinMatrixLowPoly implements IGameLogic {
 
 	@Override
 	public void update(float interval, Input input) {
-		IPlayer player = ((SceneLowPoly) scene).getPlayer();
 		scene.update(interval, input);
-		player.move(interval, input, scene);
-		((Camera) scene.getCamera()).moveWithPlayer(scene, input);
-		ParticleMaster.update(scene);
 	}
 
 	@Override
@@ -57,8 +49,6 @@ public class ThinMatrixLowPoly implements IGameLogic {
 
 	@Override
 	public void cleanUp() {
-		ParticleMaster.cleanUp();
 		scene.cleanUp();
-		scene.getMasterRenderer().cleanUp();
 	}
 }

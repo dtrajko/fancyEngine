@@ -1,12 +1,12 @@
 package engine.tm.gui.fonts;
 
-public class GUITextVao {
+public class GUITextVaoCache {
 
 	private GUIText guiText;
 	private TextMeshData meshData;
 	private int vaoID;
 
-	public GUITextVao(GUIText guiText, TextMeshData meshData, int vaoID) {
+	public GUITextVaoCache(GUIText guiText, TextMeshData meshData, int vaoID) {
 		this.guiText = guiText;
 		this.meshData = meshData;
 		this.vaoID = vaoID;

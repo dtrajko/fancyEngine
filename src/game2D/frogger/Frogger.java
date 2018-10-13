@@ -70,7 +70,6 @@ public class Frogger implements IGameLogic {
 		initGui();
 	}
 
-	@Override
 	public void initGui() {
 		font = FontFactory.getFont("kenney", window);
 	}

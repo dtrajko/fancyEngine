@@ -9,7 +9,6 @@ import engine.Window;
 import engine.graph.Camera;
 import engine.graph.Mesh;
 import engine.graph.Input;
-import engine.graph.Renderer;
 import engine.gui.GuiElement;
 import engine.gui.GuiManager;
 import engine.interfaces.IGameLogic;
@@ -21,7 +20,6 @@ public class Game3D implements IGameLogic {
 	private static final boolean SHADOWS_ENABLED = false;
     private static final float MOUSE_SENSITIVITY = 0.2f;
     private final Vector3f cameraInc;
-    private final Renderer renderer;
     private final Camera camera;
     private static IScene scene;
     private static final float CAMERA_POS_STEP = 0.1f;
@@ -46,7 +44,6 @@ public class Game3D implements IGameLogic {
     private static HashMap<String, Mesh> meshTypesMap = new HashMap<String, Mesh>();
 
     public Game3D() {
-        renderer = new Renderer();
         camera = new Camera();
         soundMgr = new SoundManager();
         guiManager = new GuiManager();
@@ -59,15 +56,10 @@ public class Game3D implements IGameLogic {
     public void init(Window win) throws Exception {
     	window = win;
         scene = new Scene();
-        renderer.init(window, scene);
         ((Scene) scene).init(window, camera, meshTypesMap, soundMgr, guiManager);
         ((Scene) scene).setRenderShadows(SHADOWS_ENABLED);
         selectDetectorCamera = new CameraBoxSelectionDetector();
     }
-
-	@Override
-	public void initGui() {
-	}
 
     @Override
     public void render(Window window) {
@@ -75,9 +67,7 @@ public class Game3D implements IGameLogic {
             sceneChanged = true;
             firstTime = false;
         }
-        renderer.render(window, camera, scene, sceneChanged);
-        renderer.renderGui(guiManager, window);
-        renderer.renderGuiText(guiManager);
+        ((Scene) scene).render(window, camera, guiManager, sceneChanged);
     }
 
     @Override
@@ -237,7 +227,6 @@ public class Game3D implements IGameLogic {
     public void cleanUp() {
 		// scene.save();
 		scene.cleanUp();
-		renderer.cleanUp();
 		soundMgr.cleanUp();
     }
 
@@ -260,7 +249,6 @@ public class Game3D implements IGameLogic {
 		return input;
 	}
 
-	@Override
 	public SoundManager getSoundManager() {
 		return soundMgr;
 	}

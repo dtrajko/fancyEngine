@@ -278,8 +278,7 @@ public class MasterRenderer implements IMasterRenderer {
 	 * @see engine.tm.render.IMasterRenderer#cleanUp(engine.IScene)
 	 */
 	@Override
-	public void cleanUp(IScene scene) {
-		scene.cleanUp();
+	public void cleanUp() {
 		terrainRenderer.cleanUp();
 		entityRenderer.cleanUp();
 		normalMappingRenderer.cleanUp();

@@ -20,7 +20,6 @@ public class AnimatedPlayer extends AnimatedModel implements IPlayer {
 	private static final float TURN_SPEED = 10;
 	private static final float GRAVITY = -2.0f; // -2.0f;
 	private static final float JUMP_POWER = 2.0f;
-	private static final float TERRAIN_HEIGHT = 0;
 	private float currentSpeed = 0;
 	private float currentTurnSpeed = 0;
 	private float upwardsSpeed = 0;

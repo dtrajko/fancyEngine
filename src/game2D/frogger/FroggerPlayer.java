@@ -57,7 +57,7 @@ public class FroggerPlayer extends Player {
 	}
 
 	private void setupSound(IGameLogic game) {
-		this.soundMgr = game.getSoundManager();
+		this.soundMgr = ((Frogger) game).getSoundManager();
 		try {
 			soundMgr.init();
 			soundMgr.setAttenuationModel(AL11.AL_EXPONENT_DISTANCE);

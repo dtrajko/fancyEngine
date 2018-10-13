@@ -2,7 +2,6 @@ package engine.interfaces;
 
 import engine.Window;
 import engine.graph.Input;
-import engine.sound.SoundManager;
 
 public interface IGameLogic {
 
@@ -12,7 +11,5 @@ public interface IGameLogic {
     void render(Window window);
 	Window getWindow();
 	Input getInput();
-	SoundManager getSoundManager();
-	void initGui();
 	void cleanUp();
 }

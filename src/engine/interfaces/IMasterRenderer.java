@@ -1,9 +1,7 @@
 package engine.interfaces;
 
 import org.joml.Matrix4f;
-
 import engine.Window;
-import engine.tm.scene.SceneLowPoly;
 
 public interface IMasterRenderer {
 
@@ -15,9 +13,9 @@ public interface IMasterRenderer {
 	float BLUE = 0.996f;
 
 	void init(IScene scene);
-	void render(Window window, IScene scene);
-	void prepare();
-	void cleanUp(IScene scene);
 	Matrix4f getProjectionMatrix();
+	void prepare();
+	void render(Window window, IScene scene);
+	void cleanUp();
 
 }
