@@ -1,7 +1,8 @@
-package engine.tm.shaders;
+package engine.helloWorld;
 
 import org.joml.Matrix4f;
 import engine.tm.settings.WorldSettings;
+import engine.tm.shaders.ShaderProgram;
 
 public class SimpleShader extends ShaderProgram {
 

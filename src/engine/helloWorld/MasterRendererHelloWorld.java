@@ -11,7 +11,6 @@ import engine.interfaces.IScene;
 import engine.tm.entities.Entity;
 import engine.tm.models.RawModel;
 import engine.tm.models.TexturedModel;
-import engine.tm.shaders.SimpleShader;
 import engine.tm.toolbox.Maths;
 
 public class MasterRendererHelloWorld implements IMasterRenderer {
