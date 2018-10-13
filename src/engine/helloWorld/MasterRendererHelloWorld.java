@@ -2,17 +2,34 @@ package engine.helloWorld;
 
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
-
+import org.lwjgl.opengl.GL13;
+import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL30;
 import engine.Window;
 import engine.interfaces.IMasterRenderer;
 import engine.interfaces.IScene;
+import engine.tm.entities.Entity;
+import engine.tm.models.RawModel;
+import engine.tm.models.TexturedModel;
+import engine.tm.shaders.SimpleShader;
+import engine.tm.toolbox.Maths;
 
 public class MasterRendererHelloWorld implements IMasterRenderer {
 
+	float RED = 0.2f;
+	float GREEN = 0.8f;
+	float BLUE = 1.0f;
+
+	private SimpleShader shader;
 	private static Matrix4f projectionMatrix;
 
 	@Override
 	public void init(IScene scene) {
+		shader = new SimpleShader();
+		projectionMatrix = createProjectionMatrix();
+		shader.start();
+		shader.loadProjectionMatrix(projectionMatrix);
+		shader.stop();
 	}
 
 	@Override
@@ -24,14 +41,37 @@ public class MasterRendererHelloWorld implements IMasterRenderer {
 	}
 
 	@Override
+	public void render(Window window, IScene scene) {
+		GL11.glViewport(0, 0, window.getWidth(), window.getHeight());
+		prepare();
+		shader.loadViewMatrix(scene.getCamera().getViewMatrix());
+		Entity entity = ((SceneHelloWorld) scene).getEntity();
+		renderModel(entity, shader);			
+	}
+
+	@Override
 	public void prepare() {
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 		GL11.glClearColor(RED, GREEN, BLUE, 1.0f);
+		shader.start();
 	}
 
-	@Override
-	public void render(Window window, IScene scene) {
+	private void renderModel(Entity entity, SimpleShader shader) {
+		TexturedModel texturedModel = entity.getTexturedModel();
+		RawModel rawModel = texturedModel.getRawModel();
+		GL30.glBindVertexArray(rawModel.getVaoID());
+		GL20.glEnableVertexAttribArray(0);
+		GL20.glEnableVertexAttribArray(1);
+		Matrix4f transformationMatrix = Maths.createTransformationMatrix(entity.getPosition(),
+			entity.getRotX(), entity.getRotY(), entity.getRotZ(), entity.getScale());
+		shader.loadTransformationMatrix(transformationMatrix);
+		GL13.glActiveTexture(GL13.GL_TEXTURE0);
+		GL11.glBindTexture(GL13.GL_TEXTURE0, texturedModel.getTexture().getID());
+		GL11.glDrawElements(GL11.GL_TRIANGLES, rawModel.getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
+		GL20.glDisableVertexAttribArray(0);
+		GL20.glDisableVertexAttribArray(1);
+		GL30.glBindVertexArray(0);
 	}
 
 	public static Matrix4f createProjectionMatrix() {
@@ -53,5 +93,6 @@ public class MasterRendererHelloWorld implements IMasterRenderer {
 
 	@Override
 	public void cleanUp() {
+		shader.cleanUp();
 	}
 }

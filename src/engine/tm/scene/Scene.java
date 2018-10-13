@@ -577,6 +577,7 @@ public class Scene implements IScene {
 		flareManager.cleanUp();
 		fireMaster.cleanUp();
 		textMaster.cleanUp();
+		masterRenderer.cleanUp();
 	}
 
 	public Vector3f getLightDirection() {

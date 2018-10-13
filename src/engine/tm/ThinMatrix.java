@@ -64,6 +64,5 @@ public class ThinMatrix implements IGameLogic {
 	public void cleanUp() {
 		ParticleMaster.cleanUp();
 		scene.cleanUp();
-		((Scene) scene).getMasterRenderer().cleanUp();
 	}
 }

@@ -59,6 +59,5 @@ public class ThinMatrixLowPoly implements IGameLogic {
 	public void cleanUp() {
 		ParticleMaster.cleanUp();
 		scene.cleanUp();
-		scene.getMasterRenderer().cleanUp();
 	}
 }
