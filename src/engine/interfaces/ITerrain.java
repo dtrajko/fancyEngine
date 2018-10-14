@@ -8,8 +8,9 @@ public interface ITerrain {
 
 	float getX();
 	float getZ();
-	float getHeightOfTerrain(float coordX, float coordZ);
 	RawModel getModel();
 	TerrainTexturePack getTexturePack();
 	TerrainTexture getBlendMap();
+	float getHeightOfTerrain(float coordX, float coordZ);
+	float getWaterHeight();
 }

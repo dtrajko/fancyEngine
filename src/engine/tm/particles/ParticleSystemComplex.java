@@ -17,9 +17,10 @@ public class ParticleSystemComplex {
 	private ParticleTexture texture;
 	private Random random = new Random();
 	private boolean checkCollision = false;
+	private FireMaster fireMaster;
 
 	public ParticleSystemComplex(ParticleTexture texture, float pps, float speed, float gravityComplient,
-			float lifeLength, float scale, boolean checkCollision) {
+			float lifeLength, float scale, boolean checkCollision, FireMaster fireMaster) {
 		this.texture = texture;
 		this.pps = pps;
 		this.averageSpeed = speed;
@@ -27,6 +28,7 @@ public class ParticleSystemComplex {
 		this.averageLifeLength = lifeLength;
 		this.averageScale = scale;
 		this.checkCollision = checkCollision;
+		this.fireMaster = fireMaster;
 	}
 
 	/**
@@ -90,7 +92,7 @@ public class ParticleSystemComplex {
 		velocity.normalize(generateValue(averageSpeed, speedError));
 		float scale = generateValue(averageScale, scaleError);
 		float lifeLength = generateValue(averageLifeLength, lifeError);
-		new Particle().setActive(this.texture, new Vector3f(center), velocity, gravityComplient, lifeLength,
+		new Particle(fireMaster).setActive(this.texture, new Vector3f(center), velocity, gravityComplient, lifeLength,
 				generateRotation(), scale, checkCollision);
 	}
 

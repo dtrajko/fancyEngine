@@ -156,7 +156,7 @@ public class MasterRendererLowPoly implements IMasterRenderer {
 		prepare();
 		terrainRendererLowPoly.render(scene, lightDirectional, clipPlane, null);
 		entityRenderer.render(scene, clipPlane);
-		scene.getFlareManager().render(scene);
+		((SceneLowPoly) scene).getFlareManager().render(scene);
 		refractionFbo.unbindAfterRender();
 	}
 
@@ -179,7 +179,7 @@ public class MasterRendererLowPoly implements IMasterRenderer {
 			reflectionFbo.getColorBuffer(0), refractionFbo.getColorBuffer(0), refractionFbo.getDepthBuffer());
 		entityRenderer.render(scene, clipPlane);
 		animatedModelRenderer.render((AnimatedModel) player, camera, lightDirection, clipPlane);
-		scene.getFlareManager().render(scene);
+		((SceneLowPoly) scene).getFlareManager().render(scene);
 	}
 
 	/**

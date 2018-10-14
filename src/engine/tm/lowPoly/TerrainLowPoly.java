@@ -96,4 +96,9 @@ public class TerrainLowPoly implements ITerrain {
 	public TerrainTexture getBlendMap() {
 		return null;
 	}
+
+	@Override
+	public float getWaterHeight() {
+		return WorldSettingsLowPoly.WATER_HEIGHT + SceneLowPoly.getWaterLevelOffset();
+	}
 }

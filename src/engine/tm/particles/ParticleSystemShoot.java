@@ -13,14 +13,16 @@ public class ParticleSystemShoot {
 	private Vector3f direction;
 	private Vector3f systemCenter;
 	private ParticleTexture texture;
+	private FireMaster fireMaster;
 
 	public ParticleSystemShoot(ParticleTexture texture, float pps, float speed,
-			float gravityComplient, float lifeLength) {
+			float gravityComplient, float lifeLength, FireMaster fireMaster) {
 		this.texture = texture;
 		this.pps = pps;
 		this.speed = speed;
 		this.gravityComplient = gravityComplient;
 		this.lifeLength = lifeLength;
+		this.fireMaster = fireMaster;
 	}
 
 	public void generateParticles(ICamera camera, Vector3f systemCenter, Vector3f direction) {
@@ -46,6 +48,6 @@ public class ParticleSystemShoot {
 	}
 
 	private void emitParticle(Vector3f center, float scale) {
-		new Particle().setActive(this.texture, new Vector3f(center), center, gravityComplient, lifeLength, 10, scale, true);
+		new Particle(fireMaster).setActive(this.texture, new Vector3f(center), center, gravityComplient, lifeLength, 10, scale, true);
 	}
 }

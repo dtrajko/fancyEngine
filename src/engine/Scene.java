@@ -51,10 +51,8 @@ import engine.sound.SoundSource;
 import engine.tm.entities.Entity;
 import engine.tm.entities.Light;
 import engine.tm.gui.GuiTexture;
-import engine.tm.lensFlare.FlareManager;
 import engine.tm.loaders.Loader;
 import engine.tm.models.TexturedModel;
-import engine.tm.particles.FireMaster;
 import engine.tm.skybox.Skybox;
 import game.Game3D;
 
@@ -729,26 +727,11 @@ public class Scene implements IScene {
 	}
 
 	@Override
-	public FlareManager getFlareManager() {
-		return null;
-	}
-
-	@Override
-	public FireMaster getFireMaster() {
-		return null;
-	}
-
-	@Override
 	public void removeEntity(Entity entity) {
 	}
 
 	@Override
 	public List<Light> getLights() {
 		return null;
-	}
-
-	@Override
-	public float getWaterLevelOffset() {
-		return 0;
 	}
 }

@@ -50,7 +50,7 @@ public class Main {
 			case "HelloWorld":
 				gameLogic = new HelloWorld();
 				opts.mode3D = true;
-				opts.cullFace = true;
+				opts.cullFace = false;
 				opts.antialiasing = true;
 				width = height = 0;
 				break;

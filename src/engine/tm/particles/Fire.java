@@ -16,13 +16,13 @@ public class Fire {
 	private ParticleSystemComplex particleSystemFire;
 	private ParticleSystemComplex particleSystemSmoke;
 
-	public Fire(Vector3f position, Loader loader) {
+	public Fire(Vector3f position, Loader loader, FireMaster fireMaster) {
 		this.position = position;
 		this.startTime = Timer.getTime();
 		particleTextureFire = new ParticleTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/particles/fire.png"), 8, true);
 		particleTextureSmoke = new ParticleTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/particles/smoke.png"), 8, false);
-		particleSystemFire = new ParticleSystemComplex(particleTextureFire, 30f, 20f, 0.0f, 6f, 20f, false);
-		particleSystemSmoke = new ParticleSystemComplex(particleTextureSmoke, 30f, 20f, -10f, 10f, 20f, false);
+		particleSystemFire = new ParticleSystemComplex(particleTextureFire, 30f, 20f, 0.0f, 6f, 20f, false, fireMaster);
+		particleSystemSmoke = new ParticleSystemComplex(particleTextureSmoke, 30f, 20f, -10f, 10f, 20f, false, fireMaster);
 	}
 
 	public void update() {

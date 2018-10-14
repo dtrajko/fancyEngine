@@ -166,4 +166,9 @@ public class TerrainProcedural implements ITerrain {
 	private float getHeight(int x, int z, HeightsGenerator generator) {
 		return generator.generateHeight(x, z);
 	}
+
+	@Override
+	public float getWaterHeight() {
+		return 0;
+	}
 }

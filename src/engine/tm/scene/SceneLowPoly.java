@@ -398,16 +398,16 @@ public class SceneLowPoly implements IScene {
 	private void setupParticles() {
 		fireMode = true;
 		particleTexture = new ParticleTexture(loader.loadTexture(WorldSettingsLowPoly.TEXTURES_DIR + "/particles/particleAtlas.png"), 4, true);
-		particleSystemShoot = new ParticleSystemShoot(particleTexture, 800f, 20f, 0.0f, 0.5f);
+		particleSystemShoot = new ParticleSystemShoot(particleTexture, 800f, 20f, 0.0f, 0.5f, fireMaster);
 	}
 
 	private void updateParticles(Input input) {
 		if (input.isKeyReleased(GLFW.GLFW_KEY_F)) {
 			fireMode = !fireMode;
 			if (fireMode) {
-				particleSystemShoot = new ParticleSystemShoot(particleTexture, 800f, 20f, 0.0f, 0.5f);
+				particleSystemShoot = new ParticleSystemShoot(particleTexture, 800f, 20f, 0.0f, 0.5f, fireMaster);
 			} else {
-				particleSystemShoot = new ParticleSystemShoot(particleTexture, 20f, 50f, -0.25f, 2f); // magic circle around the player
+				particleSystemShoot = new ParticleSystemShoot(particleTexture, 20f, 50f, -0.25f, 2f, fireMaster); // magic circle around the player
 			}
 		}
 		if (input.isMouseButtonDown(GLFW.GLFW_MOUSE_BUTTON_3)) {
@@ -473,7 +473,7 @@ public class SceneLowPoly implements IScene {
 		}
 	}
 
-	public float getWaterLevelOffset() {
+	public static float getWaterLevelOffset() {
 		return waterLevelOffset;
 	}
 
@@ -490,11 +490,6 @@ public class SceneLowPoly implements IScene {
 
 	public IMasterRenderer getMasterRenderer() {
 		return masterRenderer;
-	}
-
-	@Override
-	public FireMaster getFireMaster() {
-		return fireMaster;
 	}
 
 	public FlareManager getFlareManager() {

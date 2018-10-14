@@ -11,12 +11,12 @@ public class ParticleSystemSimple {
 	private float gravityComplient;
 	private float lifeLength;
 	private float scale;
-	
-	private ParticleTexture texture;
 	private boolean checkCollision;
+	private ParticleTexture texture;
+	private FireMaster fireMaster;
 	
 	public ParticleSystemSimple(ParticleTexture texture, float pps, float speed, float gravityComplient,
-			float lifeLength, float scale, boolean checkCollision) {
+			float lifeLength, float scale, boolean checkCollision, FireMaster fireMaster) {
 		this.texture = texture;
 		this.pps = pps;
 		this.speed = speed;
@@ -45,6 +45,6 @@ public class ParticleSystemSimple {
 		Vector3f velocity = new Vector3f(dirX, 1, dirZ);
 		velocity.normalize();
 		velocity.normalize(speed);
-		new Particle().setActive(this.texture, new Vector3f(center), velocity, gravityComplient, lifeLength, 0, scale, checkCollision);
+		new Particle(fireMaster).setActive(this.texture, new Vector3f(center), velocity, gravityComplient, lifeLength, 0, scale, checkCollision);
 	}
 }

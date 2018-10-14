@@ -17,12 +17,10 @@ import engine.tm.entities.Camera;
 import engine.tm.entities.Entity;
 import engine.tm.entities.Light;
 import engine.tm.gui.GuiTexture;
-import engine.tm.lensFlare.FlareManager;
 import engine.tm.loaders.Loader;
 import engine.tm.models.CubeMeshSimple;
 import engine.tm.models.RawModel;
 import engine.tm.models.TexturedModel;
-import engine.tm.particles.FireMaster;
 import engine.tm.settings.WorldSettings;
 import engine.tm.textures.ModelTexture;
 
@@ -119,17 +117,7 @@ public class SceneHelloWorld implements IScene {
 	}
 
 	@Override
-	public FlareManager getFlareManager() {
-		return null;
-	}
-
-	@Override
 	public List<GuiTexture> getGuiElements() {
-		return null;
-	}
-
-	@Override
-	public FireMaster getFireMaster() {
 		return null;
 	}
 
@@ -140,10 +128,5 @@ public class SceneHelloWorld implements IScene {
 	@Override
 	public List<Light> getLights() {
 		return null;
-	}
-
-	@Override
-	public float getWaterLevelOffset() {
-		return 0;
 	}
 }

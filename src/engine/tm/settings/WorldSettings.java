@@ -19,4 +19,5 @@ public class WorldSettings {
 	public static final Vector3f LIGHT_DIR = new Vector3f(0.55f, -0.15f, 0.54f);
 	public static Color LIGHT_COL = new Color(1f, 1f, 1f);
 	public static Vector2f LIGHT_BIAS = new Vector2f(0.6f, 0.8f);
+	public static int WATER_HEIGHT = 0;
 }

@@ -25,8 +25,10 @@ public class Particle {
 	private Vector3f reusableChange = new Vector3f();
 	private boolean alive = false;
 	private boolean checkCollision = false;
+	private FireMaster fireMaster;
 
-	public Particle() {
+	public Particle(FireMaster fireMaster) {
+		this.fireMaster = fireMaster;
 	}
 
 	public void setActive(ParticleTexture texture, Vector3f position, Vector3f velocity, 
@@ -72,7 +74,7 @@ public class Particle {
 			Entity entity = Entity.getEntityInCollisionWith(scene, position.x, position.y, position.z, 5.0f);
 			if (entity instanceof Entity) {
 				Vector3f entPos = entity.getPosition();
-				scene.getFireMaster().startFire(new Vector3f(entPos.x, entPos.y, entPos.z));
+				fireMaster.startFire(new Vector3f(entPos.x, entPos.y, entPos.z));
 				checkCollision = false;
 				scene.removeEntity(entity);
 				stillAlive = false;

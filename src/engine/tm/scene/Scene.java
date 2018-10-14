@@ -434,16 +434,16 @@ public class Scene implements IScene {
 	private void setupParticles() {
 		fireMode = true;
 		particleTexture = new ParticleTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/particles/particleAtlas.png"), 4, true);
-		particleSystemShoot = new ParticleSystemShoot(particleTexture, 400f, 10f, 0.0f, 2f);
+		particleSystemShoot = new ParticleSystemShoot(particleTexture, 400f, 10f, 0.0f, 2f, fireMaster);
 	}
 
 	private void updateParticles(Input input) {
 		if (input.isKeyReleased(GLFW.GLFW_KEY_F)) {
 			fireMode = !fireMode;
 			if (fireMode) {
-				particleSystemShoot = new ParticleSystemShoot(particleTexture, 200f, 60f, 0.0f, 1f);
+				particleSystemShoot = new ParticleSystemShoot(particleTexture, 200f, 60f, 0.0f, 1f, fireMaster);
 			} else {
-				particleSystemShoot = new ParticleSystemShoot(particleTexture, 20f, 50f, -0.25f, 5f); // magic circle around the player
+				particleSystemShoot = new ParticleSystemShoot(particleTexture, 20f, 50f, -0.25f, 5f, fireMaster); // magic circle around the player
 			}
 		}
 		if (input.isMouseButtonDown(GLFW.GLFW_MOUSE_BUTTON_3)) {
@@ -584,8 +584,7 @@ public class Scene implements IScene {
 		return lightDirection;
 	}
 
-	@Override
-	public float getWaterLevelOffset() {
+	public static float getWaterLevelOffset() {
 		return 0;
 	}
 }

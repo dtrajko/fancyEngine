@@ -21,7 +21,7 @@ public class FireMaster {
 
 	public void startFire(Vector3f position) {
 		if (!locations.contains(position) && fires.size() < MAX_FIRES) {
-			Fire fire = new Fire(position, loader);
+			Fire fire = new Fire(position, loader, this);
 			fires.add(fire);
 			locations.add(position);
 		}
