@@ -17,10 +17,6 @@ public class GameEngine implements Runnable {
     private static int displayFPS;
     private String windowTitle;
 
-    public GameEngine(String windowTitle, boolean vSync, Window.WindowOptions opts, IGameLogic gameLogic) throws Exception {
-        this(windowTitle, 0, 0, vSync, opts, gameLogic);
-    }
-
     public GameEngine(String windowTitle, int width, int height, boolean vSync, Window.WindowOptions opts, IGameLogic gameLogic) throws Exception {
         this.windowTitle = windowTitle;
         gameLoopThread = new Thread(this, "GAME_LOOP_THREAD");
@@ -36,6 +32,15 @@ public class GameEngine implements Runnable {
         timer = new Timer();
         this.gameLogic = null;
         this.input = null;
+    }
+
+    protected void init() throws Exception {
+        window.init();
+        timer.init();
+        input.init(window);
+        gameLogic.init(window);
+        lastFps = timer.getTime();
+        fps = 0;
     }
 
     public void start() {
@@ -57,15 +62,6 @@ public class GameEngine implements Runnable {
         } finally {
             cleanup();
         }
-    }
-
-    protected void init() throws Exception {
-        window.init();
-        timer.init();
-        input.init(window);
-        gameLogic.init(window);
-        lastFps = timer.getTime();
-        fps = 0;
     }
 
     protected void gameLoop() {

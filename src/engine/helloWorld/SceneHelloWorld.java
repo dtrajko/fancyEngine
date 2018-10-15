@@ -44,9 +44,9 @@ public class SceneHelloWorld implements IScene {
 		ModelTexture texture = new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/tiles.png"));
 		RawModel model = loader.loadToVAO(CubeMeshSimple.vertices, CubeMeshSimple.textureCoords, CubeMeshSimple.indices);
 		TexturedModel texturedModel = new TexturedModel(model, texture);
-		entity = new Entity(texturedModel, new Vector3f(0, -0.5f, -5), 0, 0, 0, 1);
+		entity = new Entity(texturedModel, new Vector3f(0, -0.8f, -5), 0, 0, 0, 1);
 	}
-	
+
 	public Entity getEntity() {
 		return entity;
 	}
