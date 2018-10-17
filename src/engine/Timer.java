@@ -9,7 +9,9 @@ public class Timer {
     }
 
     public double getTime() {
-        return System.nanoTime() / 1000_000_000.0;
+    	double time;
+    	time = System.nanoTime() / 1000_000_000.0;
+        return time;
     }
 
     public float getElapsedTime() {

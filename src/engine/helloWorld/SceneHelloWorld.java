@@ -58,6 +58,11 @@ public class SceneHelloWorld implements IScene {
 	}
 
 	@Override
+	public void render(Window window) {
+		masterRenderer.render(window, this);
+	}
+
+	@Override
 	public void resetScene(Window window, ICamera camera, IGameLogic game) {
 	}
 

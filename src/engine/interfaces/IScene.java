@@ -15,6 +15,7 @@ public interface IScene {
 
 	void init();
 	void update(float interval, Input input);
+	void render(Window window);
 	void resetScene(Window window, ICamera camera, IGameLogic game);
 	void save();
 	void cleanUp();

@@ -34,7 +34,7 @@ public class HelloWorld implements IGameLogic {
 
 	@Override
 	public void render(Window window) {
-		scene.getMasterRenderer().render(window, scene);
+		scene.render(window);
 	}
 
 	@Override

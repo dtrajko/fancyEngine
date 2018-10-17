@@ -289,6 +289,11 @@ public class Scene implements IScene {
     }
 
 	@Override
+	public void render(Window window) {
+		renderer.render(window, this);
+	}
+
+	@Override
 	public IMasterRenderer getMasterRenderer() {
 		return renderer;
 	}

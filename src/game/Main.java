@@ -12,7 +12,7 @@ public class Main {
 
 	private static int width = 0;
 	private static int height = 0;
-	private static String app = "ThinMatrixLP"; // ThinMatrixLP, ThinMatrix, Game3D, Game2D, Frogger, HelloWorld
+	private static String app = "HelloWorld"; // ThinMatrixLP, ThinMatrix, Game3D, Game2D, Frogger, HelloWorld
 
     public static void main(String[] args) {
         try {

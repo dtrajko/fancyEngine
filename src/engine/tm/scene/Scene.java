@@ -400,6 +400,11 @@ public class Scene implements IScene {
 		toggleWireframeMode(input);
 	}
 
+	@Override
+	public void render(Window window) {
+		masterRenderer.render(window, this);
+	}
+
 	private void toggleWireframeMode(Input input) {
 		if (input.isKeyReleased(GLFW.GLFW_KEY_M)) {
 			wireframeEnabled  = !wireframeEnabled;

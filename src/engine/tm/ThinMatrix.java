@@ -47,7 +47,7 @@ public class ThinMatrix implements IGameLogic {
 
 	@Override
 	public void render(Window window) {
-		((Scene) scene).getMasterRenderer().render(window, scene);
+		scene.render(window);
 	}
 
 	@Override

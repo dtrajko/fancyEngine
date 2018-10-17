@@ -154,6 +154,11 @@ public class SceneLowPoly implements IScene {
 		updateText(interval);
 	}
 
+	@Override
+	public void render(Window window) {
+		masterRenderer.render(window, this);
+	}
+
 	private void setupTerrainGenerator() {
 		PerlinNoise noise = new PerlinNoise(WorldSettingsLowPoly.OCTAVES, WorldSettingsLowPoly.AMPLITUDE, WorldSettingsLowPoly.ROUGHNESS);
 		ColorGenerator colorGen = new ColorGenerator(WorldSettingsLowPoly.TERRAIN_COLS, WorldSettingsLowPoly.COLOR_SPREAD);
