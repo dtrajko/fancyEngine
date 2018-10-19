@@ -83,12 +83,12 @@ public class GameEngine implements Runnable {
 
             render();
 
-            if ( !window.isvSync() ) {
-                sync();
+            if (window.getWindowOptions().capFps && !window.isvSync() ) {
+            	sync();
             }
         }
     }
-    
+
     private void sync() {
         float loopSlot = 1f / TARGET_FPS;
         double endTime = timer.getLastLoopTime() + loopSlot;

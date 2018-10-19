@@ -23,6 +23,7 @@ public class Main {
             opts.cullFace = true;
             opts.showFps = true;
             opts.compatibleProfile = true;
+            opts.capFps = true;
 
 			switch (app) {
 			case "ThinMatrixLP":
@@ -52,6 +53,7 @@ public class Main {
 				opts.mode3D = true;
 				opts.cullFace = false;
 				opts.antialiasing = true;
+				opts.capFps = false;
 				width = height = 0;
 				break;
 			case "Game2D":

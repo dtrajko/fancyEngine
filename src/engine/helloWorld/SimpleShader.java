@@ -3,6 +3,7 @@ package engine.helloWorld;
 import org.joml.Matrix4f;
 import engine.tm.settings.WorldSettings;
 import engine.tm.shaders.ShaderProgram;
+import engine.utils.Util;
 
 public class SimpleShader extends ShaderProgram {
 
@@ -19,8 +20,6 @@ public class SimpleShader extends ShaderProgram {
 
 	@Override
 	protected void bindAttributes() {
-		super.bindAttribute(0, "position");
-		super.bindAttribute(1, "textureCoords");
 	}
 
 	@Override
@@ -31,12 +30,10 @@ public class SimpleShader extends ShaderProgram {
 	}
 	
 	public void loadTransformationMatrix(Matrix4f matrix) {
-		// System.out.println("StaticShader transformationMatrix: " + matrix);
 		super.loadMatrix(location_transformationMatrix, matrix);
 	}
 
 	public void loadProjectionMatrix(Matrix4f projection) {
-		// System.out.println("StaticShader projectionMatrix: " + projection);
 		super.loadMatrix(location_projectionMatrix, projection);
 	}
 

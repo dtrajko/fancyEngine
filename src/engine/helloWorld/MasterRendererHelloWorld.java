@@ -15,9 +15,9 @@ import engine.tm.toolbox.Maths;
 
 public class MasterRendererHelloWorld implements IMasterRenderer {
 
-	float RED = 0.2f;
-	float GREEN = 0.8f;
-	float BLUE = 1.0f;
+	private float RED = 0.2f;
+	private float GREEN = 0.3f;
+	private float BLUE = 0.8f;
 
 	private SimpleShader shader;
 	private static Matrix4f projectionMatrix;

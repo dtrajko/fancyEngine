@@ -239,6 +239,7 @@ public class Window {
         public boolean antialiasing;
         public boolean frustumCulling;
         public boolean mode3D;
+        public boolean capFps;
     }
 
     public void restoreState() {
