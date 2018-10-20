@@ -50,11 +50,12 @@ public class Main {
 				break;
 			case "HelloWorld":
 				gameLogic = new HelloWorld();
-				opts.mode3D = true;
+				opts.mode3D = false;
 				opts.cullFace = false;
 				opts.antialiasing = true;
 				opts.capFps = false;
-				width = height = 0;
+				width = 1280;
+				height = 720;
 				break;
 			case "Game2D":
 				gameLogic = new Game2D();
