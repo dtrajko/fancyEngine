@@ -18,10 +18,12 @@ import engine.tm.entities.Entity;
 import engine.tm.entities.Light;
 import engine.tm.gui.GuiTexture;
 import engine.tm.loaders.Loader;
+import engine.tm.loaders.OBJLoader;
 import engine.tm.models.CubeMeshSimple;
 import engine.tm.models.RawModel;
 import engine.tm.models.TexturedModel;
 import engine.tm.settings.WorldSettings;
+import engine.tm.settings.WorldSettingsLowPoly;
 import engine.tm.textures.ModelTexture;
 
 public class SceneHelloWorld implements IScene {
@@ -37,14 +39,21 @@ public class SceneHelloWorld implements IScene {
 
 	@Override
 	public void init() {
+
 		camera = new Camera();
+		((Camera) camera).setSpeed(0.1f);
+		((Camera) camera).setPitch(0);
+
 		loader = new Loader();
 		masterRenderer.init(this);
 
-		ModelTexture texture = new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/tiles.png"));
-		RawModel model = loader.loadToVAO(CubeMeshSimple.vertices, CubeMeshSimple.textureCoords, CubeMeshSimple.indices);
+		// ModelTexture texture = new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/tiles.png"));
+		// RawModel model = OBJLoader.loadOBJModel("cube", loader);
+		ModelTexture texture = new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/pine.png"));
+		RawModel model = OBJLoader.loadOBJModel("pine", loader);
+
 		TexturedModel texturedModel = new TexturedModel(model, texture);
-		entity = new Entity(texturedModel, new Vector3f(0, -0.8f, -5), 0, 0, 0, 1);
+		entity = new Entity(texturedModel, new Vector3f(0, 0, -10), 0, 0, 0, 1);
 	}
 
 	public Entity getEntity() {
@@ -54,7 +63,8 @@ public class SceneHelloWorld implements IScene {
 	@Override
 	public void update(float interval, Input input) {
 		entity.increasePosition(0, 0, 0);
-		entity.increaseRotation(1, 1, 0);
+		entity.increaseRotation(0, 1, 0);
+		((Camera) camera).move(input);
 	}
 
 	@Override

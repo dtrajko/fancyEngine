@@ -39,6 +39,11 @@ public class Camera implements ICamera {
 		projectionMatrix = createProjectionMatrix();
 	}
 
+	public Camera setSpeed(float speed) {
+		this.speed = speed;
+		return this;
+	}
+
 	public Camera setOffsetY(float offsetY) {
 		this.offsetY = offsetY;
 		return this;

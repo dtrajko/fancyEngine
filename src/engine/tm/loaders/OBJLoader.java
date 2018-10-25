@@ -6,10 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.joml.Vector2f;
 import org.joml.Vector3f;
-
 import engine.tm.models.RawModel;
 import engine.tm.settings.WorldSettings;
 
@@ -94,6 +92,7 @@ public class OBJLoader {
 		for (int i = 0; i < indices.size(); i++) {
 			indicesArray[i] = indices.get(i);
 		}
+
 		return loader.loadToVAO(verticesArray, textureArray, normalsArray, indicesArray);
 	}
 
