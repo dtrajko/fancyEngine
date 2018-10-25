@@ -47,13 +47,11 @@ public class SceneHelloWorld implements IScene {
 		loader = new Loader();
 		masterRenderer.init(this);
 
-		// ModelTexture texture = new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/tiles.png"));
-		// RawModel model = OBJLoader.loadOBJModel("cube", loader);
-		ModelTexture texture = new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/pine.png"));
-		RawModel model = OBJLoader.loadOBJModel("pine", loader);
+		ModelTexture texture = new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/dragon.png"));
+		RawModel model = OBJLoader.loadOBJModel("dragon", loader);
 
 		TexturedModel texturedModel = new TexturedModel(model, texture);
-		entity = new Entity(texturedModel, new Vector3f(0, 0, -10), 0, 0, 0, 1);
+		entity = new Entity(texturedModel, new Vector3f(0, -9.5f, -27), 0, 0, 0, 1);
 	}
 
 	public Entity getEntity() {
