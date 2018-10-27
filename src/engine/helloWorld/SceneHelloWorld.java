@@ -1,5 +1,6 @@
 package engine.helloWorld;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.joml.Vector3f;
@@ -19,11 +20,9 @@ import engine.tm.entities.Light;
 import engine.tm.gui.GuiTexture;
 import engine.tm.loaders.Loader;
 import engine.tm.loaders.OBJLoader;
-import engine.tm.models.CubeMeshSimple;
 import engine.tm.models.RawModel;
 import engine.tm.models.TexturedModel;
 import engine.tm.settings.WorldSettings;
-import engine.tm.settings.WorldSettingsLowPoly;
 import engine.tm.textures.ModelTexture;
 
 public class SceneHelloWorld implements IScene {
@@ -32,6 +31,7 @@ public class SceneHelloWorld implements IScene {
 	private ICamera camera;
 	private IMasterRenderer masterRenderer;
 	private Entity entity;
+	private List<Light> lights = new ArrayList<Light>();
 
 	public SceneHelloWorld() {
 		masterRenderer = new MasterRendererHelloWorld();
@@ -47,10 +47,13 @@ public class SceneHelloWorld implements IScene {
 		loader = new Loader();
 		masterRenderer.init(this);
 
-		ModelTexture texture = new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/dragon.png"));
-		RawModel model = OBJLoader.loadOBJModel("dragon", loader);
+		lights.add(new Light(new Vector3f(-5000, 8000, -5000), new Vector3f(10, 10, 10)));
 
-		TexturedModel texturedModel = new TexturedModel(model, texture);
+		ModelTexture modelTexture = new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/dragon.png"));
+		modelTexture.setShineDamper(10);
+		modelTexture.setReflectivity(10);
+		RawModel rawModel = OBJLoader.loadOBJModel("dragon", loader);
+		TexturedModel texturedModel = new TexturedModel(rawModel, modelTexture);
 		entity = new Entity(texturedModel, new Vector3f(0, -9.5f, -27), 0, 0, 0, 1);
 	}
 
@@ -100,6 +103,11 @@ public class SceneHelloWorld implements IScene {
 	}
 
 	@Override
+	public List<Light> getLights() {
+		return lights;
+	}
+
+	@Override
 	public Map<TexturedModel, List<Entity>> getEntityList() {
 		return null;
 	}
@@ -136,10 +144,5 @@ public class SceneHelloWorld implements IScene {
 
 	@Override
 	public void removeEntity(Entity entity) {
-	}
-
-	@Override
-	public List<Light> getLights() {
-		return null;
 	}
 }

@@ -9,8 +9,10 @@ import engine.Window;
 import engine.interfaces.IMasterRenderer;
 import engine.interfaces.IScene;
 import engine.tm.entities.Entity;
+import engine.tm.entities.Light;
 import engine.tm.models.RawModel;
 import engine.tm.models.TexturedModel;
+import engine.tm.textures.ModelTexture;
 import engine.tm.toolbox.Maths;
 
 public class MasterRendererHelloWorld implements IMasterRenderer {
@@ -43,9 +45,9 @@ public class MasterRendererHelloWorld implements IMasterRenderer {
 	public void render(Window window, IScene scene) {
 		GL11.glViewport(0, 0, window.getWidth(), window.getHeight());
 		prepare();
+		shader.loadLight(scene.getLights().get(0));
 		shader.loadViewMatrix(scene.getCamera().getViewMatrix());
-		Entity entity = ((SceneHelloWorld) scene).getEntity();
-		renderModel(entity, shader);			
+		renderModel(scene, shader);			
 	}
 
 	@Override
@@ -56,8 +58,11 @@ public class MasterRendererHelloWorld implements IMasterRenderer {
 		shader.start();
 	}
 
-	private void renderModel(Entity entity, SimpleShader shader) {
+	private void renderModel(IScene scene, SimpleShader shader) {
+		Entity entity = ((SceneHelloWorld) scene).getEntity();
+		Light light = scene.getLights().get(0);
 		TexturedModel texturedModel = entity.getTexturedModel();
+		ModelTexture modelTexture = texturedModel.getTexture();
 		RawModel rawModel = texturedModel.getRawModel();
 		GL30.glBindVertexArray(rawModel.getVaoID());
 		GL20.glEnableVertexAttribArray(0);
@@ -65,8 +70,9 @@ public class MasterRendererHelloWorld implements IMasterRenderer {
 		Matrix4f transformationMatrix = Maths.createTransformationMatrix(entity.getPosition(),
 			entity.getRotX(), entity.getRotY(), entity.getRotZ(), entity.getScale());
 		shader.loadTransformationMatrix(transformationMatrix);
+		shader.loadShineVariables(modelTexture.getShineDamper(), modelTexture.getReflectivity());
 		GL13.glActiveTexture(GL13.GL_TEXTURE0);
-		GL11.glBindTexture(GL13.GL_TEXTURE0, texturedModel.getTexture().getID());
+		GL11.glBindTexture(GL13.GL_TEXTURE0, modelTexture.getID());
 		GL11.glDrawElements(GL11.GL_TRIANGLES, rawModel.getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
 		GL20.glDisableVertexAttribArray(0);
 		GL20.glDisableVertexAttribArray(1);
