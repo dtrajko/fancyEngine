@@ -12,13 +12,15 @@ uniform vec3 lightColor;
 uniform float shineDamper;
 uniform float reflectivity;
 
+const float ambientLight = 0.3f;
+
 void main(void) {
 
 	vec3 unitNormal = normalize(surfaceNormal);
 	vec3 unitLightVector = normalize(toLightVector);
 
-	float nDot1 = dot(unitNormal, unitLightVector);
-	float brightness = max(nDot1, 0.2);
+	float nDotl = dot(unitNormal, unitLightVector);
+	float brightness = max(nDotl, ambientLight);
 	vec3 diffuse = brightness * lightColor;
 
 	vec3 unitVectorToCamera = normalize(toCameraVector);

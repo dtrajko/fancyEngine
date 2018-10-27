@@ -31,6 +31,7 @@ public class OBJLoader {
 		float[] normalsArray = null;
 		float[] textureArray = null;
 		int[] indicesArray = null;
+
 		try {
 			while(true) {
 				line = reader.readLine();
@@ -72,6 +73,7 @@ public class OBJLoader {
 				processVertex(vertex1, indices, textures, normals, textureArray, normalsArray);
 				processVertex(vertex2, indices, textures, normals, textureArray, normalsArray);
 				processVertex(vertex3, indices, textures, normals, textureArray, normalsArray);
+
 				line = reader.readLine();
 			}
 			reader.close();
