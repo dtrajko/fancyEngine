@@ -47,7 +47,7 @@ public class SceneHelloWorld implements IScene {
 		loader = new Loader();
 		masterRenderer.init(this);
 
-		lights.add(new Light(new Vector3f(-5000, 8000, -5000), new Vector3f(10, 10, 10)));
+		lights.add(new Light(new Vector3f(-100, 100, -100), new Vector3f(1, 1, 1)));
 
 		ModelTexture modelTexture = new ModelTexture(loader.loadTexture(WorldSettings.TEXTURES_DIR + "/dragon.png"));
 		modelTexture.setShineDamper(10);
