@@ -64,8 +64,9 @@ public class AnimatedPlayer extends AnimatedModel implements IPlayer {
 		}
 
 		ITerrain currentTerrain = scene.getCurrentTerrain((int) super.getPosition().x, (int) super.getPosition().z);
-		float terrainHeight = currentTerrain.getWaterHeight();
+		float terrainHeight = 0;
 		if (currentTerrain != null) {
+			// terrainHeight = currentTerrain.getWaterHeight();
 			terrainHeight = currentTerrain.getHeightOfTerrain((int) super.getPosition().x, (int) super.getPosition().z);
 		}
 
