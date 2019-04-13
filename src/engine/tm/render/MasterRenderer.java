@@ -53,8 +53,6 @@ public class MasterRenderer implements IMasterRenderer {
 	private static ShadowMapMasterRenderer shadowMapRenderer;
 	private static GuiRenderer guiRenderer;
 	private static SunRenderer sunRenderer;
-	private static Fbo reflectionFbo;
-	private static Fbo refractionFbo;
 
 	public MasterRenderer() {
 		createProjectionMatrix();
@@ -67,8 +65,6 @@ public class MasterRenderer implements IMasterRenderer {
 		shadowMapRenderer = new ShadowMapMasterRenderer();
 		sunRenderer = new SunRenderer();
 		guiRenderer = new GuiRenderer();
-		reflectionFbo = createWaterFbo(Window.width, Window.height, false);
-		refractionFbo = createWaterFbo(Window.width / 2, Window.height / 2, true);
 	}
 
 	/* (non-Javadoc)
@@ -287,7 +283,5 @@ public class MasterRenderer implements IMasterRenderer {
 		waterRenderer.cleanUp();
 		shadowMapRenderer.cleanUp();
 		guiRenderer.cleanUp();
-		refractionFbo.delete();
-		reflectionFbo.delete();
 	}
 }
