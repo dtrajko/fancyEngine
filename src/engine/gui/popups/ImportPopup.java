@@ -20,7 +20,7 @@ import engine.interfaces.IScene;
 import engine.tm.gui.fonts.FontType;
 import engine.tm.gui.fonts.GUIText;
 import engine.utils.FileSystem;
-import game.Game3D;
+import game.MinecraftClone;
 
 public class ImportPopup {
 	
@@ -88,7 +88,7 @@ public class ImportPopup {
 
         	if (nextBlock instanceof GuiElement && nextBlock.isClickable() && nextBlock.getTitle() != null) {
         		// System.out.println("ImportPopup importing the selected save file: [" + nextBlock.getTitle() + "]");
-        		((Scene) scene).load(Game3D.getMeshTypesMap(), nextBlock.getTitle());
+        		((Scene) scene).load(MinecraftClone.getMeshTypesMap(), nextBlock.getTitle());
         	}
 
         	guiManager.toggleImportDialog(window);

@@ -54,7 +54,7 @@ import engine.tm.gui.GuiTexture;
 import engine.tm.loaders.Loader;
 import engine.tm.models.TexturedModel;
 import engine.tm.skybox.Skybox;
-import game.Game3D;
+import game.MinecraftClone;
 
 public class Scene implements IScene {
 
@@ -632,10 +632,10 @@ public class Scene implements IScene {
         
         int skyBoxScale = 100;
         int extension = 2;
-        int startX = extension * (-skyBoxScale + Game3D.blockScale);
-        int startZ = extension * (skyBoxScale - Game3D.blockScale);
+        int startX = extension * (-skyBoxScale + MinecraftClone.blockScale);
+        int startZ = extension * (skyBoxScale - MinecraftClone.blockScale);
         // int startY = -1;
-        int increment = Game3D.blockScale * 2;
+        int increment = MinecraftClone.blockScale * 2;
         int posX = startX;
         int posY = 0;
         int posZ = startZ;
@@ -672,7 +672,7 @@ public class Scene implements IScene {
             			gameItem = new GameItem(meshTypesMap.get("GROUND"));
             		}
             		gameItem.setPosition(posX, posY, posZ);
-                	gameItem.setScale(Game3D.blockScale);
+                	gameItem.setScale(MinecraftClone.blockScale);
                 	gameItem.setBoundingBox();
                 	
                 	gameItems.add(gameItem);                		     		

@@ -12,7 +12,7 @@ public class Main {
 
 	private static int width = 0;
 	private static int height = 0;
-	private static String app = "Game3D"; // ThinMatrixLP, ThinMatrix, Game3D, Game2D, Frogger, HelloWorld
+	private static String app = "MinecraftClone"; // ThinMatrixLP, ThinMatrix, MinecraftClone, Game2D, Frogger, HelloWorld
 
     public static void main(String[] args) {
         try {
@@ -43,7 +43,7 @@ public class Main {
 				width = height = 0;
 				break;
 			case "Game3D":
-				gameLogic = new Game3D();
+				gameLogic = new MinecraftClone();
 				opts.mode3D = true;
 				opts.antialiasing = true;
 				width = height = 0;
@@ -69,7 +69,7 @@ public class Main {
 				height = 900;
 				break;
 			default:
-				gameLogic = new Game3D();
+				gameLogic = new MinecraftClone();
 				opts.mode3D = true;
 				width = height = 0;
             }

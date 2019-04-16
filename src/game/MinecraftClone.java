@@ -15,7 +15,7 @@ import engine.interfaces.IGameLogic;
 import engine.interfaces.IScene;
 import engine.sound.SoundManager;
 
-public class Game3D implements IGameLogic {
+public class MinecraftClone implements IGameLogic {
 
 	private static final boolean SHADOWS_ENABLED = false;
     private static final float MOUSE_SENSITIVITY = 0.2f;
@@ -43,7 +43,7 @@ public class Game3D implements IGameLogic {
 
     private static HashMap<String, Mesh> meshTypesMap = new HashMap<String, Mesh>();
 
-    public Game3D() {
+    public MinecraftClone() {
         camera = new Camera();
         soundMgr = new SoundManager();
         guiManager = new GuiManager();
