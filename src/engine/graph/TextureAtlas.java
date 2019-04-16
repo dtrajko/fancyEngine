@@ -12,7 +12,7 @@ import org.lwjgl.opengl.GL14;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 
-public class Texture {
+public class TextureAtlas {
 
 	private final int id;
     private final int width;
@@ -20,11 +20,11 @@ public class Texture {
     private int numRows = 1;
     private int numCols = 1;
 
-    public Texture(String fileName) throws Exception {
+    public TextureAtlas(String fileName) throws Exception {
         this(new FileInputStream(fileName));
     }
 
-    public Texture(String fileName, int numCols, int numRows) throws Exception  {
+    public TextureAtlas(String fileName, int numCols, int numRows) throws Exception  {
         this(fileName);
         this.numCols = numCols;
         this.numRows = numRows;
@@ -38,7 +38,7 @@ public class Texture {
      * @param pixelFormat Specifies the format of the pixel data (GL_RGBA, etc.)
      * @throws Exception
      */
-    public Texture(int width, int height, int pixelFormat) throws Exception {
+    public TextureAtlas(int width, int height, int pixelFormat) throws Exception {
         this.id = glGenTextures();
         this.width = width;
         this.height = height;
@@ -50,7 +50,7 @@ public class Texture {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
     }
 
-    public Texture(InputStream is) throws Exception {
+    public TextureAtlas(InputStream is) throws Exception {
         try {
             // Load Texture file
             PNGDecoder decoder = new PNGDecoder(is);

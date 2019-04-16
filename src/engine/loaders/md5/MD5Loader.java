@@ -11,7 +11,7 @@ import org.joml.Vector4f;
 import engine.Utils;
 import engine.graph.Material;
 import engine.graph.Mesh;
-import engine.graph.Texture;
+import engine.graph.TextureAtlas;
 import engine.graph.anim.AnimGameItem;
 import engine.graph.anim.AnimatedFrame;
 
@@ -245,7 +245,7 @@ public class MD5Loader {
     private static void handleTexture(Mesh mesh, MD5Mesh md5Mesh, Vector4f defaultColor) throws Exception {
         String texturePath = md5Mesh.getTexture();
         if (texturePath != null && texturePath.length() > 0) {
-            Texture texture = new Texture(texturePath);
+            TextureAtlas texture = new TextureAtlas(texturePath);
             Material material = new Material(texture);
 
             // Handle normal Maps;
@@ -255,7 +255,7 @@ public class MD5Loader {
                 String extension = texturePath.substring(pos, texturePath.length());
                 String normalMapFileName = basePath + "_local" + extension;
                 if (Utils.existsResourceFile(normalMapFileName)) {
-                    Texture normalMap = new Texture(normalMapFileName);
+                    TextureAtlas normalMap = new TextureAtlas(normalMapFileName);
                     material.setNormalMap(normalMap);
                 }
             }

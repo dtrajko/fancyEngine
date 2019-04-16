@@ -7,7 +7,7 @@ import org.lwjgl.glfw.GLFW;
 import config.Config;
 import engine.Window;
 import engine.graph.Input;
-import engine.graph.Texture;
+import engine.graph.TextureAtlas;
 import engine.gui.GuiElement;
 import engine.gui.GuiManager;
 import engine.gui.fonts.FontFactory;
@@ -28,9 +28,9 @@ public class QuitPopup {
 
 		textMaster.init();
 
-    	Texture txQuitPopup;
+    	TextureAtlas txQuitPopup;
 		try {
-			txQuitPopup = new Texture(Config.RESOURCES_DIR +  "/textures/small_popup.png");
+			txQuitPopup = new TextureAtlas(Config.RESOURCES_DIR +  "/textures/small_popup.png");
 			GuiElement guiQuitPopup = new GuiElement(txQuitPopup, new Vector3f(0.0f, 0.0f, 1), new Vector2f(0.24f, 0.22f));
 			guiQuitPopup.setQuitPopup(true);
 			guiManager.addGuiElement(guiQuitPopup);
@@ -38,9 +38,9 @@ public class QuitPopup {
 			e.printStackTrace();
 		}
 
-    	Texture txButton;
+    	TextureAtlas txButton;
 		try {
-			txButton = new Texture(Config.RESOURCES_DIR +  "/textures/button.png");
+			txButton = new TextureAtlas(Config.RESOURCES_DIR +  "/textures/button.png");
 
 			GuiElement guiButtonCancel = new GuiElement(txButton, new Vector3f(-0.113f, -0.132f, 1), new Vector2f(0.108f, 0.0508f));
 			guiButtonCancel.setQuitPopup(true).setClickable(true).setCancelButton(true);

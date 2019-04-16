@@ -26,7 +26,7 @@ public class Mesh {
     private boolean symetric = true;
     private boolean corner = false;
 	private String label;
-	private Texture particleTexture;
+	private TextureAtlas particleTexture;
 
     public Mesh(float[] positions, float[] textCoords, float[] normals, int[] indices) {
         this(positions, textCoords, normals, indices, createEmptyIntArray(MAX_WEIGHTS * positions.length / 3, 0), createEmptyFloatArray(MAX_WEIGHTS * positions.length / 3, 0));
@@ -144,7 +144,7 @@ public class Mesh {
     }
 
     protected void initRender() {
-        Texture texture = material.getTexture();
+        TextureAtlas texture = material.getTexture();
         
         if (texture != null) {
 
@@ -153,7 +153,7 @@ public class Mesh {
             // Bind the texture
             glBindTexture(GL_TEXTURE_2D, texture.getId());
         }
-        Texture normalMap = material.getNormalMap();
+        TextureAtlas normalMap = material.getNormalMap();
         if ( normalMap != null ) {
             // Activate first texture bank
             glActiveTexture(GL_TEXTURE1);
@@ -213,7 +213,7 @@ public class Mesh {
         }
 
         // Delete the texture
-        Texture texture = material.getTexture();
+        TextureAtlas texture = material.getTexture();
         if (texture != null) {
             texture.cleanup();
         }
@@ -274,11 +274,11 @@ public class Mesh {
 		return this.label;
 	}
 
-	public void setParticleTexture(Texture texture) {
+	public void setParticleTexture(TextureAtlas texture) {
 		this.particleTexture = texture;
 	}
 	
-	public Texture getParticleTexture() {
+	public TextureAtlas getParticleTexture() {
 		return this.particleTexture;
 	}
 }

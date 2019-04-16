@@ -113,7 +113,7 @@ public class InstancedMesh extends Mesh {
 
         int i = 0;
 
-        Texture text = getMaterial().getTexture();        
+        TextureAtlas text = getMaterial().getTexture();        
         
         for (GameItem gameItem : gameItems) {
             Matrix4f modelMatrix = transformation.buildModelMatrix(gameItem);

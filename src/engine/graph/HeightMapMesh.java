@@ -24,7 +24,7 @@ public class HeightMapMesh {
         
         heightArray = new float[height][width];
         
-        Texture texture = new Texture(textureFile);
+        TextureAtlas texture = new TextureAtlas(textureFile);
 
         float incx = getXLength() / (width - 1);
         float incz = getZLength() / (height - 1);

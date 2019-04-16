@@ -26,7 +26,7 @@ import engine.graph.InstancedMesh;
 import engine.graph.Material;
 import engine.graph.Mesh;
 import engine.graph.Renderer;
-import engine.graph.Texture;
+import engine.graph.TextureAtlas;
 import engine.graph.lights.DirectionalLight;
 import engine.graph.particles.ExplosionParticleEmitter;
 import engine.graph.particles.Particle;
@@ -102,8 +102,8 @@ public class Scene implements IScene {
 
         Mesh meshGrass = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
         meshTypesMap.put("GRASS", meshGrass.setLabel("GRASS"));
-        Texture textureGrass = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_grass.png", 2, 1);
-        Texture txParticleGrass = new Texture(Config.RESOURCES_DIR +  "/textures/particle_grass.png");
+        TextureAtlas textureGrass = new TextureAtlas(Config.RESOURCES_DIR +  "/textures/terrain_texture_grass.png", 2, 1);
+        TextureAtlas txParticleGrass = new TextureAtlas(Config.RESOURCES_DIR +  "/textures/particle_grass.png");
         Material materialGrass = new Material(textureGrass);
         materialGrass.setReflectance(1.0f);
         materialGrass.setTransparency(1.0f);
@@ -112,8 +112,8 @@ public class Scene implements IScene {
 
         Mesh meshGround = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
         meshTypesMap.put("GROUND", meshGround.setLabel("GROUND"));
-        Texture textureGround = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_ground.png", 2, 1);
-        Texture txParticleGround = new Texture(Config.RESOURCES_DIR +  "/textures/particle_ground.png");
+        TextureAtlas textureGround = new TextureAtlas(Config.RESOURCES_DIR +  "/textures/terrain_texture_ground.png", 2, 1);
+        TextureAtlas txParticleGround = new TextureAtlas(Config.RESOURCES_DIR +  "/textures/particle_ground.png");
         Material materialGround = new Material(textureGround);
         materialGround.setReflectance(1.0f);
         materialGround.setTransparency(1.0f);
@@ -122,8 +122,8 @@ public class Scene implements IScene {
 
         Mesh meshWater = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
         meshTypesMap.put("WATER", meshWater.setLabel("WATER"));
-        Texture textureWater = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_water.png", 2, 1);
-        Texture txParticleWater = new Texture(Config.RESOURCES_DIR +  "/textures/particle_water.png");
+        TextureAtlas textureWater = new TextureAtlas(Config.RESOURCES_DIR +  "/textures/terrain_texture_water.png", 2, 1);
+        TextureAtlas txParticleWater = new TextureAtlas(Config.RESOURCES_DIR +  "/textures/particle_water.png");
         Material materialWater = new Material(textureWater);
         materialWater.setReflectance(1.0f);
         materialWater.setTransparency(0.7f); // 0.7f
@@ -133,8 +133,8 @@ public class Scene implements IScene {
 
         Mesh meshLava = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
         meshTypesMap.put("LAVA", meshLava.setLabel("LAVA"));
-        Texture textureLava = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_lava.png", 2, 1);
-        Texture txParticleLava = new Texture(Config.RESOURCES_DIR +  "/textures/particle_lava.png");
+        TextureAtlas textureLava = new TextureAtlas(Config.RESOURCES_DIR +  "/textures/terrain_texture_lava.png", 2, 1);
+        TextureAtlas txParticleLava = new TextureAtlas(Config.RESOURCES_DIR +  "/textures/particle_lava.png");
         Material materialLava = new Material(textureLava);
         materialLava.setReflectance(1.0f);
         materialLava.setTransparency(1.0f);
@@ -143,8 +143,8 @@ public class Scene implements IScene {
 
         Mesh meshWood = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
         meshTypesMap.put("WOOD", meshWood.setLabel("WOOD"));
-        Texture textureWood = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_wood.png", 2, 1);
-        Texture txParticleWood = new Texture(Config.RESOURCES_DIR +  "/textures/particle_wood.png");
+        TextureAtlas textureWood = new TextureAtlas(Config.RESOURCES_DIR +  "/textures/terrain_texture_wood.png", 2, 1);
+        TextureAtlas txParticleWood = new TextureAtlas(Config.RESOURCES_DIR +  "/textures/particle_wood.png");
         Material materialWood = new Material(textureWood);
         materialWood.setReflectance(1.0f);
         materialWood.setTransparency(1.0f);
@@ -153,8 +153,8 @@ public class Scene implements IScene {
 
         Mesh meshTreetop = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
         meshTypesMap.put("TREETOP", meshTreetop.setLabel("TREETOP"));
-        Texture textureTreetop = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_treetop.png", 2, 1);
-        Texture txParticleTreetop = new Texture(Config.RESOURCES_DIR +  "/textures/particle_treetop.png");
+        TextureAtlas textureTreetop = new TextureAtlas(Config.RESOURCES_DIR +  "/textures/terrain_texture_treetop.png", 2, 1);
+        TextureAtlas txParticleTreetop = new TextureAtlas(Config.RESOURCES_DIR +  "/textures/particle_treetop.png");
         Material materialTreetop = new Material(textureTreetop);
         materialTreetop.setReflectance(1.0f);
         materialTreetop.setTransparency(0.8f);
@@ -163,8 +163,8 @@ public class Scene implements IScene {
 
         Mesh meshOakwood = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
         meshTypesMap.put("OAKWOOD", meshOakwood.setLabel("OAKWOOD"));
-        Texture textureOakwood = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_oakwood.png", 2, 1);
-        Texture txParticleOakwood = new Texture(Config.RESOURCES_DIR +  "/textures/particle_oakwood.png");
+        TextureAtlas textureOakwood = new TextureAtlas(Config.RESOURCES_DIR +  "/textures/terrain_texture_oakwood.png", 2, 1);
+        TextureAtlas txParticleOakwood = new TextureAtlas(Config.RESOURCES_DIR +  "/textures/particle_oakwood.png");
         Material materialOakwood = new Material(textureOakwood);
         materialOakwood.setReflectance(1.0f);
         materialOakwood.setTransparency(1.0f);
@@ -173,8 +173,8 @@ public class Scene implements IScene {
 
         Mesh meshGlass = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
         meshTypesMap.put("GLASS", meshGlass.setLabel("GLASS"));
-        Texture textureGlass = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_glass.png", 2, 1);
-        Texture txParticleGlass = new Texture(Config.RESOURCES_DIR +  "/textures/particle_glass.png");
+        TextureAtlas textureGlass = new TextureAtlas(Config.RESOURCES_DIR +  "/textures/terrain_texture_glass.png", 2, 1);
+        TextureAtlas txParticleGlass = new TextureAtlas(Config.RESOURCES_DIR +  "/textures/particle_glass.png");
         Material materialGlass = new Material(textureGlass);
         materialGlass.setReflectance(1.0f);
         materialGlass.setTransparency(0.6f);
@@ -183,8 +183,8 @@ public class Scene implements IScene {
 
         Mesh meshCobble = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/cube.obj", 5000);
         meshTypesMap.put("COBBLE", meshCobble.setLabel("COBBLE"));
-        Texture textureCobble = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_cobble.png", 2, 1);
-        Texture txParticleCobble = new Texture(Config.RESOURCES_DIR +  "/textures/particle_cobble.png");
+        TextureAtlas textureCobble = new TextureAtlas(Config.RESOURCES_DIR +  "/textures/terrain_texture_cobble.png", 2, 1);
+        TextureAtlas txParticleCobble = new TextureAtlas(Config.RESOURCES_DIR +  "/textures/particle_cobble.png");
         Material materialCobble = new Material(textureCobble);
         materialCobble.setReflectance(1.0f);
         materialCobble.setTransparency(1.0f);
@@ -193,7 +193,7 @@ public class Scene implements IScene {
 
         Mesh meshStairs = OBJLoader.loadMesh(Config.RESOURCES_DIR + "/models/stairs.obj", 5000);
         meshTypesMap.put("STAIRS", meshStairs.setLabel("STAIRS"));
-        Texture textureStairs = new Texture(Config.RESOURCES_DIR +  "/textures/terrain_texture_stairs.png", 2, 1);
+        TextureAtlas textureStairs = new TextureAtlas(Config.RESOURCES_DIR +  "/textures/terrain_texture_stairs.png", 2, 1);
         Material materialStairs = new Material(textureStairs);
         materialStairs.setReflectance(1.0f);
         materialStairs.setTransparency(1.0f);
@@ -353,7 +353,7 @@ public class Scene implements IScene {
 
     private void setupGui(HashMap<String, Mesh> meshTypesMap, GuiManager guiManager, Window window) throws Exception {
     	// bullseye
-    	Texture textureBullseye = new Texture(Config.RESOURCES_DIR +  "/textures/bullseye.png");
+    	TextureAtlas textureBullseye = new TextureAtlas(Config.RESOURCES_DIR +  "/textures/bullseye.png");
     	GuiElement guiBullseye = new GuiElement(textureBullseye, new Vector3f(0f, 0f, 1), new Vector2f(0.026f, 0.04f));
     	guiManager.addGuiElement(guiBullseye);
     	guiManager.init(window, meshTypesMap);

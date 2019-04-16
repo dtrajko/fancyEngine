@@ -356,7 +356,7 @@ public class Renderer implements IMasterRenderer {
             IParticleEmitter emitter = emitters[i];
             Mesh mesh = emitter.getBaseParticle().getMesh();
 
-            Texture texture = mesh.getMaterial().getTexture();
+            TextureAtlas texture = mesh.getMaterial().getTexture();
             float transparency = mesh.getMaterial().getTransparency();
             particlesShaderProgram.setUniform("numCols", texture.getNumCols());
             particlesShaderProgram.setUniform("numRows", texture.getNumRows());
@@ -563,7 +563,7 @@ public class Renderer implements IMasterRenderer {
         	sceneShaderProgram.setUniform("material", mesh.getMaterial());
         	sceneShaderProgram.setUniform("transparency", mesh.getMaterial().getTransparency());
         	
-            Texture text = mesh.getMaterial().getTexture();
+            TextureAtlas text = mesh.getMaterial().getTexture();
             if (text != null) {
                 sceneShaderProgram.setUniform("numCols", text.getNumCols());
                 sceneShaderProgram.setUniform("numRows", text.getNumRows());
@@ -609,7 +609,7 @@ public class Renderer implements IMasterRenderer {
         	float transparency = mesh.getMaterial().getTransparency();
         	// System.out.println("Renderer render mesh transparency: " + transparency);
 
-            Texture text = mesh.getMaterial().getTexture();
+            TextureAtlas text = mesh.getMaterial().getTexture();
             if (text != null) {
                 sceneShaderProgram.setUniform("numCols", text.getNumCols());
                 sceneShaderProgram.setUniform("numRows", text.getNumRows());

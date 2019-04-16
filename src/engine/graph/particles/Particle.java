@@ -3,7 +3,7 @@ package engine.graph.particles;
 import org.joml.Vector3f;
 
 import engine.graph.Mesh;
-import engine.graph.Texture;
+import engine.graph.TextureAtlas;
 import engine.items.GameItem;
 
 public class Particle extends GameItem {
@@ -25,7 +25,7 @@ public class Particle extends GameItem {
         this.ttl = ttl;
         this.updateTextureMillis = 0;
         this.currentAnimTimeMillis = 0;
-        Texture texture = this.getMesh().getMaterial().getTexture();
+        TextureAtlas texture = this.getMesh().getMaterial().getTexture();
         this.animFrames = texture.getNumCols() * texture.getNumRows();
     }
 

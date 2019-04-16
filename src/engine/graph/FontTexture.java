@@ -21,7 +21,7 @@ public class FontTexture {
     private final Font font;
     private final String charSetName;
     private final Map<Character, CharInfo> charMap;
-    private Texture texture;
+    private TextureAtlas texture;
     private int height;
     private int width;
 
@@ -41,7 +41,7 @@ public class FontTexture {
         return height;
     }
 
-    public Texture getTexture() {
+    public TextureAtlas getTexture() {
         return texture;
     }
 
@@ -97,7 +97,7 @@ public class FontTexture {
             is = new ByteArrayInputStream(out.toByteArray());
         }
 
-        texture = new Texture(is);
+        texture = new TextureAtlas(is);
     }
 
     public static class CharInfo {

@@ -3,7 +3,7 @@ package engine.gui;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import engine.graph.Mesh;
-import engine.graph.Texture;
+import engine.graph.TextureAtlas;
 import engine.items.Box2D;
 import engine.tm.gui.GuiTexture;
 
@@ -23,7 +23,7 @@ public class GuiElement {
 	private boolean isSplashBackground;
 	private String title;
 
-	public GuiElement(Texture texture, Vector3f position, Vector2f scale) {
+	public GuiElement(TextureAtlas texture, Vector3f position, Vector2f scale) {
 		super();
 		this.texture = new GuiTexture(texture.getId(), new Vector2f(position.x, position.y), scale);
 		setAABB();

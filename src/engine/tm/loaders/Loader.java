@@ -20,7 +20,7 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL33;
 import de.matthiasmann.twl.utils.PNGDecoder;
 import de.matthiasmann.twl.utils.PNGDecoder.Format;
-import engine.graph.Texture;
+import engine.graph.TextureAtlas;
 import engine.tm.models.RawModel;
 import engine.tm.settings.WorldSettings;
 import engine.tm.textures.TextureData;
@@ -149,7 +149,7 @@ public class Loader {
 		int textureID = -1;
 		try {
 			InputStream is = new FileInputStream(fileFullPath);
-			textureID = new Texture(is).getId();
+			textureID = new TextureAtlas(is).getId();
 
 			GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
 			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR_MIPMAP_LINEAR);

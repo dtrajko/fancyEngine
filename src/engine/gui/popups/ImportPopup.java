@@ -11,7 +11,7 @@ import config.Config;
 import engine.Scene;
 import engine.Window;
 import engine.graph.Input;
-import engine.graph.Texture;
+import engine.graph.TextureAtlas;
 import engine.gui.GuiElement;
 import engine.gui.GuiManager;
 import engine.gui.fonts.FontFactory;
@@ -36,12 +36,12 @@ public class ImportPopup {
 		textMaster.init();
 
     	// import dialog
-    	Texture texturePanel;
-    	Texture textureLongButton;
+    	TextureAtlas texturePanel;
+    	TextureAtlas textureLongButton;
 
 		try {
-			texturePanel = new Texture(Config.RESOURCES_DIR +  "/textures/window.png");
-			textureLongButton = new Texture(Config.RESOURCES_DIR +  "/textures/button_long.png");
+			texturePanel = new TextureAtlas(Config.RESOURCES_DIR +  "/textures/window.png");
+			textureLongButton = new TextureAtlas(Config.RESOURCES_DIR +  "/textures/button_long.png");
 			FontType font = FontFactory.getFont("candara", window);
 			List<String> files = listSaveFiles();
 

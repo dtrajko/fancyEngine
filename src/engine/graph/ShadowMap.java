@@ -8,7 +8,7 @@ public class ShadowMap {
     public static final int SHADOW_MAP_WIDTH = 1024;
     public static final int SHADOW_MAP_HEIGHT = 1024;
     private final int depthMapFBO;
-    private final Texture depthMap;
+    private final TextureAtlas depthMap;
 
     public ShadowMap() throws Exception {
 
@@ -16,7 +16,7 @@ public class ShadowMap {
         depthMapFBO = GL30.glGenFramebuffers();
 
         // Create the depth map texture
-        depthMap = new Texture(SHADOW_MAP_WIDTH, SHADOW_MAP_HEIGHT, GL11.GL_DEPTH_COMPONENT);
+        depthMap = new TextureAtlas(SHADOW_MAP_WIDTH, SHADOW_MAP_HEIGHT, GL11.GL_DEPTH_COMPONENT);
 
         // Attach the the depth map texture to the FBO
         GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, depthMapFBO);
@@ -33,7 +33,7 @@ public class ShadowMap {
         GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
     }
 
-    public Texture getDepthMapTexture() {
+    public TextureAtlas getDepthMapTexture() {
         return depthMap;
     }
 

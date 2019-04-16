@@ -10,7 +10,7 @@ import config.Config;
 import engine.Window;
 import engine.graph.Mesh;
 import engine.graph.Input;
-import engine.graph.Texture;
+import engine.graph.TextureAtlas;
 import engine.gui.popups.ImportPopup;
 import engine.gui.popups.InventoryPopup;
 import engine.gui.popups.QuitPopup;
@@ -31,9 +31,9 @@ public class GuiManager {
 	public void init(Window window, HashMap<String, Mesh> meshTypesMap) {
 
     	// import dialog
-    	Texture txSplashBackground;
+    	TextureAtlas txSplashBackground;
 		try {
-			txSplashBackground = new Texture(Config.RESOURCES_DIR +  "/textures/splash_background.png");
+			txSplashBackground = new TextureAtlas(Config.RESOURCES_DIR +  "/textures/splash_background.png");
 			GuiElement guiSplashBackground = new GuiElement(txSplashBackground, new Vector3f(0.0f, 0.0f, 1), new Vector2f(1.0f, 1.0f));
 			guiSplashBackground.setSplashBackground(true);
 			addGuiElement(guiSplashBackground);

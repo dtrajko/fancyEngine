@@ -10,8 +10,8 @@ public class Material {
     private Vector4f specularColor;
     private float reflectance;
     private float transparency;
-    private Texture texture;
-    private Texture normalMap;
+    private TextureAtlas texture;
+    private TextureAtlas normalMap;
     private boolean solid;
 
     public Material() {
@@ -28,15 +28,15 @@ public class Material {
         this(color, color, color, null, reflectance);
     }
 
-    public Material(Texture texture) {
+    public Material(TextureAtlas texture) {
         this(DEFAULT_COLOR, DEFAULT_COLOR, DEFAULT_COLOR, texture, 0);
     }
 
-    public Material(Texture texture, float reflectance) {
+    public Material(TextureAtlas texture, float reflectance) {
         this(DEFAULT_COLOR, DEFAULT_COLOR, DEFAULT_COLOR, texture, reflectance);
     }
 
-    public Material(Vector4f ambientColor, Vector4f diffuseColor, Vector4f specularColor, Texture texture, float reflectance) {
+    public Material(Vector4f ambientColor, Vector4f diffuseColor, Vector4f specularColor, TextureAtlas texture, float reflectance) {
         this.ambientColor = ambientColor;
         this.diffuseColor = diffuseColor;
         this.specularColor = specularColor;
@@ -97,11 +97,11 @@ public class Material {
         return this.texture != null;
     }
 
-    public Texture getTexture() {
+    public TextureAtlas getTexture() {
         return texture;
     }
 
-    public void setTexture(Texture texture) {
+    public void setTexture(TextureAtlas texture) {
         this.texture = texture;
     }
     
@@ -109,11 +109,11 @@ public class Material {
         return this.normalMap != null;
     }
 
-    public Texture getNormalMap() {
+    public TextureAtlas getNormalMap() {
         return normalMap;
     }
 
-    public void setNormalMap(Texture normalMap) {
+    public void setNormalMap(TextureAtlas normalMap) {
         this.normalMap = normalMap;
     }
 }
